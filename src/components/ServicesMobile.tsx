@@ -92,7 +92,7 @@ export function ServicesMobile({
     };
     
     return (
-      <div className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-transparent">
+      <div className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-[#2c4657]">
         <div className="relative w-full h-screen flex flex-col items-center justify-between bg-[#2c4657] pt-[80px] pb-[20px]">
           {/* Background gradient - scaled down for mobile */}
           <div className="absolute h-[307px] left-1/2 top-[66px] -translate-x-1/2 w-[506px] pointer-events-none">

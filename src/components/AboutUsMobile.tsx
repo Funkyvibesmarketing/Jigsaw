@@ -185,22 +185,22 @@ function UpArrowButton() {
   );
 }
 
-export function AboutUsMobile({ onScrollProgress }: {
+export function AboutUsMobile({ onScrollProgress }: { 
   onScrollProgress?: (progress: number) => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [carouselIndex, setCarouselIndex] = useState(0);
-
+  
   // Auto-advance carousel every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setCarouselIndex((prev) => (prev + 1) % carouselTexts.length);
     }, 5000); // Change slide every 5 seconds
-
+    
     return () => clearInterval(interval);
   }, []);
-
+  
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
@@ -217,23 +217,23 @@ export function AboutUsMobile({ onScrollProgress }: {
   // Middle text stays centered initially, then moves up and fades out
   const middleTextY = useTransform(scrollYProgress, [0, 0.25, 0.35, 0.45], [0, 0, -100, -300]);
   const middleTextOpacity = useTransform(scrollYProgress, [0, 0.35, 0.45], [1, 1, 0]);
-
+  
   // Middle text blur effect - becomes hazy when moving up
   const middleTextBlur = useTransform(scrollYProgress, [0.25, 0.35, 0.45], ['blur(0px)', 'blur(4px)', 'blur(8px)']);
-
+  
   // SERVICES moves continuously from bottom to middle, then stays in place during zoom
   const servicesY = useTransform(scrollYProgress, [0, 0.4, 0.55, 1], [400, 50, 0, 0]);
-
+  
   // Scale up after reaching middle - MUCH MORE zoom to fill screen - FASTER zoom
   const servicesScale = useTransform(scrollYProgress, [0.55, 0.80], [1, 25]);
-
+  
   // Color transitions
   const servicesColor = useTransform(
-    scrollYProgress,
-    [0, 0.35, 0.45],
+    scrollYProgress, 
+    [0, 0.35, 0.45], 
     ['rgba(41, 65, 80, 0.1)', 'rgba(41, 65, 80, 0.1)', 'rgba(41, 65, 80, 1)']
   );
-
+  
   // Blur effect - blurred at bottom, clear in the middle and during zoom
   const servicesBlur = useTransform(scrollYProgress, [0, 0.4, 0.45], ['blur(8px)', 'blur(4px)', 'blur(0px)']);
 
@@ -251,8 +251,8 @@ export function AboutUsMobile({ onScrollProgress }: {
   const useMaskCutout = scrollProgress >= 0.56;
 
   // Solid text opacity - visible until mask cutout starts, quick but smooth fade
-  const solidTextOpacity = scrollProgress < 0.54 ? 1 :
-    scrollProgress < 0.56 ? 1 - ((scrollProgress - 0.54) / 0.02) : 0;
+  const solidTextOpacity = scrollProgress < 0.54 ? 1 : 
+                          scrollProgress < 0.56 ? 1 - ((scrollProgress - 0.54) / 0.02) : 0;
 
   // Services section opacity - fades in AFTER solid text is fully gone
   const servicesSectionOpacity = useTransform(scrollYProgress, [0.56, 0.58], [0, 1]);
@@ -266,13 +266,13 @@ export function AboutUsMobile({ onScrollProgress }: {
       {/* About Us Content */}
       <div className="relative flex items-center justify-center min-h-screen sticky top-0 overflow-hidden bg-white">
         {/* Blue gradient overlay at top */}
-        <motion.div
-          className="absolute top-0 left-0 w-full h-[100px] bg-gradient-to-b from-[#294150]/10 to-transparent z-0"
+        <motion.div 
+          className="absolute top-0 left-0 w-full h-[100px] bg-gradient-to-b from-[#294150]/10 to-transparent z-0" 
           style={{ opacity: topGradientOpacity }}
         />
-
+        
         {/* Text Carousel with Pagination - Mobile Version */}
-        <motion.div
+        <motion.div 
           className="absolute font-lato-light not-italic text-[#222526] text-center top-[24px] w-full px-6"
           style={{ y: middleTextY, opacity: middleTextOpacity, filter: middleTextBlur }}
         >
@@ -311,11 +311,12 @@ export function AboutUsMobile({ onScrollProgress }: {
                 className="transition-all duration-300"
                 aria-label={`Go to slide ${index + 1}`}
               >
-                <div
-                  className={`rounded-full transition-all duration-300 ${index === carouselIndex
-                    ? 'w-[14px] h-[14px] bg-[#2C4657]'
-                    : 'w-[10px] h-[10px] bg-[#D9D9D9] hover:bg-[#B0B0B0]'
-                    }`}
+                <div 
+                  className={`rounded-full transition-all duration-300 ${
+                    index === carouselIndex 
+                      ? 'w-[14px] h-[14px] bg-[#2C4657]' 
+                      : 'w-[10px] h-[10px] bg-[#D9D9D9] hover:bg-[#B0B0B0]'
+                  }`}
                 />
               </button>
             ))}
@@ -323,15 +324,15 @@ export function AboutUsMobile({ onScrollProgress }: {
         </motion.div>
 
         {/* Full blue screen overlay at the end - appears after zoom completes */}
-        <motion.div
-          className="absolute top-0 left-0 w-full h-full z-10"
+        <motion.div 
+          className="absolute top-0 left-0 w-full h-full z-10" 
           style={{ opacity: blueScreenOpacity }}
         >
           <img src={backgroundGradient} alt="" className="w-full h-full object-cover" />
         </motion.div>
 
         {/* SERVICES Text Mask - reveals Services section through text cutout during zoom */}
-        <motion.div
+        <motion.div 
           className="absolute top-1/2 left-0 w-full h-full z-20 pointer-events-none -translate-y-1/2"
           style={{ y: servicesY }}
         >
@@ -353,7 +354,7 @@ export function AboutUsMobile({ onScrollProgress }: {
               <mask id="servicesTextMaskMobile">
                 {/* Black background - everything hidden */}
                 <rect x="0" y="0" width="100%" height="100%" fill="black" />
-
+                
                 {/* White text - reveals Services section through letters */}
                 {/* Position calculated to center the "V" (4th letter) instead of the whole word */}
                 <text
@@ -373,11 +374,11 @@ export function AboutUsMobile({ onScrollProgress }: {
                     const letterSpacing = (baseLetterSpacing * fontSize) / baseFontSize;
                     const charWidth = fontSize * 0.55; // Character width for Lato Bold
                     const totalCharWidth = charWidth + letterSpacing;
-
+                    
                     // Shift right by 0.5 character widths to center on V
-                    // const viewportCenter = 187.5;
+                    const viewportCenter = 187.5; // 50% of 375px viewport
                     const offset = 0.5 * totalCharWidth;
-                    return `calc(50% + ${offset}px)`;
+                    return String(viewportCenter + offset);
                   })()}
                   y="50%"
                   textAnchor="middle"
@@ -387,7 +388,7 @@ export function AboutUsMobile({ onScrollProgress }: {
                     const baseSize = 48; // Much smaller for mobile to fit screen
                     if (scrollProgress < 0.55) return baseSize;
                     if (scrollProgress >= 0.80) return baseSize * 25;
-
+                    
                     const progress = (scrollProgress - 0.55) / (0.80 - 0.55);
                     const scale = 1 + (24 * progress); // 1x to 25x scale - FASTER
                     return baseSize * scale;
@@ -405,11 +406,6 @@ export function AboutUsMobile({ onScrollProgress }: {
                       return baseFontSize * scale;
                     })();
                     return String((baseLetterSpacing * fontSize) / baseFontSize);
-                  })()}
-                  stroke="white"
-                  strokeWidth={(() => {
-                    if (scrollProgress >= 0.80) return 20; // Thick stroke at end to cover gaps
-                    return 0;
                   })()}
                 >
                   SERVICES
@@ -460,7 +456,7 @@ export function AboutUsMobile({ onScrollProgress }: {
               <mask id="servicesContentMaskMobile">
                 {/* Black background - everything hidden */}
                 <rect x="0" y="0" width="100%" height="100%" fill="black" />
-
+                
                 {/* White text - reveals Services section through letters */}
                 <text
                   x={(() => {
@@ -476,9 +472,9 @@ export function AboutUsMobile({ onScrollProgress }: {
                     const letterSpacing = (baseLetterSpacing * fontSize) / baseFontSize;
                     const charWidth = fontSize * 0.55;
                     const totalCharWidth = charWidth + letterSpacing;
-                    // const viewportCenter = 187.5;
+                    const viewportCenter = 187.5;
                     const offset = 0.5 * totalCharWidth;
-                    return `calc(50% + ${offset}px)`;
+                    return String(viewportCenter + offset);
                   })()}
                   y="50%"
                   textAnchor="middle"
@@ -506,17 +502,12 @@ export function AboutUsMobile({ onScrollProgress }: {
                     })();
                     return String((baseLetterSpacing * fontSize) / baseFontSize);
                   })()}
-                  stroke="white"
-                  strokeWidth={(() => {
-                    if (scrollProgress >= 0.80) return 20;
-                    return 0;
-                  })()}
                 >
                   SERVICES
                 </text>
               </mask>
             </defs>
-
+            
             {/* foreignObject to embed HTML content with SVG mask applied */}
             <foreignObject
               x="0"

@@ -309,17 +309,22 @@ export function BlogsMobile({ onScrollProgress, blogs = [] }: BlogsMobileProps) 
                 modifier: 1,
                 slideShadows: false,
               }}
-              onSwiper={setSwiperInstance}
-              onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
+              onSwiper={(swiper) => {
+                setSwiperInstance(swiper);
+                setActiveIndex(swiper.activeIndex);
+              }}
+              onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
               className="blogs-swiper-mobile"
             >
               {blogData.map((blog, index) => (
-                <SwiperSlide key={index}>
-                  <BlogCard 
-                    blog={blog} 
-                    isActive={blogs.length > 0 && index % blogs.length === activeIndex}
-                    onClick={() => handleBlogClick(index)}
-                  />
+                <SwiperSlide key={`${blog.id}-${index}`}>
+                  {({ isActive }) => (
+                    <BlogCard 
+                      blog={blog} 
+                      isActive={isActive}
+                      onClick={() => handleBlogClick(index)}
+                    />
+                  )}
                 </SwiperSlide>
               ))}
             </Swiper>

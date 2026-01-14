@@ -428,16 +428,21 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
                 slideShadows: false,
               }}
               modules={[EffectCoverflow, Navigation]}
-              onSwiper={setSwiperInstance}
-              onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
+              onSwiper={(swiper) => {
+                setSwiperInstance(swiper);
+                setActiveIndex(swiper.activeIndex);
+              }}
+              onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
               className="!pb-[80px]"
               style={{
                 overflow: 'visible'
               }}
             >
               {blogData.map((blog, index) => (
-                <SwiperSlide key={index} className="!w-auto flex items-end justify-center">
-                  <BlogCard blog={blog} isActive={index % blogs.length === activeIndex} onClick={() => openPopup(blog)} />
+                <SwiperSlide key={`${blog.id}-${index}`} className="!w-auto flex items-end justify-center">
+                  {({ isActive }) => (
+                    <BlogCard blog={blog} isActive={isActive} onClick={() => openPopup(blog)} />
+                  )}
                 </SwiperSlide>
               ))}
             </Swiper>

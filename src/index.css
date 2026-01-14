@@ -3284,6 +3284,10 @@
     padding-bottom: calc(var(--spacing) * 8);
   }
 
+  .pb-\[10px\] {
+    padding-bottom: 10px;
+  }
+
   .pb-\[20px\] {
     padding-bottom: 20px;
   }
@@ -3294,10 +3298,6 @@
 
   .pb-\[40px\] {
     padding-bottom: 40px;
-  }
-
-  .pb-\[60px\] {
-    padding-bottom: 60px;
   }
 
   .pb-\[80px\] {
