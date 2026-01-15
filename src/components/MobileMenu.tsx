@@ -31,9 +31,9 @@ function Frame({ onClick, isActive, theme = 'dark' }: { onClick: () => void; isA
       }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] h-[64px] items-center px-[17.5px] py-[12px] relative w-full">
-          <House theme={isActive ? 'light' : theme} />
+          <House theme={isActive ? 'dark' : theme} />
           <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive ? "font-['Lato:Medium',sans-serif] text-[#2ec4b6]" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
+            isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
           }`}>Home</p>
         </div>
       </div>
@@ -85,9 +85,9 @@ function Frame1({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
       }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
-          <House1 theme={isActive ? 'light' : theme} />
+          <House1 theme={isActive ? 'dark' : theme} />
           <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive ? "font-['Lato:Medium',sans-serif] text-[#2ec4b6]" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
+            isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
           }`}>About us</p>
         </div>
       </div>
@@ -128,9 +128,9 @@ function Frame2({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
       }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
-          <Stack theme={isActive ? 'light' : theme} />
+          <Stack theme={isActive ? 'dark' : theme} />
           <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive ? "font-['Lato:Medium',sans-serif] text-[#2ec4b6]" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
+            isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
           }`}>Services</p>
         </div>
       </div>
@@ -171,9 +171,9 @@ function Frame3({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
       }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
-          <ShootingStar theme={isActive ? 'light' : theme} />
+          <ShootingStar theme={isActive ? 'dark' : theme} />
           <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive ? "font-['Lato:Medium',sans-serif] text-[#2ec4b6]" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
+            isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
           }`}>Reviews</p>
         </div>
       </div>
@@ -214,9 +214,9 @@ function Frame4({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
       }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
-          <UsersThree theme={isActive ? 'light' : theme} />
+          <UsersThree theme={isActive ? 'dark' : theme} />
           <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive ? "font-['Lato:Medium',sans-serif] text-[#2ec4b6]" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
+            isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
           }`}>Our team</p>
         </div>
       </div>
@@ -257,9 +257,9 @@ function Frame5({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
       }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
-          <GitDiff theme={isActive ? 'light' : theme} />
+          <GitDiff theme={isActive ? 'dark' : theme} />
           <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive ? "font-['Lato:Medium',sans-serif] text-[#2ec4b6]" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
+            isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
           }`}>Our process</p>
         </div>
       </div>
@@ -300,9 +300,9 @@ function Frame6({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
       }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
-          <Article theme={isActive ? 'light' : theme} />
+          <Article theme={isActive ? 'dark' : theme} />
           <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive ? "font-['Lato:Medium',sans-serif] text-[#2ec4b6]" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
+            isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
           }`}>Blogs</p>
         </div>
       </div>

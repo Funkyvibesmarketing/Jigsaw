@@ -3907,6 +3907,15 @@
   }
 
   @media (hover: hover) {
+    .hover\:scale-110:hover {
+      --tw-scale-x: 110%;
+      --tw-scale-y: 110%;
+      --tw-scale-z: 110%;
+      scale: var(--tw-scale-x) var(--tw-scale-y);
+    }
+  }
+
+  @media (hover: hover) {
     .hover\:border-2:hover {
       border-style: var(--tw-border-style);
       border-width: 2px;
@@ -3916,6 +3925,12 @@
   @media (hover: hover) {
     .hover\:border-\[\#2ec4b6\]:hover {
       border-color: #2ec4b6;
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:bg-\[\#1e3340\]:hover {
+      background-color: #1e3340;
     }
   }
 
@@ -4001,6 +4016,10 @@
     .hover\:opacity-90:hover {
       opacity: .9;
     }
+  }
+
+  .active\:bg-\[\#B0B0B0\]:active {
+    background-color: #b0b0b0;
   }
 
   .disabled\:opacity-50:disabled {

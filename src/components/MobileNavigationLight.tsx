@@ -55,9 +55,14 @@ function Frame2({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) {
 function Frame3({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) {
   return (
     <div className="content-stretch flex gap-[16px] items-center relative shrink-0">
-      <div className="flex h-[48px] items-center justify-center relative shrink-0 w-[48px]">
+      {/* Phone icon - clickable with tel: link */}
+      <a 
+        href="tel:01616675990"
+        className="flex h-[48px] items-center justify-center relative shrink-0 w-[48px] cursor-pointer"
+        aria-label="Call 0161 667 5990"
+      >
         <img src={contactImage} alt="Contact" className="size-full object-contain" />
-      </div>
+      </a>
       <Frame2 isOpen={isOpen} onClick={onClick} />
     </div>
   );

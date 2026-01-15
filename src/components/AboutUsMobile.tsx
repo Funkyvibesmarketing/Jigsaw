@@ -308,19 +308,19 @@ export function AboutUsMobile({ onScrollProgress }: {
           </div>
 
           {/* Pagination Dots - Mobile Version */}
-          <div className="flex items-center justify-center gap-[18px]">
+          <div className="flex items-center justify-center gap-[18px] relative z-50">
             {carouselTexts.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCarouselIndex(index)}
-                className="transition-all duration-300"
+                className="transition-all duration-300 cursor-pointer pointer-events-auto"
                 aria-label={`Go to slide ${index + 1}`}
               >
                 <div 
                   className={`rounded-full transition-all duration-300 ${
                     index === carouselIndex 
-                      ? 'w-[14px] h-[14px] bg-[#2C4657]' 
-                      : 'w-[10px] h-[10px] bg-[#D9D9D9] hover:bg-[#B0B0B0]'
+                      ? 'w-[14px] h-[14px] bg-[#2C4657] hover:bg-[#1e3340]' 
+                      : 'w-[10px] h-[10px] bg-[#D9D9D9] active:bg-[#B0B0B0] hover:scale-110'
                   }`}
                 />
               </button>
@@ -357,10 +357,10 @@ export function AboutUsMobile({ onScrollProgress }: {
 
               {/* Mask for Services section - only visible through text during zoom */}
               <mask id="servicesTextMaskMobile">
-                {/* Black background - everything hidden */}
-                <rect x="0" y="0" width="100%" height="100%" fill="black" />
+                {/* White background - everything covered */}
+                <rect x="0" y="0" width="100%" height="100%" fill="white" />
                 
-                {/* White text - reveals Services section through letters */}
+                {/* Black text - creates the cutout (hole) - reveals Services section through letters */}
                 {/* Position calculated to center the "V" (4th letter) instead of the whole word */}
                 <text
                   x={(() => {
@@ -388,7 +388,7 @@ export function AboutUsMobile({ onScrollProgress }: {
                   y="50%"
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  fill="white"
+                  fill="black"
                   fontSize={(() => {
                     const baseSize = 48; // Much smaller for mobile to fit screen
                     if (scrollProgress < 0.55) return baseSize;
@@ -418,6 +418,11 @@ export function AboutUsMobile({ onScrollProgress }: {
               </mask>
             </defs>
 
+            {/* White rectangle with mask applied - Safari compatible approach */}
+            {scrollProgress >= 0.55 && scrollProgress < 0.80 && (
+              <rect x="0" y="0" width="100%" height="100%" fill="white" mask="url(#servicesTextMaskMobile)" />
+            )}
+
             {/* Solid text - visible before mask cutout starts */}
             {!useMaskCutout && (
               <text
@@ -446,89 +451,18 @@ export function AboutUsMobile({ onScrollProgress }: {
           </svg>
         </motion.div>
 
-        {/* Services Section - revealed through mask during zoom */}
+        {/* Services Section - revealed through mask during zoom - positioned separately */}
         <motion.div
-          className="absolute inset-0 z-20"
+          className="absolute inset-0 z-10"
           style={{
             opacity: servicesSectionOpacity,
-            y: servicesSectionY
+            y: servicesSectionY,
+            pointerEvents: scrollProgress >= 0.80 ? 'auto' : 'none'
           }}
         >
-          {/* Use SVG with foreignObject for iOS-compatible masking */}
-          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 375 812" preserveAspectRatio="xMidYMid slice">
-            <defs>
-              {/* Reuse the same mask definition */}
-              <mask id="servicesContentMaskMobile">
-                {/* Black background - everything hidden */}
-                <rect x="0" y="0" width="100%" height="100%" fill="black" />
-                
-                {/* White text - reveals Services section through letters */}
-                <text
-                  x={(() => {
-                    const baseFontSize = 48;
-                    const baseLetterSpacing = 8;
-                    const fontSize = (() => {
-                      if (scrollProgress < 0.55) return baseFontSize;
-                      if (scrollProgress >= 0.80) return baseFontSize * 25;
-                      const progress = (scrollProgress - 0.55) / (0.80 - 0.55);
-                      const scale = 1 + (24 * progress);
-                      return baseFontSize * scale;
-                    })();
-                    const letterSpacing = (baseLetterSpacing * fontSize) / baseFontSize;
-                    const charWidth = fontSize * 0.55;
-                    const totalCharWidth = charWidth + letterSpacing;
-                    const viewportCenter = 187.5;
-                    const offset = 0.5 * totalCharWidth;
-                    return String(viewportCenter + offset);
-                  })()}
-                  y="50%"
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  fill="white"
-                  fontSize={(() => {
-                    const baseSize = 48;
-                    if (scrollProgress < 0.55) return baseSize;
-                    if (scrollProgress >= 0.80) return baseSize * 25;
-                    const progress = (scrollProgress - 0.55) / (0.80 - 0.55);
-                    const scale = 1 + (24 * progress);
-                    return baseSize * scale;
-                  })()}
-                  fontFamily="Lato, sans-serif"
-                  fontWeight="700"
-                  letterSpacing={(() => {
-                    const baseFontSize = 48;
-                    const baseLetterSpacing = 8;
-                    const fontSize = (() => {
-                      if (scrollProgress < 0.55) return baseFontSize;
-                      if (scrollProgress >= 0.80) return baseFontSize * 25;
-                      const progress = (scrollProgress - 0.55) / (0.80 - 0.55);
-                      const scale = 1 + (24 * progress);
-                      return baseFontSize * scale;
-                    })();
-                    return String((baseLetterSpacing * fontSize) / baseFontSize);
-                  })()}
-                >
-                  SERVICES
-                </text>
-              </mask>
-            </defs>
-            
-            {/* foreignObject to embed HTML content with SVG mask applied */}
-            <foreignObject
-              x="0"
-              y="0"
-              width="100%"
-              height="100%"
-              mask={scrollProgress >= 0.55 && scrollProgress < 0.80 ? 'url(#servicesContentMaskMobile)' : undefined}
-              style={{
-                pointerEvents: scrollProgress >= 0.80 ? 'auto' : 'none'
-              }}
-            >
-              <div className="w-full h-full" style={{ pointerEvents: scrollProgress >= 0.80 ? 'auto' : 'none' }}>
-                <ServicesMobile />
-              </div>
-            </foreignObject>
-          </svg>
+          <div className="w-full h-full" style={{ pointerEvents: scrollProgress >= 0.80 ? 'auto' : 'none' }}>
+            <ServicesMobile />
+          </div>
         </motion.div>
 
 

@@ -211,19 +211,19 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
           </div>
 
           {/* Pagination Dots */}
-          <div className="flex items-center justify-center gap-[26px]">
+          <div className="flex items-center justify-center gap-[26px] relative z-50">
             {carouselTexts.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCarouselIndex(index)}
-                className="transition-all duration-300"
+                className="transition-all duration-300 cursor-pointer pointer-events-auto"
                 aria-label={`Go to slide ${index + 1}`}
               >
                 <div 
                   className={`rounded-full transition-all duration-300 ${
                     index === carouselIndex 
-                      ? 'w-[20px] h-[20px] bg-[#2C4657]' 
-                      : 'w-[14px] h-[14px] bg-[#D9D9D9] hover:bg-[#B0B0B0]'
+                      ? 'w-[20px] h-[20px] bg-[#2C4657] hover:bg-[#1e3340]' 
+                      : 'w-[14px] h-[14px] bg-[#D9D9D9] hover:bg-[#B0B0B0] hover:scale-110'
                   }`}
                 />
               </button>
@@ -448,8 +448,8 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
                 </mask>
               </defs>
               
-              {/* Blue background rectangle with mask applied - hides everything except text cutout */}
-              <rect x="0" y="0" width="100%" height="100%" fill="#2c4657" mask="url(#servicesTextMaskOverlay)" />
+              {/* White rectangle with mask applied - Safari compatible - creates cutout revealing content below */}
+              <rect x="0" y="0" width="100%" height="100%" fill="white" mask="url(#servicesTextMaskOverlay)" />
             </svg>
           </div>
         )}

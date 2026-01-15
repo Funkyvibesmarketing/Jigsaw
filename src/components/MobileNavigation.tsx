@@ -120,11 +120,17 @@ function Frame1({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) {
 function Frame3({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) {
   return (
     <div className="content-stretch flex gap-[16px] items-center relative shrink-0">
-      <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "48", "--transform-inner-height": "48" } as React.CSSProperties}>
+      {/* Phone icon - clickable with tel: link */}
+      <a 
+        href="tel:01616675990"
+        className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))] cursor-pointer"
+        style={{ "--transform-inner-width": "48", "--transform-inner-height": "48" } as React.CSSProperties}
+        aria-label="Call 0161 667 5990"
+      >
         <div className="flex-none rotate-[270deg]">
           <Frame2 />
         </div>
-      </div>
+      </a>
       <Frame1 isOpen={isOpen} onClick={onClick} />
     </div>
   );
