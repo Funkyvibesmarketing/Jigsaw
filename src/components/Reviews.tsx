@@ -357,14 +357,14 @@ export function Reviews({
   
   // Different timing for mobile vs desktop
   // Desktop: Services Step 1 completes at 0.72, fade in from 0.72 to 0.76
-  // Mobile: Services mask completes at 0.78, fade in from 0.78 to 0.82
+  // Mobile: Services mask completes at 0.72, fade in from 0.72 to 0.76 (earlier timing)
   if (isMobile) {
-    // Mobile timing
-    if (aboutUsScrollProgress && aboutUsScrollProgress < 0.78) {
+    // Mobile timing - starts earlier
+    if (aboutUsScrollProgress && aboutUsScrollProgress < 0.72) {
       reviewsSectionOpacity = 0;
-    } else if (aboutUsScrollProgress && aboutUsScrollProgress < 0.82) {
-      // Fade in from 0.78 to 0.82
-      reviewsSectionOpacity = (aboutUsScrollProgress - 0.78) / 0.04;
+    } else if (aboutUsScrollProgress && aboutUsScrollProgress < 0.76) {
+      // Fade in from 0.72 to 0.76
+      reviewsSectionOpacity = (aboutUsScrollProgress - 0.72) / 0.04;
     }
   } else {
     // Desktop timing
@@ -404,13 +404,12 @@ export function Reviews({
   
   const textColorMobile = useTransform(
     scrollYProgress,
-    [0, 0.00, 0.50, 0.90, 0.93],
+    [0, 0.02, 0.90, 0.93],
     [
-      'rgba(41, 65, 80, 1)',      // Start: Solid #294150 (100%)
-      'rgba(41, 65, 80, 0.8)',    // Cards start: Fade to 80%
-      'rgba(41, 65, 80, 0.5)',    // Mid cards: Fade to 50%
-      'rgba(41, 65, 80, 0.2)',    // Cards almost done: Fade to 20%
-      'rgba(41, 65, 80, 0)'       // TEAM starts: Complete fade out (0%)
+      'rgba(41, 65, 80, 1)',      // Start: 100% opacity (full)
+      'rgba(41, 65, 80, 0.5)',    // When cards start: 50% opacity
+      'rgba(41, 65, 80, 0.5)',    // Keep at 50% while cards slide
+      'rgba(41, 65, 80, 0)'       // TEAM starts: Complete fade out
     ]
   );
 

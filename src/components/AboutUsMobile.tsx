@@ -257,14 +257,19 @@ export function AboutUsMobile({ onScrollProgress }: {
   // Services section opacity - fades in AFTER solid text is fully gone
   const servicesSectionOpacity = useTransform(scrollYProgress, [0.56, 0.58], [0, 1]);
 
-  // Services section stays fixed - no scroll up animation on mobile
-  // The section should remain visible and stable after masking completes
+  // Services section Y position - stays fixed after masking completes
+  // Keep it at 0 throughout, no movement
   const servicesSectionY = 0;
 
   return (
-    <div ref={containerRef} className="relative w-full bg-white" style={{ minHeight: '400vh' }}>
+    <div ref={containerRef} className="relative w-full bg-white" style={{ minHeight: '500vh' }}>
       {/* About Us Content */}
-      <div className="relative flex items-center justify-center min-h-screen sticky top-0 overflow-hidden bg-white">
+      <div 
+        className="relative flex items-center justify-center min-h-screen sticky top-0 overflow-hidden" 
+        style={{ 
+          backgroundColor: scrollProgress >= 0.80 ? '#2c4657' : 'white' 
+        }}
+      >
         {/* Blue gradient overlay at top */}
         <motion.div 
           className="absolute top-0 left-0 w-full h-[100px] bg-gradient-to-b from-[#294150]/10 to-transparent z-0" 
