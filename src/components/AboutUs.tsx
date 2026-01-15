@@ -187,67 +187,69 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
         />
         
         {/* Text Carousel with Pagination */}
-        <motion.div 
-          className="absolute font-lato-light left-1/2 not-italic text-[#222526] text-center top-[calc(60%-64px)] translate-x-[-50%] w-[min(1282px,90vw)] max-w-[1282px] px-4 z-[10000]"
-          style={{ y: middleTextY, opacity: middleTextOpacity }}
-        >
-          {/* Carousel Text */}
-          <div className="relative h-[200px] flex items-center justify-center overflow-hidden mb-14">
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={carouselTexts[carouselIndex].id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5, ease: "easeInOut" }}
-                className="absolute w-full leading-[50px] text-[40px]"
-              >
-                <span>{carouselTexts[carouselIndex].text}</span>
-                {carouselTexts[carouselIndex].boldText && (
-                  <span className="font-lato-semibold">{carouselTexts[carouselIndex].boldText}</span>
-                )}
-              </motion.p>
-            </AnimatePresence>
-          </div>
-
-          {/* Pagination Dots */}
-          <div 
-            className="flex items-center justify-center gap-[26px] relative z-[9999] use-default-cursor"
-            onMouseEnter={() => {
-              window.dispatchEvent(new Event('hideCursorOverlay'));
-            }}
-            onMouseLeave={() => {
-              window.dispatchEvent(new Event('showCursorOverlay'));
-            }}
+        {scrollProgress < 0.55 && (
+          <motion.div 
+            className="absolute font-lato-light left-1/2 not-italic text-[#222526] text-center top-[calc(60%-64px)] translate-x-[-50%] w-[min(1282px,90vw)] max-w-[1282px] px-4 z-[10000]"
+            style={{ y: middleTextY, opacity: middleTextOpacity }}
           >
-            {carouselTexts.map((_, index) => (
-              <button
-                key={index}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCarouselIndex(index);
-                }}
-                onMouseDown={(e) => {
-                  e.stopPropagation();
-                  setCarouselIndex(index);
-                }}
-                style={{ 
-                  cursor: 'pointer',
-                  pointerEvents: 'auto',
-                  zIndex: 99999,
-                  position: 'relative'
-                }}
-                className={`transition-all duration-300 rounded-full ${
-                  index === carouselIndex 
-                    ? 'w-[20px] h-[20px] bg-[#2C4657] hover:bg-[#1e3340]' 
-                    : 'w-[14px] h-[14px] bg-[#D9D9D9] hover:bg-[#B0B0B0] hover:scale-110'
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
-        </motion.div>
+            {/* Carousel Text */}
+            <div className="relative h-[200px] flex items-center justify-center overflow-hidden mb-14">
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={carouselTexts[carouselIndex].id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                  className="absolute w-full leading-[50px] text-[40px]"
+                >
+                  <span>{carouselTexts[carouselIndex].text}</span>
+                  {carouselTexts[carouselIndex].boldText && (
+                    <span className="font-lato-semibold">{carouselTexts[carouselIndex].boldText}</span>
+                  )}
+                </motion.p>
+              </AnimatePresence>
+            </div>
 
+            {/* Pagination Dots */}
+            <div 
+              className="flex items-center justify-center gap-[26px] relative z-[9999] use-default-cursor"
+              onMouseEnter={() => {
+                window.dispatchEvent(new Event('hideCursorOverlay'));
+              }}
+              onMouseLeave={() => {
+                window.dispatchEvent(new Event('showCursorOverlay'));
+              }}
+            >
+              {carouselTexts.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCarouselIndex(index);
+                  }}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                    setCarouselIndex(index);
+                  }}
+                  style={{ 
+                    cursor: 'pointer',
+                    pointerEvents: 'auto',
+                    zIndex: 99999,
+                    position: 'relative'
+                  }}
+                  className={`transition-all duration-300 rounded-full ${
+                    index === carouselIndex 
+                      ? 'w-[20px] h-[20px] bg-[#2C4657] hover:bg-[#1e3340]' 
+                      : 'w-[14px] h-[14px] bg-[#D9D9D9] hover:bg-[#B0B0B0] hover:scale-110'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+        
         {/* Full blue screen overlay at the end - appears after zoom completes - DESKTOP ONLY */}
         <motion.div 
           className="hidden md:block absolute top-0 left-0 w-full h-full z-10" 

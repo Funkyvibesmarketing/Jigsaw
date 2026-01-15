@@ -882,12 +882,20 @@
     top: calc(50% - 230px);
   }
 
+  .top-\[calc\(50\%-270px\)\] {
+    top: calc(50% - 270px);
+  }
+
   .top-\[calc\(50\%-256\.56px\)\] {
     top: calc(50% - 256.56px);
   }
 
   .top-\[calc\(50\%-290px\)\] {
     top: calc(50% - 290px);
+  }
+
+  .top-\[calc\(50\%-310px\)\] {
+    top: calc(50% - 310px);
   }
 
   .top-\[calc\(50\%-405\.87px\)\] {
