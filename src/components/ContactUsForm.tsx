@@ -718,7 +718,14 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
             <p className="font-['Poppins:Regular',sans-serif] leading-[16px] relative shrink-0 text-[12px] text-center">
               <span className="font-['Lato:Light',sans-serif]">Website by</span>
               <span className="font-['Lato:Regular',sans-serif]"> </span>
-              <span className="font-['Lato:SemiBold',sans-serif]">Funky Vibes Marketing</span>
+              <a 
+                href="https://funkyvibes.co.uk/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="font-['Lato:SemiBold',sans-serif] hover:underline transition-all"
+              >
+                Funky Vibes Marketing
+              </a>
             </p>
           </div>
         </motion.div>
@@ -882,7 +889,14 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
             <p className="font-['Poppins:Regular',sans-serif] leading-[16px] relative shrink-0 text-right">
               <span className="font-['Lato:Light',sans-serif]">Website by</span>
               <span className="font-['Lato:Regular',sans-serif]"> </span>
-              <span className="font-['Lato:SemiBold',sans-serif]">Funky Vibes Marketing</span>
+              <a 
+                href="https://funkyvibes.co.uk/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="font-['Lato:SemiBold',sans-serif] hover:underline transition-all"
+              >
+                Funky Vibes Marketing
+              </a>
             </p>
           </div>
         </motion.div>

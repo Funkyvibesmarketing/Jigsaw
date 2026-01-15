@@ -278,7 +278,7 @@ export function AboutUsMobile({ onScrollProgress }: {
         
         {/* Text Carousel with Pagination - Mobile Version */}
         <motion.div 
-          className="absolute font-lato-light not-italic text-[#222526] text-center top-[24px] w-full px-6"
+          className="absolute font-lato-light not-italic text-[#222526] text-center top-[24px] w-full px-6 z-[10000]"
           style={{ y: middleTextY, opacity: middleTextOpacity, filter: middleTextBlur }}
         >
           {/* Carousel Text */}
@@ -308,22 +308,40 @@ export function AboutUsMobile({ onScrollProgress }: {
           </div>
 
           {/* Pagination Dots - Mobile Version */}
-          <div className="flex items-center justify-center gap-[18px] relative z-50">
+          <div 
+            className="flex items-center justify-center gap-[18px] relative z-[9999] use-default-cursor"
+            onTouchStart={() => {
+              window.dispatchEvent(new Event('hideCursorOverlay'));
+            }}
+            onTouchEnd={() => {
+              window.dispatchEvent(new Event('showCursorOverlay'));
+            }}
+          >
             {carouselTexts.map((_, index) => (
               <button
                 key={index}
-                onClick={() => setCarouselIndex(index)}
-                className="transition-all duration-300 cursor-pointer pointer-events-auto"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCarouselIndex(index);
+                }}
+                onTouchEnd={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  setCarouselIndex(index);
+                }}
+                style={{ 
+                  cursor: 'pointer',
+                  pointerEvents: 'auto',
+                  zIndex: 99999,
+                  position: 'relative'
+                }}
+                className={`transition-all duration-300 rounded-full ${
+                  index === carouselIndex 
+                    ? 'w-[14px] h-[14px] bg-[#2C4657] active:bg-[#1e3340]' 
+                    : 'w-[10px] h-[10px] bg-[#D9D9D9] active:bg-[#B0B0B0]'
+                }`}
                 aria-label={`Go to slide ${index + 1}`}
-              >
-                <div 
-                  className={`rounded-full transition-all duration-300 ${
-                    index === carouselIndex 
-                      ? 'w-[14px] h-[14px] bg-[#2C4657] hover:bg-[#1e3340]' 
-                      : 'w-[10px] h-[10px] bg-[#D9D9D9] active:bg-[#B0B0B0] hover:scale-110'
-                  }`}
-                />
-              </button>
+              />
             ))}
           </div>
         </motion.div>

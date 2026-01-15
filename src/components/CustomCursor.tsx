@@ -20,7 +20,22 @@ export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, re
   const [cursorType, setCursorType] = useState<'light' | 'dark' | 'scrolling' | 'afterZoom' | 'reviews' | 'splash'>('splash');
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
+  const [hideOverlay, setHideOverlay] = useState(false);
   const { scrollY } = useScroll();
+
+  // Listen for custom events to hide/show cursor overlay
+  useEffect(() => {
+    const handleHideCursor = () => setHideOverlay(true);
+    const handleShowCursor = () => setHideOverlay(false);
+    
+    window.addEventListener('hideCursorOverlay', handleHideCursor);
+    window.addEventListener('showCursorOverlay', handleShowCursor);
+    
+    return () => {
+      window.removeEventListener('hideCursorOverlay', handleHideCursor);
+      window.removeEventListener('showCursorOverlay', handleShowCursor);
+    };
+  }, []);
 
   // Check if device is mobile
   useEffect(() => {
@@ -128,13 +143,21 @@ export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, re
     if (cursorType === 'scrolling' || cursorType === 'reviews') {
       // Hide default cursor when showing custom overlay
       // Use * selector to ensure all interactive elements also have cursor: none
+      // BUT exclude specific interactive elements like buttons and links
       const existingStyle = document.getElementById('custom-cursor-style');
       if (existingStyle) {
         existingStyle.remove();
       }
       const style = document.createElement('style');
       style.id = 'custom-cursor-style';
-      style.textContent = '* { cursor: none !important; }';
+      style.textContent = `
+        * { cursor: none !important; }
+        button { cursor: pointer !important; }
+        a { cursor: pointer !important; }
+        input { cursor: text !important; }
+        textarea { cursor: text !important; }
+        .use-default-cursor, .use-default-cursor * { cursor: pointer !important; }
+      `;
       document.head.appendChild(style);
       
       return () => {
@@ -227,6 +250,11 @@ export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, re
   }
 
   if (cursorType !== 'scrolling' && cursorType !== 'reviews') {
+    return null;
+  }
+
+  // Hide overlay when hovering over carousel dots
+  if (hideOverlay) {
     return null;
   }
 

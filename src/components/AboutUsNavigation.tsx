@@ -637,45 +637,47 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
             onMouseLeave={() => setIsContactHovered(false)}
           >
             <div className="flex-none rotate-[270deg]">
-              <motion.div 
-                className="bg-white box-border flex flex-row items-center relative rounded-[56px] h-[56px] overflow-hidden"
-                animate={{
-                  width: isContactHovered ? '175px' : '56px',
-                  gap: isContactHovered ? '8px' : '0px',
-                  justifyContent: isContactHovered ? 'flex-start' : 'center',
-                  paddingLeft: isContactHovered ? '24px' : '0px',
-                  paddingRight: isContactHovered ? '24px' : '0px',
-                }}
-                transition={{ duration: 0.4, ease: "easeInOut" }}
-              >
-                {/* Phone icon - always visible */}
-                <div className="flex items-center justify-center relative shrink-0 size-[24px]">
-                  <div className="flex-none rotate-[90deg]">
-                    <div className="relative size-[24px]">
-                      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
-                        <g>
-                          <path d={svgPathsPhone.p38b1d500} fill="#2C4657" />
-                          <path d={svgPathsPhone.p1af2b00} fill="#2EC4B6" />
-                        </g>
-                      </svg>
+              <a href="tel:01616675990" className="block">
+                <motion.div 
+                  className="bg-white box-border flex flex-row items-center relative rounded-[56px] h-[56px] overflow-hidden cursor-pointer"
+                  animate={{
+                    width: isContactHovered ? '175px' : '56px',
+                    gap: isContactHovered ? '8px' : '0px',
+                    justifyContent: isContactHovered ? 'flex-start' : 'center',
+                    paddingLeft: isContactHovered ? '24px' : '0px',
+                    paddingRight: isContactHovered ? '24px' : '0px',
+                  }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                >
+                  {/* Phone icon - always visible */}
+                  <div className="flex items-center justify-center relative shrink-0 size-[24px]">
+                    <div className="flex-none rotate-[90deg]">
+                      <div className="relative size-[24px]">
+                        <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
+                          <g>
+                            <path d={svgPathsPhone.p38b1d500} fill="#2C4657" />
+                            <path d={svgPathsPhone.p1af2b00} fill="#2EC4B6" />
+                          </g>
+                        </svg>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* "Contact us" text - fades in when hovered */}
-                <motion.div 
-                  className="flex items-center justify-center overflow-hidden whitespace-nowrap"
-                  animate={{
-                    opacity: isContactHovered ? 1 : 0,
-                    width: isContactHovered ? 'auto' : '0px',
-                  }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                >
-                  <div className="flex-none rotate-[360deg]">
-                    <p className="font-['Lato',sans-serif] leading-[24px] not-italic text-[#222526] text-[20px] whitespace-nowrap">Contact us</p>
-                  </div>
+                  {/* "Contact us" text - fades in when hovered */}
+                  <motion.div 
+                    className="flex items-center justify-center overflow-hidden whitespace-nowrap"
+                    animate={{
+                      opacity: isContactHovered ? 1 : 0,
+                      width: isContactHovered ? 'auto' : '0px',
+                    }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                  >
+                    <div className="flex-none rotate-[360deg]">
+                      <p className="font-['Lato',sans-serif] leading-[24px] not-italic text-[#222526] text-[20px] whitespace-nowrap">Contact us</p>
+                    </div>
+                  </motion.div>
                 </motion.div>
-              </motion.div>
+              </a>
             </div>
           </motion.div>
         </motion.div>

@@ -730,14 +730,6 @@
     top: 530px;
   }
 
-  .top-\[604px\] {
-    top: 604px;
-  }
-
-  .top-\[676px\] {
-    top: 676px;
-  }
-
   .top-\[691px\] {
     top: 691px;
   }
@@ -802,12 +794,20 @@
     top: calc(50% + 146px);
   }
 
+  .top-\[calc\(50\%\+150px\)\] {
+    top: calc(50% + 150px);
+  }
+
   .top-\[calc\(50\%\+179\.5px\)\] {
     top: calc(50% + 179.5px);
   }
 
   .top-\[calc\(50\%\+200px\)\] {
     top: calc(50% + 200px);
+  }
+
+  .top-\[calc\(50\%\+222px\)\] {
+    top: calc(50% + 222px);
   }
 
   .top-\[calc\(50\%\+225px\)\] {
@@ -1336,6 +1336,10 @@
 
   .z-\[9999\] {
     z-index: 9999;
+  }
+
+  .z-\[10000\] {
+    z-index: 10000;
   }
 
   .container {
@@ -4001,6 +4005,12 @@
   }
 
   @media (hover: hover) {
+    .hover\:underline:hover {
+      text-decoration-line: underline;
+    }
+  }
+
+  @media (hover: hover) {
     .hover\:opacity-70:hover {
       opacity: .7;
     }
@@ -4016,6 +4026,10 @@
     .hover\:opacity-90:hover {
       opacity: .9;
     }
+  }
+
+  .active\:bg-\[\#1e3340\]:active {
+    background-color: #1e3340;
   }
 
   .active\:bg-\[\#B0B0B0\]:active {

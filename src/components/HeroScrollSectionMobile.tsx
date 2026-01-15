@@ -391,23 +391,23 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
 
             {/* We're Rewarded text - matching Figma: opacity-70, text-white */}
             <motion.p 
-              className="absolute font-lato-light leading-[32px] left-1/2 not-italic opacity-70 text-[24px] text-center text-nowrap text-white top-[604px] translate-x-[-50%] whitespace-pre z-[1]"
+              className="absolute font-lato-light leading-[32px] left-1/2 not-italic opacity-70 text-[24px] text-center text-nowrap text-white top-[calc(50%+150px)] translate-x-[-50%] whitespace-pre z-[1]"
             >
               We're Rewarded
             </motion.p>
 
-            {/* Three Award Circles - exact positioning from Figma */}
-            <div className="absolute left-1/2 size-[100px] top-[676px] translate-x-[-50%] z-[1]">
+            {/* Three Award Circles - responsive positioning with safe spacing */}
+            <div className="absolute left-1/2 size-[100px] top-[calc(50%+222px)] translate-x-[-50%] z-[1]">
               <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" fill="white" fillOpacity="0.8" r="50" />
               </svg>
             </div>
-            <div className="absolute left-[calc(12.5%+21.25px)] size-[100px] top-[676px] translate-x-[-50%] z-[1]">
+            <div className="absolute left-[calc(12.5%+21.25px)] size-[100px] top-[calc(50%+222px)] translate-x-[-50%] z-[1]">
               <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" fill="white" fillOpacity="0.8" r="50" />
               </svg>
             </div>
-            <div className="absolute left-[calc(87.5%-21.25px)] size-[100px] top-[676px] translate-x-[-50%] z-[1]">
+            <div className="absolute left-[calc(87.5%-21.25px)] size-[100px] top-[calc(50%+222px)] translate-x-[-50%] z-[1]">
               <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" fill="white" fillOpacity="0.8" r="50" />
               </svg>
