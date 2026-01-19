@@ -5,22 +5,6 @@ import imgVector3 from "figma:asset/5aa702b67fe4226d00799fb3446a7e9a9a904d28.png
 import { AnimatedDoubtButton } from './AnimatedDoubtButton';
 import type { Service } from '../utils/servicesApi';
 
-const width = window.innerWidth;
-
-let scale = 0.72;
-
-// if (width >= 1728) scale = 0.72;
-// else if (width >= 1512) scale = 0.72;
-// else if (width >= 1280) scale = 0.72;
-// else scale = 0.72;
-
-const isMac = /Macintosh/.test(navigator.userAgent);
-if (isMac) { 
-  scale = 1;
-}
-
-console.log('Scale:', isMac);
-
 // Arrow button component for category navigation (top)
 function CategoryArrowButton({ direction, onClick }: { direction: 'left' | 'right'; onClick: () => void }) {
   return (
@@ -81,10 +65,10 @@ function CardArrowButton({ direction, onClick, disabled }: { direction: 'left' |
         disabled ? 'opacity-30 cursor-not-allowed' : 'hover:border-[#2ec4b6] hover:bg-[rgba(46,196,182,0.1)]'
       }`}
     >
-      <div className={`flex-none ${direction === 'left' ? 'rotate-[180deg] scale-y-[-100%]' : ''}`}>
+      <div className={`flex-none ${direction === 'left' ? 'rotate-[0deg] scale-y-[-100%]' : ''}`}>
         <div className="overflow-clip relative size-[40px]">
           <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
-            <div className="flex-none h-[17.286px] rotate-[359.849deg] w-[28.542px]">
+            <div className="flex-none h-[17.286px] rotate-[270deg] w-[28.542px]">
               <div className="relative size-full">
                 <div className="absolute inset-[-2.89%_-1.75%]">
                   <img alt="" className="block max-w-none size-full" height="18.286" src={imgVector3} width="29.542" />
@@ -383,7 +367,7 @@ export function Services({
 
       {/* Card Stack - Desktop Only */}
       <div className="hidden md:block absolute left-1/2 top-1/2 z-10" style={{
-        transform: `translate(-50%, -50%) scale(${scale})`
+        transform: 'translate(-50%, -50%) scale(0.72)'
       }}>
         {/* Back Card (furthest back, center-bottom) */}
         <motion.div
@@ -679,7 +663,7 @@ export function Services({
           >
             <div aria-hidden="true" className="absolute border-[0.75px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[24px]" />
             <div className="flex items-center justify-center relative shrink-0">
-              <div className="flex-none rotate-[180deg] scale-y-[-100%]">
+              <div className="flex-none rotate-[90deg] scale-y-[-100%]">
                 <div className="overflow-clip relative size-[30px]">
                   <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
                     <div className="flex-none h-[12.964px] rotate-[359.849deg] w-[21.406px]">

@@ -335,7 +335,7 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
       ref={containerRef}
       className="relative w-full bg-[#2c4657]"
       style={{ 
-        minHeight: "200vh",
+        minHeight: "350vh",
         touchAction: 'pan-y',
         WebkitOverflowScrolling: 'touch',
         zIndex: 100 // Higher z-index to appear above Team section
@@ -350,7 +350,7 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
         <div className="absolute inset-0 w-full h-full bg-[#2c4657]" />
         
         {/* "OUR PROCESS" Title */}
-        <div className="absolute top-[80px] left-1/2 -translate-x-1/2 pointer-events-none z-[5]">
+        <div className="absolute top-[120px] left-1/2 -translate-x-1/2 pointer-events-none z-[5]">
           <p 
             className="font-['Lato',sans-serif] text-white uppercase text-center text-nowrap"
             style={{

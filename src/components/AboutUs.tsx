@@ -2,7 +2,7 @@ import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 import { useRef, useEffect, useState } from 'react';
 import svgPathsOld from '../imports/svg-i4lcoo4sqc';
 import svgPaths from '../imports/svg-z5mgt22h4a';
-import imgVector from "figma:asset/330d355de9ece7b9f54efd87a4690b03a1e14ca2.png";
+import imgVector from 'figma:asset/4234f71b7d4a1998f6e3282ba90ea09ce5633514.png';
 import imgRectangle from "figma:asset/ac4222b2f56bb8c362d5b0a6238628c6fa0aab37.png";
 import { Services } from './Services';
 import backgroundGradient from 'figma:asset/42d2cf4a66b5216ee41ff6ee702481dc6863d649.png';
@@ -12,20 +12,20 @@ import type { Service } from '../utils/servicesApi';
 const carouselTexts = [
   {
     id: 1,
-    text: "1. At Jigsaw Financial Ltd, we are dedicated to shaping your financial future through insightful conversations."
+    text: "At Jigsaw Financial Ltd, we are dedicated to shaping your financial future through insightful conversations."
   },
   {
     id: 2,
-    text: "2. We believe that no one should be paying more than necessary for any financial product - especially their ",
+    text: "We believe that no one should be paying more than necessary for any financial product - especially their ",
     boldText: "mortgage!"
   },
   {
     id: 3,
-    text: "3. Our mission is to deliver clear, practical advice, drawing from Nick’s unique journey—from a bobsleigh accident to becoming a mortgage professional."
+    text: "Our mission is to deliver clear, practical advice, drawing from Nick’s unique journey—from a bobsleigh accident to becoming a mortgage professional."
   },
   {
     id: 4,
-    text: "4. With Gemma and Lois ensuring seamless operations, we guarantee that Nick’s expertise is always at your service, providing a reliable support system for your financial needs."
+    text: "With Gemma and Lois ensuring seamless operations, we guarantee that Nick’s expertise is always at your service, providing a reliable support system for your financial needs."
   }
 ];
 
@@ -57,15 +57,18 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
+  const [isAutoPlay, setIsAutoPlay] = useState(false); // Control auto-advance
   
-  // Auto-advance carousel every 5 seconds
+  // Auto-advance carousel every 5 seconds - only when isAutoPlay is true
   useEffect(() => {
+    if (!isAutoPlay) return; // Don't auto-advance if paused
+    
     const interval = setInterval(() => {
       setCarouselIndex((prev) => (prev + 1) % carouselTexts.length);
     }, 5000); // Change slide every 5 seconds
     
     return () => clearInterval(interval);
-  }, []);
+  }, [isAutoPlay]);
   
   // Detect mobile/desktop
   useEffect(() => {
@@ -186,17 +189,27 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
           style={{ opacity: topGradientOpacity }}
         />
         
-        {/* Text Carousel with Pagination */}
+        {/* Text Carousel with Pagination and Title */}
         {scrollProgress < 0.55 && (
           <motion.div 
-            className="absolute font-lato-light left-1/2 not-italic text-[#222526] text-center top-[calc(60%-64px)] translate-x-[-50%] w-[min(1282px,90vw)] max-w-[1282px] px-4 z-[10000]"
+            className="absolute font-lato-light left-1/2 not-italic text-[#222526] text-center top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(1282px,90vw)] max-w-[1282px] px-4 z-[10000]"
             style={{ y: middleTextY, opacity: middleTextOpacity }}
           >
-            {/* Carousel Text */}
-            <div className="relative h-[200px] flex items-center justify-center overflow-hidden mb-14">
-              <AnimatePresence mode="wait">
-                <motion.p
-                  key={carouselTexts[carouselIndex].id}
+            {/* "ABOUT US" Title - Large centered text at top, slides with carousel */}
+            <p 
+              className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[160px] text-[rgba(44,70,87,0.2)] text-center uppercase mb-[100px] whitespace-nowrap"
+              style={{ 
+                letterSpacing: '0.025em'
+              }}
+            >
+              About Us
+            </p>
+
+            {/* Carousel text - slides up/down */}
+            <div className="relative w-full max-w-[1113px] h-[200px] mb-[56px] overflow-visible mx-auto">
+              <AnimatePresence mode='wait'>
+                <motion.p 
+                  key={carouselIndex}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
@@ -211,9 +224,9 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
               </AnimatePresence>
             </div>
 
-            {/* Pagination Dots */}
+            {/* Navigation: Left Arrow + Pagination Dots + Right Arrow */}
             <div 
-              className="flex items-center justify-center gap-[26px] relative z-[9999] use-default-cursor"
+              className="flex items-center justify-center gap-[40px] relative z-[9999] use-default-cursor"
               onMouseEnter={() => {
                 window.dispatchEvent(new Event('hideCursorOverlay'));
               }}
@@ -221,31 +234,100 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
                 window.dispatchEvent(new Event('showCursorOverlay'));
               }}
             >
-              {carouselTexts.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setCarouselIndex(index);
-                  }}
-                  onMouseDown={(e) => {
-                    e.stopPropagation();
-                    setCarouselIndex(index);
-                  }}
-                  style={{ 
-                    cursor: 'pointer',
-                    pointerEvents: 'auto',
-                    zIndex: 99999,
-                    position: 'relative'
-                  }}
-                  className={`transition-all duration-300 rounded-full ${
-                    index === carouselIndex 
-                      ? 'w-[20px] h-[20px] bg-[#2C4657] hover:bg-[#1e3340]' 
-                      : 'w-[14px] h-[14px] bg-[#D9D9D9] hover:bg-[#B0B0B0] hover:scale-110'
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
+              {/* Left Arrow Button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCarouselIndex((prev) => (prev - 1 + carouselTexts.length) % carouselTexts.length);
+                }}
+                className="content-stretch flex items-center justify-center p-[4px] relative rounded-[32px] shrink-0 size-[64px] transition-all duration-200 ease-out hover:bg-[rgba(46,196,182,0.1)] group"
+                style={{ 
+                  cursor: 'pointer',
+                  pointerEvents: 'auto',
+                  zIndex: 99999,
+                  position: 'relative'
+                }}
+                aria-label="Previous slide"
+              >
+                <div aria-hidden="true" className="absolute border-[1.333px] border-[rgba(44,70,87,0.2)] border-solid inset-0 pointer-events-none rounded-[32px] transition-all duration-200 ease-out group-hover:border-[#2ec4b6]" />
+                <div className="flex items-center justify-center relative shrink-0">
+                  <div className="flex-none rotate-[180deg] scale-y-[-100%]">
+                    <div className="overflow-clip relative size-[40px]">
+                      <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
+                        <div className="flex-none h-[17.286px] rotate-[359.849deg] w-[28.542px]">
+                          <div className="relative size-full">
+                            <div className="absolute inset-[-3.86%_-2.34%]">
+                              <img alt="" className="block max-w-none size-full" height="18.619" src={imgVector} width="29.875" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </button>
+
+              {/* Pagination Dots */}
+              <div className="flex items-center justify-center gap-[26px]">
+                {carouselTexts.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCarouselIndex(index);
+                    }}
+                    onMouseDown={(e) => {
+                      e.stopPropagation();
+                      setCarouselIndex(index);
+                    }}
+                    style={{ 
+                      cursor: 'pointer',
+                      pointerEvents: 'auto',
+                      zIndex: 99999,
+                      position: 'relative'
+                    }}
+                    className={`transition-all duration-300 rounded-full ${
+                      index === carouselIndex 
+                        ? 'w-[20px] h-[20px] bg-[#2C4657] hover:bg-[#1e3340]' 
+                        : 'w-[14px] h-[14px] bg-[#D9D9D9] hover:bg-[#B0B0B0] hover:scale-110'
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+
+              {/* Right Arrow Button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCarouselIndex((prev) => (prev + 1) % carouselTexts.length);
+                }}
+                className="content-stretch flex items-center justify-center p-[4px] relative rounded-[32px] shrink-0 size-[64px] transition-all duration-200 ease-out hover:bg-[rgba(46,196,182,0.1)] group"
+                style={{ 
+                  cursor: 'pointer',
+                  pointerEvents: 'auto',
+                  zIndex: 99999,
+                  position: 'relative'
+                }}
+                aria-label="Next slide"
+              >
+                <div aria-hidden="true" className="absolute border-[1.333px] border-[rgba(44,70,87,0.2)] border-solid inset-0 pointer-events-none rounded-[32px] transition-all duration-200 ease-out group-hover:border-[#2ec4b6]" />
+                <div className="flex items-center justify-center relative shrink-0">
+                  <div className="flex-none">
+                    <div className="overflow-clip relative size-[40px]">
+                      <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
+                        <div className="flex-none h-[17.286px] rotate-[359.849deg] w-[28.542px]">
+                          <div className="relative size-full">
+                            <div className="absolute inset-[-3.86%_-2.34%]">
+                              <img alt="" className="block max-w-none size-full" height="18.619" src={imgVector} width="29.875" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </button>
             </div>
           </motion.div>
         )}
@@ -474,32 +556,5 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
         )}
       </div>
     </div>
-  );
-}
-
-// Arrow button component
-function ArrowButton({ direction, onClick }: { direction: 'left' | 'right'; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="box-border content-stretch flex gap-[8px] items-center justify-center p-[4px] relative rounded-[32px] size-[64px] transition-all duration-200 ease-out hover:bg-[rgba(46,196,182,0.2)] group"
-    >
-      <div aria-hidden="true" className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[32px] transition-all duration-200 ease-out group-hover:border-[#2ec4b6] group-hover:border-2" />
-      <div className="flex items-center justify-center relative shrink-0">
-        <div className={`flex-none ${direction === 'left' ? 'rotate-[180deg] scale-y-[-100%]' : ''}`}>
-          <div className="overflow-clip relative size-[40px]">
-            <div className="absolute flex inset-[28.38%_14.25%_28.21%_14.29%] items-center justify-center">
-              <div className="flex-none h-[17.286px] rotate-[359.849deg] w-[28.542px]">
-                <div className="relative size-full" data-name="Vector">
-                  <div className="absolute inset-[-2.07%_-1.25%]">
-                    <img alt="" className="block max-w-none size-full" height="18" src={imgVector} width="29.256" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </button>
   );
 }

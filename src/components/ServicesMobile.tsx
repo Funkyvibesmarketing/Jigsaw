@@ -22,6 +22,8 @@ export function ServicesMobile({
   const containerRef = useRef<HTMLDivElement>(null);
   const categoryRefs = useRef<(HTMLDivElement | null)[]>([]);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const verticalScrollSpeed = useRef(0); // Track vertical scroll speed
+  const scrollAnimationFrame = useRef<number | null>(null);
 
   // Fetch services data on component mount
   useEffect(() => {
@@ -48,6 +50,13 @@ export function ServicesMobile({
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
     setIsDragging(true);
+    
+    // Cancel any ongoing scroll animation
+    if (scrollAnimationFrame.current !== null) {
+      cancelAnimationFrame(scrollAnimationFrame.current);
+      scrollAnimationFrame.current = null;
+    }
+    verticalScrollSpeed.current = 0;
   };
 
   const handleTouchMove = (e: TouchEvent) => {
@@ -58,12 +67,24 @@ export function ServicesMobile({
     const deltaX = currentX - touchStartX.current;
     const deltaY = currentY - touchStartY.current;
 
-    // Only allow horizontal drag if it's stronger than vertical
+    // Determine if it's horizontal or vertical swipe
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      // Horizontal swipe - category change
       e.preventDefault();
       // Apply drag with some resistance at the edges
       const resistance = 0.5;
       setDragX(deltaX * resistance);
+    } else if (Math.abs(deltaY) > 10) {
+      // Vertical swipe - scroll the page
+      e.preventDefault();
+      const scrollAmount = deltaY * 2; // Amplify scroll for better feel
+      window.scrollBy(0, -scrollAmount); // Negative because touch down = scroll up
+      
+      // Update start position for continuous scrolling
+      touchStartY.current = currentY;
+      
+      // Track scroll speed for momentum
+      verticalScrollSpeed.current = -deltaY * 0.5;
     }
   };
 
@@ -72,6 +93,7 @@ export function ServicesMobile({
 
     const threshold = 80; // Minimum drag distance to trigger category change
 
+    // Handle horizontal category change
     if (Math.abs(dragX) > threshold) {
       if (dragX > 0) {
         // Dragged right - previous category
@@ -80,6 +102,24 @@ export function ServicesMobile({
         // Dragged left - next category
         handleNextCategory();
       }
+    }
+
+    // Apply momentum scrolling for vertical swipes
+    if (Math.abs(verticalScrollSpeed.current) > 2) {
+      const applyMomentum = () => {
+        if (Math.abs(verticalScrollSpeed.current) < 0.5) {
+          verticalScrollSpeed.current = 0;
+          scrollAnimationFrame.current = null;
+          return;
+        }
+        
+        window.scrollBy(0, -verticalScrollSpeed.current);
+        verticalScrollSpeed.current *= 0.95; // Decay factor
+        
+        scrollAnimationFrame.current = requestAnimationFrame(applyMomentum);
+      };
+      
+      applyMomentum();
     }
 
     // Reset drag state
@@ -231,10 +271,10 @@ export function ServicesMobile({
           className="flex-1 w-full touch-none relative flex items-center justify-center gap-[16px]" 
           style={{ 
             perspective: '2000px',
-            minHeight: '400px',
+            minHeight: '450px',
             maxHeight: '513px',
-            marginTop: '20px',
-            marginBottom: '24px',
+            marginTop: '10px',
+            marginBottom: '40px',
             paddingLeft: '7.5%',
             paddingRight: '7.5%'
           }}
@@ -263,7 +303,7 @@ export function ServicesMobile({
                   style={{ 
                     width: '338px',
                     maxWidth: '80vw',
-                    height: '80%',
+                    height: '85%',
                     left: '-75%',
                     zIndex: 1,
                     pointerEvents: 'none',
@@ -278,10 +318,10 @@ export function ServicesMobile({
                         className="absolute max-w-none" 
                         src={leftCard.image}
                         style={{
-                          height: '51.28%',
-                            left: '-75.35%',
-                            top: '0.01%',
-                            width: '175.54%'
+                          height: '56.28%',
+                          left: '-67.35%',
+                          top: '-6%',
+                          width: '168.54%'
                         }}
                       />
                     )}
@@ -362,12 +402,12 @@ export function ServicesMobile({
                   shouldShow = true;
                 } else if (position === 1) {
                   // First card behind
-                  cardConfig = { top: 20, scale: 0.93, opacity: 0.5, zIndex: 20, blur: 0 };
+                  cardConfig = { top: 25, scale: 0.93, opacity: 0.5, zIndex: 20, blur: 0 };
                   shouldShow = true;
                 } else if (position === 2) {
                   // Second card behind
                   cardConfig = { top: 40, scale: 0.87, opacity: 0.3, zIndex: 10, blur: 1 };
-                  shouldShow = true;
+                  shouldShow = false;
                 }
 
                 if (!shouldShow) return null;
@@ -411,10 +451,10 @@ export function ServicesMobile({
                           className="absolute max-w-none" 
                           src={card.image}
                           style={{
-                            height: '51.28%',
-                            left: '-75.35%',
-                            top: '0.01%',
-                            width: '175.54%'
+                          height: '56.28%',
+                          left: '-67.35%',
+                          top: '-6%',
+                          width: '168.54%'
                           }}
                         />
                       )}
@@ -535,7 +575,7 @@ export function ServicesMobile({
                   style={{ 
                     width: '338px',
                     maxWidth: '80vw',
-                    height: '80%',
+                    height: '85%',
                     right: '-75%',
                     zIndex: 1,
                     pointerEvents: 'none',
@@ -550,10 +590,10 @@ export function ServicesMobile({
                         className="absolute max-w-none" 
                         src={rightCard.image}
                         style={{
-                          height: '51.28%',
-                          left: '-75.35%',
-                          top: '0.01%',
-                          width: '175.54%'
+                          height: '56.28%',
+                          left: '-67.35%',
+                          top: '-6%',
+                          width: '168.54%'
                         }}
                       />
                     )}
@@ -616,7 +656,7 @@ export function ServicesMobile({
         {/* Bottom navigation - changes cards within category */}
         <div className="flex-shrink-0 w-full flex justify-center items-center pb-[80px]">
           <div className="content-stretch flex gap-[24px] items-center z-50">
-            {/* Left arrow */}
+            {/* Left arrow - now pointing DOWN */}
             <button
               onClick={handlePrevCard}
               disabled={currentCardIndex === 0}
@@ -626,10 +666,10 @@ export function ServicesMobile({
             >
               <div aria-hidden="true" className="absolute border-[0.75px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[24px]" />
               <div className="flex items-center justify-center relative shrink-0">
-                <div className="flex-none rotate-[180deg] scale-y-[-100%]">
+                <div className="flex-none rotate-[90deg]">
                   <div className="overflow-clip relative size-[30px]">
                     <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
-                      <div className="flex-none h-[12.964px] rotate-[359.849deg] w-[21.406px]">
+                      <div className="flex-none h-[12.964px] rotate-[0deg] w-[21.406px]">
                         <div className="relative size-full">
                           <div className="absolute inset-[-2.07%_-1.25%]">
                             <img alt="" className="block max-w-none size-full" height="13.5" src={imgVector} width="21.942" />
@@ -647,7 +687,7 @@ export function ServicesMobile({
               {currentCardIndex + 1}/{currentService.detailCards.length}
             </p>
             
-            {/* Right arrow */}
+            {/* Right arrow - now pointing UP */}
             <button
               onClick={handleNextCard}
               disabled={currentCardIndex === currentService.detailCards.length - 1}
@@ -657,10 +697,10 @@ export function ServicesMobile({
             >
               <div aria-hidden="true" className="absolute border-[0.75px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[24px]" />
               <div className="flex items-center justify-center relative shrink-0">
-                <div className="flex-none">
+                <div className="flex-none rotate-[-90deg]">
                   <div className="overflow-clip relative size-[30px]">
                     <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
-                      <div className="flex-none h-[12.964px] rotate-[359.849deg] w-[21.406px]">
+                      <div className="flex-none h-[12.964px] rotate-[0deg] w-[21.406px]">
                         <div className="relative size-full">
                           <div className="absolute inset-[-2.07%_-1.25%]">
                             <img alt="" className="block max-w-none size-full" height="13.5" src={imgVector} width="21.942" />

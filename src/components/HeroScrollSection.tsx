@@ -208,7 +208,7 @@ export function HeroScrollSection({ onScrollProgress, splashViewed }: { onScroll
 
           {/* JIGSAW Text - Always visible but changes gradient */}
           <motion.div 
-            className="absolute h-[212.774px] left-[50%] top-[40px] translate-x-[-50%]  w-[min(1190px,90vw)] max-w-[1190px]"
+            className="absolute h-[212.774px] left-[50%] top-[40px] translate-x-[-50%] w-[min(1190px,90vw)] max-w-[1190px]"
             style={{ opacity: topJigsawOpacity, y: textY }}
           >
             <img 

@@ -491,7 +491,7 @@ export function Reviews({
   const teamTextColor = useTransform(
     scrollYProgress,
     [0.82, 0.93, 0.95],
-    ['rgba(44, 70, 87, 1)', 'rgba(44, 70, 87, 1)', 'transparent']
+    ['rgba(44, 70, 87, 1)', 'rgba(44, 70, 87, 1)', 'rgba(44, 70, 87, 0)']
   );
   
   // White overlay fade - Reviews section fades to white when transitioning to Team
