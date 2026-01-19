@@ -212,7 +212,7 @@ export function AboutUsMobile({ onScrollProgress }: {
       onScrollProgress?.(value);
     });
     return () => unsubscribe();
-  }, [scrollYProgress, onScrollProgress]);
+  }, [scrollYProgress]); // Remove onScrollProgress from dependencies
 
   // Middle text stays centered initially, then moves up and fades out
   const middleTextY = useTransform(scrollYProgress, [0, 0.25, 0.35, 0.45], [0, 0, -100, -300]);
@@ -262,7 +262,7 @@ export function AboutUsMobile({ onScrollProgress }: {
   const servicesSectionY = 0;
 
   return (
-    <div ref={containerRef} className="relative w-full bg-white" style={{ minHeight: '500vh' }}>
+    <div ref={containerRef} className="relative w-full bg-white" style={{ minHeight: '700vh' }}>
       {/* About Us Content */}
       <div 
         className="relative flex items-center justify-center min-h-screen sticky top-0 overflow-hidden" 

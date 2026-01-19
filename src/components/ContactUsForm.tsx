@@ -515,13 +515,13 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
 
           {/* Title */}
           {!isSubmitted && (
-            <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 not-italic text-[48px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-290px)] translate-x-[-50%] whitespace-pre px-4">Get in Touch</p>
+            <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 not-italic text-[48px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-260px)] translate-x-[-50%] whitespace-pre px-4">Get in Touch</p>
           )}
 
           {!isSubmitted && (
             <>
-              {/* Step Indicator */}
-              <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] right-[24px] not-italic text-[32px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-200px)] whitespace-pre">{currentStep}/4</p>
+              {/* Step Indicator - Mobile - Above the title */}
+              <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 translate-x-[-50%] not-italic text-[32px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-310px)] whitespace-pre">{currentStep}/4</p>
 
               {/* Form Field */}
               {currentStep === 1 && (

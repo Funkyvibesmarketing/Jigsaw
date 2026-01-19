@@ -402,7 +402,7 @@ export default function Process({ onScrollProgress }: ProcessProps) {
         {/* Scaled content wrapper - Desktop only */}
         <div className="absolute inset-0 md:scale-[0.85] md:origin-center md:translate-y-[5vh]">
           {/* "OUR PROCESS" Title - Desktop Only */}
-          <div className="hidden md:block absolute top-[calc(50%-450px)] left-1/2 -translate-x-1/2 pointer-events-none z-[5]">
+          <div className="hidden md:block absolute top-[-50px] left-1/2 -translate-x-1/2 pointer-events-none z-[5]">
             <p 
               className="font-['Lato',sans-serif] text-white uppercase text-center text-nowrap"
               style={{

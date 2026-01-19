@@ -330,7 +330,7 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
     // Special handling for Home - scroll past splash screen to hero content
     if (sectionId === 'HeroSection') {
       window.scrollTo({ 
-        top: window.innerHeight * 2.2, // Scroll past splash fade threshold
+        top: window.innerHeight * 1, // Scroll past splash fade threshold
         behavior: 'smooth' 
       });
       setIsMobileMenuOpen(false);
@@ -340,7 +340,7 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
     // Special handling for About Us section
     if (sectionId === 'AboutUsSection') {
       window.scrollTo({ 
-        top: window.innerHeight * 5.7, // Same position as About Us
+        top: window.innerHeight * 3.7, // Adjusted position for About Us section
         behavior: 'smooth' 
       });
       setIsMobileMenuOpen(false);
@@ -351,6 +351,26 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
     if (sectionId === 'ServiceSection') {
       window.scrollTo({ 
         top: window.innerHeight * 9.5, // Same position as Services
+        behavior: 'smooth' 
+      });
+      setIsMobileMenuOpen(false);
+      return;
+    }
+
+    // Special handling for Process Us section
+    if (sectionId === 'ProcessSection') {
+      window.scrollTo({ 
+        top: window.innerHeight * 15.6, // Same position as Services
+        behavior: 'smooth' 
+      });
+      setIsMobileMenuOpen(false);
+      return;
+    }
+
+    // Special handling for Blogs Us section
+    if (sectionId === 'BlogsSection') {
+      window.scrollTo({ 
+        top: window.innerHeight * 18.5, // Same position as Services
         behavior: 'smooth' 
       });
       setIsMobileMenuOpen(false);

@@ -202,14 +202,14 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                       <>
                         <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "42.6875", "--transform-inner-height": "16" } as React.CSSProperties}>
                           <div className="flex-none rotate-[270deg]">
-                            <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-white text-[16px] text-center text-nowrap whitespace-pre">Home</p>
+                            <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-[16px] text-center text-nowrap whitespace-pre" style={{ color: isDarkBackground ? 'white' : '#2EC4B6' }}>Home</p>
                           </div>
                         </div>
                         <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "16", "--transform-inner-height": "16" } as React.CSSProperties}>
                           <div className="flex-none rotate-[270deg]">
                             <div className="relative shrink-0 size-[16px]">
                               <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
-                                <path d={svgPathsAboutNav.p35230a00} fill="white" />
+                                <path d={svgPathsAboutNav.p35230a00} fill={isDarkBackground ? "white" : "#2EC4B6"} />
                               </svg>
                             </div>
                           </div>
@@ -262,7 +262,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                       <>
                         <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "63.15625", "--transform-inner-height": "16" } as React.CSSProperties}>
                           <div className="flex-none rotate-[270deg]">
-                            <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-white text-[16px] text-center text-nowrap whitespace-pre">About us</p>
+                            <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-[16px] text-center text-nowrap whitespace-pre" style={{ color: isDarkBackground ? 'white' : '#2EC4B6' }}>About us</p>
                           </div>
                         </div>
                         <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "16", "--transform-inner-height": "16" } as React.CSSProperties}>
@@ -271,8 +271,8 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                               <div className="absolute inset-[8.4%_12.5%_11.52%_12.5%]">
                                 <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 12 13">
                                   <g>
-                                    <path d={svgPathsAboutNav.p5637200} fill="white" />
-                                    <path d={svgPathsAboutNav.p39df4a00} fill="white" />
+                                    <path d={svgPathsAboutNav.p5637200} fill={isDarkBackground ? "white" : "#2EC4B6"} />
+                                    <path d={svgPathsAboutNav.p39df4a00} fill={isDarkBackground ? "white" : "#2EC4B6"} />
                                   </g>
                                 </svg>
                               </div>
@@ -333,7 +333,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                       <>
                         <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "61.359375", "--transform-inner-height": "16" } as React.CSSProperties}>
                           <div className="flex-none rotate-[270deg]">
-                            <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-white text-[16px] text-center text-nowrap whitespace-pre">Services</p>
+                            <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-[16px] text-center text-nowrap whitespace-pre" style={{ color: isDarkBackground ? 'white' : '#2EC4B6' }}>Services</p>
                           </div>
                         </div>
                         <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "16", "--transform-inner-height": "16" } as React.CSSProperties}>
@@ -341,9 +341,9 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                             <div className="relative size-[16px]">
                               <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
                                 <g>
-                                  <path d={svgPathsServicesActive.p37de8b00} fill="white" />
-                                  <path d={svgPathsServicesActive.pbbcd000} fill="white" />
-                                  <path d={svgPathsServicesActive.p2e976200} fill="white" />
+                                  <path d={svgPathsServicesActive.p37de8b00} fill={isDarkBackground ? "white" : "#2EC4B6"} />
+                                  <path d={svgPathsServicesActive.pbbcd000} fill={isDarkBackground ? "white" : "#2EC4B6"} />
+                                  <path d={svgPathsServicesActive.p2e976200} fill={isDarkBackground ? "white" : "#2EC4B6"} />
                                 </g>
                               </svg>
                             </div>
@@ -398,7 +398,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                       <>
                         <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "60.453125", "--transform-inner-height": "16" } as React.CSSProperties}>
                           <div className="flex-none rotate-[270deg]">
-                            <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-white text-[16px] text-center text-nowrap whitespace-pre">Reviews</p>
+                            <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-[16px] text-center text-nowrap whitespace-pre" style={{ color: isDarkBackground ? 'white' : '#2EC4B6' }}>Reviews</p>
                           </div>
                         </div>
                         <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "16", "--transform-inner-height": "16" } as React.CSSProperties}>
@@ -406,7 +406,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                             <div className="relative size-[16px]">
                               <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
                                 <g>
-                                  <path d={svgPathsAboutNav.p343a5e00} fill="white" />
+                                  <path d={svgPathsAboutNav.p343a5e00} fill={isDarkBackground ? "white" : "#2EC4B6"} />
                                 </g>
                               </svg>
                             </div>
@@ -461,12 +461,12 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                       <>
                         <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "66.6875", "--transform-inner-height": "16" } as React.CSSProperties}>
                           <div className="flex-none rotate-[270deg]">
-                            <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-white text-[16px] text-center text-nowrap whitespace-pre">Our team</p>
+                            <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-[16px] text-center text-nowrap whitespace-pre" style={{ color: isDarkBackground ? 'white' : '#2EC4B6' }}>Our team</p>
                           </div>
                         </div>
                         <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "16", "--transform-inner-height": "16" } as React.CSSProperties}>
                           <div className="flex-none rotate-[270deg]">
-                            <div className="relative size-[16px]" style={{ "--fill-0": "white" } as React.CSSProperties}>
+                            <div className="relative size-[16px]" style={{ "--fill-0": isDarkBackground ? "white" : "#2EC4B6" } as React.CSSProperties}>
                               <UsersThree />
                             </div>
                           </div>
@@ -575,7 +575,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                       <>
                         <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "60.453125", "--transform-inner-height": "16" } as React.CSSProperties}>
                           <div className="flex-none rotate-[270deg]">
-                            <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-white text-[16px] text-center text-nowrap whitespace-pre">Blogs</p>
+                            <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-[16px] text-center text-nowrap whitespace-pre" style={{ color: isDarkBackground ? 'white' : '#2EC4B6' }}>Blogs</p>
                           </div>
                         </div>
                         <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "16", "--transform-inner-height": "16" } as React.CSSProperties}>
@@ -583,7 +583,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                             <div className="relative size-[16px]">
                               <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
                                 <g>
-                                  <path d={svgPathsAboutNav.p16e5a580} fill="white" />
+                                  <path d={svgPathsAboutNav.p16e5a580} fill={isDarkBackground ? "white" : "#2EC4B6"} />
                                 </g>
                               </svg>
                             </div>

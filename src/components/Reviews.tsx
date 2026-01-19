@@ -348,7 +348,7 @@ export function Reviews({
       }
     });
     return () => unsubscribe();
-  }, [scrollYProgress, onScrollProgress]);
+  }, [scrollYProgress]);
 
   // Fade Reviews section based on AboutUs progress - don't show until Services mask is complete
   // Reviews section opacity - fades in when Services Step 1 ends
@@ -447,32 +447,32 @@ export function Reviews({
 
   // Mobile card animations - 5 cards total with sequential one-by-one animation (REDUCED GAP - overlapping for tighter spacing)
   // ALL cards start from BOTTOM (1000px) and gradually slide up, not suddenly appear
-  // Each card gets 18% scroll range for movement
-  // Cards start 10% apart (instead of 18%) for tighter spacing - OVERLAP for smoother flow
-  // Cards finish at 0.76 to leave room for TEAM text animation
-  const card1YMobile = useTransform(scrollYProgress, [0.00, 0.18], [1000, -200]);  // Beyond top - First card
-  const card2YMobile = useTransform(scrollYProgress, [0.10, 0.28], [1000, -200]);  // Beyond top - Second card (starts at 0.10 - 10% gap)
-  const card5YMobile = useTransform(scrollYProgress, [0.20, 0.38], [1000, -200]);  // Beyond top - Third card (starts at 0.20 - 10% gap)
-  const card6YMobile = useTransform(scrollYProgress, [0.30, 0.48], [1000, -200]);  // Beyond top - Fourth card (starts at 0.30 - 10% gap)
-  const card7YMobile = useTransform(scrollYProgress, [0.40, 0.58], [1000, -200]);  // Beyond top - Fifth card (starts at 0.40 - 10% gap, finishes at 0.58)
+  // Each card gets 45% scroll range for VERY SLOW movement (increased from 30% for slower animation)
+  // Cards start 18% apart for better spacing and smoother flow
+  // Cards finish at 0.80 to leave room for TEAM text animation
+  const card1YMobile = useTransform(scrollYProgress, [0.00, 0.45], [1000, -200]);  // Beyond top - First card (45% range for very slow movement)
+  const card2YMobile = useTransform(scrollYProgress, [0.18, 0.63], [1000, -200]);  // Beyond top - Second card (starts at 0.18 - 18% gap)
+  const card5YMobile = useTransform(scrollYProgress, [0.36, 0.80], [1000, -200]);  // Beyond top - Third card (starts at 0.36 - 18% gap)
+  const card6YMobile = useTransform(scrollYProgress, [0.54, 0.85], [1000, -200]);  // Beyond top - Fourth card (starts at 0.54 - 18% gap)
+  const card7YMobile = useTransform(scrollYProgress, [0.72, 0.90], [1000, -200]);  // Beyond top - Fifth card (starts at 0.72 - 18% gap, finishes at 0.90)
 
-  // Mobile card opacity - separate from desktop timing - adjusted for new timing
-  const card1OpacityMobile = useTransform(scrollYProgress, [0.00, 0.02, 0.18, 1.0], [0, 1, 1, 1]);  // Fade in and stay visible
-  const card2OpacityMobile = useTransform(scrollYProgress, [0.10, 0.12, 0.28, 1.0], [0, 1, 1, 1]);  // Fade in and stay visible
-  const card5OpacityMobile = useTransform(scrollYProgress, [0.20, 0.22, 0.38, 1.0], [0, 1, 1, 1]);  // Fade in and stay visible
-  const card6OpacityMobile = useTransform(scrollYProgress, [0.30, 0.32, 0.48, 1.0], [0, 1, 1, 1]);  // Fade in and stay visible
-  const card7OpacityMobile = useTransform(scrollYProgress, [0.40, 0.42, 0.58, 1.0], [0, 1, 1, 1]);  // Fade in and stay visible
+  // Mobile card opacity - separate from desktop timing - adjusted for new slower timing
+  const card1OpacityMobile = useTransform(scrollYProgress, [0.00, 0.02, 0.45, 1.0], [0, 1, 1, 1]);  // Fade in and stay visible
+  const card2OpacityMobile = useTransform(scrollYProgress, [0.18, 0.20, 0.63, 1.0], [0, 1, 1, 1]);  // Fade in and stay visible
+  const card5OpacityMobile = useTransform(scrollYProgress, [0.36, 0.38, 0.80, 1.0], [0, 1, 1, 1]);  // Fade in and stay visible
+  const card6OpacityMobile = useTransform(scrollYProgress, [0.54, 0.56, 0.85, 1.0], [0, 1, 1, 1]);  // Fade in and stay visible
+  const card7OpacityMobile = useTransform(scrollYProgress, [0.72, 0.74, 0.90, 1.0], [0, 1, 1, 1]);  // Fade in and stay visible
 
   // TEAM text animations - zooms in from right side after cards finish scrolling
   // Desktop: Cards finish at 0.80, TEAM starts at 0.88 (gap for cleanup)
-  // Mobile: Cards finish at 0.85, TEAM starts at 0.88 (3% gap for cleanup) - VERY SLOW slide from 0.88 to 1.00 (12% range)
-  // Extended time for sliding AND gradual zooming
+  // Mobile: Cards finish at 0.90, TEAM starts at 0.85 - EXTREMELY SLOW slide from 0.85 to 1.00 (15% range)
+  // Extended time for sliding AND gradual zooming - VERY SLOW ANIMATION for mobile
   // Text moves slowly from right to center, then very gradually zooms to fill screen - ALWAYS FULL OPACITY
   // X position accounts for text width (~800px) to properly center: -400px offset from left: 50%
-  const teamXDesktop = useTransform(scrollYProgress, [0.88, 0.93, 0.95, 1], [2000, -200, -400, -400]); // Starts at 0.88, after desktop cards finish at 0.80
-  const teamXMobile = useTransform(scrollYProgress, [0.88, 0.94, 0.97, 1.00], [1000, 200, 0, -50]); // VERY SLOW slide: 0.88 → 1.00 (12% range), starts after cards finish at 0.85
-  const teamScale = useTransform(scrollYProgress, [0.88, 0.93, 0.95, 0.96, 0.97, 0.99, 1], [1.5, 1.5, 2.5, 4, 8, 20, 50]); // Adjusted to match new timing
-  const teamOpacity = useTransform(scrollYProgress, [0.88, 0.90, 1], [0, 1, 1]); // Fades in and stays at full opacity
+  const teamXDesktop = useTransform(scrollYProgress, [0.88, 0.96, 0.98, 1], [2000, -200, -400, -400]); // SLOWER: 0.88 → 0.96 (8% range, was 5%)
+  const teamXMobile = useTransform(scrollYProgress, [0.85, 0.91, 0.95, 0.98, 1.00], [1200, 700, 400, 150, -50]); // EXTREMELY SLOW: 0.85 → 1.00 (15% range) with very gradual steps
+  const teamScale = useTransform(scrollYProgress, [0.88, 0.96, 0.98, 0.985, 0.99, 0.995, 1], [1.5, 1.5, 2.5, 4, 8, 20, 50]); // Adjusted to match new slower timing
+  const teamOpacity = useTransform(scrollYProgress, [0.88, 0.91, 1], [0, 1, 1]); // Fades in slower and stays at full opacity
   
   // Extract current values for mask positioning
   const [teamXValue, setTeamXValue] = useState(0);

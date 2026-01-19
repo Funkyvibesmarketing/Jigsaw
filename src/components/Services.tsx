@@ -5,6 +5,22 @@ import imgVector3 from "figma:asset/5aa702b67fe4226d00799fb3446a7e9a9a904d28.png
 import { AnimatedDoubtButton } from './AnimatedDoubtButton';
 import type { Service } from '../utils/servicesApi';
 
+const width = window.innerWidth;
+
+let scale = 0.72;
+
+// if (width >= 1728) scale = 0.72;
+// else if (width >= 1512) scale = 0.72;
+// else if (width >= 1280) scale = 0.72;
+// else scale = 0.72;
+
+const isMac = /Macintosh/.test(navigator.userAgent);
+if (isMac) { 
+  scale = 1;
+}
+
+console.log('Scale:', isMac);
+
 // Arrow button component for category navigation (top)
 function CategoryArrowButton({ direction, onClick }: { direction: 'left' | 'right'; onClick: () => void }) {
   return (
@@ -96,9 +112,16 @@ export function Services({
   const [direction, setDirection] = useState<'left' | 'right'>('right');
   const [navigationSource, setNavigationSource] = useState<'category' | 'card'>('category');
   const containerRef = useRef<HTMLDivElement>(null);
+  const activeCategoryRef = useRef<HTMLDivElement>(null);
+  const [activeCategoryWidth, setActiveCategoryWidth] = useState(0);
   
   // Check if mobile for conditional slide-up behavior
   const [isMobileView, setIsMobileView] = useState(false);
+  
+  // Define currentService and related indices BEFORE using them in useEffect
+  const currentService = services[currentServiceIndex];
+  const prevServiceIndex = (currentServiceIndex - 1 + services.length) % services.length;
+  const nextServiceIndex = (currentServiceIndex + 1) % services.length;
   
   useEffect(() => {
     const checkMobile = () => {
@@ -110,9 +133,12 @@ export function Services({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const currentService = services[currentServiceIndex];
-  const prevServiceIndex = (currentServiceIndex - 1 + services.length) % services.length;
-  const nextServiceIndex = (currentServiceIndex + 1) % services.length;
+  // Measure active category width
+  useEffect(() => {
+    if (activeCategoryRef.current) {
+      setActiveCategoryWidth(activeCategoryRef.current.offsetWidth);
+    }
+  }, [currentServiceIndex, currentService]);
 
   // Visibility and positioning based on scroll progress
   // Start fading in during mask zoom (0.55) so content is visible through the cutout immediately
@@ -267,6 +293,13 @@ export function Services({
     : 0; // Loop to first card
   const backCard = currentService.detailCards[backCardIndex];
 
+  // Calculate dynamic positioning for left/right categories based on active category width
+  // Minimum gap between active category and adjacent categories
+  const minGap = 60; // 60px gap
+  const halfActiveCategoryWidth = activeCategoryWidth / 2;
+  const leftCategoryRight = `calc(50% - ${halfActiveCategoryWidth + minGap}px)`;
+  const rightCategoryLeft = `calc(50% + ${halfActiveCategoryWidth + minGap}px)`;
+
   return (
     <motion.div 
       ref={containerRef}
@@ -310,31 +343,34 @@ export function Services({
       </div>
 
       {/* Category Carousel - Desktop Only */}
-      <div className="hidden md:block absolute content-stretch left-1/2 top-[50px] translate-x-[-50%] w-[1200px]">
-        <div className="content-stretch flex items-center justify-between relative px-[80px]">
-          {/* Left side: Button + Category name */}
-          <div className="flex items-center gap-4 min-w-0 flex-1">
+      <div className="hidden md:block absolute content-stretch left-1/2 top-[50px] translate-x-[-50%] w-[80vw] max-w-[1800px] z-50">
+        <div className="relative w-full h-[80px]">
+          {/* Left side: Button + Category name - FIXED position */}
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center gap-4 max-w-[20%]">
             {/* Left category navigation button */}
             <div className="shrink-0 size-[64px]">
               <CategoryArrowButton direction="left" onClick={handleCategoryPrev} />
             </div>
-            {/* Left category name */}
-            <p className="font-lato-regular leading-[normal] not-italic text-[40px] text-[rgba(255,255,255,0.4)] text-left text-nowrap overflow-hidden text-ellipsis">
+            {/* Left category name - truncate from LEFT side without ellipsis */}
+            <p 
+              className="font-lato-regular leading-[normal] not-italic text-[32px] text-[rgba(255,255,255,0.4)] text-nowrap pointer-events-none overflow-hidden"
+              style={{ direction: 'rtl', textAlign: 'left' }}
+            >
               {services[prevServiceIndex].title}
             </p>
           </div>
 
-          {/* Center category name - with flex-shrink-0 to maintain full width */}
-          <div className="flex-shrink-0 px-12">
-            <p className="font-lato-regular leading-[normal] not-italic text-[60px] text-[rgba(255,255,255,0.8)] text-center text-nowrap">
+          {/* Center category name - active - absolutely centered */}
+          <div ref={activeCategoryRef} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-16">
+            <p className="font-lato-regular leading-[normal] not-italic text-[40px] text-white text-center text-nowrap pointer-events-none">
               {currentService.title}
             </p>
           </div>
 
-          {/* Right side: Category name + Button */}
-          <div className="flex items-center gap-4 min-w-0 flex-1 justify-end">
-            {/* Right category name */}
-            <p className="font-lato-regular leading-[normal] not-italic text-[40px] text-[rgba(255,255,255,0.4)] text-right text-nowrap overflow-hidden text-ellipsis">
+          {/* Right side: Category name + Button - FIXED position */}
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-4 max-w-[20%]">
+            {/* Right category name - truncate from RIGHT side without ellipsis */}
+            <p className="font-lato-regular leading-[normal] not-italic text-[32px] text-[rgba(255,255,255,0.4)] text-right text-nowrap pointer-events-none overflow-hidden">
               {services[nextServiceIndex].title}
             </p>
             {/* Right category navigation button */}
@@ -346,7 +382,9 @@ export function Services({
       </div>
 
       {/* Card Stack - Desktop Only */}
-      <div className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-[0.75]">
+      <div className="hidden md:block absolute left-1/2 top-1/2 z-10" style={{
+        transform: `translate(-50%, -50%) scale(${scale})`
+      }}>
         {/* Back Card (furthest back, center-bottom) */}
         <motion.div
           key={`back-card-static-${currentService.id}`}

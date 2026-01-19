@@ -16,9 +16,27 @@ export function TeamMobile({
   // Track which member is expanded (first one by default)
   const [expandedMember, setExpandedMember] = useState(0);
 
+  // Debug logging for scroll progress
+  useEffect(() => {
+    if (reviewsScrollProgress && reviewsScrollProgress >= 0.70) {
+      console.log('TeamMobile TEAM Slide Progress:', {
+        reviewsScrollProgress: reviewsScrollProgress.toFixed(3),
+        xPosition: (() => {
+          if (reviewsScrollProgress < 0.70) return "150%";
+          if (reviewsScrollProgress < 1.0) {
+            const p = (reviewsScrollProgress - 0.70) / 0.30;
+            return `${150 - (100 * p)}%`;
+          }
+          return "50%";
+        })(),
+        slidePercentage: ((reviewsScrollProgress - 0.70) / 0.30 * 100).toFixed(1) + '%'
+      });
+    }
+  }, [reviewsScrollProgress]);
+
   // Team content should be visible from the start of mask animation
-  // Appears at 0.88 (when mask starts) so it's visible through the cutout
-  let teamContentOpacity = reviewsScrollProgress && reviewsScrollProgress >= 0.88 ? 1 : 0;
+  // Appears at 0.70 (when mask starts) so it's visible through the cutout
+  let teamContentOpacity = reviewsScrollProgress && reviewsScrollProgress >= 0.70 ? 1 : 0;
   
   // Team slides up when Process section appears (processScrollProgress 0 - 0.20)
   let teamSlideY = 0;
@@ -51,7 +69,7 @@ export function TeamMobile({
   return (
     <>
       {/* White overlay with TEAM text cutout - reveals team content through the text - MOBILE VERSION */}
-      {reviewsScrollProgress && reviewsScrollProgress >= 0.88 && reviewsScrollProgress < 1.0 && (
+      {reviewsScrollProgress && reviewsScrollProgress >= 0.70 && reviewsScrollProgress < 1.0 && (
         <div 
           className="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none z-[96]"
           style={{ 
@@ -73,13 +91,14 @@ export function TeamMobile({
                 <text
                   x={(() => {
                     // Slide animation: starts off-screen right (150%), slides to center (50%)
-                    if (!reviewsScrollProgress || reviewsScrollProgress < 0.88) return "150%";
-                    if (reviewsScrollProgress < 0.92) {
-                      // 0.88 to 0.92: Slide from 150% to 50% (center)
-                      const p = (reviewsScrollProgress - 0.88) / 0.04;
+                    // ULTRA SLOW: 0.70 to 1.0 (30% range for ultra slow slide - 2x slower than before)
+                    if (!reviewsScrollProgress || reviewsScrollProgress < 0.70) return "150%";
+                    if (reviewsScrollProgress < 1.0) {
+                      // 0.70 to 1.0: Slide from 150% to 50% (center) - ULTRA SLOW
+                      const p = (reviewsScrollProgress - 0.70) / 0.30;
                       return `${150 - (100 * p)}%`;
                     }
-                    return "50%"; // Centered after 0.92
+                    return "50%"; // Centered at 1.0
                   })()}
                   y="50%"
                   textAnchor="middle"

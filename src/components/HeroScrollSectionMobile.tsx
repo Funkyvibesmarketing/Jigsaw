@@ -58,7 +58,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
       }
     });
     return () => unsubscribe();
-  }, [scrollYProgress, onScrollProgress]);
+  }, [scrollYProgress]); // Remove onScrollProgress from dependencies
 
   // Step 1: JIGSAW text fades in (0 to 0.08)
   // If splash has been viewed, start at full visibility when at top

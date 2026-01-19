@@ -99,7 +99,7 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
       }
     });
     return () => unsubscribe();
-  }, [scrollYProgress, onScrollProgress, onServicesScrollProgress]);
+  }, [scrollYProgress]); // Remove onScrollProgress and onServicesScrollProgress from dependencies
 
   // Middle text stays centered initially, then moves up and fades out
   const middleTextY = useTransform(scrollYProgress, [0, 0.25, 0.35, 0.45], [0, 0, -150, -500]);

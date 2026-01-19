@@ -25,6 +25,7 @@ import { UpArrowButton } from './components/UpArrowButton';
 import { fetchTeamMembers, defaultTeamMembers, type TeamMember } from './utils/teamApi';
 import { fetchServices, defaultServices, type Service } from './utils/servicesApi';
 import { fetchBlogs, defaultBlogs, type BlogData } from './utils/blogsApi';
+import { useLenis } from './hooks/useLenis'; // Import Lenis hook
 
 export default function App() {
   const [splashAnimationComplete, setSplashAnimationComplete] = useState(false);
@@ -50,6 +51,9 @@ export default function App() {
   const [blogs, setBlogs] = useState<BlogData[]>(defaultBlogs);
   const [isLoadingBlogs, setIsLoadingBlogs] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Initialize Lenis smooth scroll for desktop
+  useLenis();
 
   // Handle up arrow click - scroll to top (splash screen)
   const handleScrollToTop = () => {
