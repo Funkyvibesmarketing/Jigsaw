@@ -380,13 +380,13 @@ export default function App() {
       </div>
       
       {/* Team Section - appears after Reviews with TEAM text transition */}
-      <div id="TeamSection" className={isMobile ? "min-h-[200vh] bg-[#2c4657]" : ""}>
+      <div id="TeamSection" className={isMobile ? "min-h-[50vh] bg-[#2c4657]" : ""}>
         {!isMobile && <Team reviewsScrollProgress={reviewsScrollProgress} aboutUsScrollProgress={aboutUsScrollProgress} teamMembers={teamMembers} processScrollProgress={processScrollProgress} />}
         {isMobile && <TeamMobile reviewsScrollProgress={reviewsScrollProgress} teamMembers={teamMembers} processScrollProgress={processScrollProgress} onScrollProgress={setTeamScrollProgress} />}
       </div>
       
       {/* Process Section - appears after Team section */}
-      <div id="ProcessSection" className={isMobile ? "-mt-[100vh]" : ""}>
+      <div id="ProcessSection" className={isMobile ? "" : ""}>
         {!isMobile && <Process onScrollProgress={setProcessScrollProgress} />}
         {isMobile && <ProcessMobile onScrollProgress={setProcessScrollProgress} teamScrollProgress={teamInternalScrollProgress} />}
       </div>

@@ -404,12 +404,12 @@ export function Reviews({
   
   const textColorMobile = useTransform(
     scrollYProgress,
-    [0, 0.02, 0.90, 0.93],
+    [0, 0.02, 0.65, 0.75],
     [
       'rgba(41, 65, 80, 1)',      // Start: 100% opacity (full)
       'rgba(41, 65, 80, 0.5)',    // When cards start: 50% opacity
       'rgba(41, 65, 80, 0.5)',    // Keep at 50% while cards slide
-      'rgba(41, 65, 80, 0)'       // TEAM starts: Complete fade out
+      'rgba(41, 65, 80, 0)'       // Fade out at 0.75 - BEFORE TEAM starts at 0.85
     ]
   );
 
@@ -429,39 +429,40 @@ export function Reviews({
   // Slower animation - extended scroll ranges
   // MOBILE: Slower animation with extended ranges (15% vs 10% for desktop)
   
-  // Desktop card animations - 10% scroll range - ALL cards move beyond viewport
-  const card1Y = useTransform(scrollYProgress, [0.50, 0.60], [800, -400]);  // First - Goes far beyond top
-  const card1Opacity = useTransform(scrollYProgress, [0.50, 0.52, 0.60, 0.88, 0.93], [0, 1, 1, 1, 0]);  // Fade out gradually as TEAM slides in (0.88 - 0.93)
+  // Desktop card animations - 20% scroll range for SLOWER movement - ALL cards move beyond viewport
+  const card1Y = useTransform(scrollYProgress, [0.50, 0.70], [800, -400]);  // First - Goes far beyond top - SLOWER (20% range)
+  const card1Opacity = useTransform(scrollYProgress, [0.50, 0.52, 0.70, 0.88, 0.93], [0, 1, 1, 1, 0]);  // Fade out gradually as TEAM slides in (0.88 - 0.93)
 
-  const card2Y = useTransform(scrollYProgress, [0.54, 0.64], [800, -350]);  // Second - Goes far beyond top
-  const card2Opacity = useTransform(scrollYProgress, [0.54, 0.56, 0.64, 0.88, 0.93], [0, 1, 1, 1, 0]);  // Fade out gradually as TEAM slides in (0.88 - 0.93)
+  const card2Y = useTransform(scrollYProgress, [0.54, 0.74], [800, -350]);  // Second - Goes far beyond top - SLOWER (20% range)
+  const card2Opacity = useTransform(scrollYProgress, [0.54, 0.56, 0.74, 0.88, 0.93], [0, 1, 1, 1, 0]);  // Fade out gradually as TEAM slides in (0.88 - 0.93)
 
-  const card5Y = useTransform(scrollYProgress, [0.58, 0.68], [800, -300]);  // Third - Goes beyond top
+  const card5Y = useTransform(scrollYProgress, [0.58, 0.78], [800, -300]);  // Third - Goes beyond top - SLOWER (20% range)
   const card5Opacity = useTransform(scrollYProgress, [0.58, 0.60, 0.88, 0.93], [0, 1, 1, 0]);  // Fade out gradually as TEAM slides in (0.88 - 0.93)
 
-  const card6Y = useTransform(scrollYProgress, [0.62, 0.72], [800, -250]);  // Fourth - Goes beyond top
+  const card6Y = useTransform(scrollYProgress, [0.62, 0.82], [800, -250]);  // Fourth - Goes beyond top - SLOWER (20% range)
   const card6Opacity = useTransform(scrollYProgress, [0.62, 0.64, 0.88, 0.93], [0, 1, 1, 0]);  // Fade out gradually as TEAM slides in (0.88 - 0.93)
 
-  const card7Y = useTransform(scrollYProgress, [0.66, 0.76], [800, -200]);  // Fifth - Goes beyond top
+  const card7Y = useTransform(scrollYProgress, [0.66, 0.86], [800, -200]);  // Fifth - Goes beyond top - SLOWER (20% range)
   const card7Opacity = useTransform(scrollYProgress, [0.66, 0.68, 0.88, 0.93], [0, 1, 1, 0]);  // Fade out gradually as TEAM slides in (0.88 - 0.93)
 
-  // Mobile card animations - 5 cards total with sequential one-by-one animation (REDUCED GAP - overlapping for tighter spacing)
-  // ALL cards start from BOTTOM (1000px) and gradually slide up, not suddenly appear
-  // Each card gets 45% scroll range for VERY SLOW movement (increased from 30% for slower animation)
-  // Cards start 18% apart for better spacing and smoother flow
-  // Cards finish at 0.80 to leave room for TEAM text animation
-  const card1YMobile = useTransform(scrollYProgress, [0.00, 0.45], [1000, -200]);  // Beyond top - First card (45% range for very slow movement)
-  const card2YMobile = useTransform(scrollYProgress, [0.18, 0.63], [1000, -200]);  // Beyond top - Second card (starts at 0.18 - 18% gap)
-  const card5YMobile = useTransform(scrollYProgress, [0.36, 0.80], [1000, -200]);  // Beyond top - Third card (starts at 0.36 - 18% gap)
-  const card6YMobile = useTransform(scrollYProgress, [0.54, 0.85], [1000, -200]);  // Beyond top - Fourth card (starts at 0.54 - 18% gap)
-  const card7YMobile = useTransform(scrollYProgress, [0.72, 0.90], [1000, -200]);  // Beyond top - Fifth card (starts at 0.72 - 18% gap, finishes at 0.90)
+  // Mobile card animations - 5 cards total with sequential one-by-one animation
+  // MUCH LONGER scroll ranges (55%) to prevent cards moving too fast on swipes
+  // Each card requires MUCH MORE scrolling to complete its animation
+  // Cards start 10% apart for sequential appearance but overlap for smooth flow
+  // INCREASED starting position to 1200px to keep cards off-screen initially
+  const card1YMobile = useTransform(scrollYProgress, [0.00, 0.55], [1200, -100]);  // 55% range - First card (VERY SLOW) - starts off-screen
+  const card2YMobile = useTransform(scrollYProgress, [0.10, 0.65], [1200, -100]);  // 55% range - Second card (starts at 0.10) - starts off-screen
+  const card5YMobile = useTransform(scrollYProgress, [0.20, 0.75], [1200, -100]);  // 55% range - Third card (starts at 0.20) - starts off-screen
+  const card6YMobile = useTransform(scrollYProgress, [0.30, 0.85], [1200, -100]);  // 55% range - Fourth card (starts at 0.30) - starts off-screen
+  const card7YMobile = useTransform(scrollYProgress, [0.40, 0.95], [1200, -100]);  // 55% range - Fifth card (starts at 0.40) - starts off-screen
 
-  // Mobile card opacity - separate from desktop timing - adjusted for new slower timing
-  const card1OpacityMobile = useTransform(scrollYProgress, [0.00, 0.02, 0.45, 1.0], [0, 1, 1, 1]);  // Fade in and stay visible
-  const card2OpacityMobile = useTransform(scrollYProgress, [0.18, 0.20, 0.63, 1.0], [0, 1, 1, 1]);  // Fade in and stay visible
-  const card5OpacityMobile = useTransform(scrollYProgress, [0.36, 0.38, 0.80, 1.0], [0, 1, 1, 1]);  // Fade in and stay visible
-  const card6OpacityMobile = useTransform(scrollYProgress, [0.54, 0.56, 0.85, 1.0], [0, 1, 1, 1]);  // Fade in and stay visible
-  const card7OpacityMobile = useTransform(scrollYProgress, [0.72, 0.74, 0.90, 1.0], [0, 1, 1, 1]);  // Fade in and stay visible
+  // Mobile card opacity - separate from desktop timing - adjusted for extended 55% scroll ranges
+  // Cards fade out MUCH EARLIER - from 0.65 to 0.70 - well before TEAM masking starts (0.85)
+  const card1OpacityMobile = useTransform(scrollYProgress, [0.00, 0.02, 0.65, 0.70], [0, 1, 1, 0]);  // Fade out early at 0.65-0.70
+  const card2OpacityMobile = useTransform(scrollYProgress, [0.10, 0.12, 0.65, 0.70], [0, 1, 1, 0]);  // Fade out early at 0.65-0.70
+  const card5OpacityMobile = useTransform(scrollYProgress, [0.20, 0.22, 0.65, 0.70], [0, 1, 1, 0]);  // Fade out early at 0.65-0.70
+  const card6OpacityMobile = useTransform(scrollYProgress, [0.30, 0.32, 0.65, 0.70], [0, 1, 1, 0]);  // Fade out early at 0.65-0.70
+  const card7OpacityMobile = useTransform(scrollYProgress, [0.40, 0.42, 0.65, 0.70], [0, 1, 1, 0]);  // Fade out early at 0.65-0.70
 
   // TEAM text animations - zooms in from right side after cards finish scrolling
   // Desktop: Cards finish at 0.80, TEAM starts at 0.88 (gap for cleanup)
@@ -473,19 +474,6 @@ export function Reviews({
   const teamXMobile = useTransform(scrollYProgress, [0.85, 0.91, 0.95, 0.98, 1.00], [1200, 700, 400, 150, -50]); // EXTREMELY SLOW: 0.85 → 1.00 (15% range) with very gradual steps
   const teamScale = useTransform(scrollYProgress, [0.88, 0.96, 0.98, 0.985, 0.99, 0.995, 1], [1.5, 1.5, 2.5, 4, 8, 20, 50]); // Adjusted to match new slower timing
   const teamOpacity = useTransform(scrollYProgress, [0.88, 0.91, 1], [0, 1, 1]); // Fades in slower and stays at full opacity
-  
-  // Extract current values for mask positioning
-  const [teamXValue, setTeamXValue] = useState(0);
-  const [teamScaleValue, setTeamScaleValue] = useState(1);
-
-  useEffect(() => {
-    const unsubX = teamXDesktop.on('change', setTeamXValue);
-    const unsubScale = teamScale.on('change', setTeamScaleValue);
-    return () => {
-      unsubX();
-      unsubScale();
-    };
-  }, [teamXDesktop, teamScale]);
   
   // TEAM text color - solid during slide, then transparent during zoom for mask effect
   const teamTextColor = useTransform(
@@ -572,42 +560,72 @@ export function Reviews({
         {/* Review Cards - Step 3 */}
         {!isModal && (
           <>
-            {/* Card 1 - Top */}
+            {/* Card 1 - Left side */}
             <motion.div 
-              className="absolute flex items-center justify-center left-[247px] w-[502px] h-[145px]"
-              style={{ y: card1Y, opacity: card1Opacity, rotate: '354.19deg', zIndex: 60 }}
+              className="absolute flex items-center justify-center w-[502px] h-[145px]"
+              style={{ 
+                y: card1Y, 
+                opacity: card1Opacity, 
+                rotate: '354.19deg', 
+                zIndex: 60,
+                left: 'calc(50% - 500px)',  // Center-aligned offset - shifted left
+              }}
             >
               <ReviewCard review='"I would strongly recommend Nick if you are looking to secure a mortgage or remortgage. "' author="~Daniel" />
             </motion.div>
 
-            {/* Card 2 - Middle */}
+            {/* Card 2 - Right side */}
             <motion.div 
-              className="absolute flex items-center justify-center left-[839px] w-[502px] h-[145px]"
-              style={{ y: card2Y, opacity: card2Opacity, rotate: '357.749deg', zIndex: 60 }}
+              className="absolute flex items-center justify-center w-[502px] h-[145px]"
+              style={{ 
+                y: card2Y, 
+                opacity: card2Opacity, 
+                rotate: '357.749deg', 
+                zIndex: 60,
+                left: 'calc(50% + 92px)',  // Center-aligned offset - shifted left
+              }}
             >
               <ReviewCard review='"Nick is a great mortgage advisor. He helped me secure a loan quickly and efficiently. "' author="~Sarah" />
             </motion.div>
 
-            {/* Card 5 - Middle */}
+            {/* Card 5 - Left side */}
             <motion.div 
-              className="absolute flex items-center justify-center left-[239px] w-[502px] h-[145px]"
-              style={{ y: card5Y, opacity: card5Opacity, rotate: '357.749deg', zIndex: 60 }}
+              className="absolute flex items-center justify-center w-[502px] h-[145px]"
+              style={{ 
+                y: card5Y, 
+                opacity: card5Opacity, 
+                rotate: '357.749deg', 
+                zIndex: 60,
+                left: 'calc(50% - 508px)',  // Center-aligned offset - shifted left
+              }}
             >
               <ReviewCard review='"Nick was very helpful in guiding me through the mortgage process. I am very satisfied with the outcome. "' author="~Michael" />
             </motion.div>
 
-            {/* Card 6 - Right */}
+            {/* Card 6 - Right side */}
             <motion.div 
-              className="absolute flex items-center justify-center left-[931px] w-[502px] h-[145px]"
-              style={{ y: card6Y, opacity: card6Opacity, rotate: '11.025deg', zIndex: 60 }}
+              className="absolute flex items-center justify-center w-[502px] h-[145px]"
+              style={{ 
+                y: card6Y, 
+                opacity: card6Opacity, 
+                rotate: '11.025deg', 
+                zIndex: 60,
+                left: 'calc(50% + 184px)',  // Center-aligned offset - shifted left
+              }}
             >
               <ReviewCard review='"Nick is a great communicator and provided clear explanations throughout the mortgage process. "' author="~Laura" />
             </motion.div>
 
-            {/* Card 7 - Top */}
+            {/* Card 7 - Left side */}
             <motion.div 
-              className="absolute flex items-center justify-center left-[247px] w-[502px] h-[145px]"
-              style={{ y: card7Y, opacity: card7Opacity, rotate: '354.19deg', zIndex: 60 }}
+              className="absolute flex items-center justify-center w-[502px] h-[145px]"
+              style={{ 
+                y: card7Y, 
+                opacity: card7Opacity, 
+                rotate: '354.19deg', 
+                zIndex: 60,
+                left: 'calc(50% - 500px)',  // Center-aligned offset - shifted left
+              }}
             >
               <ReviewCard review='"Nick is a professional and experienced mortgage advisor. I am very impressed with his service. "' author="~David" />
             </motion.div>
@@ -794,7 +812,7 @@ export function Reviews({
       ref={containerRef} 
       className="relative w-full bg-white" 
       style={{ 
-        minHeight: isMobile ? '250vh' : '400vh',
+        minHeight: isMobile ? '500vh' : '400vh',  // INCREASED mobile height from 250vh to 500vh for much longer scroll
         marginTop: '100vh',
         pointerEvents: (aboutUsScrollProgress && aboutUsScrollProgress >= 0.72 && aboutUsScrollProgress < 0.98) || (processScrollProgress && processScrollProgress >= 0.05) ? 'none' : 'auto',
         opacity: reviewsSectionOpacity,

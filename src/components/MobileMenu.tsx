@@ -16,6 +16,7 @@ function House({ theme = 'dark' }: { theme?: 'light' | 'dark' }) {
 
 function Frame({ onClick, isActive, theme = 'dark' }: { onClick: () => void; isActive?: boolean; theme?: 'light' | 'dark' }) {
   const isDark = theme === 'dark';
+  const iconColor = isActive && !isDark ? '#2EC4B6' : (isActive ? 'white' : (isDark ? 'white' : '#2C4657'));
   
   return (
     <button 
@@ -31,9 +32,15 @@ function Frame({ onClick, isActive, theme = 'dark' }: { onClick: () => void; isA
       }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] h-[64px] items-center px-[17.5px] py-[12px] relative w-full">
-          <House theme={isActive ? 'dark' : theme} />
+          <div className="relative shrink-0 size-[24px]" data-name="House">
+            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
+              <g id="House">
+                <path d={svgPaths.pf1a2200} fill={iconColor} id="Vector" />
+              </g>
+            </svg>
+          </div>
           <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
+            isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
           }`}>Home</p>
         </div>
       </div>
@@ -70,6 +77,7 @@ function House1({ theme = 'dark' }: { theme?: 'light' | 'dark' }) {
 
 function Frame1({ onClick, isActive, theme = 'dark' }: { onClick: () => void; isActive?: boolean; theme?: 'light' | 'dark' }) {
   const isDark = theme === 'dark';
+  const strokeColor = isActive && !isDark ? '#2EC4B6' : (isActive ? 'white' : (isDark ? 'white' : '#2C4657'));
   
   return (
     <button 
@@ -85,9 +93,20 @@ function Frame1({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
       }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
-          <House1 theme={isActive ? 'dark' : theme} />
+          <div className="overflow-clip relative shrink-0 size-[24px]" data-name="House">
+            <div className="absolute inset-[8.4%_12.5%_11.52%_12.5%]" data-name="Group">
+              <div className="absolute inset-[-5.2%_-8.22%_-5.2%_-8.2%]">
+                <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 21 22">
+                  <g id="Group">
+                    <path d={svgPaths.p34fb0f80} id="Vector" stroke={strokeColor} />
+                    <path d={svgPaths.p38b3eb80} id="Vector_2" stroke={strokeColor} />
+                  </g>
+                </svg>
+              </div>
+            </div>
+          </div>
           <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
+            isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
           }`}>About us</p>
         </div>
       </div>
@@ -113,6 +132,7 @@ function Stack({ theme = 'dark' }: { theme?: 'light' | 'dark' }) {
 
 function Frame2({ onClick, isActive, theme = 'dark' }: { onClick: () => void; isActive?: boolean; theme?: 'light' | 'dark' }) {
   const isDark = theme === 'dark';
+  const iconColor = isActive && !isDark ? '#2EC4B6' : (isActive ? 'white' : (isDark ? 'white' : '#2C4657'));
   
   return (
     <button 
@@ -128,9 +148,15 @@ function Frame2({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
       }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
-          <Stack theme={isActive ? 'dark' : theme} />
+          <div className="relative shrink-0 size-[24px]" data-name="Stack">
+            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
+              <g id="Stack">
+                <path d={svgPaths.p377c9080} fill={iconColor} id="Vector" />
+              </g>
+            </svg>
+          </div>
           <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
+            isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
           }`}>Services</p>
         </div>
       </div>
@@ -156,6 +182,7 @@ function ShootingStar({ theme = 'dark' }: { theme?: 'light' | 'dark' }) {
 
 function Frame3({ onClick, isActive, theme = 'dark' }: { onClick: () => void; isActive?: boolean; theme?: 'light' | 'dark' }) {
   const isDark = theme === 'dark';
+  const iconColor = isActive && !isDark ? '#2EC4B6' : (isActive ? 'white' : (isDark ? 'white' : '#2C4657'));
   
   return (
     <button 
@@ -171,9 +198,15 @@ function Frame3({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
       }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
-          <ShootingStar theme={isActive ? 'dark' : theme} />
+          <div className="relative shrink-0 size-[24px]" data-name="ShootingStar">
+            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
+              <g id="ShootingStar">
+                <path d={svgPaths.p29e0fc80} fill={iconColor} id="Vector" />
+              </g>
+            </svg>
+          </div>
           <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
+            isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
           }`}>Reviews</p>
         </div>
       </div>
@@ -199,6 +232,7 @@ function UsersThree({ theme = 'dark' }: { theme?: 'light' | 'dark' }) {
 
 function Frame4({ onClick, isActive, theme = 'dark' }: { onClick: () => void; isActive?: boolean; theme?: 'light' | 'dark' }) {
   const isDark = theme === 'dark';
+  const iconColor = isActive && !isDark ? '#2EC4B6' : (isActive ? 'white' : (isDark ? 'white' : '#2C4657'));
   
   return (
     <button 
@@ -214,9 +248,15 @@ function Frame4({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
       }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
-          <UsersThree theme={isActive ? 'dark' : theme} />
+          <div className="relative shrink-0 size-[24px]" data-name="UsersThree">
+            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
+              <g id="UsersThree">
+                <path d={svgPaths.p2ff36c0} fill={iconColor} id="Vector" />
+              </g>
+            </svg>
+          </div>
           <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
+            isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
           }`}>Our team</p>
         </div>
       </div>
@@ -242,6 +282,7 @@ function GitDiff({ theme = 'dark' }: { theme?: 'light' | 'dark' }) {
 
 function Frame5({ onClick, isActive, theme = 'dark' }: { onClick: () => void; isActive?: boolean; theme?: 'light' | 'dark' }) {
   const isDark = theme === 'dark';
+  const iconColor = isActive && !isDark ? '#2EC4B6' : (isActive ? 'white' : (isDark ? 'white' : '#2C4657'));
   
   return (
     <button 
@@ -257,9 +298,15 @@ function Frame5({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
       }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
-          <GitDiff theme={isActive ? 'dark' : theme} />
+          <div className="relative shrink-0 size-[24px]" data-name="GitDiff">
+            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
+              <g id="GitDiff">
+                <path d={svgPaths.p1d567280} fill={iconColor} id="Vector" />
+              </g>
+            </svg>
+          </div>
           <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
+            isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
           }`}>Our process</p>
         </div>
       </div>
@@ -285,6 +332,7 @@ function Article({ theme = 'dark' }: { theme?: 'light' | 'dark' }) {
 
 function Frame6({ onClick, isActive, theme = 'dark' }: { onClick: () => void; isActive?: boolean; theme?: 'light' | 'dark' }) {
   const isDark = theme === 'dark';
+  const iconColor = isActive && !isDark ? '#2EC4B6' : (isActive ? 'white' : (isDark ? 'white' : '#2C4657'));
   
   return (
     <button 
@@ -300,9 +348,15 @@ function Frame6({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
       }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
-          <Article theme={isActive ? 'dark' : theme} />
+          <div className="relative shrink-0 size-[24px]" data-name="Article">
+            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
+              <g id="Article">
+                <path d={svgPaths.p57ca580} fill={iconColor} id="Vector" />
+              </g>
+            </svg>
+          </div>
           <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]")
+            isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
           }`}>Blogs</p>
         </div>
       </div>
@@ -340,7 +394,7 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
     // Special handling for About Us section
     if (sectionId === 'AboutUsSection') {
       window.scrollTo({ 
-        top: window.innerHeight * 3.7, // Adjusted position for About Us section
+        top: window.innerHeight * 3.8, // Adjusted position for About Us section
         behavior: 'smooth' 
       });
       setIsMobileMenuOpen(false);
@@ -351,6 +405,17 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
     if (sectionId === 'ServiceSection') {
       window.scrollTo({ 
         top: window.innerHeight * 9.5, // Same position as Services
+        behavior: 'smooth' 
+      });
+      setIsMobileMenuOpen(false);
+      return;
+    }
+
+
+    // Special handling for Team section
+    if (sectionId === 'TeamSection') {
+      window.scrollTo({ 
+        top: window.innerHeight * 13.6, // Same position as Services
         behavior: 'smooth' 
       });
       setIsMobileMenuOpen(false);
@@ -370,7 +435,7 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
     // Special handling for Blogs Us section
     if (sectionId === 'BlogsSection') {
       window.scrollTo({ 
-        top: window.innerHeight * 18.5, // Same position as Services
+        top: window.innerHeight * 19.7, // Same position as Services
         behavior: 'smooth' 
       });
       setIsMobileMenuOpen(false);

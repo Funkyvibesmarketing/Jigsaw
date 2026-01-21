@@ -300,6 +300,15 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [popupBlog, setPopupBlog] = useState<BlogData | null>(null);
+
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  let scrl = -2;
+  if (width > 1536) {
+    scrl = -10;
+  }
+
+  console.log('Viewport size:', width, 'x', height);
   
   // Duplicate the blogs for smooth infinite loop
   const blogData = blogs.length > 0 ? [
@@ -336,7 +345,7 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
   const titleOpacity = useTransform(scrollYProgress, [0.21, 0.26], [0, 1]);
 
   // Step 3: Cards slide up from bottom (0.40 - 0.50)
-  const cardsY = useTransform(scrollYProgress, [0.40, 0.50], ["100vh", "-2vh"]);
+  const cardsY = useTransform(scrollYProgress, [0.40, 0.50], ["100vh", `${scrl}vh`]);
   const cardsOpacity = useTransform(scrollYProgress, [0.40, 0.45, 0.50], [0, 0.3, 1]);
   
   // Fade out entire blogs section when Contact Us slides up

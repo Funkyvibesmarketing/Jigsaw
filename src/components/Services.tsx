@@ -101,6 +101,15 @@ export function Services({
   
   // Check if mobile for conditional slide-up behavior
   const [isMobileView, setIsMobileView] = useState(false);
+
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  let scale = 0.72;
+  if (width > 1536) {
+    scale = 1;
+  }
+
+  console.log('Viewport size:', width, 'x', height);
   
   // Define currentService and related indices BEFORE using them in useEffect
   const currentService = services[currentServiceIndex];
@@ -367,7 +376,7 @@ export function Services({
 
       {/* Card Stack - Desktop Only */}
       <div className="hidden md:block absolute left-1/2 top-1/2 z-10" style={{
-        transform: 'translate(-50%, -50%) scale(0.72)'
+        transform: 'translate(-50%, -50%) scale(' + scale + ')'
       }}>
         {/* Back Card (furthest back, center-bottom) */}
         <motion.div

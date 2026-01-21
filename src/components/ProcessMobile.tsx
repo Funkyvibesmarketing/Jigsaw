@@ -75,19 +75,19 @@ function BottomProgressBar({
         // Calculate which bar should be bright based on scroll progress
         let dotBarIndex = -1;
         
-        if (progress >= 0.35 && progress < 0.45) {
+        if (progress >= 0.30 && progress < 0.35) {
           // Step 2: Only bar 0 is bright
           dotBarIndex = 0;
-        } else if (progress >= 0.45 && progress < 0.50) {
+        } else if (progress >= 0.35 && progress < 0.40) {
           // Transition 2→3: Bars progressively light up from 0 to 14
-          const transitionProgress = (progress - 0.45) / (0.50 - 0.45);
+          const transitionProgress = (progress - 0.35) / (0.40 - 0.35);
           dotBarIndex = Math.floor(transitionProgress * 14);
-        } else if (progress >= 0.50 && progress < 0.70) {
+        } else if (progress >= 0.40 && progress < 0.60) {
           // Step 3: Bars 0-14 are bright
           dotBarIndex = 14;
-        } else if (progress >= 0.70 && progress < 0.75) {
+        } else if (progress >= 0.60 && progress < 0.75) {
           // Transition 3→4: Bars progressively light up from 14 to 28
-          const transitionProgress = (progress - 0.70) / (0.75 - 0.70);
+          const transitionProgress = (progress - 0.60) / (0.75 - 0.60);
           dotBarIndex = 14 + Math.floor(transitionProgress * 14);
         } else if (progress >= 0.75) {
           // Step 4: All bars 0-28 are bright
@@ -112,9 +112,9 @@ function BottomProgressBar({
       const mobileBar14 = 172; // ~50% of width
       const mobileBar28 = 344; // ~100% of width
       
-      if (progress < 0.35) {
+      if (progress < 0.30) {
         setDotVisible(false);
-      } else if (progress < 0.50) {
+      } else if (progress < 0.40) {
         // Step 2: Dot appears at bar 0
         setDotVisible(true);
         setDotPosition(mobileBar0);
@@ -130,7 +130,7 @@ function BottomProgressBar({
     });
     
     return () => unsubscribe();
-  }, [currentStep, step2BarOpacities, step3BarOpacities, step4BarOpacities]);
+  }, [currentStep]); // Only depend on currentStep, not the bar opacity arrays
 
   const bars = [
     { bg: "rgba(255,255,255,0.72)", height: "60px" }, // Bar 0
@@ -252,52 +252,49 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
   // Process section slides up from bottom (0 - 0.20)
   const processSlideY = useTransform(scrollYProgress, [0, 0.20], ["100vh", "0vh"]);
 
-  // Step 2 (Step 1): "Understand your problem" - Delayed to start after section slides up (0.20 - 0.50)
+  // Step 2 (Step 1): "Understand your problem" - Delayed to start after section slides up (0.20 - 0.40)
   const step2SlideX = useTransform(scrollYProgress, 
-    [0, 0.20, 0.45, 0.50], 
+    [0, 0.20, 0.35, 0.40], 
     ["0vw", "0vw", "0vw", "-100vw"]
   );
   
-  // Step 2: Icon and text are fully visible after section slides up
-  const step2IconOpacity = useTransform(scrollYProgress, [0.20, 0.25], [0, 1]);
-  
   const step2TextOpacity = useTransform(scrollYProgress, [0.20, 0.25], [0, 1]);
   
-  // Step 2: Progress bar animations - only bar 0 animates (25% - 35%)
+  // Step 2: Progress bar animations - only bar 0 animates (25% - 30%)
   const totalBars = 29;
   const step2BarOpacities = Array.from({ length: totalBars }, (_, i) => {
     if (i === 0) {
       // Bar 0 animates from dim to bright during Step 2
-      return useTransform(scrollYProgress, [0.25, 0.35], [0, 1]);
+      return useTransform(scrollYProgress, [0.25, 0.30], [0, 1]);
     }
     // All other bars don't animate in this step
     return useTransform(scrollYProgress, [0, 1], [0, 0]);
   });
   
   // Step 3: Icon animations
-  const step3IconOpacity = useTransform(scrollYProgress, [0.45, 0.52], [0, 1]);
+  const step3IconOpacity = useTransform(scrollYProgress, [0.35, 0.42], [0, 1]);
   
   // Step 3: Text animations
-  const step3TextSlideX = useTransform(scrollYProgress, [0.46, 0.50], [80, 0]);
-  const step3TextOpacity = useTransform(scrollYProgress, [0.46, 0.50], [0, 1]);
+  const step3TextSlideX = useTransform(scrollYProgress, [0.36, 0.40], [80, 0]);
+  const step3TextOpacity = useTransform(scrollYProgress, [0.36, 0.40], [0, 1]);
   
   // Step 3: Slides from right (100vw) to center (0), then to left (-100vw)
   const step3SlideX = useTransform(scrollYProgress, 
-    [0.20, 0.45, 0.50, 0.70, 0.75], 
+    [0.20, 0.35, 0.40, 0.60, 0.65], 
     ["100vw", "100vw", "0vw", "0vw", "-100vw"]
   );
   
-  // Step 3: Progress bar animations - bars 1-14 animate during dot movement (45-50%)
+  // Step 3: Progress bar animations - bars 1-14 animate during dot movement (35-40%)
   const step3BarOpacities = Array.from({ length: totalBars }, (_, i) => {
     if (i === 0) {
       // Bar 0 is already bright, stays bright
       return useTransform(scrollYProgress, [0, 1], [1, 1]);
     }
     if (i >= 1 && i <= 14) {
-      // Bars 1-14 animate during dot movement from bar 0 to bar 14 (45% - 50%)
+      // Bars 1-14 animate during dot movement from bar 0 to bar 14 (35% - 40%)
       const barProgress = (i - 1) / 13; // 0 to 1 for bars 1-14 (13 intervals)
-      const startProgress = 0.45 + (barProgress * (0.50 - 0.45));
-      const endProgress = Math.min(startProgress + 0.008, 0.50);
+      const startProgress = 0.35 + (barProgress * (0.40 - 0.35));
+      const endProgress = Math.min(startProgress + 0.008, 0.40);
       return useTransform(scrollYProgress, [startProgress, endProgress], [0, 1]);
     }
     // Bars 15-28 don't animate in this step
@@ -306,27 +303,24 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
   
   // Step 4: Slides from right (100vw) to center (0) and stays there
   const step4SlideX = useTransform(scrollYProgress, 
-    [0.20, 0.70, 0.75, 1.0], 
+    [0.20, 0.60, 0.65, 1.0], 
     ["100vw", "100vw", "0vw", "0vw"]
   );
   
-  // Step 4: Icon animations
-  const step4IconOpacity = useTransform(scrollYProgress, [0.70, 0.77], [0, 1]);
-  
   // Step 4: Text animations
-  const step4TextSlideX = useTransform(scrollYProgress, [0.71, 0.75], [80, 0]);
-  const step4TextOpacity = useTransform(scrollYProgress, [0.71, 0.75], [0, 1]);
+  const step4TextSlideX = useTransform(scrollYProgress, [0.61, 0.65], [80, 0]);
+  const step4TextOpacity = useTransform(scrollYProgress, [0.61, 0.65], [0, 1]);
   
-  // Step 4: Progress bar animations - bars 15-28 animate during dot movement (70-75%)
+  // Step 4: Progress bar animations - bars 15-28 animate during dot movement (60-75%)
   const step4BarOpacities = Array.from({ length: totalBars }, (_, i) => {
     if (i <= 14) {
       // Bars 0-14 are already bright, stay bright
       return useTransform(scrollYProgress, [0, 1], [1, 1]);
     }
-    // Bars 15-28 animate during dot movement from bar 14 to bar 28 (70% - 75%)
+    // Bars 15-28 animate during dot movement from bar 14 to bar 28 (60% - 75%)
     const barProgress = (i - 14) / 14; // 0 to 1 (bar 15 = 0, bar 28 = 1)
-    const startProgress = 0.70 + (barProgress * (0.75 - 0.70));
-    const endProgress = Math.min(startProgress + 0.008, 0.75);
+    const startProgress = 0.60 + (barProgress * (0.75 - 0.60));
+    const endProgress = Math.min(startProgress + 0.01, 0.75);
     return useTransform(scrollYProgress, [startProgress, endProgress], [0, 1]);
   });
 
@@ -335,7 +329,7 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
       ref={containerRef}
       className="relative w-full bg-[#2c4657]"
       style={{ 
-        minHeight: "350vh",
+        minHeight: "400vh",
         touchAction: 'pan-y',
         WebkitOverflowScrolling: 'touch',
         zIndex: 100 // Higher z-index to appear above Team section
@@ -388,14 +382,11 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
               </div>
 
               {/* Icon - centered within circles */}
-              <motion.div 
-                className="absolute left-1/2 size-[29.4px] top-[337px] translate-x-[-50%] translate-y-[-50%]"
-                style={{ 
-                  opacity: step2IconOpacity
-                }}
+              <div 
+                className="absolute left-1/2 size-[29.4px] top-[337px] translate-x-[-50%] translate-y-[-50%] z-10"
               >
                 <HandshakeIcon />
-              </motion.div>
+              </div>
 
               {/* Text content */}
               <motion.div
@@ -433,14 +424,11 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
               </div>
 
               {/* Icon - with slide animation */}
-              <motion.div 
-                className="absolute left-1/2 size-[29.4px] top-[337px] translate-x-[-50%] translate-y-[-50%]"
-                style={{ 
-                  opacity: step3IconOpacity
-                }}
+              <div 
+                className="absolute left-1/2 size-[29.4px] top-[337px] translate-x-[-50%] translate-y-[-50%] z-10"
               >
                 <ResearchIcon />
-              </motion.div>
+              </div>
 
               {/* Text content - with slide animation */}
               <motion.div
@@ -479,14 +467,11 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
               </div>
 
               {/* Icon - with slide animation */}
-              <motion.div 
-                className="absolute left-1/2 size-[29.4px] top-[337px] translate-x-[-50%] translate-y-[-50%]"
-                style={{ 
-                  opacity: step4IconOpacity
-                }}
+              <div 
+                className="absolute left-1/2 size-[29.4px] top-[337px] translate-x-[-50%] translate-y-[-50%] z-10"
               >
                 <BrainIcon />
-              </motion.div>
+              </div>
 
               {/* Text content - with slide animation */}
               <motion.div

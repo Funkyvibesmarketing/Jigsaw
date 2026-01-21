@@ -238,7 +238,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
 
           {/* Background House Image - Step 2 */}
           <motion.div 
-            className="absolute flex h-[875px] items-center justify-center left-[-449px] top-[69px] w-[1306.42px] z-[1]"
+            className="absolute flex h-[875px] items-center justify-center left-[-449px] top-[20px] w-[1306.42px] z-[1]"
             style={{ opacity: bgImageOpacity, y: bgImageY }}
           >
             <div className="flex-none rotate-[180deg] scale-y-[-100%]">
@@ -254,7 +254,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
           
           {/* Hero House Image (Original) - visible during hero section, fades out when compliance appears */}
           <motion.div 
-            className="absolute flex h-[875px] items-center justify-center left-[-449px] top-[97px] w-[1306.42px] z-[2]"
+            className="absolute flex h-[875px] items-center justify-center left-[-449px] top-[40px] w-[1306.42px] z-[2]"
             style={{ opacity: heroHouseOpacity, y: mainImageY }}
           >
             <div className="flex-none rotate-[180deg] scale-y-[-100%]">
@@ -270,7 +270,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
 
           {/* Compliance House Image (Mobile) - fades in when compliance appears, replaces hero house */}
           <motion.div 
-            className="absolute flex h-[875px] items-center justify-center left-[-449px] top-[97px] w-[1306.42px] z-[2]"
+            className="absolute flex h-[875px] items-center justify-center left-[-449px] top-[47px] w-[1306.42px] z-[2]"
             style={{ opacity: complianceHouseOpacity, y: mainImageY }}
           >
             <div className="flex-none rotate-[180deg] scale-y-[-100%]">

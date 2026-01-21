@@ -1,6 +1,24 @@
-import { motion } from 'motion/react';
-import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { useState, useEffect, useRef } from 'react';
 import type { TeamMember } from '../utils/teamApi';
+import imgVector from "figma:asset/6d6de80792d2de9d2d28717db9e5bf0e0b17e6c0.png";
+
+// Arrow component for navigation
+function NavArrow() {
+  return (
+    <div className="overflow-clip relative size-[30px]">
+      <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
+        <div className="flex-none h-[12.964px] rotate-[359.849deg] w-[21.406px]">
+          <div className="relative size-full">
+            <div className="absolute inset-[-2.07%_-1.25%]">
+              <img alt="" className="block max-w-none size-full" height="13.5" src={imgVector} width="21.942" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function TeamMobile({ 
   reviewsScrollProgress,
@@ -13,234 +31,346 @@ export function TeamMobile({
   processScrollProgress?: number;
   onScrollProgress?: (progress: number) => void;
 }) {
-  // Track which member is expanded (first one by default)
-  const [expandedMember, setExpandedMember] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const [dragX, setDragX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const hasSwiped = useRef(false);
 
-  // Debug logging for scroll progress
-  useEffect(() => {
-    if (reviewsScrollProgress && reviewsScrollProgress >= 0.70) {
-      console.log('TeamMobile TEAM Slide Progress:', {
-        reviewsScrollProgress: reviewsScrollProgress.toFixed(3),
-        xPosition: (() => {
-          if (reviewsScrollProgress < 0.70) return "150%";
-          if (reviewsScrollProgress < 1.0) {
-            const p = (reviewsScrollProgress - 0.70) / 0.30;
-            return `${150 - (100 * p)}%`;
-          }
-          return "50%";
-        })(),
-        slidePercentage: ((reviewsScrollProgress - 0.70) / 0.30 * 100).toFixed(1) + '%'
-      });
-    }
-  }, [reviewsScrollProgress]);
+  // Only show first 3 team members
+  const displayMembers = teamMembers.slice(0, 3);
+  const totalSlides = 3;
 
-  // Team content should be visible from the start of mask animation
-  // Appears at 0.70 (when mask starts) so it's visible through the cutout
-  let teamContentOpacity = reviewsScrollProgress && reviewsScrollProgress >= 0.70 ? 1 : 0;
+  // Team content should be visible when TEAM text masking starts sliding in (0.76)
+  // Fade in from 0.76 to 0.82 for smooth transition
+  let teamContentOpacity = 0;
+  if (reviewsScrollProgress && reviewsScrollProgress >= 0.76 && reviewsScrollProgress < 0.82) {
+    // Fade in from 0.76 to 0.82
+    teamContentOpacity = (reviewsScrollProgress - 0.76) / 0.06;
+  } else if (reviewsScrollProgress && reviewsScrollProgress >= 0.82) {
+    teamContentOpacity = 1;
+  }
   
-  // Team slides up when Process section appears (processScrollProgress 0 - 0.20)
+  // Team slides up when Process section appears
   let teamSlideY = 0;
   if (processScrollProgress && processScrollProgress > 0) {
-    // Slide up during first 20% of Process scroll
     const slideProgress = Math.min(processScrollProgress / 0.20, 1);
-    teamSlideY = slideProgress * -100; // Slide up by 100vh
+    teamSlideY = slideProgress * -100;
   }
   
   // Report scroll progress to parent
   useEffect(() => {
     if (onScrollProgress) {
-      // Team is visible when reviews progress is >= 0.98
       if (reviewsScrollProgress && reviewsScrollProgress >= 0.98) {
         onScrollProgress(1);
       } else {
         onScrollProgress(0);
       }
     }
-  }, [reviewsScrollProgress, onScrollProgress]);
+  }, [reviewsScrollProgress]); // Remove onScrollProgress from dependencies to prevent infinite loop
 
-  // Calculate heights for accordion
-  const collapsedHeight = 77; // Height of header (top line + name)
-  const expandedHeight = 682; // Full height with content
-
-  const toggleMember = (index: number) => {
-    setExpandedMember(expandedMember === index ? -1 : index);
+  // Navigation handlers
+  const handleNext = () => {
+    if (currentIndex < totalSlides - 1) {
+      setDirection(1);
+      setCurrentIndex(prev => prev + 1);
+    }
   };
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setDirection(-1);
+      setCurrentIndex(prev => prev - 1);
+    }
+  };
+
+  // Touch handlers for swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation();
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    hasSwiped.current = false;
+    setIsDragging(true);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    const deltaX = currentX - touchStartX.current;
+    const deltaY = currentY - touchStartY.current;
+
+    // Detect if horizontal swipe is dominant
+    if (Math.abs(deltaX) > 10 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Apply drag with boundaries
+      let boundedDragX = deltaX;
+      
+      // Add resistance at boundaries
+      if ((currentIndex === 0 && deltaX > 0) || (currentIndex === totalSlides - 1 && deltaX < 0)) {
+        boundedDragX = deltaX * 0.3; // Strong resistance at edges
+      }
+      
+      setDragX(boundedDragX);
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    e.stopPropagation();
+    if (!isDragging) return;
+
+    const threshold = 30; // Reduced threshold for easier swiping
+    const velocity = Math.abs(dragX);
+
+    // Check if swipe threshold or velocity is met
+    if (velocity > threshold && !hasSwiped.current) {
+      if (dragX > 0 && currentIndex > 0) {
+        handlePrev();
+        hasSwiped.current = true;
+      } else if (dragX < 0 && currentIndex < totalSlides - 1) {
+        handleNext();
+        hasSwiped.current = true;
+      }
+    }
+
+    setDragX(0);
+    setIsDragging(false);
+  };
+
+  // Add touch event listeners
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Remove native event listeners since we're using React synthetic events
+    return () => {};
+  }, [isDragging, dragX, currentIndex]);
+
+  const currentMember = displayMembers[currentIndex];
 
   return (
     <>
-      {/* White overlay with TEAM text cutout - reveals team content through the text - MOBILE VERSION */}
-      {reviewsScrollProgress && reviewsScrollProgress >= 0.70 && reviewsScrollProgress < 1.0 && (
-        <div 
-          className="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none z-[96]"
-          style={{ 
-            // Fade out the mask at the very end (0.995 to 1.0)
-            opacity: reviewsScrollProgress >= 0.995 ? 1 - ((reviewsScrollProgress - 0.995) / 0.005) : 1,
-            touchAction: 'none', // Let touch events pass through to scrollable content below
-            willChange: 'opacity',
-            transform: `translateY(${teamSlideY}vh)` // Slide up with team content
-          } as React.CSSProperties}
-        >
-          {/* SVG with mask to create cutout effect */}
-          <svg className="absolute inset-0 w-full h-full" style={{ willChange: 'transform' } as React.CSSProperties}>
-            <defs>
-              <mask id="teamTextMaskMobile">
-                {/* White background - everything covered */}
-                <rect x="0" y="0" width="100%" height="100%" fill="white" />
-                
-                {/* Black text - creates the cutout (hole) - slides in from right then zooms */}
-                <text
-                  x={(() => {
-                    // Slide animation: starts off-screen right (150%), slides to center (50%)
-                    // ULTRA SLOW: 0.70 to 1.0 (30% range for ultra slow slide - 2x slower than before)
-                    if (!reviewsScrollProgress || reviewsScrollProgress < 0.70) return "150%";
-                    if (reviewsScrollProgress < 1.0) {
-                      // 0.70 to 1.0: Slide from 150% to 50% (center) - ULTRA SLOW
-                      const p = (reviewsScrollProgress - 0.70) / 0.30;
-                      return `${150 - (100 * p)}%`;
-                    }
-                    return "50%"; // Centered at 1.0
-                  })()}
-                  y="50%"
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  fill="black"
-                  fontSize={(() => {
-                    // Start with EVEN LARGER text during slide-in (200px), then zoom from there
-                    if (!reviewsScrollProgress || reviewsScrollProgress < 0.88) return 200;
-                    if (reviewsScrollProgress >= 1.0) return 200 * 80;
+      {/* Only render when Team should be visible */}
+      {reviewsScrollProgress && reviewsScrollProgress >= 0.76 && (
+        <>
+          {/* White overlay with TEAM text cutout - reveals team content through the text */}
+          {reviewsScrollProgress >= 0.76 && reviewsScrollProgress < 1.0 && (
+            <div 
+              className="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none z-[96]"
+              style={{ 
+                opacity: reviewsScrollProgress >= 0.995 ? 1 - ((reviewsScrollProgress - 0.995) / 0.005) : 1,
+                touchAction: 'none',
+                willChange: 'opacity',
+                transform: `translateY(${teamSlideY}vh)`
+              } as React.CSSProperties}
+            >
+              <svg className="absolute inset-0 w-full h-full" style={{ willChange: 'transform' } as React.CSSProperties}>
+                <defs>
+                  <mask id="teamTextMaskMobile">
+                    <rect x="0" y="0" width="100%" height="100%" fill="white" />
+                    <text
+                      x={(() => {
+                        if (!reviewsScrollProgress || reviewsScrollProgress < 0.76) return "220%";
+                        if (reviewsScrollProgress < 0.88) {
+                          // Slide from right to center (220% to 50%)
+                          const p = (reviewsScrollProgress - 0.76) / 0.12; // 0.88 - 0.76 = 0.12
+                          return `${220 - (170 * p)}%`;
+                        }
+                        // Stay at center during zoom
+                        return "50%";
+                      })()}
+                      y="50%"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fill="black"
+                      fontSize={(() => {
+                        const baseSize = 200;
+                        if (!reviewsScrollProgress || reviewsScrollProgress < 0.88) return baseSize;
+                        if (reviewsScrollProgress >= 1.0) return baseSize * 25;
+                        
+                        // Zoom starts AFTER slide completes (0.88) - simple linear interpolation like SERVICES
+                        const progress = (reviewsScrollProgress - 0.88) / (1.0 - 0.88);
+                        const scale = 1 + (24 * progress); // 1x to 25x scale
+                        return baseSize * scale;
+                      })()}
+                      fontFamily="Lato, sans-serif"
+                      fontWeight="700"
+                      letterSpacing="16"
+                    >
+                      TEAM
+                    </text>
+                  </mask>
+                </defs>
+                <rect x="0" y="0" width="100%" height="100%" fill="white" mask="url(#teamTextMaskMobile)" />
+              </svg>
+            </div>
+          )}
+
+          {/* Team content - fixed position, overlays on top of Reviews */}
+          <motion.div
+            className="fixed top-0 left-0 w-full h-screen overflow-hidden"
+            style={{ 
+              opacity: teamContentOpacity,
+              pointerEvents: (reviewsScrollProgress && reviewsScrollProgress >= 1.0) ? 'auto' : 'none',
+              zIndex: processScrollProgress && processScrollProgress > 0 ? 50 : 95,
+              transform: `translateY(${teamSlideY}vh)`
+            }}
+          >
+            <div className="absolute inset-0 bg-[#2c4657]" ref={containerRef}>
+              {/* Top divider lines */}
+              <div className="absolute h-0 left-[24px] top-[100px] w-[calc(50%-36px)]">
+                <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 351 1">
+                  <line stroke="white" strokeOpacity="0.3" x2="100%" y1="0.5" y2="0.5" />
+                </svg>
+              </div>
+              <div className="absolute h-0 right-[24px] top-[100px] w-[calc(50%-36px)]">
+                <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 351 1">
+                  <line stroke="white" strokeOpacity="0.3" x2="100%" y1="0.5" y2="0.5" />
+                </svg>
+              </div>
+
+              {/* Card slider container - showing 2 members side by side */}
+              <div 
+                className="absolute left-0 right-5 top-[145px] bottom-[120px] overflow-visible"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                style={{ touchAction: 'pan-y' }}
+              >
+                <div className="relative w-full h-full overflow-visible">{displayMembers.map((member, index) => {
+                    // Calculate position for each slide
+                    let xOffset = (index - currentIndex) * 100; // Percentage based on slide index
                     
-                    // Gradual zoom progression
-                    let scale;
-                    if (reviewsScrollProgress < 0.94) {
-                      // 0.88 to 0.94: Hold at scale 1 (200px) - EVEN LARGER during slide and hold
-                      scale = 1;
-                    } else if (reviewsScrollProgress < 0.95) {
-                      // 0.94 to 0.95: scale 1 to 1.5
-                      const p = (reviewsScrollProgress - 0.94) / 0.01;
-                      scale = 1 + (1.5 - 1) * p;
-                    } else if (reviewsScrollProgress < 0.96) {
-                      // 0.95 to 0.96: scale 1.5 to 3
-                      const p = (reviewsScrollProgress - 0.95) / 0.01;
-                      scale = 1.5 + (3 - 1.5) * p;
-                    } else if (reviewsScrollProgress < 0.97) {
-                      // 0.96 to 0.97: scale 3 to 6
-                      const p = (reviewsScrollProgress - 0.96) / 0.01;
-                      scale = 3 + (6 - 3) * p;
-                    } else if (reviewsScrollProgress < 0.98) {
-                      // 0.97 to 0.98: scale 6 to 12
-                      const p = (reviewsScrollProgress - 0.97) / 0.01;
-                      scale = 6 + (12 - 6) * p;
-                    } else if (reviewsScrollProgress < 0.99) {
-                      // 0.98 to 0.99: scale 12 to 25
-                      const p = (reviewsScrollProgress - 0.98) / 0.01;
-                      scale = 12 + (25 - 12) * p;
-                    } else if (reviewsScrollProgress < 0.995) {
-                      // 0.99 to 0.995: scale 25 to 50
-                      const p = (reviewsScrollProgress - 0.99) / 0.005;
-                      scale = 25 + (50 - 25) * p;
-                    } else {
-                      // 0.995 to 1.0: scale 50 to 80 (final zoom as mask fades)
-                      const p = (reviewsScrollProgress - 0.995) / 0.005;
-                      scale = 50 + (80 - 50) * p;
+                    // Apply drag offset only to visible slides
+                    if (isDragging && (index === currentIndex || index === currentIndex + 1 || index === currentIndex - 1)) {
+                      const dragPercentage = (dragX / window.innerWidth) * 100;
+                      xOffset += dragPercentage;
                     }
                     
-                    return 200 * scale; // Base size 200px (EVEN LARGER - was 140px)
-                  })()}
-                  fontFamily="Lato, sans-serif"
-                  fontWeight="700"
-                  letterSpacing="16"
+                    // Determine if slide should be visible
+                    const isVisible = index === currentIndex || (index === currentIndex + 1 && index < totalSlides);
+                    
+                    // Calculate the x position
+                    let xPosition = `${xOffset}%`;
+                    if (index === currentIndex + 1) {
+                      xPosition = `calc(100% - 24px)`; // Position next card to show larger peek preview
+                    }
+                    
+                    return (
+                      <motion.div
+                        key={member.id}
+                        animate={{ 
+                          x: xPosition,
+                          opacity: isVisible ? 1 : 0
+                        }}
+                        transition={{
+                          x: { 
+                            type: "spring", 
+                            stiffness: isDragging ? 500 : 300, 
+                            damping: isDragging ? 50 : 30,
+                            mass: 0.5
+                          },
+                          opacity: { duration: 0.2 }
+                        }}
+                        className="absolute top-0 bottom-0 left-0 right-0"
+                        style={{ 
+                          pointerEvents: index === currentIndex ? 'auto' : 'none',
+                          willChange: 'transform'
+                        }}
+                      >
+                        {/* Member card with proper padding */}
+                        <div className="flex flex-col h-full pl-[24px] pr-[24px]">
+                          {/* Line above name */}
+                          <div className="w-full h-[1px] bg-white opacity-30 mb-[16px]" />
+
+                          {/* Member name with number on same line */}
+                          <div className="flex items-baseline justify-between mb-[32px]">
+                            <p className="font-['Lato:Bold',sans-serif] leading-[normal] not-italic text-[24px] text-white">
+                              {member.name}
+                            </p>
+                            <p className="font-['Lato:Bold',sans-serif] leading-[normal] not-italic text-[16px] text-[rgba(255,255,255,0.5)]">
+                              {String(index + 1).padStart(2, '0')}
+                            </p>
+                          </div>
+
+                          {/* Job title */}
+                          <p className="font-['Lato:SemiBold',sans-serif] leading-[38px] not-italic text-[32px] text-[rgba(255,255,255,0.5)] mb-[32px] w-[259px]">
+                            {member.title}
+                          </p>
+
+                          {/* Member photo */}
+                          <div className="w-full h-[360px] mb-[32px] overflow-hidden">
+                            <img 
+                              alt={member.name}
+                              className="w-full h-full object-cover" 
+                              src={member.image}
+                            />
+                          </div>
+
+                          {/* Bio text */}
+                          <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[14px] text-white tracking-[0.14px]">
+                            {member.bio}
+                          </p>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Bottom navigation */}
+              <div className="absolute left-1/2 -translate-x-1/2 bottom-[40px] flex gap-[24px] items-center z-50">
+                {/* Left arrow */}
+                <button
+                  onClick={handlePrev}
+                  disabled={currentIndex === 0}
+                  className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] shrink-0 size-[48px] relative transition-opacity duration-200 ${
+                    currentIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
+                  }`}
                 >
-                  TEAM
-                </text>
-              </mask>
-            </defs>
-            
-            {/* White rectangle with mask applied */}
-            <rect x="0" y="0" width="100%" height="100%" fill="white" mask="url(#teamTextMaskMobile)" />
-          </svg>
-        </div>
-      )}
-
-      {/* Team content - fixed position, overlays on top of Reviews */}
-      <motion.div
-        className="fixed top-0 left-0 w-full h-screen overflow-hidden"
-        style={{ 
-          opacity: teamContentOpacity,
-          pointerEvents: (reviewsScrollProgress && reviewsScrollProgress >= 1.0) ? 'auto' : 'none', // Only scrollable after mask is complete
-          zIndex: processScrollProgress && processScrollProgress > 0 ? 50 : 95, // Lower z-index when Process starts
-          transform: `translateY(${teamSlideY}vh)` // Slide up when Process appears
-        }}
-      >
-        <div className="absolute inset-0 bg-[#2c4657] overflow-y-auto overflow-x-hidden">
-          {/* Scrollable content container with top padding for navigation */}
-          <div className="relative min-h-screen pt-[100px] pb-[80px] px-4">
-            {teamMembers.map((member, index) => {
-              const isExpanded = expandedMember === index;
-              
-              return (
-                <motion.div 
-                  key={member.id} 
-                  className="relative overflow-hidden border-t border-white/30 w-full max-w-[393px] mx-auto"
-                  animate={{ 
-                    height: isExpanded ? expandedHeight : collapsedHeight 
-                  }}
-                  transition={{ 
-                    type: "spring",
-                    stiffness: 100,
-                    damping: 20,
-                    mass: 1
-                  }}
-                >
-                  {/* Clickable header area */}
-                  <div 
-                    className="relative cursor-pointer px-2"
-                    onClick={() => toggleMember(index)}
-                  >
-                    {/* Member number - right side */}
-                    <p className="absolute font-['Lato:Bold',sans-serif] leading-[normal] right-2 not-italic text-[14px] text-[rgba(255,255,255,0.5)] text-center text-nowrap top-[21px] whitespace-pre">
-                      {String(index + 1).padStart(2, '0')}
-                    </p>
-
-                    {/* Member name - left side */}
-                    <p className="absolute font-['Lato:Bold',sans-serif] leading-[normal] left-2 not-italic text-[20px] text-nowrap text-white top-[21px] whitespace-pre max-w-[70%] truncate">
-                      {member.name}
-                    </p>
-                  </div>
-
-                  {/* Expandable content */}
-                  <motion.div
-                    className="px-2"
-                    animate={{ opacity: isExpanded ? 1 : 0 }}
-                    transition={{ duration: 0.3, delay: isExpanded ? 0.2 : 0 }}
-                  >
-                    {/* Job title */}
-                    <p className="absolute font-['Lato:SemiBold',sans-serif] leading-[normal] left-2 not-italic text-[24px] text-[rgba(255,255,255,0.5)] top-[77px] w-[calc(100%-16px)]">
-                      {member.title}
-                    </p>
-
-                    {/* Member photo */}
-                    <div className="absolute h-[280px] left-2 top-[160px] w-[calc(100%-16px)]">
-                      <img 
-                        alt={member.name}
-                        className="absolute inset-0 max-w-none object-50%-50% object-cover pointer-events-none size-full rounded-lg" 
-                        src={member.image}
-                      />
+                  <div aria-hidden="true" className="absolute border-[0.75px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[24px]" />
+                  <div className="flex items-center justify-center relative shrink-0">
+                    <div className="flex-none rotate-[180deg] scale-y-[-100%]">
+                      <NavArrow />
                     </div>
-
-                    {/* Bio text */}
-                    <p className="absolute font-['Lato:Regular',sans-serif] leading-[22px] left-2 not-italic text-[13px] text-white top-[460px] tracking-[0.13px] w-[calc(100%-16px)]">
-                      {member.bio}
-                    </p>
-                  </motion.div>
-                </motion.div>
-              );
-            })}
-
-            {/* Bottom horizontal line after last member */}
-            <div className="h-[1px] bg-white/30 w-full max-w-[393px] mx-auto" />
-          </div>
-        </div>
-      </motion.div>
+                  </div>
+                </button>
+                
+                {/* Counter - shows current page / total pages */}
+                <p className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[24px] text-[rgba(255,255,255,0.2)] text-center text-nowrap">
+                  {currentIndex + 1}/{totalSlides}
+                </p>
+                
+                {/* Right arrow */}
+                <div className="flex items-center justify-center relative shrink-0">
+                  <div className="flex-none rotate-[180deg] scale-y-[-100%]">
+                    <button
+                      onClick={handleNext}
+                      disabled={currentIndex === totalSlides - 1}
+                      className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] size-[48px] relative transition-opacity duration-200 ${
+                        currentIndex === totalSlides - 1 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
+                      }`}
+                    >
+                      <div aria-hidden="true" className="absolute border-[0.75px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[24px]" />
+                      <div className="flex items-center justify-center relative shrink-0">
+                        <div className="flex-none rotate-[180deg] scale-y-[-100%]">
+                          <NavArrow />
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
     </>
   );
 }

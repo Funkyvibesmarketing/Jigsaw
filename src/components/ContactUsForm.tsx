@@ -419,17 +419,17 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
         );
       case 4:
         return (
-          <div className="absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] top-[calc(50%-140px)] translate-x-[-50%] translate-y-[-50%] w-[800px]">
+          <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-108px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
             <textarea
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              placeholder="Enter your message"
-              className="font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[48px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] resize-none h-[60px] caret-white"
+              placeholder="Your message"
+              className="font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[28px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] resize-none h-[60px] caret-white"
             />
-            <div className="h-0 relative shrink-0 w-full flex justify-center">
-              <div className="absolute bottom-0 top-[-1px] w-[600px]">
-                <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 600 1">
-                  <line stroke="var(--stroke-0, white)" strokeOpacity="0.5" x2="600" y1="0.5" y2="0.5" />
+            <div className="h-0 relative shrink-0 w-full">
+              <div className="absolute bottom-0 left-0 right-0 top-[-1px]">
+                <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 382 1">
+                  <line stroke="white" strokeOpacity="0.5" x2="382" y1="0.5" y2="0.5" />
                 </svg>
               </div>
             </div>
@@ -515,17 +515,17 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
 
           {/* Title */}
           {!isSubmitted && (
-            <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 not-italic text-[48px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-260px)] translate-x-[-50%] whitespace-pre px-4">Get in Touch</p>
+            <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 not-italic text-[48px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-230px)] translate-x-[-50%] whitespace-pre px-4">Get in Touch</p>
           )}
 
           {!isSubmitted && (
             <>
               {/* Step Indicator - Mobile - Above the title */}
-              <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 translate-x-[-50%] not-italic text-[32px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-310px)] whitespace-pre">{currentStep}/4</p>
+              <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 translate-x-[-50%] not-italic text-[32px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-280px)] whitespace-pre">{currentStep}/4</p>
 
               {/* Form Field */}
               {currentStep === 1 && (
-                <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-138px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
+                <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-108px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
                   <input
                     type="text"
                     value={formData.name}
@@ -544,7 +544,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
               )}
 
               {currentStep === 2 && (
-                <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-138px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
+                <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-108px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
                   <input
                     type="email"
                     value={formData.email}
@@ -563,7 +563,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
               )}
 
               {currentStep === 3 && (
-                <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-138px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
+                <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-108px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
                   <input
                     type="tel"
                     value={formData.phone}
@@ -582,7 +582,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
               )}
 
               {currentStep === 4 && (
-                <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-138px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
+                <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-108px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
                   <textarea
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}

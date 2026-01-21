@@ -4,6 +4,23 @@ import imgVector from "figma:asset/6d6de80792d2de9d2d28717db9e5bf0e0b17e6c0.png"
 import type { Service } from '../utils/servicesApi';
 import { fetchServices } from '../utils/servicesApi';
 
+// Arrow component for navigation
+function NavArrow() {
+  return (
+    <div className="overflow-clip relative size-[30px]">
+      <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
+        <div className="flex-none h-[12.964px] rotate-[359.849deg] w-[21.406px]">
+          <div className="relative size-full">
+            <div className="absolute inset-[-2.07%_-1.25%]">
+              <img alt="" className="block max-w-none size-full" height="13.5" src={imgVector} width="21.942" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ServicesMobile({ 
   onScrollProgress,
 }: { 
@@ -14,16 +31,12 @@ export function ServicesMobile({
   const [cardDirection, setCardDirection] = useState(0);
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  const [dragX, setDragX] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const cardAreaRef = useRef<HTMLDivElement>(null);
+  const categoryContainerRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const categoryRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const verticalScrollSpeed = useRef(0); // Track vertical scroll speed
-  const scrollAnimationFrame = useRef<number | null>(null);
+  const [dragX, setDragX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const hasSwiped = useRef(false);
 
   // Fetch services data on component mount
   useEffect(() => {
@@ -45,104 +58,7 @@ export function ServicesMobile({
   const prevService = services[prevServiceIndex];
   const nextService = services[nextServiceIndex];
 
-  // Handle horizontal drag/swipe to change categories with smooth animation
-  const handleTouchStart = (e: TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-    setIsDragging(true);
-    
-    // Cancel any ongoing scroll animation
-    if (scrollAnimationFrame.current !== null) {
-      cancelAnimationFrame(scrollAnimationFrame.current);
-      scrollAnimationFrame.current = null;
-    }
-    verticalScrollSpeed.current = 0;
-  };
-
-  const handleTouchMove = (e: TouchEvent) => {
-    if (!isDragging) return;
-    
-    const currentX = e.touches[0].clientX;
-    const currentY = e.touches[0].clientY;
-    const deltaX = currentX - touchStartX.current;
-    const deltaY = currentY - touchStartY.current;
-
-    // Determine if it's horizontal or vertical swipe
-    if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      // Horizontal swipe - category change
-      e.preventDefault();
-      // Apply drag with some resistance at the edges
-      const resistance = 0.5;
-      setDragX(deltaX * resistance);
-    } else if (Math.abs(deltaY) > 10) {
-      // Vertical swipe - scroll the page
-      e.preventDefault();
-      const scrollAmount = deltaY * 2; // Amplify scroll for better feel
-      window.scrollBy(0, -scrollAmount); // Negative because touch down = scroll up
-      
-      // Update start position for continuous scrolling
-      touchStartY.current = currentY;
-      
-      // Track scroll speed for momentum
-      verticalScrollSpeed.current = -deltaY * 0.5;
-    }
-  };
-
-  const handleTouchEnd = (e: TouchEvent) => {
-    if (!currentService || !isDragging) return;
-
-    const threshold = 80; // Minimum drag distance to trigger category change
-
-    // Handle horizontal category change
-    if (Math.abs(dragX) > threshold) {
-      if (dragX > 0) {
-        // Dragged right - previous category
-        handlePrevCategory();
-      } else {
-        // Dragged left - next category
-        handleNextCategory();
-      }
-    }
-
-    // Apply momentum scrolling for vertical swipes
-    if (Math.abs(verticalScrollSpeed.current) > 2) {
-      const applyMomentum = () => {
-        if (Math.abs(verticalScrollSpeed.current) < 0.5) {
-          verticalScrollSpeed.current = 0;
-          scrollAnimationFrame.current = null;
-          return;
-        }
-        
-        window.scrollBy(0, -verticalScrollSpeed.current);
-        verticalScrollSpeed.current *= 0.95; // Decay factor
-        
-        scrollAnimationFrame.current = requestAnimationFrame(applyMomentum);
-      };
-      
-      applyMomentum();
-    }
-
-    // Reset drag state
-    setDragX(0);
-    setIsDragging(false);
-  };
-
-  // Add touch event listeners with passive: false
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    container.addEventListener('touchstart', handleTouchStart, { passive: false });
-    container.addEventListener('touchmove', handleTouchMove, { passive: false });
-    container.addEventListener('touchend', handleTouchEnd, { passive: false });
-
-    return () => {
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('touchmove', handleTouchMove);
-      container.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [isDragging, dragX, currentService, services]);
-
+  // Category navigation functions
   const handleNextCategory = () => {
     if (services.length === 0) return;
     setCurrentCategoryIndex((prev) => (prev + 1) % services.length);
@@ -155,7 +71,61 @@ export function ServicesMobile({
     setCurrentCardIndex(0); // Reset to first card of new category
   };
 
-  // Card navigation - same logic as desktop
+  // Touch handlers for category swipe
+  const handleCategoryTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    hasSwiped.current = false;
+    setIsDragging(true);
+  };
+
+  const handleCategoryTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    const deltaX = currentX - touchStartX.current;
+    const deltaY = currentY - touchStartY.current;
+
+    // Detect if horizontal swipe is dominant
+    if (Math.abs(deltaX) > 10 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Apply drag with boundaries
+      let boundedDragX = deltaX;
+      
+      // Add resistance at boundaries
+      if ((currentCategoryIndex === 0 && deltaX > 0) || (currentCategoryIndex === services.length - 1 && deltaX < 0)) {
+        boundedDragX = deltaX * 0.3;
+      }
+      
+      setDragX(boundedDragX);
+    }
+  };
+
+  const handleCategoryTouchEnd = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+
+    const threshold = 30;
+    const velocity = Math.abs(dragX);
+
+    // Check if swipe threshold or velocity is met
+    if (velocity > threshold && !hasSwiped.current) {
+      if (dragX > 0 && currentCategoryIndex > 0) {
+        handlePrevCategory();
+        hasSwiped.current = true;
+      } else if (dragX < 0 && currentCategoryIndex < services.length - 1) {
+        handleNextCategory();
+        hasSwiped.current = true;
+      }
+    }
+
+    setDragX(0);
+    setIsDragging(false);
+  };
+
+  // Card navigation - same logic as before
   const handleNextCard = () => {
     if (!currentService) return;
     if (currentCardIndex < currentService.detailCards.length - 1) {
@@ -172,17 +142,6 @@ export function ServicesMobile({
     }
   };
 
-  // Calculate drag progress for smooth height transitions
-  // dragX ranges from negative (left drag) to positive (right drag)
-  // Progress: 0 = at rest, 1 = fully dragged to threshold
-  const dragProgress = Math.min(Math.abs(dragX) / 160, 1); // 160px = 2x threshold for smoother animation
-  
-  // Left card grows when dragging right (positive dragX)
-  const leftCardScale = dragX > 0 ? 0.95 + (0.05 * (Math.min(dragX / 160, 1))) : 0.95;
-  
-  // Right card grows when dragging left (negative dragX)
-  const rightCardScale = dragX < 0 ? 0.95 + (0.05 * (Math.min(Math.abs(dragX) / 160, 1))) : 0.95;
-
   if (isLoading || !currentService) {
     return (
       <div className="relative w-full h-screen flex items-center justify-center bg-[#2c4657]">
@@ -195,7 +154,7 @@ export function ServicesMobile({
     <div className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-[#2c4657]">
       <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-between bg-[#2c4657] pt-[80px] pb-[20px]">
         {/* Background gradient */}
-        <div className="absolute h-[307px] left-1/2 top-[66px] -translate-x-1/2 w-[506px] pointer-events-none">
+        <div className="absolute h-[307px] left-1/2 top-[86px] -translate-x-1/2 w-[506px] pointer-events-none">
           <div className="absolute inset-[-19.54%_-11.86%]">
             <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 626 427">
               <g filter="url(#filter0_f_services_mobile)" id="Ellipse 14">
@@ -217,7 +176,7 @@ export function ServicesMobile({
         </div>
 
         {/* Category names carousel slider */}
-        <div className="flex-shrink-0 w-full" style={{ marginTop: '46px', height: '80px' }}>
+        <div className="flex-shrink-0 w-full" style={{ marginTop: '26px', height: '80px' }}>
           <div className="relative w-full h-full overflow-hidden">
             {/* Previous category - left edge, partially visible - clips from LEFT side */}
             <div className="absolute left-0 top-1/2 -translate-y-1/2 overflow-hidden flex items-center" style={{ maxWidth: '18%' }}>
@@ -268,7 +227,7 @@ export function ServicesMobile({
 
         {/* Card stack - swipeable horizontally for categories */}
         <div 
-          className="flex-1 w-full touch-none relative flex items-center justify-center gap-[16px]" 
+          className="flex-1 w-full relative flex items-center justify-center gap-[16px]" 
           style={{ 
             perspective: '2000px',
             minHeight: '450px',
@@ -276,9 +235,13 @@ export function ServicesMobile({
             marginTop: '10px',
             marginBottom: '40px',
             paddingLeft: '7.5%',
-            paddingRight: '7.5%'
+            paddingRight: '7.5%',
+            touchAction: 'pan-y'
           }}
-          ref={containerRef}
+          ref={categoryContainerRef}
+          onTouchStart={handleCategoryTouchStart}
+          onTouchMove={handleCategoryTouchMove}
+          onTouchEnd={handleCategoryTouchEnd}
         >
           {/* Left preview card - from previous category */}
           {prevService.detailCards.length > 0 && (() => {
@@ -289,15 +252,14 @@ export function ServicesMobile({
                   key={`left-preview-${prevService.id}`}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ 
-                    opacity: 1, 
-                    x: isDragging ? dragX : 0,
-                    scaleY: isDragging ? leftCardScale : 0.95
+                    opacity: 1,
+                    x: 0,
+                    scaleY: 0.95
                   }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ 
                     duration: 0.4,
-                    x: { type: "spring", stiffness: 500, damping: 50 },
-                    scaleY: { type: "spring", stiffness: 500, damping: 50 }
+                    ease: [0.4, 0, 0.2, 1]
                   }}
                   className="absolute bg-white overflow-clip rounded-[24px] top-1/2 -translate-y-1/2"
                   style={{ 
@@ -381,11 +343,8 @@ export function ServicesMobile({
           })()}
 
           {/* Center card stack - current category */}
-          <motion.div 
+          <div 
             className="w-[94%] max-w-[338px] relative h-full mx-auto"
-            ref={cardAreaRef}
-            animate={{ x: isDragging ? dragX : 0 }}
-            transition={{ type: "spring", stiffness: 500, damping: 50 }}
           >
             <AnimatePresence initial={false} custom={cardDirection}>
               {currentService.detailCards.map((card, index) => {
@@ -451,10 +410,10 @@ export function ServicesMobile({
                           className="absolute max-w-none" 
                           src={card.image}
                           style={{
-                          height: '56.28%',
-                          left: '-67.35%',
-                          top: '-6%',
-                          width: '168.54%'
+                            height: '56.28%',
+                            left: '-67.35%',
+                            top: '-6%',
+                            width: '168.54%'
                           }}
                         />
                       )}
@@ -550,7 +509,7 @@ export function ServicesMobile({
                 );
               })}
             </AnimatePresence>
-          </motion.div>
+          </div>
 
           {/* Right preview card - from next category */}
           {nextService.detailCards.length > 0 && (() => {
@@ -561,15 +520,14 @@ export function ServicesMobile({
                   key={`right-preview-${nextService.id}`}
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ 
-                    opacity: 1, 
-                    x: isDragging ? dragX : 0,
-                    scaleY: isDragging ? rightCardScale : 0.95
+                    opacity: 1,
+                    x: 0,
+                    scaleY: 0.95
                   }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ 
                     duration: 0.4,
-                    x: { type: "spring", stiffness: 500, damping: 50 },
-                    scaleY: { type: "spring", stiffness: 500, damping: 50 }
+                    ease: [0.4, 0, 0.2, 1]
                   }}
                   className="absolute bg-white overflow-clip rounded-[24px] top-1/2 -translate-y-1/2"
                   style={{ 
@@ -658,11 +616,25 @@ export function ServicesMobile({
           <div className="content-stretch flex gap-[24px] items-center z-50">
             {/* Left arrow - now pointing DOWN */}
             <button
-              onClick={handlePrevCard}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                handlePrevCard();
+              }}
               disabled={currentCardIndex === 0}
-              className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] shrink-0 size-[48px] relative transition-opacity duration-200 ${
+              className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] shrink-0 size-[48px] relative transition-opacity duration-200 touch-manipulation ${
                 currentCardIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
               }`}
+              style={{ 
+                cursor: 'pointer',
+                pointerEvents: 'auto',
+                zIndex: 99999,
+                position: 'relative',
+                touchAction: 'manipulation',
+                WebkitTapHighlightColor: 'transparent',
+                userSelect: 'none'
+              }}
+              aria-label="Previous card"
             >
               <div aria-hidden="true" className="absolute border-[0.75px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[24px]" />
               <div className="flex items-center justify-center relative shrink-0">
@@ -682,18 +654,32 @@ export function ServicesMobile({
               </div>
             </button>
             
-            {/* Counter - shows current card / total cards in current category (same as desktop) */}
+            {/* Counter - shows current card / total cards in current category */}
             <p className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[24px] text-[rgba(255,255,255,0.2)] text-center text-nowrap">
               {currentCardIndex + 1}/{currentService.detailCards.length}
             </p>
             
             {/* Right arrow - now pointing UP */}
             <button
-              onClick={handleNextCard}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                handleNextCard();
+              }}
               disabled={currentCardIndex === currentService.detailCards.length - 1}
-              className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] size-[48px] relative transition-opacity duration-200 ${
+              className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] size-[48px] relative transition-opacity duration-200 touch-manipulation ${
                 currentCardIndex === currentService.detailCards.length - 1 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
               }`}
+              style={{ 
+                cursor: 'pointer',
+                pointerEvents: 'auto',
+                zIndex: 99999,
+                position: 'relative',
+                touchAction: 'manipulation',
+                WebkitTapHighlightColor: 'transparent',
+                userSelect: 'none'
+              }}
+              aria-label="Next card"
             >
               <div aria-hidden="true" className="absolute border-[0.75px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[24px]" />
               <div className="flex items-center justify-center relative shrink-0">
