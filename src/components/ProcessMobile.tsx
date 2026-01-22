@@ -332,7 +332,7 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
         minHeight: "400vh",
         touchAction: 'pan-y',
         WebkitOverflowScrolling: 'touch',
-        zIndex: 100 // Higher z-index to appear above Team section
+        zIndex: 96 // Higher z-index to appear above Team section
       } as React.CSSProperties}
     >
       {/* Sticky container */}

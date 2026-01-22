@@ -162,7 +162,7 @@ export function TeamMobile({
           {/* White overlay with TEAM text cutout - reveals team content through the text */}
           {reviewsScrollProgress >= 0.76 && reviewsScrollProgress < 1.0 && (
             <div 
-              className="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none z-[96]"
+              className="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none z-[100]"
               style={{ 
                 opacity: reviewsScrollProgress >= 0.995 ? 1 - ((reviewsScrollProgress - 0.995) / 0.005) : 1,
                 touchAction: 'none',

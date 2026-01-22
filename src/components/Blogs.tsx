@@ -307,8 +307,6 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
   if (width > 1536) {
     scrl = -10;
   }
-
-  console.log('Viewport size:', width, 'x', height);
   
   // Duplicate the blogs for smooth infinite loop
   const blogData = blogs.length > 0 ? [

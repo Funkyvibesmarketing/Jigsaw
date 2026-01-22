@@ -98,9 +98,6 @@ export function Services({
   const containerRef = useRef<HTMLDivElement>(null);
   const activeCategoryRef = useRef<HTMLDivElement>(null);
   const [activeCategoryWidth, setActiveCategoryWidth] = useState(0);
-  
-  // Check if mobile for conditional slide-up behavior
-  const [isMobileView, setIsMobileView] = useState(false);
 
   const width = window.innerWidth;
   const height = window.innerHeight;
@@ -110,6 +107,9 @@ export function Services({
   }
 
   console.log('Viewport size:', width, 'x', height);
+  
+  // Check if mobile for conditional slide-up behavior
+  const [isMobileView, setIsMobileView] = useState(false);
   
   // Define currentService and related indices BEFORE using them in useEffect
   const currentService = services[currentServiceIndex];
@@ -425,11 +425,88 @@ export function Services({
                 </svg>
               </div>
 
-              <p className="absolute font-lato-regular inset-[11.45%_42.44%_69.05%_4.17%] leading-[20.479px] not-italic text-[#222526] text-[15.928px]">
-                {prevCard.type === 'normal' && (prevCard.title || prevCard.description || prevCard.text)}
-                {prevCard.type === 'bullet' && prevCard.bulletTitle}
-                {prevCard.type === 'price' && 'Pricing Information'}
-              </p>
+              {/* Content - scaled down version of main card */}
+              <div className="relative z-10 h-full">
+                {/* Type: Normal */}
+                {prevCard.type === 'normal' && (
+                  <div className="absolute content-stretch flex flex-col gap-[14px] items-start left-[23px] not-italic text-[#222526] top-[34px] w-[290px]">
+                    {prevCard.title && (
+                      <p className="font-lato-semibold leading-[20px] relative shrink-0 text-[16px] w-full">
+                        {prevCard.title}
+                      </p>
+                    )}
+                    
+                    {prevCard.description && (
+                      <p className="font-lato-regular leading-[16px] relative shrink-0 text-[11.5px] w-full">
+                        {prevCard.description}
+                      </p>
+                    )}
+
+                    {!prevCard.description && prevCard.text && (
+                      <p className="font-lato-regular leading-[16px] relative shrink-0 text-[11.5px] w-full">
+                        {prevCard.text}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Type: Bullet */}
+                {prevCard.type === 'bullet' && (
+                  <div className="absolute left-[23px] top-[34px] flex flex-col gap-[14px] items-start w-[290px] text-[#222526]">
+                    <p className="font-lato-semibold leading-[20px] not-italic text-[16px] w-full">
+                      {prevCard.bulletTitle}
+                    </p>
+                    <ul className="block font-lato-regular leading-[0] text-[11.5px] w-full list-disc pl-[17px]">
+                      {prevCard.bulletPoints?.map((point, index) => (
+                        <li key={index} className="mb-[9px] last:mb-0">
+                          <span className="leading-[16px]">{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Type: Price */}
+                {prevCard.type === 'price' && prevCard.priceData && (
+                  <div className="absolute left-[23px] top-[46px] flex flex-col gap-[23px] items-start w-[290px]">
+                    <div className="content-stretch flex flex-col gap-[14px] items-start w-full">
+                      <p className="font-lato-regular leading-[20px] not-italic text-[#222526] text-[11.5px] w-full">
+                        {prevCard.priceData.newClientLabel}
+                      </p>
+                      <div className="content-stretch flex flex-col gap-[7px] items-start w-full">
+                        <p className="font-lato-bold leading-[16px] text-[#222526] text-[23px] w-full">
+                          {prevCard.priceData.newClientPrice}
+                        </p>
+                        <p className="font-lato-regular leading-[20px] text-[11.5px] text-[rgba(34,37,38,0.5)] w-full">
+                          {prevCard.priceData.newClientDescription}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="h-0 w-full relative">
+                      <div className="absolute inset-[-1px_0_0_0]">
+                        <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 290 1">
+                          <line stroke="black" strokeOpacity="0.25" x2="290" y1="0.5" y2="0.5" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div className="content-stretch flex flex-col gap-[14px] items-start w-full">
+                      <p className="font-lato-regular leading-[20px] not-italic text-[#222526] text-[11.5px] w-full">
+                        {prevCard.priceData.existingClientLabel}
+                      </p>
+                      <div className="content-stretch flex flex-col gap-[7px] items-start w-full">
+                        <p className="font-lato-bold leading-[16px] text-[#222526] text-[23px] w-full">
+                          {prevCard.priceData.existingClientPrice}
+                        </p>
+                        <p className="font-lato-regular leading-[20px] text-[11.5px] text-[rgba(34,37,38,0.5)] w-full">
+                          {prevCard.priceData.existingClientDescription}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </motion.div>
           </AnimatePresence>
         )}
@@ -580,11 +657,88 @@ export function Services({
                 </svg>
               </div>
 
-              <p className="absolute font-lato-regular inset-[11.45%_42.44%_69.05%_4.17%] leading-[20.479px] not-italic text-[#222526] text-[15.928px]">
-                {nextCard.type === 'normal' && (nextCard.title || nextCard.description || nextCard.text)}
-                {nextCard.type === 'bullet' && nextCard.bulletTitle}
-                {nextCard.type === 'price' && 'Pricing Information'}
-              </p>
+              {/* Content - scaled down version of main card */}
+              <div className="relative z-10 h-full">
+                {/* Type: Normal */}
+                {nextCard.type === 'normal' && (
+                  <div className="absolute content-stretch flex flex-col gap-[14px] items-start left-[23px] not-italic text-[#222526] top-[34px] w-[290px]">
+                    {nextCard.title && (
+                      <p className="font-lato-semibold leading-[20px] relative shrink-0 text-[16px] w-full">
+                        {nextCard.title}
+                      </p>
+                    )}
+                    
+                    {nextCard.description && (
+                      <p className="font-lato-regular leading-[16px] relative shrink-0 text-[11.5px] w-full">
+                        {nextCard.description}
+                      </p>
+                    )}
+
+                    {!nextCard.description && nextCard.text && (
+                      <p className="font-lato-regular leading-[16px] relative shrink-0 text-[11.5px] w-full">
+                        {nextCard.text}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Type: Bullet */}
+                {nextCard.type === 'bullet' && (
+                  <div className="absolute left-[23px] top-[34px] flex flex-col gap-[14px] items-start w-[290px] text-[#222526]">
+                    <p className="font-lato-semibold leading-[20px] not-italic text-[16px] w-full">
+                      {nextCard.bulletTitle}
+                    </p>
+                    <ul className="block font-lato-regular leading-[0] text-[11.5px] w-full list-disc pl-[17px]">
+                      {nextCard.bulletPoints?.map((point, index) => (
+                        <li key={index} className="mb-[9px] last:mb-0">
+                          <span className="leading-[16px]">{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Type: Price */}
+                {nextCard.type === 'price' && nextCard.priceData && (
+                  <div className="absolute left-[23px] top-[46px] flex flex-col gap-[23px] items-start w-[290px]">
+                    <div className="content-stretch flex flex-col gap-[14px] items-start w-full">
+                      <p className="font-lato-regular leading-[20px] not-italic text-[#222526] text-[11.5px] w-full">
+                        {nextCard.priceData.newClientLabel}
+                      </p>
+                      <div className="content-stretch flex flex-col gap-[7px] items-start w-full">
+                        <p className="font-lato-bold leading-[16px] text-[#222526] text-[23px] w-full">
+                          {nextCard.priceData.newClientPrice}
+                        </p>
+                        <p className="font-lato-regular leading-[20px] text-[11.5px] text-[rgba(34,37,38,0.5)] w-full">
+                          {nextCard.priceData.newClientDescription}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="h-0 w-full relative">
+                      <div className="absolute inset-[-1px_0_0_0]">
+                        <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 290 1">
+                          <line stroke="black" strokeOpacity="0.25" x2="290" y1="0.5" y2="0.5" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div className="content-stretch flex flex-col gap-[14px] items-start w-full">
+                      <p className="font-lato-regular leading-[20px] not-italic text-[#222526] text-[11.5px] w-full">
+                        {nextCard.priceData.existingClientLabel}
+                      </p>
+                      <div className="content-stretch flex flex-col gap-[7px] items-start w-full">
+                        <p className="font-lato-bold leading-[16px] text-[#222526] text-[23px] w-full">
+                          {nextCard.priceData.existingClientPrice}
+                        </p>
+                        <p className="font-lato-regular leading-[20px] text-[11.5px] text-[rgba(34,37,38,0.5)] w-full">
+                          {nextCard.priceData.existingClientDescription}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </motion.div>
           </AnimatePresence>
         )}
