@@ -1,6 +1,6 @@
-import imgFrame1000003005 from "figma:asset/685ae034862fec8a08b70546bfa8cca049aecf63.png";
-import imgFrame1000003006 from "figma:asset/dec0fdee7a1eca13319fba5ba99e495193caffd9.png";
-import imgFrame1000003007 from "figma:asset/91c7ae1cb9500d6b5e27fc351d57788518b3a2c9.png";
+import imgFrame1000003005 from "figma:asset/685ae034862fec8a08b70546bfa8cca049aecf63.webp";
+import imgFrame1000003006 from "figma:asset/dec0fdee7a1eca13319fba5ba99e495193caffd9.webp";
+import imgFrame1000003007 from "figma:asset/91c7ae1cb9500d6b5e27fc351d57788518b3a2c9.webp";
 
 // TypeScript interface for Blog data
 export interface BlogData {
@@ -20,7 +20,7 @@ export const defaultBlogs: BlogData[] = [
     id: 1,
     title: 'Security & complaints',
     description: 'Jigsaw Financial Ltd are an appointed representative of PRIMIS Mortgage Network...',
-    image: imgFrame1000003005,
+    image: "https://jigsaw.funkyvibes.co.uk/blog-images/685ae034862fec8a08b70546bfa8cca049aecf63.webp",
     fullContent: `Jigsaw Financial Ltd are an appointed representative of PRIMIS Mortgage Network, a trading name of First Complete. First Complete is authorized and regulated by the Financial Conduct Authority.
 
 We are committed to providing a professional service to all our customers.
@@ -99,7 +99,7 @@ If you will have any difficulties with any elements of the process that is outli
     id: 2,
     title: 'Financial Planning',
     description: 'Discover comprehensive financial planning solutions tailored to your unique needs...',
-    image: imgFrame1000003006,
+    image: "https://jigsaw.funkyvibes.co.uk/blog-images/91c7ae1cb9500d6b5e27fc351d57788518b3a2c9.webp",
     fullContent: `Discover comprehensive financial planning solutions tailored to your unique needs and goals.
 
 Our expert team of financial planners work closely with you to understand your financial situation, aspirations, and challenges. We believe that every client deserves a personalized approach that takes into account their individual circumstances.
@@ -126,7 +126,7 @@ Contact us to schedule a complimentary consultation and discover how our financi
     id: 3,
     title: 'Mortgage Solutions',
     description: 'Expert mortgage advice to help you find the perfect home financing solution...',
-    image: imgFrame1000003007,
+    image: "https://jigsaw.funkyvibes.co.uk/blog-images/dec0fdee7a1eca13319fba5ba99e495193caffd9.webp",
     fullContent: `Expert mortgage advice to help you find the perfect home financing solution for your needs.
 
 Whether you're a first-time buyer, looking to remortgage, or investing in property, our mortgage specialists are here to guide you through every step of the process.
@@ -157,7 +157,7 @@ Our service is completely free for most mortgage products, as we are paid by the
     id: 4,
     title: 'Investment Strategies',
     description: 'Build and grow your wealth with our expert investment advisory services...',
-    image: imgFrame1000003005,
+    image: "https://jigsaw.funkyvibes.co.uk/blog-images/685ae034862fec8a08b70546bfa8cca049aecf63.webp",
     fullContent: `Build and grow your wealth with our expert investment advisory services tailored to your risk profile and financial goals.
 
 Our investment specialists combine market expertise with cutting-edge analysis to help you make informed investment decisions.
@@ -186,7 +186,7 @@ Contact us today to discuss how our investment services can help you achieve you
     id: 5,
     title: 'Protection & Insurance',
     description: 'Safeguard your family and assets with comprehensive protection solutions...',
-    image: imgFrame1000003006,
+    image: "https://jigsaw.funkyvibes.co.uk/blog-images/91c7ae1cb9500d6b5e27fc351d57788518b3a2c9.webp",
     fullContent: `Safeguard your family and assets with comprehensive protection solutions designed to give you peace of mind.
 
 Life Insurance
