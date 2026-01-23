@@ -289,12 +289,12 @@ export function TeamMobile({
                       >
                         {/* Member card with proper padding and responsive layout */}
                         <div className="flex flex-col h-full pl-[24px] pr-[24px] min-w-[280px]">
-                          {/* Line above name */}
-                          <div className="w-full h-[1px] bg-white opacity-30 mb-[16px]" />
+                          {/* Line above name - using RGBA for better mobile compatibility */}
+                          <div className="w-full h-[1px] bg-[rgba(255,255,255,0.3)] mb-[16px]" style={{ minHeight: '1px' }} />
 
                           {/* Member name with number on same line */}
                           <div className="flex items-baseline justify-between mb-[24px] min-h-[29px]">
-                            <p className="font-['Lato:Bold',sans-serif] leading-[normal] not-italic text-[20px] sm:text-[24px] text-white">
+                            <p className="font-['Lato:Bold',sans-serif] leading-[normal] not-italic text-[20px] sm:text-[24px] text-white" style={{ fontWeight: 700 }}>
                               {member.name}
                             </p>
                             <p className="font-['Lato:Bold',sans-serif] leading-[normal] not-italic text-[14px] sm:text-[16px] text-[rgba(255,255,255,0.5)] ml-2">
@@ -303,7 +303,7 @@ export function TeamMobile({
                           </div>
 
                           {/* Job title - responsive with proper wrapping */}
-                          <p className="font-['Lato:SemiBold',sans-serif] leading-[32px] sm:leading-[38px] not-italic text-[24px] sm:text-[32px] text-[rgba(255,255,255,0.5)] mb-[24px] sm:mb-[32px] max-w-full break-words min-h-[64px] sm:min-h-[76px]">
+                          <p className="font-['Lato:SemiBold',sans-serif] leading-[32px] sm:leading-[38px] not-italic text-[24px] sm:text-[32px] text-[rgba(255,255,255,0.5)] mb-[24px] sm:mb-[32px] max-w-full break-words min-h-[64px] sm:min-h-[76px]" style={{ fontWeight: 600 }}>
                             {member.title}
                           </p>
 

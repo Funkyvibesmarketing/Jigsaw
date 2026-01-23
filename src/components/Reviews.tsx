@@ -407,8 +407,8 @@ export function Reviews({
     [0, 0.02, 0.65, 0.75],
     [
       'rgba(41, 65, 80, 1)',      // Start: 100% opacity (full)
-      'rgba(41, 65, 80, 0.5)',    // When cards start: 50% opacity
-      'rgba(41, 65, 80, 0.5)',    // Keep at 50% while cards slide
+      'rgba(41, 65, 80, 0.2)',    // When centered: 20% opacity
+      'rgba(41, 65, 80, 0.2)',    // Keep at 20% while cards slide
       'rgba(41, 65, 80, 0)'       // Fade out at 0.75 - BEFORE TEAM starts at 0.85
     ]
   );

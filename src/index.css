@@ -2979,6 +2979,10 @@
     background-color: #ffffff1a;
   }
 
+  .bg-\[rgba\(255\,255\,255\,0\.3\)\] {
+    background-color: #ffffff4d;
+  }
+
   .bg-\[rgba\(255\,255\,255\,0\.22\)\] {
     background-color: #ffffff38;
   }
@@ -3518,6 +3522,10 @@
     font-size: 100px;
   }
 
+  .text-\[110px\] {
+    font-size: 110px;
+  }
+
   .text-\[160px\] {
     font-size: 160px;
   }
@@ -4055,14 +4063,14 @@
   }
 
   @media (hover: hover) {
-    .hover\:bg-\[\#B0B0B0\]:hover {
-      background-color: #b0b0b0;
+    .hover\:bg-\[\#26a89c\]:hover {
+      background-color: #26a89c;
     }
   }
 
   @media (hover: hover) {
-    .hover\:bg-\[\#d0dde5\]:hover {
-      background-color: #d0dde5;
+    .hover\:bg-\[\#B0B0B0\]:hover {
+      background-color: #b0b0b0;
     }
   }
 

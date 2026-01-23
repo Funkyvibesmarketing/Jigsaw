@@ -238,7 +238,11 @@ function BlogPopupMobile({
           border-radius: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #e4ecf1;
+          background: #2ec4b6;
+          border-radius: 16px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #26a89c;
           border-radius: 16px;
         }
       `}</style>

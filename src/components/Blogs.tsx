@@ -248,7 +248,7 @@ function BlogPopup({
         <div ref={scrollbarTrackRef} className="h-full relative shrink-0 w-[8px]">
           <div className="absolute bg-white h-[440px] left-[3px] rounded-[8px] top-0 w-[2px]" />
           <div 
-            className="absolute bg-[#e4ecf1] h-[20px] left-0 rounded-[16px] w-[8px] cursor-pointer hover:bg-[#d0dde5] transition-colors" 
+            className="absolute bg-[#2ec4b6] h-[20px] left-0 rounded-[16px] w-[8px] cursor-pointer hover:bg-[#26a89c] transition-colors" 
             style={{ top: `${thumbTop}px` }}
             onMouseDown={handleScrollbarMouseDown}
           />
@@ -422,7 +422,7 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
           className="absolute left-[calc(50%+0.5px)] bottom-0 translate-x-[-50%] z-30"
           style={{ opacity: titleOpacity, y: titleY }}
         >
-          <p className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[#222526] text-[100px] text-center text-nowrap tracking-[40px] whitespace-pre">
+          <p className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[#222526] text-[110px] text-center text-nowrap tracking-[40px] whitespace-pre">
             BLOGS
           </p>
         </motion.div>
