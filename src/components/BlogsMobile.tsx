@@ -123,6 +123,42 @@ function BlogPopupMobile({
     setScrollPercentage(percentage);
   };
 
+  // Prevent scroll propagation to main page
+  const handleWheel = (e: React.WheelEvent) => {
+    e.stopPropagation();
+    
+    if (!contentRef.current) return;
+    
+    const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
+    const isAtTop = scrollTop === 0;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+    
+    // Prevent scroll if we're at the edge and trying to scroll further in that direction
+    if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
+      e.preventDefault();
+    }
+  };
+
+  // Prevent touch scroll propagation to main page
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation();
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.stopPropagation();
+    
+    if (!contentRef.current) return;
+    
+    const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
+    const isAtTop = scrollTop === 0;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+    
+    // Allow touch scroll within content bounds
+    if (!isAtTop && !isAtBottom) {
+      return;
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-[16px]">
       {/* Backdrop */}
@@ -155,6 +191,9 @@ function BlogPopupMobile({
           <div 
             ref={contentRef}
             onScroll={handleContentScroll}
+            onWheel={handleWheel}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
             className="flex-1 overflow-y-auto w-full pr-[8px] custom-scrollbar min-h-0" 
           >
             <div className="font-['Lato:Regular',sans-serif] leading-[20px] not-italic text-[14px] text-[rgba(44,70,87,0.8)] tracking-[0.2px] whitespace-pre-line pb-[20px]">
@@ -166,9 +205,10 @@ function BlogPopupMobile({
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute right-[20px] top-[20px] size-[32px] cursor-pointer hover:opacity-70 transition-opacity flex items-center justify-center"
+          className="absolute right-[16px] top-[16px] size-[40px] cursor-pointer hover:opacity-70 transition-opacity flex items-center justify-center bg-white rounded-full shadow-md z-10"
+          aria-label="Close"
         >
-          <X className="size-[24px] text-[#2c4657]" />
+          <X className="size-[20px] text-[#2c4657] stroke-[2.5]" />
         </button>
       </motion.div>
 

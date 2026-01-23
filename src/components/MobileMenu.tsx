@@ -404,7 +404,7 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
     // Special handling for Service Us section
     if (sectionId === 'ServiceSection') {
       window.scrollTo({ 
-        top: window.innerHeight * 9.5, // Same position as Services
+        top: window.innerHeight * 6.2, // Same position as Services
         behavior: 'smooth' 
       });
       setIsMobileMenuOpen(false);
@@ -415,7 +415,7 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
     // Special handling for Team section
     if (sectionId === 'TeamSection') {
       window.scrollTo({ 
-        top: window.innerHeight * 13.6, // Same position as Services
+        top: window.innerHeight * 12, // Same position as Services
         behavior: 'smooth' 
       });
       setIsMobileMenuOpen(false);
@@ -425,7 +425,7 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
     // Special handling for Process Us section
     if (sectionId === 'ProcessSection') {
       window.scrollTo({ 
-        top: window.innerHeight * 15.6, // Same position as Services
+        top: window.innerHeight * 13.8, // Same position as Services
         behavior: 'smooth' 
       });
       setIsMobileMenuOpen(false);
@@ -435,7 +435,7 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
     // Special handling for Blogs Us section
     if (sectionId === 'BlogsSection') {
       window.scrollTo({ 
-        top: window.innerHeight * 19.7, // Same position as Services
+        top: window.innerHeight * 18, // Same position as Services
         behavior: 'smooth' 
       });
       setIsMobileMenuOpen(false);

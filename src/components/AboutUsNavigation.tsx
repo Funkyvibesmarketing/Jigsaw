@@ -34,12 +34,12 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
       case 'About us':
         // About Us section starts after Hero (100vh splash + hero height)
         // Hero is typically 800vh tall, so About Us starts around 800vh
-        targetScrollY = viewportHeight * 3.6; // Start of About Us
+        targetScrollY = viewportHeight * 3.2; // Start of About Us
         break;
       case 'Services':
         // Services appears within About Us section around 50% through
         // About Us is 600vh tall, Services appears around 300vh into it
-        targetScrollY = viewportHeight * 4.5; // Approximately middle of About Us where Services appears
+        targetScrollY = viewportHeight * 5.5; // Approximately middle of About Us where Services appears
         break;
       case 'Reviews':
         // Reviews section starts after About Us completes
@@ -50,12 +50,12 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
       case 'Our team':
         // Team section starts after Reviews completes
         // Reviews is 400vh tall, so Team starts at 608vh + 100vh + 400vh
-        targetScrollY = viewportHeight * 11; // Start of Team section
+        targetScrollY = viewportHeight * 10; // Start of Team section
         break;
       case 'Our process':
         // Process section starts after Team completes
         // Team section length varies, but Process typically starts here
-        targetScrollY = viewportHeight * 12.4; // Start of Process section
+        targetScrollY = viewportHeight * 11.3; // Start of Process section
         break;
       case 'Blogs':
         // Blogs section starts after Process completes

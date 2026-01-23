@@ -350,8 +350,8 @@ export function Team({
       </div>
 
       {/* White overlay with TEAM text cutout - reveals team content through the text */}
-      {/* Mask starts sliding in at 0.82, then zooms from 0.93+, hides at 0.99 */}
-      {reviewsScrollProgress && reviewsScrollProgress >= 0.82 && reviewsScrollProgress < 0.99 && (
+      {/* Mask starts sliding in at 0.82, then zooms from 0.90+, stays visible longer */}
+      {reviewsScrollProgress && reviewsScrollProgress >= 0.82 && reviewsScrollProgress < 1.0 && (
         <div 
           className="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none z-[96]"
           style={{ 
@@ -368,9 +368,9 @@ export function Team({
                 {/* Black text - creates the cutout (hole) with slide + zoom animation */}
                 <text
                   x={(() => {
-                    // Slide from right: starts at 150% at 0.82, center (50%) at 0.93
-                    if (reviewsScrollProgress < 0.93) {
-                      const slideProgress = Math.min((reviewsScrollProgress - 0.82) / (0.93 - 0.82), 1);
+                    // Slide from right: starts at 150% at 0.82, center (50%) at 0.90 (earlier)
+                    if (reviewsScrollProgress < 0.90) {
+                      const slideProgress = Math.min((reviewsScrollProgress - 0.82) / (0.90 - 0.82), 1);
                       return `${150 - (100 * slideProgress)}%`;
                     }
                     return "50%";
@@ -380,82 +380,31 @@ export function Team({
                   dominantBaseline="middle"
                   fill="black"
                   fontSize={(() => {
-                    // Zoom animation - slower, more gradual progression
-                    // Scale from 2 to 150 across scroll progress 0.82 to 1.0 (increased initial size)
-                    if (!reviewsScrollProgress || reviewsScrollProgress < 0.82) return 0;
-                    if (reviewsScrollProgress >= 1.0) return 232 * 150; // Massive zoom at the end
+                    // Zoom animation - MUCH SLOWER: greatly extended scroll range
+                    // Base size is 232px, scale from 2 to 12 over EXTENDED scroll range
+                    const baseSize = 232;
+                    if (!reviewsScrollProgress || reviewsScrollProgress < 0.90) return baseSize * 2; // Hold at 2x during slide-in
+                    if (reviewsScrollProgress >= 0.999) return baseSize * 12; // Reduced max zoom from 15 to 12
                     
-                    // Scale progression: [2, 2, 2, 2.5, 3.5, 6, 12, 35, 150]
-                    // Scroll breakpoints: [0.82, 0.93, 0.95, 0.96, 0.97, 0.98, 0.985, 0.99, 1.0]
-                    let scale;
-                    if (reviewsScrollProgress < 0.93) {
-                      scale = 2; // Larger during slide-in
-                    } else if (reviewsScrollProgress < 0.95) {
-                      scale = 2; // Hold at 2
-                    } else if (reviewsScrollProgress < 0.96) {
-                      // 0.95 to 0.96: scale 2 to 2.5
-                      const p = (reviewsScrollProgress - 0.95) / 0.01;
-                      scale = 2 + (2.5 - 2) * p;
-                    } else if (reviewsScrollProgress < 0.97) {
-                      // 0.96 to 0.97: scale 2.5 to 3.5
-                      const p = (reviewsScrollProgress - 0.96) / 0.01;
-                      scale = 2.5 + (3.5 - 2.5) * p;
-                    } else if (reviewsScrollProgress < 0.98) {
-                      // 0.97 to 0.98: scale 3.5 to 6
-                      const p = (reviewsScrollProgress - 0.97) / 0.01;
-                      scale = 3.5 + (6 - 3.5) * p;
-                    } else if (reviewsScrollProgress < 0.985) {
-                      // 0.98 to 0.985: scale 6 to 12
-                      const p = (reviewsScrollProgress - 0.98) / 0.005;
-                      scale = 6 + (12 - 6) * p;
-                    } else if (reviewsScrollProgress < 0.99) {
-                      // 0.985 to 0.99: scale 12 to 35
-                      const p = (reviewsScrollProgress - 0.985) / 0.005;
-                      scale = 12 + (35 - 12) * p;
-                    } else {
-                      // 0.99 to 1.0: scale 35 to 150 (fastest at the end)
-                      const p = (reviewsScrollProgress - 0.99) / 0.01;
-                      scale = 35 + (150 - 35) * p;
-                    }
-                    
-                    return 232 * scale; // Base size 232px * scale
+                    // Linear progression from 0.90 to 0.999 (0.099 scroll range - even slower)
+                    const progress = (reviewsScrollProgress - 0.90) / (0.999 - 0.90);
+                    const scale = 2 + (10 * progress); // 2x to 12x scale (linear)
+                    return baseSize * scale;
                   })()}
                   fontFamily="Lato, sans-serif"
                   fontWeight="700"
                   letterSpacing={(() => {
                     // Scale letter spacing proportionally to fontSize
-                    if (!reviewsScrollProgress || reviewsScrollProgress < 0.82) return "0";
                     const baseFontSize = 232;
+                    const baseLetterSpacing = 48;
                     const fontSize = (() => {
-                      if (reviewsScrollProgress >= 1.0) return 232 * 150;
-                      let scale;
-                      if (reviewsScrollProgress < 0.93) {
-                        scale = 2;
-                      } else if (reviewsScrollProgress < 0.95) {
-                        scale = 2;
-                      } else if (reviewsScrollProgress < 0.96) {
-                        const p = (reviewsScrollProgress - 0.95) / 0.01;
-                        scale = 2 + (2.5 - 2) * p;
-                      } else if (reviewsScrollProgress < 0.97) {
-                        const p = (reviewsScrollProgress - 0.96) / 0.01;
-                        scale = 2.5 + (3.5 - 2.5) * p;
-                      } else if (reviewsScrollProgress < 0.98) {
-                        const p = (reviewsScrollProgress - 0.97) / 0.01;
-                        scale = 3.5 + (6 - 3.5) * p;
-                      } else if (reviewsScrollProgress < 0.985) {
-                        const p = (reviewsScrollProgress - 0.98) / 0.005;
-                        scale = 6 + (12 - 6) * p;
-                      } else if (reviewsScrollProgress < 0.99) {
-                        const p = (reviewsScrollProgress - 0.985) / 0.005;
-                        scale = 12 + (35 - 12) * p;
-                      } else {
-                        const p = (reviewsScrollProgress - 0.99) / 0.01;
-                        scale = 35 + (150 - 35) * p;
-                      }
+                      if (!reviewsScrollProgress || reviewsScrollProgress < 0.90) return baseFontSize * 2;
+                      if (reviewsScrollProgress >= 0.999) return baseFontSize * 12;
+                      const progress = (reviewsScrollProgress - 0.90) / (0.999 - 0.90);
+                      const scale = 2 + (10 * progress);
                       return baseFontSize * scale;
                     })();
-                    // Scale letter spacing: base 48px
-                    return String((48 * fontSize) / baseFontSize);
+                    return String((baseLetterSpacing * fontSize) / baseFontSize);
                   })()}
                 >
                   TEAM

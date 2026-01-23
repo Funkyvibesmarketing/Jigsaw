@@ -65,14 +65,13 @@ function CardArrowButton({ direction, onClick, disabled }: { direction: 'left' |
         disabled ? 'opacity-30 cursor-not-allowed' : 'hover:border-[#2ec4b6] hover:bg-[rgba(46,196,182,0.1)]'
       }`}
     >
-      <div className={`flex-none ${direction === 'left' ? 'rotate-[0deg] scale-y-[-100%]' : ''}`}>
-        <div className="overflow-clip relative size-[40px]">
-          <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
-            <div className="flex-none h-[17.286px] rotate-[270deg] w-[28.542px]">
-              <div className="relative size-full">
-                <div className="absolute inset-[-2.89%_-1.75%]">
-                  <img alt="" className="block max-w-none size-full" height="18.286" src={imgVector3} width="29.542" />
-                </div>
+      {/* Left arrow points UP, Right arrow points DOWN */}
+      <div className="overflow-clip relative size-[40px]">
+        <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
+          <div className={`flex-none h-[17.286px] w-[28.542px] ${direction === 'left' ? 'rotate-[-90deg]' : 'rotate-[90deg]'}`}>
+            <div className="relative size-full">
+              <div className="absolute inset-[-2.89%_-1.75%]">
+                <img alt="" className="block max-w-none size-full" height="18.286" src={imgVector3} width="29.542" />
               </div>
             </div>
           </div>
@@ -169,18 +168,18 @@ export function Services({
 
   // Card navigation (bottom arrows)
   const handleCardPrev = () => {
-    // Left button goes backward (decrement index)
+    // Right button (DOWN arrow) - goes backward, card slides DOWN
     if (detailCardIndex > 0) {
-      setDirection('right'); // Cards slide left to right (coming from left)
+      setDirection('right'); // Cards slide DOWN
       setDetailCardIndex(prev => prev - 1);
       setNavigationSource('card');
     }
   };
 
   const handleCardNext = () => {
-    // Right button advances forward (increment index)
+    // Left button (UP arrow) - advances forward, card slides UP
     if (detailCardIndex < currentService.detailCards.length - 1) {
-      setDirection('left'); // Cards slide right to left (coming from right)
+      setDirection('left'); // Cards slide UP
       setDetailCardIndex(prev => prev + 1);
       setNavigationSource('card');
     }
@@ -339,7 +338,7 @@ export function Services({
       <div className="hidden md:block absolute content-stretch left-1/2 top-[50px] translate-x-[-50%] w-[80vw] max-w-[1800px] z-50">
         <div className="relative w-full h-[80px]">
           {/* Left side: Button + Category name - FIXED position */}
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center gap-4 max-w-[20%]">
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center gap-4 max-w-[15%]">
             {/* Left category navigation button */}
             <div className="shrink-0 size-[64px]">
               <CategoryArrowButton direction="left" onClick={handleCategoryPrev} />
@@ -355,13 +354,13 @@ export function Services({
 
           {/* Center category name - active - absolutely centered */}
           <div ref={activeCategoryRef} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-16">
-            <p className="font-lato-regular leading-[normal] not-italic text-[40px] text-white text-center text-nowrap pointer-events-none">
+            <p className="font-lato-regular leading-[normal] not-italic text-[60px] text-white text-center text-nowrap pointer-events-none">
               {currentService.title}
             </p>
           </div>
 
           {/* Right side: Category name + Button - FIXED position */}
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-4 max-w-[20%]">
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-4 max-w-[15%]">
             {/* Right category name - truncate from RIGHT side without ellipsis */}
             <p className="font-lato-regular leading-[normal] not-italic text-[32px] text-[rgba(255,255,255,0.4)] text-right text-nowrap pointer-events-none overflow-hidden">
               {services[nextServiceIndex].title}
@@ -748,16 +747,16 @@ export function Services({
       <div className="hidden md:flex absolute content-stretch gap-[32px] items-center left-1/2 -translate-x-1/2 bottom-[15px]">
         <CardArrowButton 
           direction="left" 
-          onClick={handleCardPrev} 
-          disabled={detailCardIndex === 0}
+          onClick={handleCardNext} 
+          disabled={detailCardIndex === currentService.detailCards.length - 1}
         />
         <p className="font-lato-regular leading-[normal] not-italic relative shrink-0 text-[32px] text-[rgba(255,255,255,0.2)] text-center text-nowrap">
           {detailCardIndex + 1}/{currentService.detailCards.length}
         </p>
         <CardArrowButton 
           direction="right" 
-          onClick={handleCardNext} 
-          disabled={detailCardIndex === currentService.detailCards.length - 1}
+          onClick={handleCardPrev} 
+          disabled={detailCardIndex === 0}
         />
       </div>
 
@@ -826,7 +825,7 @@ export function Services({
           >
             <div aria-hidden="true" className="absolute border-[0.75px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[24px]" />
             <div className="flex items-center justify-center relative shrink-0">
-              <div className="flex-none rotate-[90deg] scale-y-[-100%]">
+              <div className="flex-none rotate-[180deg] scale-y-[-100%]">
                 <div className="overflow-clip relative size-[30px]">
                   <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
                     <div className="flex-none h-[12.964px] rotate-[359.849deg] w-[21.406px]">

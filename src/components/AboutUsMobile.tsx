@@ -223,54 +223,62 @@ export function AboutUsMobile({ onScrollProgress }: {
     return () => unsubscribe();
   }, [scrollYProgress]); // Remove onScrollProgress from dependencies
 
-  // About Us content - slides up with same speed as SERVICES
-  const middleTextY = useTransform(scrollYProgress, [0, 0.05, 0.35], [0, 0, -400]);
-  const middleTextOpacity = useTransform(scrollYProgress, [0, 0.25, 0.35], [1, 1, 0]);
+  // About Us content - slides up to center, PAUSES (stays perfectly still), then continues sliding
+  // 0-0.08: Slides up from below to center
+  // 0.08-0.28: PAUSE - stays perfectly centered (no movement at all)
+  // 0.28-0.45: Continues sliding up and fades out
+  const middleTextY = useTransform(scrollYProgress, [0, 0.08, 0.28, 0.45], [100, 0, 0, -400]);
+  const middleTextOpacity = useTransform(scrollYProgress, [0, 0.35, 0.45], [1, 1, 0]);
   
-  // Middle text blur effect - stays clear while moving, only blurs near the end
-  const middleTextBlur = useTransform(scrollYProgress, [0, 0.30, 0.33, 0.35], ['blur(0px)', 'blur(0px)', 'blur(4px)', 'blur(8px)']);
+  // Middle text blur effect - stays clear while paused, only blurs near the end
+  const middleTextBlur = useTransform(scrollYProgress, [0, 0.40, 0.43, 0.45], ['blur(0px)', 'blur(0px)', 'blur(4px)', 'blur(8px)']);
   
-  // SERVICES moves at the SAME SPEED and SAME TIME as About Us - maintaining consistent gap
-  // Gap is approximately 500px (About Us starts at 0, SERVICES starts at 500)
-  const servicesY = useTransform(scrollYProgress, [0, 0.05, 0.35], [500, 500, 0]);
+  // SERVICES appears below and waits during the pause, then slides up
+  // 0-0.28: Stays below (during About Us pause)
+  // 0.28-0.45: Slides up to center
+  const servicesY = useTransform(scrollYProgress, [0, 0.08, 0.28, 0.45], [500, 500, 500, 0]);
   
-  // Scale up after reaching middle - MUCH MORE zoom to fill screen - STARTS SOONER
-  const servicesScale = useTransform(scrollYProgress, [0.35, 0.55], [1, 25]);
+  // Scale up after reaching middle - MUCH MORE zoom to fill screen
+  const servicesScale = useTransform(scrollYProgress, [0.45, 0.65], [1, 25]);
   
   // Color transitions - opacity increases quickly as it slides up
   const servicesColor = useTransform(
     scrollYProgress, 
-    [0, 0.15, 0.20], 
+    [0, 0.25, 0.35], 
     ['rgba(41, 65, 80, 0.2)', 'rgba(41, 65, 80, 0.6)', 'rgba(41, 65, 80, 1)']
   );
   
   // Blur effect - clears up quickly as it slides up
-  const servicesBlur = useTransform(scrollYProgress, [0, 0.15, 0.20], ['blur(6px)', 'blur(2px)', 'blur(0px)']);
+  const servicesBlur = useTransform(scrollYProgress, [0, 0.25, 0.35], ['blur(6px)', 'blur(2px)', 'blur(0px)']);
 
-  // SERVICES text opacity - fades out as zoom completes - FASTER
-  const servicesTextOpacity = useTransform(scrollYProgress, [0, 0.48, 0.52], [1, 1, 0]);
+  // SERVICES text opacity - fades out as zoom completes
+  const servicesTextOpacity = useTransform(scrollYProgress, [0, 0.58, 0.62], [1, 1, 0]);
 
-  // Full blue screen overlay - appears AFTER masking zoom completes - FASTER
-  const blueScreenOpacity = useTransform(scrollYProgress, [0.60, 0.64], [0, 1]);
+  // Full blue screen overlay - appears AFTER masking zoom completes
+  const blueScreenOpacity = useTransform(scrollYProgress, [0.70, 0.74], [0, 1]);
 
   // Mask mode - false = solid text, true = cutout revealing background
-  // Transitions when zoom starts - STARTS SOONER
-  const useMaskCutout = scrollProgress >= 0.48;
+  // Transitions when zoom starts - adjusted for new timeline
+  const useMaskCutout = scrollProgress >= 0.58;
 
   // Solid text opacity - visible until mask cutout starts, quick but smooth fade
-  const solidTextOpacity = scrollProgress < 0.46 ? 1 : 
-                          scrollProgress < 0.48 ? 1 - ((scrollProgress - 0.46) / 0.02) : 0;
+  const solidTextOpacity = scrollProgress < 0.56 ? 1 : 
+                          scrollProgress < 0.58 ? 1 - ((scrollProgress - 0.56) / 0.02) : 0;
 
-  // Services section opacity - fades in ONLY when masking starts - STARTS SOONER
-  const servicesSectionOpacity = useTransform(scrollYProgress, [0.48, 0.51], [0, 1]);
+  // Services section opacity - fades in ONLY when masking starts
+  const servicesSectionOpacity = useTransform(scrollYProgress, [0.58, 0.61], [0, 1]);
 
   return (
     <div ref={containerRef} className="relative w-full bg-white" style={{ minHeight: '400vh' }}>
-      {/* About Us Content - Sticky container */}
+      {/* About Us Content - Sticky container with enhanced mobile sticky behavior */}
       <div 
-        className="relative flex items-center justify-center min-h-screen sticky top-0 overflow-hidden" 
+        className="sticky top-0 flex items-center justify-center min-h-screen overflow-hidden will-change-transform" 
         style={{ 
-          backgroundColor: scrollProgress >= 0.80 ? '#2c4657' : 'white' 
+          backgroundColor: scrollProgress >= 0.85 ? '#2c4657' : 'white',
+          zIndex: 10,
+          WebkitBackfaceVisibility: 'hidden',
+          backfaceVisibility: 'hidden',
+          transform: 'translateZ(0)' // Force GPU acceleration for smooth sticky behavior
         }}
       >
         
@@ -286,7 +294,7 @@ export function AboutUsMobile({ onScrollProgress }: {
         >
           {/* "ABOUT US" Title - Large centered text at top, slides with carousel */}
           <p 
-            className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[50px] text-[rgba(44,70,87,0.2)] text-center uppercase mb-[40px] whitespace-nowrap pointer-events-none select-none"
+            className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[50px] text-[rgba(44,70,87,0.2)] text-center uppercase mb-[60px] whitespace-nowrap pointer-events-none select-none"
             style={{ 
               letterSpacing: '0.025em'
             }}

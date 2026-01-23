@@ -92,15 +92,8 @@ export function ServicesMobile({
       e.preventDefault();
       e.stopPropagation();
       
-      // Apply drag with boundaries
-      let boundedDragX = deltaX;
-      
-      // Add resistance at boundaries
-      if ((currentCategoryIndex === 0 && deltaX > 0) || (currentCategoryIndex === services.length - 1 && deltaX < 0)) {
-        boundedDragX = deltaX * 0.3;
-      }
-      
-      setDragX(boundedDragX);
+      // Apply drag without boundaries - circular navigation
+      setDragX(deltaX);
     }
   };
 
@@ -110,12 +103,14 @@ export function ServicesMobile({
     const threshold = 30;
     const velocity = Math.abs(dragX);
 
-    // Check if swipe threshold or velocity is met
+    // Check if swipe threshold or velocity is met - circular navigation
     if (velocity > threshold && !hasSwiped.current) {
-      if (dragX > 0 && currentCategoryIndex > 0) {
+      if (dragX > 0) {
+        // Swipe right - go to previous category (wraps around)
         handlePrevCategory();
         hasSwiped.current = true;
-      } else if (dragX < 0 && currentCategoryIndex < services.length - 1) {
+      } else if (dragX < 0) {
+        // Swipe left - go to next category (wraps around)
         handleNextCategory();
         hasSwiped.current = true;
       }
@@ -127,6 +122,7 @@ export function ServicesMobile({
 
   // Card navigation - same logic as before
   const handleNextCard = () => {
+    // Right button (UP arrow) - advances forward, card slides UP
     if (!currentService) return;
     if (currentCardIndex < currentService.detailCards.length - 1) {
       setCardDirection(1);
@@ -135,6 +131,7 @@ export function ServicesMobile({
   };
 
   const handlePrevCard = () => {
+    // Left button (DOWN arrow) - goes backward, card slides DOWN
     if (!currentService) return;
     if (currentCardIndex > 0) {
       setCardDirection(-1);
@@ -614,16 +611,16 @@ export function ServicesMobile({
         {/* Bottom navigation - changes cards within category */}
         <div className="flex-shrink-0 w-full flex justify-center items-center pb-[80px]">
           <div className="content-stretch flex gap-[24px] items-center z-50">
-            {/* Left arrow - now pointing DOWN */}
+            {/* Left arrow - pointing UP - advances forward */}
             <button
               onPointerDown={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                handlePrevCard();
+                handleNextCard();
               }}
-              disabled={currentCardIndex === 0}
+              disabled={currentCardIndex === currentService.detailCards.length - 1}
               className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] shrink-0 size-[48px] relative transition-opacity duration-200 touch-manipulation ${
-                currentCardIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
+                currentCardIndex === currentService.detailCards.length - 1 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
               }`}
               style={{ 
                 cursor: 'pointer',
@@ -634,11 +631,11 @@ export function ServicesMobile({
                 WebkitTapHighlightColor: 'transparent',
                 userSelect: 'none'
               }}
-              aria-label="Previous card"
+              aria-label="Next card"
             >
               <div aria-hidden="true" className="absolute border-[0.75px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[24px]" />
               <div className="flex items-center justify-center relative shrink-0">
-                <div className="flex-none rotate-[90deg]">
+                <div className="flex-none rotate-[-90deg]">
                   <div className="overflow-clip relative size-[30px]">
                     <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
                       <div className="flex-none h-[12.964px] rotate-[0deg] w-[21.406px]">
@@ -659,16 +656,16 @@ export function ServicesMobile({
               {currentCardIndex + 1}/{currentService.detailCards.length}
             </p>
             
-            {/* Right arrow - now pointing UP */}
+            {/* Right arrow - pointing DOWN - goes backward */}
             <button
               onPointerDown={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                handleNextCard();
+                handlePrevCard();
               }}
-              disabled={currentCardIndex === currentService.detailCards.length - 1}
+              disabled={currentCardIndex === 0}
               className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] size-[48px] relative transition-opacity duration-200 touch-manipulation ${
-                currentCardIndex === currentService.detailCards.length - 1 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
+                currentCardIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
               }`}
               style={{ 
                 cursor: 'pointer',
@@ -679,11 +676,11 @@ export function ServicesMobile({
                 WebkitTapHighlightColor: 'transparent',
                 userSelect: 'none'
               }}
-              aria-label="Next card"
+              aria-label="Previous card"
             >
               <div aria-hidden="true" className="absolute border-[0.75px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[24px]" />
               <div className="flex items-center justify-center relative shrink-0">
-                <div className="flex-none rotate-[-90deg]">
+                <div className="flex-none rotate-[90deg]">
                   <div className="overflow-clip relative size-[30px]">
                     <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
                       <div className="flex-none h-[12.964px] rotate-[0deg] w-[21.406px]">

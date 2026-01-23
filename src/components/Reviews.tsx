@@ -813,7 +813,7 @@ export function Reviews({
       className="relative w-full bg-white" 
       style={{ 
         minHeight: isMobile ? '500vh' : '400vh',  // INCREASED mobile height from 250vh to 500vh for much longer scroll
-        marginTop: '100vh',
+        marginTop: '0vh',
         pointerEvents: (aboutUsScrollProgress && aboutUsScrollProgress >= 0.72 && aboutUsScrollProgress < 0.98) || (processScrollProgress && processScrollProgress >= 0.05) ? 'none' : 'auto',
         opacity: reviewsSectionOpacity,
         zIndex: (scrollProgress >= 0.82 || reviewsSectionOpacity <= 0.5) ? 50 : 96,

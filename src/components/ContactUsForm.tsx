@@ -515,7 +515,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
 
           {/* Title */}
           {!isSubmitted && (
-            <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 not-italic text-[48px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-230px)] translate-x-[-50%] whitespace-pre px-4">Get in Touch</p>
+            <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 not-italic text-[28px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-230px)] translate-x-[-50%] whitespace-pre px-4 tracking-[24px]">REACH US</p>
           )}
 
           {!isSubmitted && (
@@ -779,13 +779,13 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
 
           {/* Main Title */}
           {!isSubmitted && (
-            <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 not-italic text-[72px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[40px] translate-x-[-50%] whitespace-pre">Get in Touch</p>
+            <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 not-italic text-[100px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[40px] translate-x-[-50%] whitespace-pre tracking-[48px]">REACH US</p>
           )}
 
           {!isSubmitted && (
             <>
               {/* Step Indicator */}
-              <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+440px)] not-italic text-[48px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-130px)] translate-x-[-50%] whitespace-pre">{currentStep}/4</p>
+              <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+440px)] not-italic text-[72px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-130px)] translate-x-[-50%] whitespace-pre">{currentStep}/4</p>
 
               {/* Form Field */}
               {renderFormField()}

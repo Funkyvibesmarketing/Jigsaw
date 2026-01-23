@@ -139,6 +139,22 @@ function BlogPopup({
     setIsDragging(true);
   };
 
+  // Prevent scroll propagation to main page
+  const handleWheel = (e: React.WheelEvent) => {
+    e.stopPropagation();
+    
+    if (!contentRef.current) return;
+    
+    const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
+    const isAtTop = scrollTop === 0;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+    
+    // Prevent scroll if we're at the edge and trying to scroll further in that direction
+    if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
+      e.preventDefault();
+    }
+  };
+
   useEffect(() => {
     if (!isDragging) return;
 
@@ -197,7 +213,7 @@ function BlogPopup({
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
         transition={{ duration: 0.3 }}
-        className="relative z-10 bg-gradient-to-b from-[rgba(255,255,255,1)] to-[rgba(228,236,241,1)] to-[80.385%] box-border content-stretch flex gap-[40px] h-[520px] items-start overflow-clip p-[40px] rounded-[12px] shrink-0 w-[1280px] max-w-[90vw]"
+        className="relative z-10 bg-gradient-to-b from-[rgba(255,255,255,1)] to-[rgba(228,236,241,1)] to-[80.385%] box-border content-stretch flex gap-[40px] h-[520px] items-start overflow-hidden p-[40px] rounded-[12px] shrink-0 w-[1280px] max-w-[90vw]"
         style={{ boxShadow: '0 -10px 40px rgba(0, 0, 0, 0.15), 0 10px 40px rgba(0, 0, 0, 0.15), 0 0 80px rgba(0, 0, 0, 0.1)' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -207,7 +223,7 @@ function BlogPopup({
         </div>
 
         {/* Blog Content */}
-        <div className="basis-0 content-stretch flex flex-col gap-[24px] grow items-start min-h-px min-w-px relative shrink-0">
+        <div className="basis-0 content-stretch flex flex-col gap-[24px] grow items-start min-h-0 min-w-px relative shrink-0">
           <p className="font-['Lato:SemiBold',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[#2c4657] text-[32px] w-[min-content]">
             {blog.title}
           </p>
@@ -216,8 +232,9 @@ function BlogPopup({
           <div 
             ref={contentRef}
             onScroll={handleContentScroll}
-            className="flex-1 overflow-y-auto relative w-full pr-[16px] hide-scrollbar" 
-            style={{ maxHeight: '360px' }}
+            onWheel={handleWheel}
+            className="overflow-y-scroll relative w-full pr-[16px] hide-scrollbar" 
+            style={{ height: '360px', minHeight: '360px', maxHeight: '360px' }}
           >
             <div className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[16px] text-[rgba(44,70,87,0.8)] tracking-[0.2px] whitespace-pre-line pb-[20px]">
               {blog.fullContent || blog.description}

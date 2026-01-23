@@ -97,7 +97,7 @@ export default function ContactUs({ onScrollProgress }: ContactUsProps) {
             {/* Main Content Container */}
             <div className="flex flex-col items-center justify-center w-full max-w-[382px]">
               {/* Title */}
-              <p className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[64px] text-[rgba(44,70,87,0.4)] text-center text-nowrap mb-[40px] whitespace-pre">Reach us at</p>
+              <p className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[28px] text-[rgba(44,70,87,0.4)] text-nowrap mb-[40px] tracking-[15px] w-full text-center ">CONTACT US</p>
 
               {/* Contact Cards */}
               <div className="content-stretch flex flex-col gap-[32px] items-start w-full">
@@ -207,7 +207,7 @@ export default function ContactUs({ onScrollProgress }: ContactUsProps) {
 
 
           {/* Main Title */}
-          <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+0.5px)] not-italic text-[120px] text-[rgba(44,70,87,0.4)] text-center text-nowrap top-[calc(50%-218px)] translate-x-[-50%] whitespace-pre">Reach us at</p>
+          <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+0.5px)] not-italic text-[100px] text-[rgba(44,70,87,0.4)] text-center text-nowrap top-[calc(50%-218px)] translate-x-[-50%] whitespace-pre tracking-[48px]">CONTACT US</p>
 
           {/* Info Cards Container */}
           <div className="absolute content-stretch flex gap-[32px] items-start left-[calc(50%+34.5px)] top-[calc(50%+96px)] translate-x-[-50%] translate-y-[-50%] w-[1293px]">
@@ -215,8 +215,9 @@ export default function ContactUs({ onScrollProgress }: ContactUsProps) {
             {/* Phone Card */}
             <InfoCard title="Phone" cardOpacity={card2Opacity} cardY={card2Y} onClick={handlePhoneClick}>
               <p className="font-['Lato:Light',sans-serif] leading-[40px] min-w-full not-italic relative shrink-0 text-[#2c4657] text-[28px] w-[min-content]">
-                
                 <span className="font-['Lato:Light',sans-serif]">0161 667 5990</span>
+              </p>
+              <p className="font-['Lato:Light',sans-serif] leading-[40px] min-w-full not-italic relative shrink-0 text-[#2c4657] text-[28px] w-[min-content]">
               </p>
             </InfoCard>
 
@@ -228,6 +229,7 @@ export default function ContactUs({ onScrollProgress }: ContactUsProps) {
             {/* Email Card */}
             <InfoCard title="Email" cardOpacity={card3Opacity} cardY={card3Y} onClick={handleEmailClick}>
               <p className="font-['Lato:Light',sans-serif] leading-[40px] min-w-full not-italic relative shrink-0 text-[#2c4657] text-[28px] w-[min-content]">info@jigsaw.ltd</p>
+              <p className="font-['Lato:Light',sans-serif] leading-[40px] min-w-full not-italic relative shrink-0 text-[#2c4657] text-[28px] w-[min-content]"></p>
             </InfoCard>
           </div>
         </motion.div>

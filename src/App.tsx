@@ -356,7 +356,7 @@ export default function App() {
       </div>
 
       {/* About Us Section */}
-      <div id="AboutUsSection">
+      <div id="AboutUsSection" style={{marginTop: isMobile ? '-345px' : '0'}}>
         {isMobile ? (
           <AboutUsMobile onScrollProgress={setAboutUsScrollProgress} />
         ) : (

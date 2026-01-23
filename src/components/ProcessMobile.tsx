@@ -113,7 +113,8 @@ function BottomProgressBar({
       const mobileBar28 = 344; // ~100% of width
       
       if (progress < 0.30) {
-        setDotVisible(false);
+        setDotVisible(true);
+        setDotPosition(mobileBar0);
       } else if (progress < 0.40) {
         // Step 2: Dot appears at bar 0
         setDotVisible(true);
@@ -249,16 +250,16 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
     return () => unsubscribe();
   }, [scrollYProgress, onScrollProgress]);
 
-  // Process section slides up from bottom (0 - 0.20)
-  const processSlideY = useTransform(scrollYProgress, [0, 0.20], ["100vh", "0vh"]);
+  // Process section slides up from bottom - MINIMAL offset to eliminate blank space
+  const processSlideY = useTransform(scrollYProgress, [0, 0.08], ["0vh", "0vh"]);
 
-  // Step 2 (Step 1): "Understand your problem" - Delayed to start after section slides up (0.20 - 0.40)
+  // Step 2 (Step 1): "Understand your problem" - Starts immediately
   const step2SlideX = useTransform(scrollYProgress, 
-    [0, 0.20, 0.35, 0.40], 
+    [0, 0.08, 0.35, 0.40], 
     ["0vw", "0vw", "0vw", "-100vw"]
   );
   
-  const step2TextOpacity = useTransform(scrollYProgress, [0.20, 0.25], [0, 1]);
+  const step2TextOpacity = useTransform(scrollYProgress, [0.08, 0.12], [0, 1]);
   
   // Step 2: Progress bar animations - only bar 0 animates (25% - 30%)
   const totalBars = 29;

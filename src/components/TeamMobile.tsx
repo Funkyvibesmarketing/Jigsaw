@@ -57,7 +57,9 @@ export function TeamMobile({
   // Team slides up when Process section appears
   let teamSlideY = 0;
   if (processScrollProgress && processScrollProgress > 0) {
-    const slideProgress = Math.min(processScrollProgress / 0.20, 1);
+    // Start sliding earlier - use a faster/earlier timing
+    // When processScrollProgress is 0.10 (halfway through Process slide-up), Team should start moving
+    const slideProgress = Math.min(processScrollProgress / 0.15, 1); // Slide completes by 0.15 instead of 0.20
     teamSlideY = slideProgress * -100;
   }
   
@@ -162,12 +164,13 @@ export function TeamMobile({
           {/* White overlay with TEAM text cutout - reveals team content through the text */}
           {reviewsScrollProgress >= 0.76 && reviewsScrollProgress < 1.0 && (
             <div 
-              className="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none z-[100]"
+              className="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none"
               style={{ 
                 opacity: reviewsScrollProgress >= 0.995 ? 1 - ((reviewsScrollProgress - 0.995) / 0.005) : 1,
                 touchAction: 'none',
                 willChange: 'opacity',
-                transform: `translateY(${teamSlideY}vh)`
+                transform: `translateY(${teamSlideY}vh)`,
+                zIndex: processScrollProgress && processScrollProgress > 0 ? 40 : 100
               } as React.CSSProperties}
             >
               <svg className="absolute inset-0 w-full h-full" style={{ willChange: 'transform' } as React.CSSProperties}>
@@ -284,28 +287,28 @@ export function TeamMobile({
                           willChange: 'transform'
                         }}
                       >
-                        {/* Member card with proper padding */}
-                        <div className="flex flex-col h-full pl-[24px] pr-[24px]">
+                        {/* Member card with proper padding and responsive layout */}
+                        <div className="flex flex-col h-full pl-[24px] pr-[24px] min-w-[280px]">
                           {/* Line above name */}
                           <div className="w-full h-[1px] bg-white opacity-30 mb-[16px]" />
 
                           {/* Member name with number on same line */}
-                          <div className="flex items-baseline justify-between mb-[32px]">
-                            <p className="font-['Lato:Bold',sans-serif] leading-[normal] not-italic text-[24px] text-white">
+                          <div className="flex items-baseline justify-between mb-[24px] min-h-[29px]">
+                            <p className="font-['Lato:Bold',sans-serif] leading-[normal] not-italic text-[20px] sm:text-[24px] text-white">
                               {member.name}
                             </p>
-                            <p className="font-['Lato:Bold',sans-serif] leading-[normal] not-italic text-[16px] text-[rgba(255,255,255,0.5)]">
+                            <p className="font-['Lato:Bold',sans-serif] leading-[normal] not-italic text-[14px] sm:text-[16px] text-[rgba(255,255,255,0.5)] ml-2">
                               {String(index + 1).padStart(2, '0')}
                             </p>
                           </div>
 
-                          {/* Job title */}
-                          <p className="font-['Lato:SemiBold',sans-serif] leading-[38px] not-italic text-[32px] text-[rgba(255,255,255,0.5)] mb-[32px] w-[259px]">
+                          {/* Job title - responsive with proper wrapping */}
+                          <p className="font-['Lato:SemiBold',sans-serif] leading-[32px] sm:leading-[38px] not-italic text-[24px] sm:text-[32px] text-[rgba(255,255,255,0.5)] mb-[24px] sm:mb-[32px] max-w-full break-words min-h-[64px] sm:min-h-[76px]">
                             {member.title}
                           </p>
 
-                          {/* Member photo */}
-                          <div className="w-full h-[360px] mb-[32px] overflow-hidden">
+                          {/* Member photo - responsive with reduced height */}
+                          <div className="w-full min-h-[200px] max-h-[260px] h-[30vh] mb-[20px] sm:mb-[24px] overflow-hidden flex-shrink-0">
                             <img 
                               alt={member.name}
                               className="w-full h-full object-cover" 
@@ -313,10 +316,12 @@ export function TeamMobile({
                             />
                           </div>
 
-                          {/* Bio text */}
-                          <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[14px] text-white tracking-[0.14px]">
-                            {member.bio}
-                          </p>
+                          {/* Bio text - responsive sizing without scrollbar */}
+                          <div className="flex-1">
+                            <p className="font-['Lato:Regular',sans-serif] leading-[20px] sm:leading-[24px] not-italic text-[12px] sm:text-[14px] text-white tracking-[0.12px] sm:tracking-[0.14px] pr-2">
+                              {member.bio}
+                            </p>
+                          </div>
                         </div>
                       </motion.div>
                     );
