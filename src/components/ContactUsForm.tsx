@@ -714,7 +714,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
 
           {/* Footer */}
           <div className="absolute content-stretch flex flex-col gap-[20px] items-center justify-center left-1/2 not-italic text-white bottom-[40px] -translate-x-1/2 w-[90%] max-w-[382px] px-4">
-            <p className="font-['Lato:Regular',sans-serif] leading-[16px] relative shrink-0 text-[12px] text-center">© Copyright Jigsaw Finacial. 2025. All Rights Reserved.</p>
+            <p className="font-['Lato:Regular',sans-serif] leading-[16px] relative shrink-0 text-[12px] text-center">© Copyright Jigsaw Financial. 2025. All Rights Reserved.</p>
             <p className="font-['Poppins:Regular',sans-serif] leading-[16px] relative shrink-0 text-[12px] text-center">
               <span className="font-['Lato:Light',sans-serif]">Website by</span>
               <span className="font-['Lato:Regular',sans-serif]"> </span>
@@ -885,7 +885,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
 
           {/* Footer */}
           <div className="absolute content-stretch flex items-center justify-between left-1/2 translate-x-[-50%] not-italic text-[14px] text-nowrap text-white bottom-[30px] w-[1100px] whitespace-pre">
-            <p className="font-['Lato:Regular',sans-serif] leading-[16px] relative shrink-0">© Copyright Jigsaw Finacial. 2025. All Rights Reserved.</p>
+            <p className="font-['Lato:Regular',sans-serif] leading-[16px] relative shrink-0">© Copyright Jigsaw Financial. 2025. All Rights Reserved.</p>
             <p className="font-['Poppins:Regular',sans-serif] leading-[16px] relative shrink-0 text-right">
               <span className="font-['Lato:Light',sans-serif]">Website by</span>
               <span className="font-['Lato:Regular',sans-serif]"> </span>
