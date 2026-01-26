@@ -122,7 +122,7 @@ export default function App() {
   }, [scrollY, splashHasBeenViewed, splashOpacityValue]);
 
   // Calculate if splash is still visible (navigation should be hidden)
-  const isSplashVisible = currentScrollY < window.innerHeight * 0.3;
+  const isSplashVisible = !splashHasBeenViewed && currentScrollY < window.innerHeight * 0.3;
 
   // Fetch team members from API
   useEffect(() => {

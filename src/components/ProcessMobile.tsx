@@ -76,21 +76,21 @@ function BottomProgressBar({
         let dotBarIndex = -1;
         
         if (progress >= 0.30 && progress < 0.35) {
-          // Step 2: Only bar 0 is bright
+          // Step 2 (showing): Only bar 0 is bright
           dotBarIndex = 0;
         } else if (progress >= 0.35 && progress < 0.40) {
           // Transition 2→3: Bars progressively light up from 0 to 14
           const transitionProgress = (progress - 0.35) / (0.40 - 0.35);
           dotBarIndex = Math.floor(transitionProgress * 14);
         } else if (progress >= 0.40 && progress < 0.60) {
-          // Step 3: Bars 0-14 are bright
+          // Step 3 (showing): Bars 0-14 are bright
           dotBarIndex = 14;
-        } else if (progress >= 0.60 && progress < 0.75) {
+        } else if (progress >= 0.60 && progress < 0.65) {
           // Transition 3→4: Bars progressively light up from 14 to 28
-          const transitionProgress = (progress - 0.60) / (0.75 - 0.60);
+          const transitionProgress = (progress - 0.60) / (0.65 - 0.60);
           dotBarIndex = 14 + Math.floor(transitionProgress * 14);
-        } else if (progress >= 0.75) {
-          // Step 4: All bars 0-28 are bright
+        } else if (progress >= 0.65) {
+          // Step 4 (showing): All bars 0-28 are bright
           dotBarIndex = 28;
         }
         
@@ -116,15 +116,15 @@ function BottomProgressBar({
         setDotVisible(true);
         setDotPosition(mobileBar0);
       } else if (progress < 0.40) {
-        // Step 2: Dot appears at bar 0
+        // Step 2 showing: Dot appears at bar 0
         setDotVisible(true);
         setDotPosition(mobileBar0);
-      } else if (progress < 0.75) {
-        // Step 3: Dot appears at bar 14
+      } else if (progress < 0.60) {
+        // Step 3 showing: Dot appears at bar 14
         setDotVisible(true);
         setDotPosition(mobileBar14);
       } else {
-        // Step 4: Dot appears at bar 28
+        // Step 4 showing: Dot appears at bar 28
         setDotVisible(true);
         setDotPosition(mobileBar28);
       }
@@ -312,16 +312,16 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
   const step4TextSlideX = useTransform(scrollYProgress, [0.61, 0.65], [80, 0]);
   const step4TextOpacity = useTransform(scrollYProgress, [0.61, 0.65], [0, 1]);
   
-  // Step 4: Progress bar animations - bars 15-28 animate during dot movement (60-75%)
+  // Step 4: Progress bar animations - bars 15-28 animate during dot movement (60-65%)
   const step4BarOpacities = Array.from({ length: totalBars }, (_, i) => {
     if (i <= 14) {
       // Bars 0-14 are already bright, stay bright
       return useTransform(scrollYProgress, [0, 1], [1, 1]);
     }
-    // Bars 15-28 animate during dot movement from bar 14 to bar 28 (60% - 75%)
+    // Bars 15-28 animate during dot movement from bar 14 to bar 28 (60% - 65%)
     const barProgress = (i - 14) / 14; // 0 to 1 (bar 15 = 0, bar 28 = 1)
-    const startProgress = 0.60 + (barProgress * (0.75 - 0.60));
-    const endProgress = Math.min(startProgress + 0.01, 0.75);
+    const startProgress = 0.60 + (barProgress * (0.65 - 0.60));
+    const endProgress = Math.min(startProgress + 0.005, 0.65);
     return useTransform(scrollYProgress, [startProgress, endProgress], [0, 1]);
   });
 

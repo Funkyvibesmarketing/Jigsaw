@@ -502,10 +502,11 @@ export function AboutUsMobile({ onScrollProgress }: {
                     const baseFontSize = 48;
                     const baseLetterSpacing = 8;
                     const fontSize = (() => {
-                      if (scrollProgress < 0.48) return baseFontSize;
+                      // Start at same size as solid text (1x) when masking begins, zoom to 25x
+                      if (scrollProgress < 0.58) return baseFontSize; // Same as solid text
                       if (scrollProgress >= 0.70) return baseFontSize * 25;
-                      const progress = (scrollProgress - 0.48) / (0.70 - 0.48);
-                      const scale = 1 + (24 * progress); // 1x to 25x scale - FASTER
+                      const progress = (scrollProgress - 0.58) / (0.70 - 0.58);
+                      const scale = 1 + (24 * progress); // 1x to 25x scale
                       return baseFontSize * scale;
                     })();
                     const letterSpacing = (baseLetterSpacing * fontSize) / baseFontSize;
@@ -522,23 +523,24 @@ export function AboutUsMobile({ onScrollProgress }: {
                   dominantBaseline="middle"
                   fill="black"
                   fontSize={(() => {
-                    const baseSize = 48; // Much smaller for mobile to fit screen
-                    if (scrollProgress < 0.48) return baseSize;
+                    const baseSize = 48;
+                    // Start at same size as solid text (1x) when masking begins, zoom to 25x
+                    if (scrollProgress < 0.58) return baseSize; // Same as solid text
                     if (scrollProgress >= 0.70) return baseSize * 25;
                     
-                    const progress = (scrollProgress - 0.48) / (0.70 - 0.48);
-                    const scale = 1 + (24 * progress); // 1x to 25x scale - FASTER
+                    const progress = (scrollProgress - 0.58) / (0.70 - 0.58);
+                    const scale = 1 + (24 * progress); // 1x to 25x scale
                     return baseSize * scale;
                   })()}
                   fontFamily="Lato, sans-serif"
                   fontWeight="700"
                   letterSpacing={(() => {
                     const baseFontSize = 48;
-                    const baseLetterSpacing = 8; // Adjusted for mobile
+                    const baseLetterSpacing = 8;
                     const fontSize = (() => {
-                      if (scrollProgress < 0.48) return baseFontSize;
+                      if (scrollProgress < 0.58) return baseFontSize;
                       if (scrollProgress >= 0.70) return baseFontSize * 25;
-                      const progress = (scrollProgress - 0.48) / (0.70 - 0.48);
+                      const progress = (scrollProgress - 0.58) / (0.70 - 0.58);
                       const scale = 1 + (24 * progress);
                       return baseFontSize * scale;
                     })();
@@ -551,7 +553,7 @@ export function AboutUsMobile({ onScrollProgress }: {
             </defs>
 
             {/* White rectangle with mask applied - Safari compatible approach */}
-            {scrollProgress >= 0.48 && scrollProgress < 0.70 && (
+            {scrollProgress >= 0.58 && scrollProgress < 0.70 && (
               <rect x="0" y="0" width="100%" height="100%" fill="white" mask="url(#servicesTextMaskMobile)" />
             )}
 

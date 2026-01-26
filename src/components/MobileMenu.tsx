@@ -404,7 +404,7 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
     // Special handling for Service Us section
     if (sectionId === 'ServiceSection') {
       window.scrollTo({ 
-        top: window.innerHeight * 6.3, // Same position as Services
+        top: window.innerHeight * 6.2, // Same position as Services
         behavior: 'smooth' 
       });
       setIsMobileMenuOpen(false);
