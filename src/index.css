@@ -714,10 +714,6 @@
     top: 465px;
   }
 
-  .top-\[516px\] {
-    top: 516px;
-  }
-
   .top-\[528px\] {
     top: 528px;
   }
@@ -832,10 +828,6 @@
 
   .top-\[calc\(50\%-33px\)\] {
     top: calc(50% - 33px);
-  }
-
-  .top-\[calc\(50\%-34px\)\] {
-    top: calc(50% - 34px);
   }
 
   .top-\[calc\(50\%-40px\)\] {
@@ -1735,14 +1727,6 @@
 
   .h-\[64px\] {
     height: 64px;
-  }
-
-  .h-\[65px\] {
-    height: 65px;
-  }
-
-  .h-\[68\.112px\] {
-    height: 68.112px;
   }
 
   .h-\[70vh\] {

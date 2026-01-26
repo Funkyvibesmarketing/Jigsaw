@@ -57,7 +57,7 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progres
       style={{ margin: 0, padding: 0 }}
     >
       {/* JIGSAW Letters - J, I, G, S, W (without A) - Mobile optimized */}
-      <div className="absolute h-[68.112px] left-1/2 top-[calc(50%-34px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[392px] px-4" data-name="JIGSAW">
+      <div className="absolute h-[60px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[392px] px-4" style={{ marginTop: '-40px' }} data-name="JIGSAW">
         <svg className="block size-full overflow-visible" fill="none" preserveAspectRatio="none" viewBox="0 0 402 69">
           <g id="JIGSAW">
             {/* J - appears from left */}
@@ -65,7 +65,7 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progres
               d={svgPaths.p3630e540} 
               fill="#2C4657"
               initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
+              animate={{ opacity: 1, x: -20 }}
               transition={{ delay: 0.4, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
             />
             
@@ -74,7 +74,7 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progres
               d={svgPaths.pb43e380} 
               fill="#2C4657"
               initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
+              animate={{ opacity: 1, x: -15 }}
               transition={{ delay: 0.7, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
             />
             
@@ -83,7 +83,7 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progres
               d={svgPaths.p2fd354f0} 
               fill="#2C4657"
               initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
+              animate={{ opacity: 1, x: -10 }}
               transition={{ delay: 1.0, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
             />
             
@@ -101,7 +101,7 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progres
               d={svgPaths.p1094ff00} 
               fill="#2C4657"
               initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 10 }}
+              animate={{ opacity: 1, x: 20 }}
               transition={{ delay: 1.6, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
             />
           </g>
@@ -109,13 +109,13 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progres
         
         {/* Main - The special A logo that appears FIRST - starts in center then moves to position */}
         <motion.div 
-          className="absolute w-[60px] h-[65px]" 
+          className="absolute w-[60px] h-[60px]" 
           data-name="Main_1_00000014621826160272210780000006234564362710872498_"
           initial={{ opacity: 0, scale: 0.5, left: '50%', x: '-50%', top: '50%', y: '-50%' }}
           animate={{ 
             opacity: 1, 
             scale: 1, 
-            left: 'calc(50% + 12px)',
+            left: 'calc(50% + 20px)',
             top: '2px',
             x: 0,
             y: 0
@@ -140,7 +140,8 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progres
       {/* Progress bars and percentage - fade out when reaching 100% */}
       {!showFinancial && (
         <motion.div 
-          className="absolute content-stretch flex gap-[32px] items-center left-[calc(50%+0.5px)] top-[516px] translate-x-[-50%]"
+          className="absolute content-stretch flex gap-[32px] items-center left-1/2 top-1/2 -translate-x-1/2"
+          style={{ marginTop: '100px' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: fadeProgress ? 0 : 1 }}
           transition={{ duration: 0.5 }}
@@ -183,7 +184,8 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progres
       {/* Financial Banner - Mobile optimized */}
       {showFinancial && (
         <motion.div 
-          className="absolute left-1/2 top-[calc(50%+25px)] -translate-x-1/2 w-[300px]"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 w-[90%]"
+          style={{ marginTop: '10px' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
