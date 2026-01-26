@@ -88,7 +88,7 @@ export const defaultServices: Service[] = [
         type: 'normal',
         title: "Moving to a new home?",
         description: "You may save money by taking your mortgage with you—if not, we’ll assist with a mortgage upgrade. Relevant to your new property and current life and lifestyle. We’ll review your current deal, advise on porting vs. switching, and help you plan financially for the big move.",
-        image: "https://jigsaw.funkyvibes.co.uk/service-images/hmm2.png",
+        image: "https://jigsaw.funkyvibes.co.uk/service-images/hmm2.webp",
         imageInset: "-2.69% -2.15% -0.94% 20.5%"
       },
       {
@@ -102,7 +102,7 @@ export const defaultServices: Service[] = [
           existingClientPrice: "Free of Cost!",
           existingClientDescription: "Because paying again for advice you already got feels... unnecessary"
         },
-        image: "https://jigsaw.funkyvibes.co.uk/service-images/hmm2.png",
+        image: "https://jigsaw.funkyvibes.co.uk/service-images/hmm2.webp",
         imageInset: "-2.69% -2.15% -0.94% 20.5%"
       }
     ]
@@ -118,7 +118,7 @@ export const defaultServices: Service[] = [
         type: 'normal',
         title: "Rates change. Life changes. Your mortgage should, too.",
         description: "Whether you’re looking for a better deal, borrowing more, or just escaping your current lender’s“surprise”fees, we’ll guide you through the switch.",
-        image: "https://jigsaw.funkyvibes.co.uk/service-images/remo.png",
+        image: "https://jigsaw.funkyvibes.co.uk/service-images/remo.webp",
         imageInset: "-0.69% -0.15% -0.94% 19.5%"
       },
       {
@@ -130,7 +130,7 @@ export const defaultServices: Service[] = [
           "Equity release",
           "Debt Consolidation strategies"
         ],
-        image: "https://jigsaw.funkyvibes.co.uk/service-images/remo.png",
+        image: "https://jigsaw.funkyvibes.co.uk/service-images/remo.webp",
         imageInset: "-0.69% -0.15% -0.94% 19.5%"
       },
       {
@@ -144,7 +144,7 @@ export const defaultServices: Service[] = [
           existingClientPrice: "Free of Cost!",
           existingClientDescription: "Because paying again for advice you already got feels... unnecessary"
         },
-        image: "https://jigsaw.funkyvibes.co.uk/service-images/remo.png",
+        image: "https://jigsaw.funkyvibes.co.uk/service-images/remo.webp",
         imageInset: "-0.69% -0.15% -0.94% 19.5%"
       }
     ]
@@ -160,7 +160,7 @@ export const defaultServices: Service[] = [
         type: 'normal',
         title: "Serving your country shouldn’t make it harder to own a home",
         description: "We understand the realities of life in the forces—postings, deployments, limited time, unpredictable paperwork—and we shape our service around it.",
-        image: "https://jigsaw.funkyvibes.co.uk/service-images/mmp.png",
+        image: "https://jigsaw.funkyvibes.co.uk/service-images/mmp.webp",
         imageInset: "-0.69% -0.15% -0.94% 19.5%"
       },
       {
@@ -172,7 +172,7 @@ export const defaultServices: Service[] = [
           "Flexible appointment times",
           "Experience with military-specific mortgage products"
         ],
-        image: "https://jigsaw.funkyvibes.co.uk/service-images/mmp.png",
+        image: "https://jigsaw.funkyvibes.co.uk/service-images/mmp.webp",
         imageInset: "-0.69% -0.15% -0.94% 19.5%"
       },
       {
@@ -186,7 +186,7 @@ export const defaultServices: Service[] = [
           existingClientPrice: "Free of Cost!",
           existingClientDescription: "Because paying again for advice you already got feels... unnecessary"
         },
-        image: "https://jigsaw.funkyvibes.co.uk/service-images/mmp.png",
+        image: "https://jigsaw.funkyvibes.co.uk/service-images/mmp.webp",
         imageInset: "-0.69% -0.15% -0.94% 19.5%"
       }
     ]
