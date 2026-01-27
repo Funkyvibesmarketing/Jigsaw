@@ -176,7 +176,7 @@ export function ServicesMobile({
         <div className="flex-shrink-0 w-full" style={{ marginTop: '26px', height: '80px' }}>
           <div className="relative w-full h-full overflow-hidden">
             {/* Previous category - left edge, partially visible - clips from LEFT side */}
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 overflow-hidden flex items-center" style={{ maxWidth: '18%' }}>
+            <div className="hidden absolute left-0 top-1/2 -translate-y-1/2 overflow-hidden flex items-center" style={{ maxWidth: '18%' }}>
               <motion.p
                 key={`prev-${prevServiceIndex}`}
                 initial={{ opacity: 0 }}
@@ -207,7 +207,7 @@ export function ServicesMobile({
             </div>
 
             {/* Next category - right edge, partially visible - clips from RIGHT side */}
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 overflow-hidden flex items-center justify-end" style={{ maxWidth: '18%' }}>
+            <div className="hidden absolute right-0 top-1/2 -translate-y-1/2 overflow-hidden flex items-center justify-end" style={{ maxWidth: '18%' }}>
               <motion.p
                 key={`next-${nextServiceIndex}`}
                 initial={{ opacity: 0 }}
@@ -277,7 +277,7 @@ export function ServicesMobile({
                         className="absolute max-w-none" 
                         src={leftCard.image}
                         style={{
-                          height: '56.28%',
+                          height: '61.28%',
                           left: '-67.35%',
                           top: '-6%',
                           width: '168.54%'
@@ -407,7 +407,7 @@ export function ServicesMobile({
                           className="absolute max-w-none" 
                           src={card.image}
                           style={{
-                            height: '56.28%',
+                            height: '61.28%',
                             left: '-67.35%',
                             top: '-6%',
                             width: '168.54%'
@@ -545,7 +545,7 @@ export function ServicesMobile({
                         className="absolute max-w-none" 
                         src={rightCard.image}
                         style={{
-                          height: '56.28%',
+                          height: '61.28%',
                           left: '-67.35%',
                           top: '-6%',
                           width: '168.54%'

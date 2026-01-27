@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import svgPaths from '../imports/svg-jnardqphfi';
 import svgPathsFullLogo from '../imports/svg-vfi0emqqhx';
 import svgPathsMain from '../imports/svg-w3sqzfwyzd';
+import svgPathsALogo from '../imports/svg-srebhhv8fw';
 import Main from '../imports/Main100000014621826160272210780000006234564362710872498';
 import imgMobileA from 'figma:asset/e55262ede034fdfcdc468926f793b234c0108a2a.png';
 import imgFinancialBanner from 'figma:asset/9d0fdbe2203505eb3ad7a3a5c6f2a92dd6f76e7a.png';
@@ -64,6 +65,8 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progres
             <motion.path 
               d={svgPaths.p3630e540} 
               fill="#2C4657"
+              stroke="#2C4657"
+              strokeWidth="1.5"
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: -20 }}
               transition={{ delay: 0.4, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
@@ -73,6 +76,8 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progres
             <motion.path 
               d={svgPaths.pb43e380} 
               fill="#2C4657"
+              stroke="#2C4657"
+              strokeWidth="1.5"
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: -15 }}
               transition={{ delay: 0.7, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
@@ -82,6 +87,8 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progres
             <motion.path 
               d={svgPaths.p2fd354f0} 
               fill="#2C4657"
+              stroke="#2C4657"
+              strokeWidth="1.5"
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: -10 }}
               transition={{ delay: 1.0, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
@@ -91,6 +98,8 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progres
             <motion.path 
               d={svgPaths.p27c9a80} 
               fill="#2C4657"
+              stroke="#2C4657"
+              strokeWidth="1.5"
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 1.3, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
@@ -100,6 +109,8 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progres
             <motion.path 
               d={svgPaths.p1094ff00} 
               fill="#2C4657"
+              stroke="#2C4657"
+              strokeWidth="1.5"
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 20 }}
               transition={{ delay: 1.6, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
@@ -129,11 +140,27 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progres
             y: { delay: 0.4, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }
           }}
         >
-          <img 
-            src={imgMobileA} 
-            alt="A" 
-            className="block size-full object-contain"
-          />
+          <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 62.4487 68.11">
+            <g clipPath="url(#clip0_2119_89)">
+              <path 
+                d={svgPathsALogo.p2bf2a00} 
+                fill="#2EC4B6"
+                stroke="#2EC4B6"
+                strokeWidth="1.5"
+              />
+              <path 
+                d={svgPathsALogo.p27abc200} 
+                fill="#2C4657"
+                stroke="#2C4657"
+                strokeWidth="1.5"
+              />
+            </g>
+            <defs>
+              <clipPath id="clip0_2119_89">
+                <rect fill="white" height="68.11" width="62.4487" />
+              </clipPath>
+            </defs>
+          </svg>
         </motion.div>
       </div>
 
@@ -141,7 +168,7 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progres
       {!showFinancial && (
         <motion.div 
           className="absolute content-stretch flex gap-[32px] items-center left-1/2 top-1/2 -translate-x-1/2"
-          style={{ marginTop: '100px' }}
+          style={{ marginTop: '20px' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: fadeProgress ? 0 : 1 }}
           transition={{ duration: 0.5 }}
@@ -185,7 +212,7 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progres
       {showFinancial && (
         <motion.div 
           className="absolute left-1/2 top-1/2 -translate-x-1/2 w-[90%]"
-          style={{ marginTop: '10px' }}
+          style={{ marginTop: '0px',left : '50%' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
