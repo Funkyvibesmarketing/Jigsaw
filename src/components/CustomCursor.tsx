@@ -214,12 +214,19 @@ export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, re
         </svg>
       `;
 
-      const lightCursorURL = `data:image/svg+xml;base64,${btoa(lightCursorSVG)}`;
-      const darkCursorURL = `data:image/svg+xml;base64,${btoa(darkCursorSVG)}`;
-      const afterZoomCursorURL = `data:image/svg+xml;base64,${btoa(afterZoomCursorSVG)}`;
-      const reviewsCursorURL = `data:image/svg+xml;base64,${btoa(reviewsCursorSVG)}`;
-      const splashCursorURL = `data:image/svg+xml;base64,${btoa(splashCursorSVG)}`;
+      // Safari-compatible SVG encoding using encodeURIComponent instead of btoa
+      const encodeSVG = (svg: string) => {
+        // Remove extra whitespace and newlines for cleaner encoding
+        const cleanSVG = svg.replace(/\s+/g, ' ').trim();
+        return `data:image/svg+xml,${encodeURIComponent(cleanSVG)}`;
+      };
 
+      const lightCursorURL = encodeSVG(lightCursorSVG);
+      const darkCursorURL = encodeSVG(darkCursorSVG);
+      const afterZoomCursorURL = encodeSVG(afterZoomCursorSVG);
+      const reviewsCursorURL = encodeSVG(reviewsCursorSVG);
+      const splashCursorURL = encodeSVG(splashCursorSVG);
+      
       // Apply cursor to document
       let cursorURL = lightCursorURL;
       if (cursorType === 'splash') {
