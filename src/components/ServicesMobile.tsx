@@ -404,13 +404,13 @@ export function ServicesMobile({
                       {card.image && (
                         <img 
                           alt="" 
-                          className="absolute max-w-none" 
-                          src={card.image}
+                          className="absolute " 
+                          src={card.imagem}
                           style={{
-                            height: '61.28%',
-                            left: '-67.35%',
-                            top: '-6%',
-                            width: '168.54%'
+                            height: '71.28%',
+                            left: '0%',
+                            top: '0%',
+                            width: '100%'
                           }}
                         />
                       )}

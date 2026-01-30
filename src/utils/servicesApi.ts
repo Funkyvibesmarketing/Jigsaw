@@ -43,7 +43,7 @@ export const defaultServices: Service[] = [
         title: "Buying home for first time? We make it easy",
         description: "Buying your first home can feel like learning a new language—one spoken entirely by banks. We translate the process, help you find the best deals, and support you every step of the way. So you can move in with confidence, not confusion.",
         image: "https://jigsaw.funkyvibes.co.uk/service-images/ftb.webp",
-        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/ftbm.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Firsttimebuyers.webp",
         imageInset: "-0.69% -0.15% 0.06% 21.5%"
       },
       {
@@ -57,7 +57,7 @@ export const defaultServices: Service[] = [
           "Avoid rookie mistakes with real, regulated advice"
         ],
         image: "https://jigsaw.funkyvibes.co.uk/service-images/ftb.webp",
-        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/ftbm.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Firsttimebuyers.webp",
         imageInset: "-0.69% -0.15% 0.06% 21.5%"
       },
       {
@@ -72,7 +72,7 @@ export const defaultServices: Service[] = [
           existingClientDescription: "Because paying again for advice you already got feels... unnecessary"
         },
         image: "https://jigsaw.funkyvibes.co.uk/service-images/ftb.webp",
-        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/ftbm.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Firsttimebuyers.webp",
         imageInset: "-0.69% -0.15% 0.06% 21.5%"
       }
     ]
@@ -89,6 +89,7 @@ export const defaultServices: Service[] = [
         title: "Moving to a new home?",
         description: "You may save money by taking your mortgage with you—if not, we’ll assist with a mortgage upgrade. Relevant to your new property and current life and lifestyle. We’ll review your current deal, advise on porting vs. switching, and help you plan financially for the big move.",
         image: "https://jigsaw.funkyvibes.co.uk/service-images/hmm2.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Homemovermortgage.webp",
         imageInset: "-2.69% -2.15% -0.94% 20.5%"
       },
       {
@@ -103,6 +104,7 @@ export const defaultServices: Service[] = [
           existingClientDescription: "Because paying again for advice you already got feels... unnecessary"
         },
         image: "https://jigsaw.funkyvibes.co.uk/service-images/hmm2.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Homemovermortgage.webp",
         imageInset: "-2.69% -2.15% -0.94% 20.5%"
       }
     ]
@@ -119,6 +121,7 @@ export const defaultServices: Service[] = [
         title: "Rates change. Life changes. Your mortgage should, too.",
         description: "Whether you’re looking for a better deal, borrowing more, or just escaping your current lender’s“surprise”fees, we’ll guide you through the switch.",
         image: "https://jigsaw.funkyvibes.co.uk/service-images/remo.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Remortgage.webp",
         imageInset: "-0.69% -0.15% -0.94% 19.5%"
       },
       {
@@ -131,6 +134,7 @@ export const defaultServices: Service[] = [
           "Debt Consolidation strategies"
         ],
         image: "https://jigsaw.funkyvibes.co.uk/service-images/remo.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Remortgage.webp",
         imageInset: "-0.69% -0.15% -0.94% 19.5%"
       },
       {
@@ -145,6 +149,7 @@ export const defaultServices: Service[] = [
           existingClientDescription: "Because paying again for advice you already got feels... unnecessary"
         },
         image: "https://jigsaw.funkyvibes.co.uk/service-images/remo.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Remortgage.webp",
         imageInset: "-0.69% -0.15% -0.94% 19.5%"
       }
     ]
@@ -161,6 +166,7 @@ export const defaultServices: Service[] = [
         title: "Serving your country shouldn’t make it harder to own a home",
         description: "We understand the realities of life in the forces—postings, deployments, limited time, unpredictable paperwork—and we shape our service around it.",
         image: "https://jigsaw.funkyvibes.co.uk/service-images/mmp.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Mortgageformilitarypersonnel.webp",
         imageInset: "-0.69% -0.15% -0.94% 19.5%"
       },
       {
@@ -173,6 +179,7 @@ export const defaultServices: Service[] = [
           "Experience with military-specific mortgage products"
         ],
         image: "https://jigsaw.funkyvibes.co.uk/service-images/mmp.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Mortgageformilitarypersonnel.webp",
         imageInset: "-0.69% -0.15% -0.94% 19.5%"
       },
       {
@@ -187,6 +194,7 @@ export const defaultServices: Service[] = [
           existingClientDescription: "Because paying again for advice you already got feels... unnecessary"
         },
         image: "https://jigsaw.funkyvibes.co.uk/service-images/mmp.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Mortgageformilitarypersonnel.webp",
         imageInset: "-0.69% -0.15% -0.94% 19.5%"
       }
     ]
