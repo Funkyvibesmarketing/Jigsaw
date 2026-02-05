@@ -22,20 +22,20 @@ function CategoryArrowButton({ direction, onClick }: { direction: 'left' | 'righ
       }}
     >
       {/* Border overlay */}
-      <div 
-        aria-hidden="true" 
-        className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[32px] transition-all duration-200 ease-out group-hover:border-[#2ec4b6] group-hover:border-2" 
+      <div
+        aria-hidden="true"
+        className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[32px] transition-all duration-200 ease-out group-hover:border-[#2ec4b6] group-hover:border-2"
       />
-      
+
       {/* Hover glow effect */}
-      <div 
+      <div
         aria-hidden="true"
         className="absolute inset-0 rounded-[32px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-out pointer-events-none"
         style={{
           background: 'radial-gradient(circle at center, rgba(46, 196, 182, 0.15) 0%, transparent 70%)'
         }}
       />
-      
+
       <div className="flex items-center justify-center relative shrink-0 z-10">
         <div className={`flex-none ${direction === 'left' ? 'rotate-[180deg] scale-y-[-100%]' : ''}`}>
           <div className="overflow-clip relative size-[40px]">
@@ -61,9 +61,8 @@ function CardArrowButton({ direction, onClick, disabled }: { direction: 'left' |
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`flex items-center justify-center rounded-full size-[64px] border border-[rgba(255,255,255,0.3)] transition-all duration-200 ease-out ${
-        disabled ? 'opacity-30 cursor-not-allowed' : 'hover:border-[#2ec4b6] hover:bg-[rgba(46,196,182,0.1)]'
-      }`}
+      className={`flex items-center justify-center rounded-full size-[64px] border border-[rgba(255,255,255,0.3)] transition-all duration-200 ease-out ${disabled ? 'opacity-30 cursor-not-allowed' : 'hover:border-[#2ec4b6] hover:bg-[rgba(46,196,182,0.1)]'
+        }`}
     >
       {/* Left arrow points UP, Right arrow points DOWN */}
       <div className="overflow-clip relative size-[40px]">
@@ -81,11 +80,11 @@ function CardArrowButton({ direction, onClick, disabled }: { direction: 'left' |
   );
 }
 
-export function Services({ 
+export function Services({
   scrollProgress,
   services,
   reviewsScrollProgress
-}: { 
+}: {
   scrollProgress: number;
   services: Service[];
   reviewsScrollProgress?: number;
@@ -106,20 +105,20 @@ export function Services({
   }
 
   console.log('Viewport size:', width, 'x', height);
-  
+
   // Check if mobile for conditional slide-up behavior
   const [isMobileView, setIsMobileView] = useState(false);
-  
+
   // Define currentService and related indices BEFORE using them in useEffect
   const currentService = services[currentServiceIndex];
   const prevServiceIndex = (currentServiceIndex - 1 + services.length) % services.length;
   const nextServiceIndex = (currentServiceIndex + 1) % services.length;
-  
+
   useEffect(() => {
     const checkMobile = () => {
       setIsMobileView(window.innerWidth < 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -145,7 +144,7 @@ export function Services({
   })();
   // Enable pointer events right after mask reveal completes (0.68)
   const servicesSectionPointerEvents = scrollProgress >= 0.69 ? 'auto' : 'none';
-  
+
   // Only show if scroll progress is in the Services range (0.55+) - when mask cutout starts
   if (scrollProgress < 0.55) {
     return null;
@@ -186,78 +185,75 @@ export function Services({
   };
 
   const currentCard = currentService.detailCards[detailCardIndex];
-  
+
   // For preview cards (left and right):
   // - Left card: always shows first card of the left/previous category
   // - Right card: always shows first card of the right/next category
   // - These only change when category changes (top navigation)
-  const prevCard = services[prevServiceIndex].detailCards.length > 0 
+  const prevCard = services[prevServiceIndex].detailCards.length > 0
     ? services[prevServiceIndex].detailCards[0] // First card of left category
     : null;
   const nextCard = services[nextServiceIndex].detailCards.length > 0
     ? services[nextServiceIndex].detailCards[0] // First card of right category
     : null;
 
-  // Animation variants based on direction
-  const slideVariants = {
-    enter: (direction: 'left' | 'right') => ((({
-      x: direction === 'left' ? 600 : -600,
-      opacity: 0,
-      scale: 0.9
-    }))),
+  // Unified animation variants
+  const mainVariants = {
+    enter: ({ direction, source }: { direction: 'left' | 'right'; source: 'category' | 'card' }) => {
+      if (source === 'category') {
+        return {
+          x: direction === 'left' ? 600 : -600,
+          y: 0,
+          opacity: 0,
+          scale: 0.9,
+          rotateX: 0,
+          zIndex: 1
+        };
+      } else {
+        // Card navigation (vertical)
+        // Left (Next/Up) -> Enter from Bottom (y=500)
+        // Right (Prev/Down) -> Enter from Top (y=-500)
+        return {
+          x: 0,
+          y: direction === 'left' ? 500 : -500,
+          opacity: 0,
+          scale: 0.9,
+          rotateX: direction === 'left' ? 15 : -15,
+          zIndex: 1
+        };
+      }
+    },
     center: {
       x: 0,
-      opacity: 1,
-      scale: 1
-    },
-    exit: (direction: 'left' | 'right') => ((({
-      x: direction === 'left' ? -600 : 600,
-      opacity: 0,
-      scale: 0.9
-    })))
-  };
-
-  // Animation variants for card stack pagination (swipe up/down movement)
-  const stackVariants = {
-    // Card coming from bottom (swipe up)
-    fromBottom: {
-      opacity: 0,
-      y: 500,
-      scale: 0.9,
-      zIndex: 1,
-      rotateX: 15
-    },
-    // Card coming from top (swipe down)
-    fromTop: {
-      opacity: 0,
-      y: -500,
-      scale: 0.9,
-      zIndex: 1,
-      rotateX: -15
-    },
-    // Card at center
-    atCenter: {
-      opacity: 1,
       y: 0,
+      opacity: 1,
       scale: 1,
-      zIndex: 10,
-      rotateX: 0
+      rotateX: 0,
+      zIndex: 10
     },
-    // Card exiting to top (swipe up)
-    exitTop: {
-      opacity: 0,
-      y: -500,
-      scale: 0.9,
-      zIndex: 1,
-      rotateX: -15
-    },
-    // Card exiting to bottom (swipe down)
-    exitBottom: {
-      opacity: 0,
-      y: 500,
-      scale: 0.9,
-      zIndex: 1,
-      rotateX: 15
+    exit: ({ direction, source }: { direction: 'left' | 'right'; source: 'category' | 'card' }) => {
+      if (source === 'category') {
+        return {
+          x: direction === 'left' ? -600 : 600,
+          y: 0,
+          opacity: 0,
+          scale: 0.9,
+          rotateX: 0,
+          zIndex: 1
+        };
+      } else {
+        // Card navigation (vertical)
+        // Left (Next/Up) -> Exit to Top (y=-500)
+        // Right (Prev/Down) -> Exit to Bottom (y=500)
+        return {
+          x: 0,
+          y: direction === 'left' ? -500 : 500,
+          opacity: 0,
+          scale: 0.9,
+          rotateX: direction === 'left' ? -15 : 15,
+          zIndex: 1
+        };
+      }
     }
   };
 
@@ -280,8 +276,8 @@ export function Services({
   };
 
   // Get the next card in the stack for back card display
-  const backCardIndex = detailCardIndex < currentService.detailCards.length - 1 
-    ? detailCardIndex + 1 
+  const backCardIndex = detailCardIndex < currentService.detailCards.length - 1
+    ? detailCardIndex + 1
     : 0; // Loop to first card
   const backCard = currentService.detailCards[backCardIndex];
 
@@ -293,17 +289,17 @@ export function Services({
   const rightCategoryLeft = `calc(50% + ${halfActiveCategoryWidth + minGap}px)`;
 
   return (
-    <motion.div 
+    <motion.div
       ref={containerRef}
       className="absolute inset-0 z-20 bg-[#2c4657] pointer-events-auto overflow-hidden"
-      style={{ 
+      style={{
         opacity: servicesSectionOpacity,
         pointerEvents: servicesSectionPointerEvents,
         // Only start sliding up after mask animation completes (scrollProgress >= 0.9) on DESKTOP
         // AND Reviews section has started significantly (reviewsScrollProgress > 0.15)
         // On mobile, don't apply slide-up animation
         y: !isMobileView && reviewsScrollProgress && reviewsScrollProgress > 0.15 && scrollProgress >= 0.9
-          ? `${-100 * Math.min((reviewsScrollProgress - 0.15) * 20, 1)}%` 
+          ? `${-100 * Math.min((reviewsScrollProgress - 0.15) * 20, 1)}%`
           : 0
       }}
       transition={{ duration: 0.3 }}
@@ -344,7 +340,7 @@ export function Services({
               <CategoryArrowButton direction="left" onClick={handleCategoryPrev} />
             </div>
             {/* Left category name - truncate from LEFT side without ellipsis */}
-            <p 
+            <p
               className="font-lato-regular leading-[normal] not-italic text-[32px] text-[rgba(255,255,255,0.4)] text-nowrap pointer-events-none overflow-hidden"
               style={{ direction: 'rtl', textAlign: 'left' }}
             >
@@ -388,7 +384,7 @@ export function Services({
               <circle cx="405.731" cy="405.731" fill="white" r="405.731" />
             </svg>
           </div>
-          
+
           <AnimatePresence mode="wait">
             <motion.p
               key={`back-text-${currentService.id}-${backCardIndex}`}
@@ -434,7 +430,7 @@ export function Services({
                         {prevCard.title}
                       </p>
                     )}
-                    
+
                     {prevCard.description && (
                       <p className="font-lato-regular leading-[16px] relative shrink-0 text-[11.5px] w-full">
                         {prevCard.description}
@@ -511,17 +507,17 @@ export function Services({
         )}
 
         {/* Main Card (front center) */}
-        <AnimatePresence initial={false}>
+        <AnimatePresence initial={false} custom={{ direction, source: navigationSource }}>
           <motion.div
             key={`main-card-${currentService.id}-${detailCardIndex}`}
-            custom={direction}
-            initial={navigationSource === 'card' ? (direction === 'left' ? 'fromBottom' : 'fromTop') : 'enter'}
-            animate={navigationSource === 'card' ? 'atCenter' : 'center'}
-            exit={navigationSource === 'card' ? (direction === 'left' ? 'exitTop' : 'exitBottom') : 'exit'}
-            variants={navigationSource === 'card' ? stackVariants : slideVariants}
-            transition={{ duration: navigationSource === 'card' ? 0.5 : 0.5, ease: [0.4, 0, 0.2, 1] }}
+            custom={{ direction, source: navigationSource }}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            variants={mainVariants}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
             className="absolute bg-white h-[559px] left-[calc(50%+0.5px)] overflow-hidden rounded-[40px] top-[calc(50%+25.5px)] translate-x-[-50%] translate-y-[-50%] w-[959px]"
-            style={navigationSource === 'card' ? { 
+            style={navigationSource === 'card' ? {
               transformOrigin: 'center center'
             } : undefined}
           >
@@ -547,7 +543,7 @@ export function Services({
                         {currentCard.title}
                       </p>
                     )}
-                    
+
                     {currentCard.description && (
                       <p className="font-lato-regular leading-[28px] relative shrink-0 text-[20px] w-full">
                         {currentCard.description}
@@ -630,7 +626,7 @@ export function Services({
                   </div>
                 )}
               </div>
-              
+
             </div>
           </motion.div>
         </AnimatePresence>
@@ -666,7 +662,7 @@ export function Services({
                         {nextCard.title}
                       </p>
                     )}
-                    
+
                     {nextCard.description && (
                       <p className="font-lato-regular leading-[16px] relative shrink-0 text-[11.5px] w-full">
                         {nextCard.description}
@@ -745,17 +741,17 @@ export function Services({
 
       {/* Bottom Navigation - Card Counter and Arrows - Desktop Only */}
       <div className="hidden md:flex absolute content-stretch gap-[32px] items-center left-1/2 -translate-x-1/2 bottom-[15px]">
-        <CardArrowButton 
-          direction="left" 
-          onClick={handleCardNext} 
+        <CardArrowButton
+          direction="left"
+          onClick={handleCardNext}
           disabled={detailCardIndex === currentService.detailCards.length - 1}
         />
         <p className="font-lato-regular leading-[normal] not-italic relative shrink-0 text-[32px] text-[rgba(255,255,255,0.2)] text-center text-nowrap">
           {detailCardIndex + 1}/{currentService.detailCards.length}
         </p>
-        <CardArrowButton 
-          direction="right" 
-          onClick={handleCardPrev} 
+        <CardArrowButton
+          direction="right"
+          onClick={handleCardPrev}
           disabled={detailCardIndex === 0}
         />
       </div>
@@ -772,11 +768,11 @@ export function Services({
               <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
-          
+
           <h2 className="font-lato-regular text-white/80 text-[28px] text-center">
             {currentService.title}
           </h2>
-          
+
           <button
             onClick={handleCategoryNext}
             className="p-3 rounded-full bg-white/10 border border-white/20"
@@ -840,11 +836,11 @@ export function Services({
               </div>
             </div>
           </button>
-          
+
           <p className="font-lato-regular leading-[normal] not-italic relative shrink-0 text-[24px] text-[rgba(255,255,255,0.2)] text-center text-nowrap">
             {detailCardIndex + 1}/{currentService.detailCards.length}
           </p>
-          
+
           <button
             onClick={handleCardPrev}
             className="content-stretch flex items-center justify-center p-[3px] rounded-[24px] size-[48px] relative"
