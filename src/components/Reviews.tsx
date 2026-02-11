@@ -196,7 +196,7 @@ function Frame4Mobile() {
 }
 
 // Review Card Component
-function ReviewCard({ review, author }: { review: string; author: string }) {
+function ReviewCard({ review, author, date }: { review: string; author: string; date: string }) {
   return (
     <motion.div 
       className="relative rounded-[16px] w-[502px] md:block hidden overflow-hidden backdrop-blur-[14px] backdrop-filter bg-[rgba(228,236,241,0.4)] border border-[rgba(46,196,182,0.3)] border-solid shadow-[0px_4px_28px_-1px_rgba(46,196,182,0.12)]"
@@ -213,7 +213,10 @@ function ReviewCard({ review, author }: { review: string; author: string }) {
       {/* Content wrapper with padding */}
       <div className="relative px-[32px] pt-[24px] pb-[32px] flex flex-col gap-[16px]">
         <p className="font-['Lato:Regular',sans-serif] leading-[32px] not-italic text-[#2c4657] text-[20px] tracking-[0.04px]">{review}</p>
-        <p className="font-['Lato:Regular',sans-serif] leading-[16px] not-italic text-[#2c4657] text-[14px] text-nowrap">{author}</p>
+        <div className="flex items-center justify-between w-full">
+          <p className="font-['Lato:Regular',sans-serif] leading-[16px] not-italic text-[#2c4657] text-[14px] text-nowrap">{author}</p>
+          <p className="font-['Lato:Regular',sans-serif] leading-[16px] not-italic text-[#2c4657] text-[14px] text-nowrap">{date}</p>
+        </div>
       </div>
       
       {/* Decorative ellipse at bottom */}
@@ -242,7 +245,7 @@ function ReviewCard({ review, author }: { review: string; author: string }) {
 }
 
 // Mobile Review Card Component - scaled down from desktop
-function ReviewCardMobile({ review, author, duration = 4 }: { review: string; author: string; duration?: number }) {
+function ReviewCardMobile({ review, author, date, duration = 4 }: { review: string; author: string; date: string; duration?: number }) {
   return (
     <motion.div 
       className="relative rounded-[16px] w-[305px] overflow-hidden" 
@@ -263,7 +266,10 @@ function ReviewCardMobile({ review, author, duration = 4 }: { review: string; au
     >
       <div className="box-border content-stretch flex flex-col gap-[24px] items-start p-[16px] relative w-[305px]">
         <p className="font-['Lato:Regular',sans-serif] leading-[28px] min-w-full not-italic relative shrink-0 text-[#2c4657] text-[16px] tracking-[0.032px] w-[min-content]">{review}</p>
-        <p className="font-['Lato:Regular',sans-serif] leading-[16px] min-w-full not-italic relative shrink-0 text-[#2c4657] text-[12px] w-[min-content]">{author}</p>
+        <div className="flex items-center justify-between w-full">
+          <p className="font-['Lato:Regular',sans-serif] leading-[16px] not-italic text-[#2c4657] text-[12px] text-nowrap">{author}</p>
+          <p className="font-['Lato:Regular',sans-serif] leading-[16px] not-italic text-[#2c4657] text-[12px] text-nowrap">{date}</p>
+        </div>
         <div className="absolute flex h-[calc(1px*((var(--transform-inner-width)*0.05869666114449501)+(var(--transform-inner-height)*0.9982757568359375)))] items-center justify-center left-[71.35px] top-[88.2px] w-[calc(1px*((var(--transform-inner-height)*0.05869666114449501)+(var(--transform-inner-width)*0.9982757568359375)))]" style={{ "--transform-inner-width": "353.984375", "--transform-inner-height": "87" } as React.CSSProperties}>
           <div className="flex-none rotate-[356.635deg]">
             <div className="h-[87px] relative w-[353.994px]">
@@ -571,7 +577,7 @@ export function Reviews({
                 left: 'calc(50% - 500px)',  // Center-aligned offset - shifted left
               }}
             >
-              <ReviewCard review='"I would strongly recommend Nick if you are looking to secure a mortgage or remortgage. "' author="~Daniel" />
+              <ReviewCard review='"I would strongly recommend Nick if you are looking to secure a mortgage or remortgage. "' author="~Daniel" date="January, 2024" />
             </motion.div>
 
             {/* Card 2 - Right side */}
@@ -585,7 +591,7 @@ export function Reviews({
                 left: 'calc(50% + 92px)',  // Center-aligned offset - shifted left
               }}
             >
-              <ReviewCard review='"Nick is a great mortgage advisor. He helped me secure a loan quickly and efficiently. "' author="~Sarah" />
+              <ReviewCard review='"Nick is a great mortgage advisor. He helped me secure a loan quickly and efficiently. "' author="~Sarah" date="March, 2024" />
             </motion.div>
 
             {/* Card 5 - Left side */}
@@ -599,7 +605,7 @@ export function Reviews({
                 left: 'calc(50% - 508px)',  // Center-aligned offset - shifted left
               }}
             >
-              <ReviewCard review='"Nick was very helpful in guiding me through the mortgage process. I am very satisfied with the outcome. "' author="~Michael" />
+              <ReviewCard review='"Nick was very helpful in guiding me through the mortgage process. I am very satisfied with the outcome. "' author="~Michael" date="June, 2024" />
             </motion.div>
 
             {/* Card 6 - Right side */}
@@ -613,7 +619,7 @@ export function Reviews({
                 left: 'calc(50% + 184px)',  // Center-aligned offset - shifted left
               }}
             >
-              <ReviewCard review='"Nick is a great communicator and provided clear explanations throughout the mortgage process. "' author="~Laura" />
+              <ReviewCard review='"Nick is a great communicator and provided clear explanations throughout the mortgage process. "' author="~Laura" date="September, 2024" />
             </motion.div>
 
             {/* Card 7 - Left side */}
@@ -627,7 +633,7 @@ export function Reviews({
                 left: 'calc(50% - 500px)',  // Center-aligned offset - shifted left
               }}
             >
-              <ReviewCard review='"Nick is a professional and experienced mortgage advisor. I am very impressed with his service. "' author="~David" />
+              <ReviewCard review='"Nick is a professional and experienced mortgage advisor. I am very impressed with his service. "' author="~David" date="December, 2024" />
             </motion.div>
           </>
         )}
@@ -703,7 +709,7 @@ export function Reviews({
                   zIndex: 60
                 }}
               >
-                <ReviewCardMobile review='"I would strongly recommend Nick if you are looking to secure a mortgage or remortgage. "' author="~Daniel" />
+                <ReviewCardMobile review='"I would strongly recommend Nick if you are looking to secure a mortgage or remortgage. "' author="~Daniel" date="January, 2024" />
               </motion.div>
 
               {/* Card 2 - Left rotated - GOES BEYOND TOP */}
@@ -717,7 +723,7 @@ export function Reviews({
                   zIndex: 60
                 }}
               >
-                <ReviewCardMobile review='"Nick is a great mortgage advisor. He helped me secure a loan quickly and efficiently. "' author="~Sarah" />
+                <ReviewCardMobile review='"Nick is a great mortgage advisor. He helped me secure a loan quickly and efficiently. "' author="~Sarah" date="March, 2024" />
               </motion.div>
 
               {/* Card 5 - Left Center - STAYS VISIBLE */}
@@ -731,7 +737,7 @@ export function Reviews({
                   zIndex: 60
                 }}
               >
-                <ReviewCardMobile review='"Nick was very helpful in guiding me through the mortgage process. I am very satisfied with the outcome. "' author="~Michael" />
+                <ReviewCardMobile review='"Nick was very helpful in guiding me through the mortgage process. I am very satisfied with the outcome. "' author="~Michael" date="June, 2024" />
               </motion.div>
 
               {/* Card 6 - Right Center - STAYS VISIBLE */}
@@ -745,7 +751,7 @@ export function Reviews({
                   zIndex: 60
                 }}
               >
-                <ReviewCardMobile review='"Nick is a great communicator and provided clear explanations throughout the mortgage process. "' author="~Laura" />
+                <ReviewCardMobile review='"Nick is a great communicator and provided clear explanations throughout the mortgage process. "' author="~Laura" date="September, 2024" />
               </motion.div>
 
               {/* Card 7 - Center - STAYS VISIBLE */}
@@ -759,7 +765,7 @@ export function Reviews({
                   zIndex: 60
                 }}
               >
-                <ReviewCardMobile review='"Nick is a professional and experienced mortgage advisor. I am very impressed with his service. "' author="~David" />
+                <ReviewCardMobile review='"Nick is a professional and experienced mortgage advisor. I am very impressed with his service. "' author="~David" date="December, 2024" />
               </motion.div>
             </>
           )}
