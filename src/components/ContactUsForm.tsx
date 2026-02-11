@@ -6,6 +6,7 @@ import mobileSvgPaths from "../imports/svg-496nz61rw6";
 import cursorSvgPaths from "../imports/svg-3ga094bafp";
 import { ChevronUp, Phone, Menu } from "lucide-react";
 import { submitContactForm, validateFormData, type ContactFormData } from "../utils/contactApi";
+import PDFViewer from "./PDFViewer";
 
 interface ContactUsFormProps {
   onScrollProgress?: (progress: number) => void;
@@ -252,6 +253,11 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
   // Custom cursor tracking for desktop
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [showCursor, setShowCursor] = useState(false);
+  const [hideCursorForLinks, setHideCursorForLinks] = useState(false);
+
+  // PDF Viewer state
+  const [pdfViewerOpen, setPdfViewerOpen] = useState(false);
+  const [currentPdf, setCurrentPdf] = useState<{ url: string; title: string } | null>(null);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -358,11 +364,21 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
     }
   };
 
+  const openPDF = (url: string, title: string) => {
+    setCurrentPdf({ url, title });
+    setPdfViewerOpen(true);
+  };
+
+  const closePDF = () => {
+    setPdfViewerOpen(false);
+    setCurrentPdf(null);
+  };
+
   const renderFormField = () => {
     switch (currentStep) {
       case 1:
         return (
-          <div className="absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] top-[calc(50%-140px)] translate-x-[-50%] translate-y-[-50%] w-[800px]">
+          <div className="absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] top-[calc(50%-350px)] translate-x-[-50%] translate-y-[-50%] w-[800px]">
             <input
               type="text"
               value={formData.name}
@@ -381,7 +397,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
         );
       case 2:
         return (
-          <div className="absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] top-[calc(50%-140px)] translate-x-[-50%] translate-y-[-50%] w-[800px]">
+          <div className="absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] top-[calc(50%-350px)] translate-x-[-50%] translate-y-[-50%] w-[800px]">
             <input
               type="email"
               value={formData.email}
@@ -400,7 +416,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
         );
       case 3:
         return (
-          <div className="absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] top-[calc(50%-140px)] translate-x-[-50%] translate-y-[-50%] w-[800px]">
+          <div className="absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] top-[calc(50%-350px)] translate-x-[-50%] translate-y-[-50%] w-[800px]">
             <input
               type="tel"
               value={formData.phone}
@@ -419,7 +435,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
         );
       case 4:
         return (
-          <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-108px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
+          <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-350px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
             <textarea
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
@@ -441,10 +457,10 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
   return (
     <div
       ref={containerRef}
-      className="relative w-full bg-[#2c4657] z-[80] min-h-[150vh] md:cursor-none"
+      className="relative w-full bg-[#2c4657] z-[80]  md:cursor-none"
     >
       {/* Custom Cursor - Desktop Only */}
-      {showCursor && (
+      {showCursor && !hideCursorForLinks && !pdfViewerOpen && (
         <div 
           className="fixed pointer-events-none z-[9999] hidden md:block"
           style={{
@@ -465,8 +481,8 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
         </div>
       )}
 
-      {/* Sticky container */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+      {/* Sticky Form Section */}
+      <div className="sticky top-0 h-[200vh] w-full overflow-hidden pb-[60px]">
         {/* Mobile View */}
         <motion.div 
           className="md:hidden bg-[#2c4657] relative size-full"
@@ -497,7 +513,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
           {/* Success Message */}
           {isSubmitted && (
             <motion.div 
-              className="absolute left-1/2 top-[calc(50%-200px)] translate-x-[-50%] translate-y-[-50%] flex flex-col gap-[24px] items-center w-[90%] max-w-[382px] px-4"
+              className="absolute left-1/2 top-[calc(50%-350px)] translate-x-[-50%] translate-y-[-50%] flex flex-col gap-[24px] items-center w-[90%] max-w-[382px] px-4"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
@@ -515,17 +531,17 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
 
           {/* Title */}
           {!isSubmitted && (
-            <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 not-italic text-[28px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-230px)] translate-x-[-50%] whitespace-pre px-4 tracking-[24px]">REACH US</p>
+            <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 not-italic text-[28px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-600px)] translate-x-[-50%] whitespace-pre px-4 tracking-[24px]">REACH US</p>
           )}
 
           {!isSubmitted && (
             <>
               {/* Step Indicator - Mobile - Above the title */}
-              <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 translate-x-[-50%] not-italic text-[32px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-280px)] whitespace-pre">{currentStep}/4</p>
+              <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 translate-x-[-50%] not-italic text-[32px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-650px)] whitespace-pre">{currentStep}/4</p>
 
               {/* Form Field */}
               {currentStep === 1 && (
-                <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-108px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
+                <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-478px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
                   <input
                     type="text"
                     value={formData.name}
@@ -544,7 +560,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
               )}
 
               {currentStep === 2 && (
-                <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-108px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
+                <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-478px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
                   <input
                     type="email"
                     value={formData.email}
@@ -563,7 +579,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
               )}
 
               {currentStep === 3 && (
-                <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-108px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
+                <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-478px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
                   <input
                     type="tel"
                     value={formData.phone}
@@ -582,7 +598,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
               )}
 
               {currentStep === 4 && (
-                <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-108px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
+                <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-478px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
                   <textarea
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
@@ -609,7 +625,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
                   (currentStep === 3 && !formData.phone) ||
                   (currentStep === 4 && !formData.message)
                 }
-                className={`absolute bg-[#222526] box-border content-stretch flex gap-[8px] items-center justify-center left-1/2 px-[24px] py-[12px] rounded-[56px] top-[calc(50%-40px)] translate-x-[-50%] transition-opacity border-none ${
+                className={`absolute bg-[#222526] box-border content-stretch flex gap-[8px] items-center justify-center left-1/2 px-[24px] py-[12px] rounded-[56px] top-[calc(50%-400px)] translate-x-[-50%] transition-opacity border-none ${
                   isSubmitting ||
                   (currentStep === 1 && !formData.name) ||
                   (currentStep === 2 && !formData.email) ||
@@ -627,7 +643,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
               {/* Error Message */}
               {submitError && (
                 <motion.p 
-                  className="absolute left-1/2 translate-x-[-50%] top-[calc(50%+60px)] font-['Lato:Regular',sans-serif] text-[14px] text-red-400 text-center max-w-[320px]"
+                  className="absolute left-1/2 translate-x-[-50%] top-[calc(50%-280px)] font-['Lato:Regular',sans-serif] text-[14px] text-red-400 text-center max-w-[95%] px-4"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
@@ -641,70 +657,130 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
                 <button
                   onClick={handleBack}
                   disabled={isSubmitting}
-                  className="absolute left-1/2 translate-x-[-50%] top-[calc(50%+20px)] cursor-pointer bg-transparent border-none disabled:opacity-50"
+                  className="absolute left-1/2 translate-x-[-50%] top-[calc(50%-320px)] cursor-pointer md:cursor-none bg-transparent border-none hover:opacity-70 transition-opacity disabled:opacity-50"
                 >
-                  <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[16px] text-white whitespace-pre">Back</p>
+                  <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[20px] text-white whitespace-pre">Back</p>
                 </button>
               )}
             </>
           )}
 
-          {/* Social Media - Instagram */}
-          <div className="absolute bg-[rgba(255,255,255,0.1)] box-border content-stretch flex gap-[8px] items-center left-1/2 -translate-x-1/2 p-[16px] rounded-[100px] size-[56px] bottom-[200px]">
-            <div aria-hidden="true" className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" />
-            <div className="relative shrink-0 size-[24px]">
-              <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
-                <g clipPath="url(#clip0_mobile_instagram)">
-                  <path d={svgPaths.p2f6d7600} fill="white" />
-                </g>
-                <defs>
-                  <clipPath id="clip0_mobile_instagram">
-                    <rect fill="white" height="24" width="24" />
-                  </clipPath>
-                </defs>
-              </svg>
+          {/* Legal/Compliance Text */}
+          <div className="absolute left-1/2 -translate-x-1/2 bottom-[480px] content-stretch flex flex-col gap-[24px] items-center not-italic w-[90%] max-w-[382px] px-4">
+            <p className="font-['Lato:Light',sans-serif] leading-[20px] min-w-full relative shrink-0 text-[14px] text-[rgba(255,255,255,0.6)] w-[min-content] whitespace-pre-wrap">{`Your home  may be repossessed if you do not keep up repayments on your mortgage. Jigsaw Financial Limited are registered in England and Wales, and an Appointed Representative of PRIMIS Mortgage Network, a trading name of First Complete Ltd. First Complete Ltd is authorised and regulated by the Financial Conduct Authority.`}</p>
+            <p className="font-['Lato:Light',sans-serif] leading-[0] min-w-full relative shrink-0 text-[14px] text-[rgba(255,255,255,0.6)] w-[min-content] whitespace-pre-wrap">
+              <span className="leading-[20px]">
+                The guidance contained within this website is subject to the UK regulatory regime and is therefore primarily targeted at consumers based in the UK
+                <br aria-hidden="true" />
+                {`Registered office address - `}
+              </span>
+              <span className="[text-decoration-skip-ink:none] decoration-solid font-['Lato:Regular',sans-serif] leading-[20px] text-white underline">Suite 2f2 Sovereign House, Stockport Road, Cheadle, England, SK8 2EA. Company No: 11821948</span>
+            </p>
+            <p className="font-['Lato:Light',sans-serif] leading-[20px] min-w-full relative shrink-0 text-[14px] text-[rgba(255,255,255,0.6)] w-[min-content] whitespace-pre-wrap">{`Jigsaw Financial usually charges a fee for mortgage advice. The amount of the fee will depend on your circumstances and will be discussed and agreed with you at the earliest opportunity. `}</p>
+            
+            {/* Complaints Process and Privacy Policy Links */}
+            <div className="content-stretch flex font-['Lato:Regular',sans-serif] items-center justify-between leading-[18px] relative shrink-0 text-[16px] text-white underline w-full">
+              <button 
+                onClick={() => openPDF('/pdfs/complaints-process.pdf', 'Complaints Process')}
+                onMouseEnter={() => setHideCursorForLinks(true)}
+                onMouseLeave={() => setHideCursorForLinks(false)}
+                className="decoration-solid relative shrink-0 hover:opacity-70 transition-opacity bg-transparent border-none text-white underline cursor-pointer font-['Lato:Regular',sans-serif] text-[16px] leading-[18px]"
+              >
+                Complaints Process
+              </button>
+              <button 
+                onClick={() => openPDF('/pdfs/privacy-policy.pdf', 'Privacy Policy')}
+                onMouseEnter={() => setHideCursorForLinks(true)}
+                onMouseLeave={() => setHideCursorForLinks(false)}
+                className="decoration-solid relative shrink-0 hover:opacity-70 transition-opacity bg-transparent border-none text-white underline cursor-pointer font-['Lato:Regular',sans-serif] text-[16px] leading-[18px]"
+              >
+                Privacy Policy
+              </button>
             </div>
           </div>
-          <p className="absolute font-['Lato:Light',sans-serif] leading-[20px] left-1/2 -translate-x-1/2 not-italic text-[16px] text-center text-white bottom-[170px] tracking-[0.2px]">Instagram</p>
 
-          {/* Social Media - LinkedIn */}
-          <div className="absolute bg-[rgba(255,255,255,0.1)] box-border content-stretch flex gap-[8px] items-center right-[20px] p-[16px] rounded-[100px] size-[56px] bottom-[200px]">
-            <div aria-hidden="true" className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" />
-            <div className="relative shrink-0 size-[24px]">
-              <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
-                <g clipPath="url(#clip0_mobile_linkedin)">
-                  <path clipRule="evenodd" d={svgPaths.p106ed680} fill="white" fillRule="evenodd" />
-                </g>
-                <defs>
-                  <clipPath id="clip0_mobile_linkedin">
-                    <rect fill="white" height="24" width="24" />
-                  </clipPath>
-                </defs>
-              </svg>
-            </div>
-          </div>
-          <p className="absolute font-['Lato:Light',sans-serif] leading-[20px] right-[22px] not-italic text-[16px] text-center text-white bottom-[170px] tracking-[0.2px]">LinkedIn</p>
+          {/* Social Media Section */}
+          <div className="absolute left-1/2 -translate-x-1/2 bottom-[240px] content-stretch flex flex-col gap-[32px] items-center justify-center w-[90%] max-w-[382px]">
+            <p className="font-['Lato:Regular',sans-serif] leading-[26px] not-italic text-[24px] text-white">Follow us on:</p>
+            
+            <div className="content-stretch flex items-center justify-between w-full">
+              {/* Facebook */}
+              <a 
+                href="https://www.facebook.com/JigsawFinancialLtd/#"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="content-stretch flex flex-col gap-[8px] items-center shrink-0"
+              >
+                <div className="bg-[rgba(255,255,255,0.1)] box-border content-stretch flex gap-[8px] items-center p-[16px] rounded-[100px] size-[56px] relative">
+                  <div aria-hidden="true" className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" />
+                  <div className="relative shrink-0 size-[24px]">
+                    <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
+                      <g clipPath="url(#clip0_mobile_facebook)">
+                        <path d={svgPaths.pa2aea00} fill="white" />
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_mobile_facebook">
+                          <rect fill="white" height="24" width="24" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                  </div>
+                  <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_4px_4px_0px_rgba(255,255,255,0.12),inset_0px_-5px_4px_0px_rgba(255,255,255,0.08)]" />
+                </div>
+                <p className="font-['Lato:Light',sans-serif] leading-[28px] not-italic text-[20px] text-white tracking-[0.2px]">Facebook</p>
+              </a>
 
-          {/* Social Media - Facebook */}
-          <div className="absolute bg-[rgba(255,255,255,0.1)] box-border content-stretch flex gap-[8px] items-center left-[20px] p-[16px] rounded-[100px] size-[56px] bottom-[200px]">
-            <div aria-hidden="true" className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" />
-            <div className="relative shrink-0 size-[24px]">
-              <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
-                <g clipPath="url(#clip0_mobile_facebook)">
-                  <path d={svgPaths.pa2aea00} fill="white" />
-                </g>
-                <defs>
-                  <clipPath id="clip0_mobile_facebook">
-                    <rect fill="white" height="24" width="24" />
-                  </clipPath>
-                </defs>
-              </svg>
+              {/* Instagram */}
+              <div className="content-stretch flex flex-col gap-[8px] items-center shrink-0">
+                <div className="bg-[rgba(255,255,255,0.1)] box-border content-stretch flex gap-[8px] items-center p-[16px] rounded-[100px] size-[56px] relative">
+                  <div aria-hidden="true" className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" />
+                  <div className="relative shrink-0 size-[24px]">
+                    <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
+                      <g clipPath="url(#clip0_mobile_instagram)">
+                        <path d={svgPaths.p2f6d7600} fill="white" />
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_mobile_instagram">
+                          <rect fill="white" height="24" width="24" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                  </div>
+                  <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_4px_4px_0px_rgba(255,255,255,0.12),inset_0px_-5px_4px_0px_rgba(255,255,255,0.08)]" />
+                </div>
+                <p className="font-['Lato:Light',sans-serif] leading-[28px] not-italic text-center text-[20px] text-white tracking-[0.2px]">Instagram</p>
+              </div>
+
+              {/* LinkedIn */}
+              <a 
+                href="https://www.linkedin.com/company/jigsaw-financial-ltd/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="content-stretch flex flex-col gap-[8px] items-center shrink-0"
+              >
+                <div className="bg-[rgba(255,255,255,0.1)] box-border content-stretch flex gap-[8px] items-center p-[16px] rounded-[100px] size-[56px] relative">
+                  <div aria-hidden="true" className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" />
+                  <div className="relative shrink-0 size-[24px]">
+                    <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
+                      <g clipPath="url(#clip0_mobile_linkedin)">
+                        <path clipRule="evenodd" d={svgPaths.p106ed680} fill="white" fillRule="evenodd" />
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_mobile_linkedin">
+                          <rect fill="white" height="24" width="24" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                  </div>
+                  <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_4px_4px_0px_rgba(255,255,255,0.12),inset_0px_-5px_4px_0px_rgba(255,255,255,0.08)]" />
+                </div>
+                <p className="font-['Lato:Light',sans-serif] leading-[28px] not-italic text-center text-[20px] text-white tracking-[0.2px]">LinkedIn</p>
+              </a>
             </div>
           </div>
-          <p className="absolute font-['Lato:Light',sans-serif] leading-[20px] left-[18px] not-italic text-[16px] text-white bottom-[170px] tracking-[0.2px]">Facebook</p>
 
           {/* Separator Line */}
-          <div className="absolute bottom-[150px] h-0 left-1/2 -translate-x-1/2 w-[90%] max-w-[378px]">
+          <div className="absolute bottom-[180px] h-0 left-1/2 -translate-x-1/2 w-[90%] max-w-[378px]">
             <div className="absolute bottom-0 left-0 right-0 top-[-1px]">
               <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 378 1">
                 <line stroke="white" strokeOpacity="0.5" x2="378" y1="0.5" y2="0.5" />
@@ -713,7 +789,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
           </div>
 
           {/* Footer */}
-          <div className="absolute content-stretch flex flex-col gap-[20px] items-center justify-center left-1/2 not-italic text-white bottom-[40px] -translate-x-1/2 w-[90%] max-w-[382px] px-4">
+          <div className="absolute content-stretch flex flex-col gap-[20px] items-center justify-center left-1/2 not-italic text-white bottom-[60px] -translate-x-1/2 w-[90%] max-w-[382px] px-4">
             <p className="font-['Lato:Regular',sans-serif] leading-[16px] relative shrink-0 text-[12px] text-center">© Copyright Jigsaw Financial. 2025. All Rights Reserved.</p>
             <p className="font-['Poppins:Regular',sans-serif] leading-[16px] relative shrink-0 text-[12px] text-center">
               <span className="font-['Lato:Light',sans-serif]">Website by</span>
@@ -761,7 +837,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
           {/* Success Message */}
           {isSubmitted && (
             <motion.div 
-              className="absolute left-1/2 top-[calc(50%-100px)] translate-x-[-50%] translate-y-[-50%] flex flex-col gap-[36px] items-center"
+              className="absolute left-1/2 top-[calc(50%-250px)] translate-x-[-50%] translate-y-[-50%] flex flex-col gap-[36px] items-center"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
@@ -779,13 +855,13 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
 
           {/* Main Title */}
           {!isSubmitted && (
-            <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 not-italic text-[100px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[40px] translate-x-[-50%] whitespace-pre tracking-[48px]">REACH US</p>
+            <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 not-italic text-[100px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[100px] translate-x-[-50%] whitespace-pre tracking-[48px]">REACH US</p>
           )}
 
           {!isSubmitted && (
             <>
               {/* Step Indicator */}
-              <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+440px)] not-italic text-[72px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-130px)] translate-x-[-50%] whitespace-pre">{currentStep}/4</p>
+              <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+440px)] not-italic text-[72px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-350px)] translate-x-[-50%] whitespace-pre">{currentStep}/4</p>
 
               {/* Form Field */}
               {renderFormField()}
@@ -800,7 +876,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
                   (currentStep === 3 && !formData.phone) ||
                   (currentStep === 4 && !formData.message)
                 }
-                className={`absolute bg-[#222526] box-border content-stretch flex gap-[8px] items-center justify-center left-[50%] translate-x-[-50%] px-[40px] py-[24px] rounded-[56px] top-[calc(50%-65px)] transition-opacity border-none ${
+                className={`absolute bg-[#222526] box-border content-stretch flex gap-[8px] items-center justify-center left-[50%] translate-x-[-50%] px-[40px] py-[24px] rounded-[56px] top-[calc(50%-275px)] transition-opacity border-none ${
                   isSubmitting ||
                   (currentStep === 1 && !formData.name) ||
                   (currentStep === 2 && !formData.email) ||
@@ -819,7 +895,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
               {/* Error Message */}
               {submitError && (
                 <motion.p 
-                  className="absolute left-1/2 translate-x-[-50%] top-[calc(50%+80px)] font-['Lato:Regular',sans-serif] text-[18px] text-red-400 text-center max-w-[600px]"
+                  className="absolute left-1/2 translate-x-[-50%] top-[calc(50%-50px)] font-['Lato:Regular',sans-serif] text-[18px] text-red-400 text-center max-w-[600px]"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
@@ -833,7 +909,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
                 <button
                   onClick={handleBack}
                   disabled={isSubmitting}
-                  className="absolute left-[50%] translate-x-[-50%] top-[calc(50%+25px)] cursor-pointer md:cursor-none bg-transparent border-none hover:opacity-70 transition-opacity disabled:opacity-50"
+                  className="absolute left-1/2 translate-x-[-50%] top-[calc(50%-180px)] cursor-pointer md:cursor-none bg-transparent border-none hover:opacity-70 transition-opacity disabled:opacity-50"
                 >
                   <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[24px] text-white whitespace-pre">Back</p>
                 </button>
@@ -841,12 +917,53 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
             </>
           )}
 
-          {/* Social Media Icons */}
-          <p className={`absolute leading-[24px] left-[calc(50%-140px)] not-italic text-[16px] text-nowrap text-white bottom-[120px] tracking-[0.2px] translate-x-[-50%] whitespace-pre transition-all ${facebookHovered ? "font-['Lato:Bold',sans-serif]" : "font-['Lato:Light',sans-serif]"}`}>Facebook</p>
-          <p className={`absolute leading-[24px] left-1/2 not-italic text-[16px] text-center text-nowrap text-white bottom-[120px] tracking-[0.2px] translate-x-[-50%] whitespace-pre transition-all ${instagramHovered ? "font-['Lato:Bold',sans-serif]" : "font-['Lato:Light',sans-serif]"}`}>Instagram</p>
-          <p className={`absolute leading-[24px] left-[calc(50%+140px)] not-italic text-[16px] text-center text-nowrap text-white bottom-[120px] tracking-[0.2px] translate-x-[-50%] whitespace-pre transition-all ${linkedinHovered ? "font-['Lato:Bold',sans-serif]" : "font-['Lato:Light',sans-serif]"}`}>LinkedIn</p>
+          {/* Legal/Compliance Text - Desktop */}
+          <div className="absolute left-1/2 -translate-x-1/2 top-[calc(100vh+240px)] content-stretch flex flex-col gap-[24px] items-center not-italic w-[1152px]">
+            <p className="font-['Lato:Light',sans-serif] leading-[20px] min-w-full relative shrink-0 text-[14px] text-[rgba(255,255,255,0.6)] w-[min-content] whitespace-pre-wrap">{`Your home  may be repossessed if you do not keep up repayments on your mortgage. Jigsaw Financial Limited are registered in England and Wales, and an Appointed Representative of PRIMIS Mortgage Network, a trading name of First Complete Ltd. First Complete Ltd is authorised and regulated by the Financial Conduct Authority.`}</p>
+            <p className="font-['Lato:Light',sans-serif] leading-[0] min-w-full relative shrink-0 text-[14px] text-[rgba(255,255,255,0.6)] w-[min-content] whitespace-pre-wrap">
+              <span className="leading-[20px]">
+                The guidance contained within this website is subject to the UK regulatory regime and is therefore primarily targeted at consumers based in the UK
+                <br aria-hidden="true" />
+                {`Registered office address - `}
+              </span>
+              <span className="[text-decoration-skip-ink:none] decoration-solid font-['Lato:Regular',sans-serif] leading-[20px] text-white underline">Suite 2f2 Sovereign House, Stockport Road, Cheadle, England, SK8 2EA. Company No: 11821948</span>
+            </p>
+            <p className="font-['Lato:Light',sans-serif] leading-[20px] min-w-full relative shrink-0 text-[14px] text-[rgba(255,255,255,0.6)] w-[min-content] whitespace-pre-wrap">{`Jigsaw Financial usually charges a fee for mortgage advice. The amount of the fee will depend on your circumstances and will be discussed and agreed with you at the earliest opportunity. `}</p>
+            
+            {/* Complaints Process and Privacy Policy Links */}
+            <div className="content-stretch flex font-['Lato:Regular',sans-serif] items-center justify-between leading-[18px] relative shrink-0 text-[16px] text-white underline w-full">
+              <button 
+                onClick={() => openPDF('/pdfs/complaints-process.pdf', 'Complaints Process')}
+                onMouseEnter={() => setHideCursorForLinks(true)}
+                onMouseLeave={() => setHideCursorForLinks(false)}
+                className="decoration-solid relative shrink-0 hover:opacity-70 transition-opacity bg-transparent border-none text-white underline cursor-pointer font-['Lato:Regular',sans-serif] text-[16px] leading-[18px]"
+              >
+                Complaints Process
+              </button>
+              <button 
+                onClick={() => openPDF('/pdfs/privacy-policy.pdf', 'Privacy Policy')}
+                onMouseEnter={() => setHideCursorForLinks(true)}
+                onMouseLeave={() => setHideCursorForLinks(false)}
+                className="decoration-solid relative shrink-0 hover:opacity-70 transition-opacity bg-transparent border-none text-white underline cursor-pointer font-['Lato:Regular',sans-serif] text-[16px] leading-[18px]"
+              >
+                Privacy Policy
+              </button>
+            </div>
+          </div>
 
-          <div className="absolute left-[calc(50%-140px)] size-[56px] bottom-[150px] translate-x-[-50%]">
+          {/* Social Media Icons */}
+          <p className="absolute font-['Lato:Regular',sans-serif] leading-[24px] left-1/2 not-italic text-[20px] text-center text-nowrap text-white top-[calc(100vh+80px)] tracking-[0.2px] translate-x-[-50%] whitespace-pre">Follow us on:</p>
+          
+          <p className={`absolute leading-[24px] left-[calc(50%-140px)] not-italic text-[16px] text-nowrap text-white top-[calc(100vh+190px)] tracking-[0.2px] translate-x-[-50%] whitespace-pre transition-all ${facebookHovered ? "font-['Lato:Bold',sans-serif]" : "font-['Lato:Light',sans-serif]"}`}>Facebook</p>
+          <p className={`absolute leading-[24px] left-1/2 not-italic text-[16px] text-center text-nowrap text-white top-[calc(100vh+190px)] tracking-[0.2px] translate-x-[-50%] whitespace-pre transition-all ${instagramHovered ? "font-['Lato:Bold',sans-serif]" : "font-['Lato:Light',sans-serif]"}`}>Instagram</p>
+          <p className={`absolute leading-[24px] left-[calc(50%+140px)] not-italic text-[16px] text-center text-nowrap text-white top-[calc(100vh+190px)] tracking-[0.2px] translate-x-[-50%] whitespace-pre transition-all ${linkedinHovered ? "font-['Lato:Bold',sans-serif]" : "font-['Lato:Light',sans-serif]"}`}>LinkedIn</p>
+
+          <a 
+            href="https://www.facebook.com/JigsawFinancialLtd/#"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute left-[calc(50%-140px)] size-[56px] top-[calc(100vh+130px)] translate-x-[-50%]"
+          >
             <SocialButton 
               shadowColor="inset 0px 4px 4px 0px rgba(24, 119, 242, 0.12), inset 0px -5px 4px 0px rgba(24, 119, 242, 0.08)"
               glowColor="0 0 0 1px rgba(24, 119, 242, 0.3), 0 0 20px 8px rgba(24, 119, 242, 0.2), 0 0 40px 16px rgba(24, 119, 242, 0.1)"
@@ -854,8 +971,8 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
             >
               {(isHovered: boolean) => <BiFacebook isHovered={isHovered} />}
             </SocialButton>
-          </div>
-          <div className="absolute left-1/2 size-[56px] bottom-[150px] translate-x-[-50%]">
+          </a>
+          <div className="absolute left-1/2 size-[56px] top-[calc(100vh+130px)] translate-x-[-50%]">
             <SocialButton 
               shadowColor="inset 0px 4px 4px 0px rgba(200, 55, 171, 0.12), inset 0px -5px 4px 0px rgba(200, 55, 171, 0.08)"
               glowColor="0 0 0 1px rgba(200, 55, 171, 0.3), 0 0 20px 8px rgba(200, 55, 171, 0.2), 0 0 40px 16px rgba(200, 55, 171, 0.1)"
@@ -864,7 +981,12 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
               {(isHovered: boolean) => <UilInstagramAlt isHovered={isHovered} />}
             </SocialButton>
           </div>
-          <div className="absolute left-[calc(50%+140px)] size-[56px] bottom-[150px] translate-x-[-50%]">
+          <a 
+            href="https://www.linkedin.com/company/jigsaw-financial-ltd/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute left-[calc(50%+140px)] size-[56px] top-[calc(100vh+130px)] translate-x-[-50%]"
+          >
             <SocialButton 
               shadowColor="inset 0px 4px 4px 0px rgba(0, 118, 178, 0.12), inset 0px -5px 4px 0px rgba(0, 118, 178, 0.08)"
               glowColor="0 0 0 1px rgba(0, 118, 178, 0.3), 0 0 20px 8px rgba(0, 118, 178, 0.2), 0 0 40px 16px rgba(0, 118, 178, 0.1)"
@@ -872,28 +994,28 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
             >
               {(isHovered: boolean) => <AkarIconsLinkedinV1Fill isHovered={isHovered} />}
             </SocialButton>
-          </div>
+          </a>
 
-          {/* Footer Divider */}
-          <div className="absolute h-0 left-1/2 bottom-[70px] translate-x-[-50%] w-[1100px]">
+          {/* Footer Divider Line */}
+          <div className="absolute h-0 left-1/2 translate-x-[-50%] w-[1152px] top-[calc(100vh+478px)]">
             <div className="absolute bottom-0 left-0 right-0 top-[-1px]">
-              <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 1100 1">
-                <line id="Line 33" stroke="var(--stroke-0, white)" strokeOpacity="0.5" x2="1100" y1="0.5" y2="0.5" />
+              <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 1152 1">
+                <line stroke="var(--stroke-0, white)" strokeOpacity="0.5" x2="1152" y1="0.5" y2="0.5" />
               </svg>
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="absolute content-stretch flex items-center justify-between left-1/2 translate-x-[-50%] not-italic text-[14px] text-nowrap text-white bottom-[30px] w-[1100px] whitespace-pre">
-            <p className="font-['Lato:Regular',sans-serif] leading-[16px] relative shrink-0">© Copyright Jigsaw Financial. 2025. All Rights Reserved.</p>
-            <p className="font-['Poppins:Regular',sans-serif] leading-[16px] relative shrink-0 text-right">
-              <span className="font-['Lato:Light',sans-serif]">Website by</span>
-              <span className="font-['Lato:Regular',sans-serif]"> </span>
+          {/* Footer - Copyright and Website by */}
+          <div className="absolute content-stretch flex h-[18px] items-center justify-between not-italic left-1/2 translate-x-[-50%] text-[16px] text-white w-[1152px] top-[calc(100vh+518px)]">
+            <p className="font-['Lato:Regular',sans-serif] leading-[18px] relative shrink-0">© Copyright Jigsaw Financial. 2025. All Rights Reserved.</p>
+            <p className="font-['Poppins:Regular',sans-serif] leading-[0] relative shrink-0 text-right">
+              <span className="font-['Lato:Light',sans-serif] leading-[18px]">Website by</span>
+              <span className="font-['Lato:Regular',sans-serif] leading-[18px]"> </span>
               <a 
                 href="https://funkyvibes.co.uk/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="font-['Lato:SemiBold',sans-serif] hover:underline transition-all"
+                className="font-['Lato:SemiBold',sans-serif] leading-[18px] hover:underline transition-all md:cursor-none"
               >
                 Funky Vibes Marketing
               </a>
@@ -901,6 +1023,15 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
           </div>
         </motion.div>
       </div>
+
+      {/* PDF Viewer Modal */}
+      {pdfViewerOpen && currentPdf && (
+        <PDFViewer
+          pdfUrl={currentPdf.url}
+          title={currentPdf.title}
+          onClose={closePDF}
+        />
+      )}
     </div>
   );
 }
