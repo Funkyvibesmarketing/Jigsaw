@@ -71,11 +71,18 @@ function BlogCard({
                   {blog.description}
                 </p>
               </div>
-              <div className="content-stretch flex gap-[4px] items-center justify-center overflow-clip relative rounded-[12px] shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
-                <p className={`font-['Lato:Medium',sans-serif] leading-[20px] not-italic relative shrink-0 text-[12px] text-nowrap whitespace-pre ${isActive ? 'text-white' : 'text-[#2c4657]'}`}>
-                  Read More
-                </p>
-                <ArrowCircleRight fill={isActive ? "white" : "#2C4657"} />
+              <div className="content-stretch flex gap-[4px] items-center justify-between overflow-clip relative rounded-[12px] shrink-0 w-full">
+                <div className="flex gap-[4px] items-center justify-center cursor-pointer hover:opacity-80 transition-opacity">
+                  <p className={`font-['Lato:Medium',sans-serif] leading-[20px] not-italic relative shrink-0 text-[12px] text-nowrap whitespace-pre ${isActive ? 'text-white' : 'text-[#2c4657]'}`}>
+                    Read More
+                  </p>
+                  <ArrowCircleRight fill={isActive ? "white" : "#2C4657"} />
+                </div>
+                {blog.date && (
+                  <p className={`font-['Lato:Light',sans-serif] leading-[20px] not-italic relative shrink-0 text-[10px] ${isActive ? 'text-[rgba(255,255,255,0.6)]' : 'text-[rgba(44,70,87,0.6)]'}`}>
+                    {blog.date}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -183,6 +190,11 @@ function BlogPopupMobile({
 
         {/* Blog Content */}
         <div className="flex-1 flex flex-col gap-[16px] items-start min-h-0 w-full overflow-hidden">
+          {blog.date && (
+            <p className="font-['Lato:Light',sans-serif] leading-[normal] not-italic shrink-0 text-[12px] text-[#2c4657]">
+              {blog.date}
+            </p>
+          )}
           <p className="font-['Lato:SemiBold',sans-serif] leading-[normal] not-italic shrink-0 text-[#2c4657] text-[24px] w-full">
             {blog.title}
           </p>
@@ -313,7 +325,7 @@ export function BlogsMobile({ onScrollProgress, blogs = [] }: BlogsMobileProps) 
   };
 
   return (
-    <div ref={containerRef} className="relative bg-white min-h-[250vh]">
+    <div ref={containerRef} className="relative bg-white min-h-[250vh]" style={{ position: "relative" }}>
       {/* Sticky container that stays below navigation */}
       <div className="sticky top-[80px] h-[calc(100vh-80px)] w-full overflow-hidden flex flex-col">
         {/* Background */}
@@ -341,7 +353,7 @@ export function BlogsMobile({ onScrollProgress, blogs = [] }: BlogsMobileProps) 
               grabCursor={true}
               centeredSlides={true}
               slidesPerView="auto"
-              loop={true}
+              loop={false}
               speed={500}
               touchRatio={1}
               resistance={true}

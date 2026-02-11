@@ -64,11 +64,18 @@ function BlogCard({ blog, isActive, onClick }: { blog: BlogData; isActive: boole
               {blog.description}
             </p>
           </div>
-          <div className="content-stretch flex gap-[4px] items-center justify-center overflow-clip relative rounded-[12px] shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
-            <p className={`font-['Lato:Medium',sans-serif] leading-[20px] not-italic relative shrink-0 text-[14px] text-nowrap whitespace-pre ${isActive ? 'text-white' : 'text-[#2c4657]'}`}>
-              Read More
-            </p>
-            <ArrowCircleRight fill={isActive ? "white" : "#2C4657"} />
+          <div className="content-stretch flex gap-[4px] items-center justify-between overflow-clip relative rounded-[12px] shrink-0 w-full">
+            <div className="flex gap-[4px] items-center justify-center cursor-pointer hover:opacity-80 transition-opacity">
+              <p className={`font-['Lato:Medium',sans-serif] leading-[20px] not-italic relative shrink-0 text-[14px] text-nowrap whitespace-pre ${isActive ? 'text-white' : 'text-[#2c4657]'}`}>
+                Read More
+              </p>
+              <ArrowCircleRight fill={isActive ? "white" : "#2C4657"} />
+            </div>
+            {blog.date && (
+              <p className={`font-['Lato:Light',sans-serif] leading-[20px] not-italic relative shrink-0 text-[12px] ${isActive ? 'text-[rgba(255,255,255,0.6)]' : 'text-[rgba(44,70,87,0.6)]'}`}>
+                {blog.date}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -224,9 +231,16 @@ function BlogPopup({
 
         {/* Blog Content */}
         <div className="basis-0 content-stretch flex flex-col gap-[24px] grow items-start min-h-0 min-w-px relative shrink-0">
-          <p className="font-['Lato:SemiBold',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[#2c4657] text-[32px] w-[min-content]">
-            {blog.title}
-          </p>
+          <div className="flex items-center justify-between w-full">
+            <p className="font-['Lato:SemiBold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2c4657] text-[32px]">
+              {blog.title}
+            </p>
+            {blog.date && (
+              <p className="font-['Lato:Light',sans-serif] leading-[normal] not-italic relative shrink-0 text-[14px] text-[#2c4657] ml-[24px]">
+                {blog.date}
+              </p>
+            )}
+          </div>
           
           {/* Scrollable Content */}
           <div 
@@ -400,7 +414,7 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
     <div
       ref={containerRef}
       className="relative w-full bg-white"
-      style={{ minHeight: "350vh", opacity: blogsOpacity }}
+      style={{ minHeight: "350vh", opacity: blogsOpacity, position: "relative" }}
     >
       {/* Sticky container */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">

@@ -1,9 +1,63 @@
 import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 import { useRef, useEffect, useState } from 'react';
 import svgPaths from '../imports/svg-n75w9nmva4';
+import svgPathsLinkedIn from '../imports/svg-cxhurimysf'; // Import LinkedIn SVG paths
 import imgVector from "figma:asset/29d00c96d16b578c0374f784d6e51ab7656ee486.png";
 import type { TeamMember } from '../utils/teamApi';
 import imgTeamPreview from "figma:asset/8ff86b859ea6e1213d92ee504583e0bce2dc86d5.png";
+
+// LinkedIn Icon Component
+function LinkedInIcon({ isHovered }: { isHovered: boolean }) {
+  return (
+    <div className="relative shrink-0 size-[24px]">
+      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
+        <g clipPath="url(#clip0_linkedin_team)">
+          <path 
+            clipRule="evenodd" 
+            d={svgPathsLinkedIn.p106ed680} 
+            fill={isHovered ? "#0076B2" : "white"} 
+            fillRule="evenodd" 
+          />
+        </g>
+        <defs>
+          <clipPath id="clip0_linkedin_team">
+            <rect fill="white" height="24" width="24" />
+          </clipPath>
+        </defs>
+      </svg>
+    </div>
+  );
+}
+
+// LinkedIn Button Component
+function LinkedInButton({ linkedinUrl }: { linkedinUrl: string }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <a 
+      href={linkedinUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="bg-[rgba(255,255,255,0.1)] box-border content-stretch flex gap-[8px] items-center p-[16px] rounded-[100px] size-[56px] relative transition-all cursor-pointer"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{
+        boxShadow: isHovered ? '0 0 0 1px rgba(0, 118, 178, 0.3), 0 0 20px 8px rgba(0, 118, 178, 0.2), 0 0 40px 16px rgba(0, 118, 178, 0.1)' : 'none'
+      }}
+    >
+      <div aria-hidden="true" className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" />
+      <LinkedInIcon isHovered={isHovered} />
+      {isHovered && (
+        <div 
+          className="absolute inset-0 pointer-events-none rounded-[100px]" 
+          style={{ 
+            boxShadow: 'inset 0px 4px 4px 0px rgba(0, 118, 178, 0.12), inset 0px -5px 4px 0px rgba(0, 118, 178, 0.08)'
+          }}
+        />
+      )}
+    </a>
+  );
+}
 
 export function Team({ 
   reviewsScrollProgress, 
@@ -338,6 +392,13 @@ export function Team({
                         <p className="absolute font-['Lato:Regular',sans-serif] leading-[40px] left-[432px] not-italic text-[20px] text-white top-[calc(50%+100px)] translate-y-[-50%] tracking-[0.14px] w-[480px]">
                           {member.bio}
                         </p>
+
+                        {/* LinkedIn Button - positioned to the right of photo, below bio text */}
+                        {member.linkedinUrl && (
+                          <div className="absolute left-[432px] top-[calc(50%+100px+140px)]" style={{ pointerEvents: 'auto' }}>
+                            <LinkedInButton linkedinUrl={member.linkedinUrl} />
+                          </div>
+                        )}
                       </motion.div>
                     )}
                   </AnimatePresence>

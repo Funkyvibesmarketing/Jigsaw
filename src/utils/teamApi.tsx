@@ -7,6 +7,7 @@ export interface TeamMember {
   title: string;
   bio: React.ReactNode;
   image: string;
+  linkedinUrl?: string; // Optional LinkedIn profile URL
 }
 
 // Default team member data (fallback/mock data)
@@ -28,7 +29,8 @@ export const getDefaultTeamMembers = (): TeamMember[] => [
         <span>{` founding of Jigsaw. Our ongoing mission is to simplify finance and help clients secure homes.`}</span>
       </>
     ),
-    image: imgRectangle14120
+    image: imgRectangle14120,
+    linkedinUrl: "https://www.linkedin.com/in/nick-kershaw-123456789/" // Example LinkedIn URL
   },
   {
     id: 2,
@@ -45,7 +47,8 @@ export const getDefaultTeamMembers = (): TeamMember[] => [
         <span>{` to bring expertise and compassion to mortgage advisory.`}</span>
       </>
     ),
-    image: "https://images.unsplash.com/photo-1581065178047-8ee15951ede6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjB3b21hbiUyMGJ1c2luZXNzJTIwcG9ydHJhaXR8ZW58MXx8fHwxNzY0MTE1OTg5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+    image: "https://images.unsplash.com/photo-1581065178047-8ee15951ede6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjB3b21hbiUyMGJ1c2luZXNzJTIwcG9ydHJhaXR8ZW58MXx8fHwxNzY0MTE1OTg5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    linkedinUrl: "https://www.linkedin.com/in/sarah-thompson-987654321/" // Example LinkedIn URL
   },
   {
     id: 3,
@@ -62,7 +65,8 @@ export const getDefaultTeamMembers = (): TeamMember[] => [
         <span>{`, I focus on creating peace of mind for our clients with expert advice and reliable coverage.`}</span>
       </>
     ),
-    image: "https://images.unsplash.com/photo-1629507208649-70919ca33793?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBtYW4lMjBidXNpbmVzcyUyMHBvcnRyYWl0fGVufDF8fHx8MTc2NDA5NzQzNXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+    image: "https://images.unsplash.com/photo-1629507208649-70919ca33793?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBtYW4lMjBidXNpbmVzcyUyMHBvcnRyYWl0fGVufDF8fHx8MTc2NDA5NzQzNXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    linkedinUrl: "https://www.linkedin.com/in/james-mitchell-555555555/" // Example LinkedIn URL
   }
 ];
 

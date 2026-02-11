@@ -2,6 +2,42 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect, useRef } from 'react';
 import type { TeamMember } from '../utils/teamApi';
 import imgVector from "figma:asset/6d6de80792d2de9d2d28717db9e5bf0e0b17e6c0.png";
+import svgPaths from "../imports/svg-rqrvikz6z1";
+
+// LinkedIn Icon Component
+function AkarIconsLinkedinV1Fill() {
+  return (
+    <div className="relative shrink-0 size-[14px]" data-name="akar-icons:linkedin-v1-fill">
+      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 14 14">
+        <g clipPath="url(#clip0_2221_245)" id="akar-icons:linkedin-v1-fill">
+          <path clipRule="evenodd" d={svgPaths.p18701100} fill="var(--fill-0, white)" fillRule="evenodd" id="Vector" />
+        </g>
+        <defs>
+          <clipPath id="clip0_2221_245">
+            <rect fill="white" height="14" width="14" />
+          </clipPath>
+        </defs>
+      </svg>
+    </div>
+  );
+}
+
+// LinkedIn Button Component
+function LinkedInButton({ linkedinUrl }: { linkedinUrl: string }) {
+  return (
+    <a 
+      href={linkedinUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="bg-[rgba(255,255,255,0.1)] content-stretch flex gap-[4px] items-center px-[12px] py-[6px] relative rounded-[57.143px] w-fit cursor-pointer hover:bg-[rgba(255,255,255,0.15)] transition-colors mt-[16px]"
+    >
+      <div aria-hidden="true" className="absolute border-[0.571px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[57.143px]" />
+      <AkarIconsLinkedinV1Fill />
+      <p className="font-['Lato:Light',sans-serif] leading-[20px] not-italic relative shrink-0 text-[14px] text-center text-white tracking-[0.2px]">View my Linkedin</p>
+      <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_2.286px_2.286px_0px_rgba(255,255,255,0.12),inset_0px_-2.857px_2.286px_0px_rgba(255,255,255,0.08)]" />
+    </a>
+  );
+}
 
 // Arrow component for navigation
 function NavArrow() {
@@ -72,7 +108,7 @@ export function TeamMobile({
         onScrollProgress(0);
       }
     }
-  }, [reviewsScrollProgress]); // Remove onScrollProgress from dependencies to prevent infinite loop
+  }, [reviewsScrollProgress, onScrollProgress]); // Add onScrollProgress back with proper memoization expected from parent
 
   // Navigation handlers
   const handleNext = () => {
@@ -144,15 +180,6 @@ export function TeamMobile({
     setDragX(0);
     setIsDragging(false);
   };
-
-  // Add touch event listeners
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    // Remove native event listeners since we're using React synthetic events
-    return () => {};
-  }, [isDragging, dragX, currentIndex]);
 
   const currentMember = displayMembers[currentIndex];
 
@@ -322,6 +349,11 @@ export function TeamMobile({
                               {member.bio}
                             </p>
                           </div>
+
+                          {/* LinkedIn Button */}
+                          {member.linkedinUrl && (
+                            <LinkedInButton linkedinUrl={member.linkedinUrl} />
+                          )}
                         </div>
                       </motion.div>
                     );
