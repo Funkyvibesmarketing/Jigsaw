@@ -5,6 +5,7 @@ import svgPathsCompliance from '../imports/svg-u4aqnlggjb';
 import imgModernHouseAtTwilight4 from 'figma:asset/77b24f13b4242da58b9f7acf069a8d06393d7e02.png';
 import imgModernHouseAtTwilight4Mobile from 'figma:asset/b6dd7b7dd618b958e5aaca66f91a1e86e6151a35.png';
 import imgVector from 'figma:asset/98e22ea118a61d8d843204140092d61e8f5f90c4.png';
+import imgRectangle14200 from "figma:asset/2b522be0adda68686cd941d2da701840d5a124a6.png";
 
 function MobileDownArrow({ onClick }: { onClick?: () => void }) {
   return (
@@ -348,7 +349,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
             className="absolute font-lato-semibold leading-[48px] left-1/2 -translate-x-1/2 not-italic text-[36px] text-white top-[calc(50%+225px)] w-[90%] max-w-[382px] px-4 z-[15]"
             style={{ opacity: sentenceOpacity, y: sentenceY }}
           >
-            Helping you find the right mortgage for your future 
+            The right fit for your mortgage and protection needs 
           </motion.p>
 
           {/* Down Arrow Button - Step 5 */}
@@ -365,7 +366,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
 
           {/* Compliance Content - Step 8 */}
           <motion.div
-            className="absolute left-0 top-0 h-full w-full z-[10]"
+            className="absolute left-0 top-0 h-full w-full z-[100] pointer-events-none"
             id="WeRewarded"
             style={{ y: complianceY, opacity: complianceOpacity }}
           >
@@ -389,28 +390,37 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
             {/* White gradient at bottom */}
             <div className="absolute bottom-0 left-0 w-full h-[400px] bg-gradient-to-t from-white/40 to-transparent z-[2]" />
 
-            {/* We're Rewarded text - matching Figma: opacity-70, text-white */}
-            <motion.p 
-              className="absolute font-lato-light leading-[32px] left-1/2 not-italic opacity-70 text-[24px] text-center text-nowrap text-white top-[calc(50%+150px)] translate-x-[-50%] whitespace-pre z-[1]"
-            >
-              We're Rewarded
-            </motion.p>
+            {/* FCA Compliance Section - Mobile Design */}
+            <div className="absolute left-1/2 top-[calc(50%+100px)] -translate-x-1/2 w-[90%] max-w-[500px] flex flex-col gap-[20px] items-center justify-center z-[101] pointer-events-auto px-4">
+              {/* Mask Group - FCA Logo */}
+              <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid items-[start] justify-items-[start] relative shrink-0 pointer-events-auto">
+                <div 
+                  className="bg-white col-1 h-[52px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[0px_0px] mask-size-[159px_52px] ml-0 mt-0 row-1 w-[159px] pointer-events-auto" 
+                  style={{ 
+                    maskImage: `url('${imgRectangle14200}')`,
+                    WebkitMaskImage: `url('${imgRectangle14200}')`,
+                    maskSize: '159px 52px',
+                    WebkitMaskSize: '159px 52px',
+                    maskRepeat: 'no-repeat',
+                    WebkitMaskRepeat: 'no-repeat'
+                  }} 
+                />
+              </div>
 
-            {/* Three Award Circles - responsive positioning with safe spacing */}
-            <div className="absolute left-1/2 size-[100px] top-[calc(50%+222px)] translate-x-[-50%] z-[1]">
-              <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" fill="white" fillOpacity="0.8" r="50" />
-              </svg>
-            </div>
-            <div className="absolute left-[calc(12.5%+21.25px)] size-[100px] top-[calc(50%+222px)] translate-x-[-50%] z-[1]">
-              <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" fill="white" fillOpacity="0.8" r="50" />
-              </svg>
-            </div>
-            <div className="absolute left-[calc(87.5%-21.25px)] size-[100px] top-[calc(50%+222px)] translate-x-[-50%] z-[1]">
-              <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" fill="white" fillOpacity="0.8" r="50" />
-              </svg>
+              {/* FCA Text */}
+              <p className="font-lato-light min-h-px min-w-px not-italic relative text-[14px] text-white text-center pointer-events-auto">
+                <span className="leading-[20px]">Jigsaw Financial is authorised and regulated by the Financial Conduct Authority (FCA), giving you confidence that our advice meets the highest professional and regulatory standards. You can verify our registration directly on the FCA Register </span>
+                <a 
+                  href="https://register.fca.org.uk/s/firm?id=0010X00004QO8QvQAL" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="font-lato-semibold leading-[20px] underline decoration-solid hover:text-[#2ec4b6] transition-colors duration-200 cursor-pointer pointer-events-auto relative z-[102]"
+                  style={{ pointerEvents: 'auto' }}
+                >
+                  here
+                </a>
+                <span className="leading-[20px]">.</span>
+              </p>
             </div>
           </motion.div>
         </div>

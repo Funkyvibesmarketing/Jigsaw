@@ -5,6 +5,7 @@ import svgPathsCompliance from '../imports/svg-a12xqqb4fo';
 import imgModernHouseAtTwilight4 from 'figma:asset/77b24f13b4242da58b9f7acf069a8d06393d7e02.png';
 import imgVector from 'figma:asset/29d00c96d16b578c0374f784d6e51ab7656ee486.png';
 import imgJigsawLogo from 'figma:asset/a4641c1a776e3a061386003b194f52b5d42a8c11.png';
+import imgRectangle14200 from "figma:asset/2b522be0adda68686cd941d2da701840d5a124a6.png";
 import { DownArrowButton } from './DownArrowButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import AboutUsScrollEffect from '../imports/AboutUsScrollEffect';
@@ -316,7 +317,7 @@ export function HeroScrollSection({ onScrollProgress, splashViewed }: { onScroll
               y: sentenceY 
             }}
           >
-            Helping you find the right mortgage for your future
+            The right fit for your mortgage and protection needs
           </motion.p>
 
           {/* Down Arrow Button - Appears during Step 6 */}
@@ -334,44 +335,43 @@ export function HeroScrollSection({ onScrollProgress, splashViewed }: { onScroll
 
           {/* Compliance Content - Appears during Step 8, sits above white background */}
           <motion.div
-            className="absolute left-0 top-0 h-screen w-full z-[10]"
+            className="absolute left-0 top-0 h-screen w-full z-[100] pointer-events-none"
             id="WeRewarded"
             style={{ y: complianceY, opacity: complianceOpacity }}
           >
             
-            {/* We're Rewarded Section */}
-            <motion.p 
-              className="absolute font-lato-light leading-[48px] left-1/2 not-italic text-[48px] text-center text-nowrap top-[calc(50%-40px)] -translate-x-1/2 whitespace-pre drop-shadow-lg z-[3]"
-              style={{ color: complianceTextColor, opacity: rewardedTextOpacity, y: rewardedTextY }}
-            >
-              We're Rewarded
-            </motion.p>
+            {/* FCA Compliance Section - New Design */}
+            <div className="absolute left-1/2 top-[calc(50%-40px)] -translate-x-1/2 w-[min(90vw,1200px)] flex gap-[29px] items-center justify-center z-[101] pointer-events-auto">
+              {/* Mask Group - FCA Logo */}
+              <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid items-[start] justify-items-[start] relative shrink-0 pointer-events-auto">
+                <div 
+                  className="bg-white col-1 h-[71.361px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[0px_0px] mask-size-[218px_71.361px] ml-0 mt-0 row-1 w-[218px] pointer-events-auto" 
+                  style={{ 
+                    maskImage: `url('${imgRectangle14200}')`,
+                    WebkitMaskImage: `url('${imgRectangle14200}')`,
+                    maskSize: '218px 71.361px',
+                    WebkitMaskSize: '218px 71.361px',
+                    maskRepeat: 'no-repeat',
+                    WebkitMaskRepeat: 'no-repeat'
+                  }} 
+                />
+              </div>
 
-            {/* Three Award Circles */}
-            <motion.div 
-              className="absolute left-[calc(16.667%+74px)] size-[180px] top-[calc(50%+80px)] z-[3]"
-              style={{ opacity: circlesOpacity, scale: circlesScale }}
-            >
-              <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 180 180">
-                <circle cx="90" cy="90" fill="white" fillOpacity={circlesBrightness} r="90" />
-              </svg>
-            </motion.div>
-            <motion.div 
-              className="absolute left-[calc(41.667%+36px)] size-[180px] top-[calc(50%+80px)] z-[3]"
-              style={{ opacity: circlesOpacity, scale: circlesScale }}
-            >
-              <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 180 180">
-                <circle cx="90" cy="90" fill="white" fillOpacity={circlesBrightness} r="90" />
-              </svg>
-            </motion.div>
-            <motion.div 
-              className="absolute left-[calc(66.667%-2px)] size-[180px] top-[calc(50%+80px)] z-[3]"
-              style={{ opacity: circlesOpacity, scale: circlesScale }}
-            >
-              <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 180 180">
-                <circle cx="90" cy="90" fill="white" fillOpacity={circlesBrightness} r="90" />
-              </svg>
-            </motion.div>
+              {/* FCA Text */}
+              <p className="flex-[1_0_0] font-lato-light min-h-px min-w-px not-italic relative text-[18px] text-white pointer-events-auto">
+                <span className="leading-[26px]">Jigsaw Financial is authorised and regulated by the Financial Conduct Authority (FCA), giving you confidence that our advice meets the highest professional and regulatory standards. You can verify our registration directly on the FCA Register </span>
+                <a 
+                  href="https://register.fca.org.uk/s/firm?id=0010X00004QO8QvQAL" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="font-lato-semibold leading-[26px] underline decoration-solid hover:text-[#2ec4b6] transition-colors duration-200 cursor-pointer pointer-events-auto relative z-[102]"
+                  style={{ pointerEvents: 'auto' }}
+                >
+                  here
+                </a>
+                <span className="leading-[26px]">.</span>
+              </p>
+            </div>
           </motion.div>
 
           {/* About Us Transition Screen (0.96 to 1.0) */}
