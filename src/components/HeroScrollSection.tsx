@@ -14,6 +14,17 @@ export function HeroScrollSection({ onScrollProgress, splashViewed }: { onScroll
   const containerRef = useRef<HTMLDivElement>(null);
   const [hideDownArrow, setHideDownArrow] = useState(false);
   const viewportHeight = window.innerHeight;
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
   // Handle down arrow click - scroll to About Us section
   const handleDownArrowClick = () => {
     if (containerRef.current) {
@@ -84,15 +95,20 @@ export function HeroScrollSection({ onScrollProgress, splashViewed }: { onScroll
   
   // Step 3: Sentence appears and slides up quickly (0.04 to 0.06), stays, then slides up more and fades out - compressed timeline
   // If splash has been viewed, show sentence immediately at top (moved up to be visible in viewport)
+  // Delay appearance until after house and JIGSAW text are visible
   const sentenceOpacity = useTransform(
     scrollYProgress, 
-    [0, 0.02, 0.08, 0.38, 0.44], 
+    [0, 0.10, 0.14, 0.38, 0.44], 
     splashViewed ? [1, 1, 1, 1, 0] : [0, 0, 1, 1, 0]
   );
+  // For desktop: start from marking position (centered on house), for mobile: use original values
+  // Sentence stays in position until 0.25, then starts sliding up
   const sentenceY = useTransform(
     scrollYProgress, 
-    [0, 0.02, 0.08, 0.36, 0.44], 
-    splashViewed ? [-280, -280, -280, -480, -1180] : [1500, 1500, 0, -200, -900]
+    [0, 0.10, 0.14, 0.25, 0.36, 0.44], 
+    splashViewed 
+      ? (isDesktop ? [-500, -500, -500, -500, -700, -1400] : [-280, -280, -280, -280, -480, -1180])
+      : (isDesktop ? [-400, -400, -400, -400, -600, -1300] : [1500, 1500, 0, 0, -200, -900])
   );
   
   // Step 6: Down arrow appears (compressed from 0.48-0.53 to 0.32-0.37)
@@ -311,13 +327,13 @@ export function HeroScrollSection({ onScrollProgress, splashViewed }: { onScroll
 
           {/* Sentence - Appears during Step 3 at lower position, slides up starting from Step 6 */}
           <motion.p 
-            className="absolute font-lato-semibold leading-[normal] left-[calc(41.667%-446px)] not-italic text-[56px] text-white top-[calc(50%+420px)] w-[890px] z-[15]"
+            className="absolute font-lato-semibold leading-[normal] text-center not-italic text-[56px] tracking-[20px] text-white top-[calc(50%+420px)] w-[100%] z-[15]"
             style={{ 
               opacity: sentenceOpacity,
               y: sentenceY 
             }}
           >
-            The right fit for your mortgage and protection needs
+            ADVICE THAT FITS
           </motion.p>
 
           {/* Down Arrow Button - Appears during Step 6 */}

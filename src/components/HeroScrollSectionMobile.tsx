@@ -109,19 +109,21 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
     [0, 0.10, 0.14, 0.30, 0.45], 
     splashViewed ? [1, 1, 1, 1, 0] : [0, 0, 1, 1, 0]
   );
+  // Mobile: start from marking position (centered on house as shown in image)
+  // Sentence stays in position until 0.25, then starts sliding up
   const sentenceY = useTransform(
     scrollYProgress, 
-    [0, 0.10, 0.14, 0.30, 0.45], 
-    splashViewed ? [0, 0, 0, 0, -600] : [100, 100, 0, 0, -600]
+    [0, 0.10, 0.14, 0.25, 0.30, 0.45], 
+    splashViewed ? [-200, -200, -200, -200, -400, -1000] : [-200, -200, -200, -200, -400, -1000]
   );
   
   // Step 4: Navigation appears (compressed from 0.375-0.5 to 0.18-0.28)
   const navY = useTransform(scrollYProgress, [0.18, 0.28], [-50, 0]);
   const navOpacity = useTransform(scrollYProgress, [0.18, 0.28, 0.45, 0.50], [0, 1, 1, 0]);
   
-  // Step 5: Down arrow appears AFTER navigation is fully visible (delayed from 0.28 to 0.35)
-  const arrowY = useTransform(scrollYProgress, [0.35, 0.37], [100, 0]);
-  const arrowOpacity = useTransform(scrollYProgress, [0, 0.35, 0.37, 0.40, 0.42], [0, 0, 1, 1, 0]);
+  // Step 5: Down arrow appears earlier - right after sentence appears (0.20 to 0.25)
+  const arrowY = useTransform(scrollYProgress, [0.20, 0.25], [100, 0]);
+  const arrowOpacity = useTransform(scrollYProgress, [0, 0.20, 0.25, 0.40, 0.42], [0, 0, 1, 1, 0]);
   
   // Step 6: Bottom gradient appears with sentence and stays with arrow
   const step6GradientOpacity = useTransform(scrollYProgress, [0.14, 0.20, 0.75, 0.80], [1, 1, 0, 0]);
@@ -346,10 +348,10 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
 
           {/* Sentence - Step 3 */}
           <motion.p 
-            className="absolute font-lato-semibold leading-[48px] left-1/2 -translate-x-1/2 not-italic text-[36px] text-white top-[calc(50%+225px)] w-[90%] max-w-[382px] px-4 z-[15]"
+            className="absolute font-lato-semibold leading-[48px]  not-italic text-[30px] text-center text-white tracking-[20px] top-[calc(50%+225px)] w-[100%] max-w-[382px] px-4 z-[15]"
             style={{ opacity: sentenceOpacity, y: sentenceY }}
           >
-            The right fit for your mortgage and protection needs 
+            ADVICE <br />THAT FITS 
           </motion.p>
 
           {/* Down Arrow Button - Step 5 */}
