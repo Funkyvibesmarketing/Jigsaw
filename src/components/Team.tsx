@@ -12,11 +12,11 @@ function LinkedInIcon({ isHovered }: { isHovered: boolean }) {
     <div className="relative shrink-0 size-[24px]">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
         <g clipPath="url(#clip0_linkedin_team)">
-          <path 
-            clipRule="evenodd" 
-            d={svgPathsLinkedIn.p106ed680} 
-            fill={isHovered ? "#0076B2" : "white"} 
-            fillRule="evenodd" 
+          <path
+            clipRule="evenodd"
+            d={svgPathsLinkedIn.p106ed680}
+            fill={isHovered ? "#0076B2" : "white"}
+            fillRule="evenodd"
           />
         </g>
         <defs>
@@ -34,7 +34,7 @@ function LinkedInButton({ linkedinUrl }: { linkedinUrl: string }) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <a 
+    <a
       href={linkedinUrl}
       target="_blank"
       rel="noopener noreferrer"
@@ -48,9 +48,9 @@ function LinkedInButton({ linkedinUrl }: { linkedinUrl: string }) {
       <div aria-hidden="true" className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" />
       <LinkedInIcon isHovered={isHovered} />
       {isHovered && (
-        <div 
-          className="absolute inset-0 pointer-events-none rounded-[100px]" 
-          style={{ 
+        <div
+          className="absolute inset-0 pointer-events-none rounded-[100px]"
+          style={{
             boxShadow: 'inset 0px 4px 4px 0px rgba(0, 118, 178, 0.12), inset 0px -5px 4px 0px rgba(0, 118, 178, 0.08)'
           }}
         />
@@ -59,13 +59,13 @@ function LinkedInButton({ linkedinUrl }: { linkedinUrl: string }) {
   );
 }
 
-export function Team({ 
-  reviewsScrollProgress, 
-  servicesScrollProgress, 
+export function Team({
+  reviewsScrollProgress,
+  servicesScrollProgress,
   aboutUsScrollProgress,
   teamMembers,
   processScrollProgress
-}: { 
+}: {
   reviewsScrollProgress?: number;
   servicesScrollProgress?: number;
   aboutUsScrollProgress?: number;
@@ -81,11 +81,11 @@ export function Team({
   // Handler for clicking on team member columns
   const handleMemberClick = (index: number) => {
     if (index === currentMemberIndex) return;
-    
+
     setPreviousMemberIndex(currentMemberIndex);
     setIsTransitioning(true);
     setCurrentMemberIndex(index);
-    
+
     // Reset transition state after animation completes
     setTimeout(() => {
       setIsTransitioning(false);
@@ -94,14 +94,14 @@ export function Team({
 
   // Team content fades in when Reviews scroll progress reaches 0.82 (when TEAM text starts sliding)
   // Should be fully visible by scroll progress 0.85
-  let teamContentOpacity = reviewsScrollProgress && reviewsScrollProgress >= 0.82 ? 
+  let teamContentOpacity = reviewsScrollProgress && reviewsScrollProgress >= 0.82 ?
     Math.min((reviewsScrollProgress - 0.82) / 0.03, 1) : 0;
-  
+
   // Slide up transform when Process section starts - calculate immediately, no spring
   const teamTranslateY = processScrollProgress && processScrollProgress > 0
     ? `${-100 * Math.min(processScrollProgress / 0.15, 1)}vh`
     : '0vh';
-  
+
   // Debug logging for Process scroll
   useEffect(() => {
     if (processScrollProgress && processScrollProgress > 0) {
@@ -115,7 +115,7 @@ export function Team({
 
   // Check if Services Step 1 is currently visible (AboutUs scroll 0.72-0.98)
   const isServicesStep1Active = aboutUsScrollProgress && aboutUsScrollProgress >= 0.72 && aboutUsScrollProgress < 0.98;
-  
+
   // Check if Services Step 2 modal is open
   const isServicesStep2Active = servicesScrollProgress && servicesScrollProgress > 0.1;
 
@@ -130,39 +130,39 @@ export function Team({
       pointerEvents: (teamContentOpacity > 0 && !isServicesStep1Active && !isServicesStep2Active) ? 'auto' : 'none'
     });
   }
-  
+
   // Dynamic calculation based on number of team members
   const totalMembers = teamMembers.length;
   const containerWidth = 1600; // Total container width
   const startX = 128; // Starting position
   const availableWidth = containerWidth - startX - 100; // Leave 100px margin on right
-  
+
   // Calculate optimal widths
   // Expanded column should be large enough for content (min 900px)
   const minExpandedWidth = 900;
   const maxExpandedWidth = 1065;
-  
+
   // Calculate closed width dynamically
   // Formula: (availableWidth - expandedWidth) / (totalMembers - 1)
   const getOptimalWidths = () => {
     let expandedWidth = maxExpandedWidth;
     let closedWidth = (availableWidth - expandedWidth) / (totalMembers - 1);
-    
+
     // If closed columns would be too narrow (< 80px), reduce expanded width
     if (closedWidth < 80) {
       closedWidth = 80;
       expandedWidth = availableWidth - (closedWidth * (totalMembers - 1));
     }
-    
+
     return { expandedWidth, closedWidth };
   };
-  
+
   const { expandedWidth, closedWidth } = getOptimalWidths();
-  
+
   // Function to get column style based on index
   const getColumnStyle = (index: number) => {
     let left = startX;
-    
+
     // Calculate left position - sum of all columns before this one
     for (let i = 0; i < index; i++) {
       if (i === currentMemberIndex) {
@@ -171,10 +171,10 @@ export function Team({
         left += closedWidth;
       }
     }
-    
+
     // Determine width - expanded if active, closed otherwise
     const width = index === currentMemberIndex ? expandedWidth : closedWidth;
-    
+
     return { left, width };
   };
 
@@ -184,7 +184,7 @@ export function Team({
       <div
         ref={containerRef}
         className="fixed top-0 left-0 w-full h-screen overflow-hidden z-[95]"
-        style={{ 
+        style={{
           opacity: teamContentOpacity,
           transform: `translateY(${teamTranslateY})`,
           pointerEvents: (teamContentOpacity > 0 && !isServicesStep1Active && !isServicesStep2Active) ? 'auto' : 'none',
@@ -194,9 +194,9 @@ export function Team({
       >
         <div className="absolute inset-0 bg-[#2c4657] flex items-center justify-center">
           {/* Scaled container - design is 1440px wide, scale to fit viewport with padding */}
-          <div 
-            className="relative w-[1600px] h-[800px]" 
-            style={{ 
+          <div
+            className="relative w-[1600px] h-[800px]"
+            style={{
               transform: 'scale(0.8) translateY(-40px)',
               transformOrigin: 'center center'
             }}
@@ -224,13 +224,13 @@ export function Team({
               const { left, width } = getColumnStyle(index);
               const isActive = index === currentMemberIndex;
               const isClosing = isTransitioning && index === previousMemberIndex;
-              
+
               // Z-index logic: ensure closing column slides UNDER other columns
               // Active (opening) column: z-index 10 (highest - always on top)
               // Previous (closing) column: z-index 3 (lowest - slides under everything)
               // Other columns: z-index 5-8 based on position
               let zIndex = 5;
-              
+
               if (isActive) {
                 // Currently active/expanded column - highest z-index
                 zIndex = 10;
@@ -241,7 +241,7 @@ export function Team({
                 // Other columns during transition
                 // Columns that are sliding need to be above the closing column
                 const isMovingRight = currentMemberIndex > previousMemberIndex;
-                
+
                 if (isMovingRight) {
                   // Moving right: columns between previous and current slide right
                   // Give them z-index based on position (rightmost on top)
@@ -260,7 +260,7 @@ export function Team({
                   }
                 }
               }
-              
+
               return (
                 <motion.div
                   key={member.id}
@@ -303,9 +303,9 @@ export function Team({
                   </div>
 
                   {/* Column number - stays at left when closing, moves to center when fully closed */}
-                  <motion.p 
+                  <motion.p
                     className={`absolute font-['Lato:Bold',sans-serif] leading-[normal] not-italic text-[24px] text-center text-nowrap top-[91px] whitespace-pre transition-colors duration-300 ${isActive ? 'text-[#2ec4b6]' : 'text-[rgba(255,255,255,0.5)]'}`}
-                    animate={{ 
+                    animate={{
                       left: (isActive || isClosing) ? 38 : '50%',
                       x: (isActive || isClosing) ? 0 : '-50%'
                     }}
@@ -321,12 +321,11 @@ export function Team({
                   </motion.p>
 
                   {/* Team member name (rotated) - ONE element with conditional positioning */}
-                  <div 
-                    className={`absolute flex h-[197px] items-center justify-center w-[38px] z-10 pointer-events-none transition-all duration-300 ${
-                      isActive || isClosing 
-                        ? 'left-[38px]' 
-                        : 'left-[58%] -translate-x-1/2 group-hover:!bottom-[-50px] group-hover:!top-auto'
-                    }`}
+                  <div
+                    className={`absolute flex h-[197px] items-center justify-center w-[38px] z-10 pointer-events-none transition-all duration-300 ${isActive || isClosing
+                      ? 'left-[38px]'
+                      : 'left-[58%] -translate-x-1/2 group-hover:!bottom-[-50px] group-hover:!top-auto'
+                      }`}
                     style={{
                       top: (isActive || isClosing) ? 'calc(50% + 100px)' : 'calc(50% + 100px)',
                       transform: (isActive || isClosing) ? 'translateY(-50%)' : 'translateX(-50%) translateY(-50%)',
@@ -343,7 +342,7 @@ export function Team({
                   {!isActive && !isClosing && (
                     <>
                       {/* Job title (rotated) - visible on hover, positioned relative to number */}
-                      <div 
+                      <div
                         className="absolute flex items-center justify-center top-[280px] z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                         style={{
                           left: '50%',
@@ -368,7 +367,7 @@ export function Team({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={{ 
+                        transition={{
                           duration: 0.4,
                           ease: "easeInOut"
                         }}
@@ -376,10 +375,10 @@ export function Team({
                       >
                         {/* Main team member photo */}
                         <div className="absolute h-[450px] left-[101px] top-[calc(50%+100px)] translate-y-[-50%] w-[300px]">
-                          <img 
-                            alt={member.name} 
-                            className="absolute inset-0 max-w-none object-50%-50% object-cover pointer-events-none size-full" 
-                            src={member.image} 
+                          <img
+                            alt={member.name}
+                            className="absolute inset-0 max-w-none object-50%-50% object-cover pointer-events-none size-full"
+                            src={member.image}
                           />
                         </div>
 
@@ -389,7 +388,7 @@ export function Team({
                         </p>
 
                         {/* Bio text - to the right of photo */}
-                        <p className="absolute font-['Lato:Regular',sans-serif] leading-[40px] left-[432px] not-italic text-[20px] text-white top-[calc(50%+100px)] translate-y-[-50%] tracking-[0.14px] w-[480px]">
+                        <p className="absolute font-['Lato:Regular',sans-serif] leading-[40px] left-[432px] not-italic text-[16px] text-white top-[calc(50%+50px)] translate-y-[-50%] tracking-[0.14px] w-[600px]">
                           {member.bio}
                         </p>
 
@@ -413,9 +412,9 @@ export function Team({
       {/* White overlay with TEAM text cutout - reveals team content through the text */}
       {/* Mask starts sliding in at 0.82, then zooms from 0.90+, stays visible longer */}
       {reviewsScrollProgress && reviewsScrollProgress >= 0.82 && reviewsScrollProgress < 1.0 && (
-        <div 
+        <div
           className="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none z-[96]"
-          style={{ 
+          style={{
             opacity: 1 // Full opacity immediately - no fade
           }}
         >
@@ -425,7 +424,7 @@ export function Team({
               <mask id="teamTextMask">
                 {/* White background - everything covered */}
                 <rect x="0" y="0" width="100%" height="100%" fill="white" />
-                
+
                 {/* Black text - creates the cutout (hole) with slide + zoom animation */}
                 <text
                   x={(() => {
@@ -446,7 +445,7 @@ export function Team({
                     const baseSize = 232;
                     if (!reviewsScrollProgress || reviewsScrollProgress < 0.90) return baseSize * 2; // Hold at 2x during slide-in
                     if (reviewsScrollProgress >= 0.999) return baseSize * 12; // Reduced max zoom from 15 to 12
-                    
+
                     // Linear progression from 0.90 to 0.999 (0.099 scroll range - even slower)
                     const progress = (reviewsScrollProgress - 0.90) / (0.999 - 0.90);
                     const scale = 2 + (10 * progress); // 2x to 12x scale (linear)
@@ -472,7 +471,7 @@ export function Team({
                 </text>
               </mask>
             </defs>
-            
+
             {/* White rectangle with mask applied */}
             <rect x="0" y="0" width="100%" height="100%" fill="white" mask="url(#teamTextMask)" />
           </svg>

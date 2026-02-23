@@ -25,7 +25,7 @@ function AkarIconsLinkedinV1Fill() {
 // LinkedIn Button Component
 function LinkedInButton({ linkedinUrl }: { linkedinUrl: string }) {
   return (
-    <a 
+    <a
       href={linkedinUrl}
       target="_blank"
       rel="noopener noreferrer"
@@ -56,12 +56,12 @@ function NavArrow() {
   );
 }
 
-export function TeamMobile({ 
+export function TeamMobile({
   reviewsScrollProgress,
   teamMembers,
   processScrollProgress,
   onScrollProgress
-}: { 
+}: {
   reviewsScrollProgress?: number;
   teamMembers: TeamMember[];
   processScrollProgress?: number;
@@ -89,7 +89,7 @@ export function TeamMobile({
   } else if (reviewsScrollProgress && reviewsScrollProgress >= 0.82) {
     teamContentOpacity = 1;
   }
-  
+
   // Team slides up when Process section appears
   let teamSlideY = 0;
   if (processScrollProgress && processScrollProgress > 0) {
@@ -98,7 +98,7 @@ export function TeamMobile({
     const slideProgress = Math.min(processScrollProgress / 0.15, 1); // Slide completes by 0.15 instead of 0.20
     teamSlideY = slideProgress * -100;
   }
-  
+
   // Report scroll progress to parent
   useEffect(() => {
     if (onScrollProgress) {
@@ -136,7 +136,7 @@ export function TeamMobile({
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging) return;
-    
+
     const currentX = e.touches[0].clientX;
     const currentY = e.touches[0].clientY;
     const deltaX = currentX - touchStartX.current;
@@ -146,15 +146,15 @@ export function TeamMobile({
     if (Math.abs(deltaX) > 10 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
       e.preventDefault();
       e.stopPropagation();
-      
+
       // Apply drag with boundaries
       let boundedDragX = deltaX;
-      
+
       // Add resistance at boundaries
       if ((currentIndex === 0 && deltaX > 0) || (currentIndex === totalSlides - 1 && deltaX < 0)) {
         boundedDragX = deltaX * 0.3; // Strong resistance at edges
       }
-      
+
       setDragX(boundedDragX);
     }
   };
@@ -190,9 +190,9 @@ export function TeamMobile({
         <>
           {/* White overlay with TEAM text cutout - reveals team content through the text */}
           {reviewsScrollProgress >= 0.76 && reviewsScrollProgress < 1.0 && (
-            <div 
+            <div
               className="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none"
-              style={{ 
+              style={{
                 opacity: reviewsScrollProgress >= 0.995 ? 1 - ((reviewsScrollProgress - 0.995) / 0.005) : 1,
                 touchAction: 'none',
                 willChange: 'opacity',
@@ -223,7 +223,7 @@ export function TeamMobile({
                         const baseSize = 200;
                         if (!reviewsScrollProgress || reviewsScrollProgress < 0.88) return baseSize;
                         if (reviewsScrollProgress >= 1.0) return baseSize * 25;
-                        
+
                         // Zoom starts AFTER slide completes (0.88) - simple linear interpolation like SERVICES
                         const progress = (reviewsScrollProgress - 0.88) / (1.0 - 0.88);
                         const scale = 1 + (24 * progress); // 1x to 25x scale
@@ -245,7 +245,7 @@ export function TeamMobile({
           {/* Team content - fixed position, overlays on top of Reviews */}
           <motion.div
             className="fixed top-0 left-0 w-full h-screen overflow-hidden"
-            style={{ 
+            style={{
               opacity: teamContentOpacity,
               pointerEvents: (reviewsScrollProgress && reviewsScrollProgress >= 1.0) ? 'auto' : 'none',
               zIndex: processScrollProgress && processScrollProgress > 0 ? 50 : 95,
@@ -266,7 +266,7 @@ export function TeamMobile({
               </div>
 
               {/* Card slider container - showing 2 members side by side */}
-              <div 
+              <div
                 className="absolute left-0 right-5 top-[145px] bottom-[120px] overflow-visible"
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
@@ -274,90 +274,90 @@ export function TeamMobile({
                 style={{ touchAction: 'pan-y' }}
               >
                 <div className="relative w-full h-full overflow-visible">{displayMembers.map((member, index) => {
-                    // Calculate position for each slide
-                    let xOffset = (index - currentIndex) * 100; // Percentage based on slide index
-                    
-                    // Apply drag offset only to visible slides
-                    if (isDragging && (index === currentIndex || index === currentIndex + 1 || index === currentIndex - 1)) {
-                      const dragPercentage = (dragX / window.innerWidth) * 100;
-                      xOffset += dragPercentage;
-                    }
-                    
-                    // Determine if slide should be visible
-                    const isVisible = index === currentIndex || (index === currentIndex + 1 && index < totalSlides);
-                    
-                    // Calculate the x position
-                    let xPosition = `${xOffset}%`;
-                    if (index === currentIndex + 1) {
-                      xPosition = `calc(100% - 24px)`; // Position next card to show larger peek preview
-                    }
-                    
-                    return (
-                      <motion.div
-                        key={member.id}
-                        animate={{ 
-                          x: xPosition,
-                          opacity: isVisible ? 1 : 0
-                        }}
-                        transition={{
-                          x: { 
-                            type: "spring", 
-                            stiffness: isDragging ? 500 : 300, 
-                            damping: isDragging ? 50 : 30,
-                            mass: 0.5
-                          },
-                          opacity: { duration: 0.2 }
-                        }}
-                        className="absolute top-0 bottom-0 left-0 right-0"
-                        style={{ 
-                          pointerEvents: index === currentIndex ? 'auto' : 'none',
-                          willChange: 'transform'
-                        }}
-                      >
-                        {/* Member card with proper padding and responsive layout */}
-                        <div className="flex flex-col h-full pl-[24px] pr-[24px] min-w-[280px]">
-                          {/* Line above name - using RGBA for better mobile compatibility */}
-                          <div className="w-full h-[1px] bg-[rgba(255,255,255,0.3)] mb-[16px]" style={{ minHeight: '1px' }} />
+                  // Calculate position for each slide
+                  let xOffset = (index - currentIndex) * 100; // Percentage based on slide index
 
-                          {/* Member name with number on same line */}
-                          <div className="flex items-baseline justify-between mb-[24px] min-h-[29px]">
-                            <p className="font-['Lato:Bold',sans-serif] leading-[normal] not-italic text-[20px] sm:text-[24px] text-white" style={{ fontWeight: 700 }}>
-                              {member.name}
-                            </p>
-                            <p className="font-['Lato:Bold',sans-serif] leading-[normal] not-italic text-[14px] sm:text-[16px] text-[rgba(255,255,255,0.5)] ml-2">
-                              {String(index + 1).padStart(2, '0')}
-                            </p>
-                          </div>
+                  // Apply drag offset only to visible slides
+                  if (isDragging && (index === currentIndex || index === currentIndex + 1 || index === currentIndex - 1)) {
+                    const dragPercentage = (dragX / window.innerWidth) * 100;
+                    xOffset += dragPercentage;
+                  }
 
-                          {/* Job title - responsive with proper wrapping */}
-                          <p className="font-['Lato:SemiBold',sans-serif] leading-[32px] sm:leading-[38px] not-italic text-[24px] sm:text-[32px] text-[rgba(255,255,255,0.5)] mb-[24px] sm:mb-[32px] max-w-full break-words min-h-[64px] sm:min-h-[76px]" style={{ fontWeight: 600 }}>
-                            {member.title}
+                  // Determine if slide should be visible
+                  const isVisible = index === currentIndex || (index === currentIndex + 1 && index < totalSlides);
+
+                  // Calculate the x position
+                  let xPosition = `${xOffset}%`;
+                  if (index === currentIndex + 1) {
+                    xPosition = `calc(100% - 24px)`; // Position next card to show larger peek preview
+                  }
+
+                  return (
+                    <motion.div
+                      key={member.id}
+                      animate={{
+                        x: xPosition,
+                        opacity: isVisible ? 1 : 0
+                      }}
+                      transition={{
+                        x: {
+                          type: "spring",
+                          stiffness: isDragging ? 500 : 300,
+                          damping: isDragging ? 50 : 30,
+                          mass: 0.5
+                        },
+                        opacity: { duration: 0.2 }
+                      }}
+                      className="absolute top-0 bottom-0 left-0 right-0"
+                      style={{
+                        pointerEvents: index === currentIndex ? 'auto' : 'none',
+                        willChange: 'transform'
+                      }}
+                    >
+                      {/* Member card with proper padding and responsive layout */}
+                      <div className="flex flex-col h-full pl-[24px] pr-[24px] min-w-[280px]">
+                        {/* Line above name - using RGBA for better mobile compatibility */}
+                        <div className="w-full h-[1px] bg-[rgba(255,255,255,0.3)] mb-[16px]" style={{ minHeight: '1px' }} />
+
+                        {/* Member name with number on same line */}
+                        <div className="flex items-baseline justify-between mb-[24px] min-h-[29px]">
+                          <p className="font-['Lato:Bold',sans-serif] leading-[normal] not-italic text-[20px] sm:text-[24px] text-white" style={{ fontWeight: 700 }}>
+                            {member.name}
                           </p>
-
-                          {/* Member photo - responsive with reduced height */}
-                          <div className="w-full min-h-[200px] max-h-[260px] h-[30vh] mb-[20px] sm:mb-[24px] overflow-hidden flex-shrink-0">
-                            <img 
-                              alt={member.name}
-                              className="w-full h-full object-cover" 
-                              src={member.image}
-                            />
-                          </div>
-
-                          {/* Bio text - responsive sizing without scrollbar */}
-                          <div className="flex-1">
-                            <p className="font-['Lato:Regular',sans-serif] leading-[20px] sm:leading-[24px] not-italic text-[12px] sm:text-[14px] text-white tracking-[0.12px] sm:tracking-[0.14px] pr-2">
-                              {member.bio}
-                            </p>
-                          </div>
-
-                          {/* LinkedIn Button */}
-                          {member.linkedinUrl && (
-                            <LinkedInButton linkedinUrl={member.linkedinUrl} />
-                          )}
+                          <p className="font-['Lato:Bold',sans-serif] leading-[normal] not-italic text-[14px] sm:text-[16px] text-[rgba(255,255,255,0.5)] ml-2">
+                            {String(index + 1).padStart(2, '0')}
+                          </p>
                         </div>
-                      </motion.div>
-                    );
-                  })}
+
+                        {/* Job title - responsive with proper wrapping */}
+                        <p className="font-['Lato:SemiBold',sans-serif] leading-[32px] sm:leading-[38px] not-italic text-[24px] sm:text-[32px] text-[rgba(255,255,255,0.5)] mb-[24px] sm:mb-[32px] max-w-full break-words min-h-[64px] sm:min-h-[76px]" style={{ fontWeight: 600 }}>
+                          {member.title}
+                        </p>
+
+                        {/* Member photo - responsive with reduced height */}
+                        <div className="w-full min-h-[200px] max-h-[260px] h-[30vh] mb-[20px] sm:mb-[24px] overflow-hidden flex-shrink-0">
+                          <img
+                            alt={member.name}
+                            className="w-full h-full object-cover"
+                            src={member.image}
+                          />
+                        </div>
+
+                        {/* Bio text - scrollable container with custom scrollbar */}
+                        <div className="flex-1 overflow-y-auto pr-2 bio-scrollbar min-h-0 touch-pan-y">
+                          <p className="font-['Lato:Regular',sans-serif] leading-[20px] sm:leading-[24px] not-italic text-[12px] sm:text-[14px] text-white tracking-[0.12px] sm:tracking-[0.14px]">
+                            {member.bio}
+                          </p>
+                        </div>
+
+                        {/* LinkedIn Button */}
+                        {member.linkedinUrl && (
+                          <LinkedInButton linkedinUrl={member.linkedinUrl} />
+                        )}
+                      </div>
+                    </motion.div>
+                  );
+                })}
                 </div>
               </div>
 
@@ -367,9 +367,8 @@ export function TeamMobile({
                 <button
                   onClick={handlePrev}
                   disabled={currentIndex === 0}
-                  className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] shrink-0 size-[48px] relative transition-opacity duration-200 ${
-                    currentIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
-                  }`}
+                  className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] shrink-0 size-[48px] relative transition-opacity duration-200 ${currentIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
+                    }`}
                 >
                   <div aria-hidden="true" className="absolute border-[0.75px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[24px]" />
                   <div className="flex items-center justify-center relative shrink-0">
@@ -378,21 +377,20 @@ export function TeamMobile({
                     </div>
                   </div>
                 </button>
-                
+
                 {/* Counter - shows current page / total pages */}
                 <p className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[24px] text-[rgba(255,255,255,0.2)] text-center text-nowrap">
                   {currentIndex + 1}/{totalSlides}
                 </p>
-                
+
                 {/* Right arrow */}
                 <div className="flex items-center justify-center relative shrink-0">
                   <div className="flex-none rotate-[180deg] scale-y-[-100%]">
                     <button
                       onClick={handleNext}
                       disabled={currentIndex === totalSlides - 1}
-                      className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] size-[48px] relative transition-opacity duration-200 ${
-                        currentIndex === totalSlides - 1 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
-                      }`}
+                      className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] size-[48px] relative transition-opacity duration-200 ${currentIndex === totalSlides - 1 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
+                        }`}
                     >
                       <div aria-hidden="true" className="absolute border-[0.75px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[24px]" />
                       <div className="flex items-center justify-center relative shrink-0">
