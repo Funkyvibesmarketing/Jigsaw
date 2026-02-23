@@ -7,27 +7,40 @@ import { ServicesMobile } from './ServicesMobile';
 
 // Carousel text items (same as desktop)
 // Carousel text items
-const carouselTexts = [
+interface CarouselText {
+  id: number;
+  header: string;
+  text: string | React.ReactNode;
+  hasLearnMore?: boolean;
+  boldText?: string;
+}
+
+const carouselTexts: CarouselText[] = [
   {
     id: 1,
-    number: "1.",
-    text: "At Jigsaw Financial Ltd, we are dedicated to shaping your financial future through insightful conversations."
+    header: "The Origin Story.",
+    text: "Founded on the principles Nick picked up on a less-than-traditional career path—calm under pressure, straight-talking, and doing things properly - ",
+    hasLearnMore: true
   },
   {
     id: 2,
-    number: "2.",
-    text: "We believe that no one should be paying more than necessary for any financial product - especially their ",
-    boldText: "mortgage!"
+    header: "Straight Talking.",
+    text: "We keep things simple: straight answers, no jargon, no waffle. We’ll chat things through properly, so you know exactly what you’re signing up to-and why.",
   },
   {
     id: 3,
-    number: "3.",
-    text: "Our mission is to deliver clear, practical advice, drawing from Nick's unique journey—from a bobsleigh accident to becoming a mortgage professional."
+    header: "Pay What’s Fair.",
+    text: "We believe no one should pay more than necessary for any financial product — especially their mortgage — and that fees should always be clear, fair and fully explained upfront."
   },
   {
     id: 4,
-    number: "4.",
-    text: "With Gemma and Lois ensuring seamless operations, we guarantee that Nick's expertise is always at your service, providing a reliable support system for your financial needs."
+    header: "Regulated, Reliable, On Your Side.",
+    text: "We’re fully authorised and regulated, which means advice you can trust-and a process that’s done properly. Friendly? Yes.Professional? Absolutely."
+  },
+  {
+    id: 5,
+    header: "One Fee, Ongoing Support.",
+    text: "You pay once for expert advice, and we don’t disappear after completion. We’ll be here for the long run-including free remortgage support when it’s time for your next step."
   }
 ];
 
@@ -185,31 +198,43 @@ function UpArrowButton() {
   );
 }
 
-export function AboutUsMobile({ onScrollProgress }: { 
+export function AboutUsMobile({ onScrollProgress }: {
   onScrollProgress?: (progress: number) => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+
+  const handleLearnMoreMClick = () => {
+    if (containerRef.current) {
+      const viewportHeight = window.innerHeight;
+      window.scrollTo({
+        top: viewportHeight * 12,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(false); // Control auto-advance
   const onScrollProgressRef = useRef(onScrollProgress);
-  
+  const viewportHeight = window.innerHeight;
+
   // Update ref when callback changes
   useEffect(() => {
     onScrollProgressRef.current = onScrollProgress;
   }, [onScrollProgress]);
-  
+
   // Auto-advance carousel every 5 seconds - only when isAutoPlay is true
   useEffect(() => {
     if (!isAutoPlay) return; // Don't auto-advance if paused
-    
+
     const interval = setInterval(() => {
       setCarouselIndex((prev) => (prev + 1) % carouselTexts.length);
     }, 5000); // Change slide every 5 seconds
-    
+
     return () => clearInterval(interval);
   }, [isAutoPlay]);
-  
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
@@ -229,25 +254,25 @@ export function AboutUsMobile({ onScrollProgress }: {
   // 0.28-0.45: Continues sliding up and fades out
   const middleTextY = useTransform(scrollYProgress, [0, 0.08, 0.28, 0.45], [100, 0, 0, -400]);
   const middleTextOpacity = useTransform(scrollYProgress, [0, 0.35, 0.45], [1, 1, 0]);
-  
+
   // Middle text blur effect - stays clear while paused, only blurs near the end
   const middleTextBlur = useTransform(scrollYProgress, [0, 0.40, 0.43, 0.45], ['blur(0px)', 'blur(0px)', 'blur(4px)', 'blur(8px)']);
-  
+
   // SERVICES appears below and waits during the pause, then slides up
   // 0-0.28: Stays below (during About Us pause)
   // 0.28-0.45: Slides up to center
   const servicesY = useTransform(scrollYProgress, [0, 0.08, 0.28, 0.45], [500, 500, 500, 0]);
-  
+
   // Scale up after reaching middle - MUCH MORE zoom to fill screen
   const servicesScale = useTransform(scrollYProgress, [0.45, 0.65], [1, 25]);
-  
+
   // Color transitions - opacity increases quickly as it slides up
   const servicesColor = useTransform(
-    scrollYProgress, 
-    [0, 0.25, 0.35], 
+    scrollYProgress,
+    [0, 0.25, 0.35],
     ['rgba(41, 65, 80, 0.2)', 'rgba(41, 65, 80, 0.6)', 'rgba(41, 65, 80, 1)']
   );
-  
+
   // Blur effect - clears up quickly as it slides up
   const servicesBlur = useTransform(scrollYProgress, [0, 0.25, 0.35], ['blur(6px)', 'blur(2px)', 'blur(0px)']);
 
@@ -262,18 +287,31 @@ export function AboutUsMobile({ onScrollProgress }: {
   const useMaskCutout = scrollProgress >= 0.58;
 
   // Solid text opacity - visible until mask cutout starts, quick but smooth fade
-  const solidTextOpacity = scrollProgress < 0.56 ? 1 : 
-                          scrollProgress < 0.58 ? 1 - ((scrollProgress - 0.56) / 0.02) : 0;
+  const solidTextOpacity = scrollProgress < 0.56 ? 1 :
+    scrollProgress < 0.58 ? 1 - ((scrollProgress - 0.56) / 0.02) : 0;
 
   // Services section opacity - fades in ONLY when masking starts
   const servicesSectionOpacity = useTransform(scrollYProgress, [0.58, 0.61], [0, 1]);
 
+
+  const handleLearnMoreClick = () => {
+    if (containerRef.current) {
+      // Get the hero container height
+      const heroHeight = containerRef.current.offsetHeight;
+      // Scroll to the end of the hero section (which is the start of About Us)
+      window.scrollTo({
+        top: viewportHeight * 10,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <div ref={containerRef} className="relative w-full bg-white" style={{ minHeight: '400vh' }}>
       {/* About Us Content - Sticky container with enhanced mobile sticky behavior */}
-      <div 
-        className="sticky top-0 flex items-center justify-center min-h-screen overflow-hidden will-change-transform" 
-        style={{ 
+      <div
+        className="sticky top-0 flex items-center justify-center min-h-screen overflow-hidden will-change-transform"
+        style={{
           backgroundColor: scrollProgress >= 0.85 ? '#2c4657' : 'white',
           zIndex: 10,
           WebkitBackfaceVisibility: 'hidden',
@@ -281,21 +319,21 @@ export function AboutUsMobile({ onScrollProgress }: {
           transform: 'translateZ(0)' // Force GPU acceleration for smooth sticky behavior
         }}
       >
-        
+
         {/* Text Carousel with Pagination - Mobile Version */}
-        <motion.div 
+        <motion.div
           className="absolute font-lato-light not-italic text-[#222526] text-center top-[140px] w-full px-6 z-[10000]"
-          style={{ 
-            y: middleTextY, 
-            opacity: middleTextOpacity, 
+          style={{
+            y: middleTextY,
+            opacity: middleTextOpacity,
             filter: middleTextBlur,
             pointerEvents: scrollProgress < 0.60 ? 'auto' : 'none'
           }}
         >
           {/* "ABOUT US" Title - Large centered text at top, slides with carousel */}
-          <p 
+          <p
             className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[50px] text-[rgba(44,70,87,0.2)] text-center uppercase mb-[60px] whitespace-nowrap pointer-events-none select-none"
-            style={{ 
+            style={{
               letterSpacing: '0.025em'
             }}
           >
@@ -313,13 +351,13 @@ export function AboutUsMobile({ onScrollProgress }: {
                 transition={{ duration: 0.5, ease: "easeInOut" }}
                 className="w-full flex flex-col gap-0"
               >
-                {/* Number at the top */}
-                <p className="hidden leading-[36px] text-[24px] mb-0">
-                  {carouselTexts[carouselIndex].number}
-                </p>
                 {/* Text content below */}
+                <p className="font-lato-semibold">{carouselTexts[carouselIndex].header}</p><br />
                 <p className="leading-[36px] text-[24px]">
                   {carouselTexts[carouselIndex].text}
+                  {carouselTexts[carouselIndex].hasLearnMore && (
+                    <a className="cursor-pointer pointer-events-auto" onClick={handleLearnMoreMClick}>Learn more</a>
+                  )}
                   {carouselTexts[carouselIndex].boldText && (
                     <span className="font-lato-semibold">{carouselTexts[carouselIndex].boldText}</span>
                   )}
@@ -329,7 +367,7 @@ export function AboutUsMobile({ onScrollProgress }: {
           </div>
 
           {/* Navigation: Left Arrow + Pagination Dots + Right Arrow */}
-          <div 
+          <div
             className="flex items-center justify-center gap-[24px] relative z-[9999] use-default-cursor"
           >
             {/* Left Arrow Button */}
@@ -340,7 +378,7 @@ export function AboutUsMobile({ onScrollProgress }: {
                 setCarouselIndex((prev) => (prev - 1 + carouselTexts.length) % carouselTexts.length);
               }}
               className="content-stretch flex items-center justify-center p-[3px] relative rounded-[24px] shrink-0 size-[48px] transition-all duration-200 ease-out active:bg-[rgba(46,196,182,0.1)] group touch-manipulation"
-              style={{ 
+              style={{
                 cursor: 'pointer',
                 pointerEvents: 'auto',
                 zIndex: 99999,
@@ -379,7 +417,7 @@ export function AboutUsMobile({ onScrollProgress }: {
                     e.preventDefault();
                     setCarouselIndex(index);
                   }}
-                  style={{ 
+                  style={{
                     cursor: 'pointer',
                     pointerEvents: 'auto',
                     zIndex: 99999,
@@ -388,11 +426,10 @@ export function AboutUsMobile({ onScrollProgress }: {
                     WebkitTapHighlightColor: 'transparent',
                     userSelect: 'none'
                   }}
-                  className={`transition-all duration-300 rounded-full touch-manipulation ${
-                    index === carouselIndex 
-                      ? 'w-[14px] h-[14px] bg-[#2C4657] active:bg-[#1e3340]' 
-                      : 'w-[10px] h-[10px] bg-[#D9D9D9] active:bg-[#B0B0B0]'
-                  }`}
+                  className={`transition-all duration-300 rounded-full touch-manipulation ${index === carouselIndex
+                    ? 'w-[14px] h-[14px] bg-[#2C4657] active:bg-[#1e3340]'
+                    : 'w-[10px] h-[10px] bg-[#D9D9D9] active:bg-[#B0B0B0]'
+                    }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
@@ -406,7 +443,7 @@ export function AboutUsMobile({ onScrollProgress }: {
                 setCarouselIndex((prev) => (prev + 1) % carouselTexts.length);
               }}
               className="content-stretch flex items-center justify-center p-[3px] relative rounded-[24px] shrink-0 size-[48px] transition-all duration-200 ease-out active:bg-[rgba(46,196,182,0.1)] group touch-manipulation"
-              style={{ 
+              style={{
                 cursor: 'pointer',
                 pointerEvents: 'auto',
                 zIndex: 99999,
@@ -438,9 +475,9 @@ export function AboutUsMobile({ onScrollProgress }: {
         </motion.div>
 
         {/* Full blue screen overlay at the end - appears after zoom completes */}
-        <motion.div 
-          className="absolute top-0 left-0 w-full h-full z-[5]" 
-          style={{ 
+        <motion.div
+          className="absolute top-0 left-0 w-full h-full z-[5]"
+          style={{
             opacity: blueScreenOpacity,
             pointerEvents: scrollProgress >= 0.80 ? 'none' : 'auto'
           }}
@@ -457,9 +494,9 @@ export function AboutUsMobile({ onScrollProgress }: {
             touchAction: scrollProgress >= 0.51 ? 'auto' : 'none'
           }}
         >
-          <div 
-            className="w-full h-full" 
-            style={{ 
+          <div
+            className="w-full h-full"
+            style={{
               pointerEvents: scrollProgress >= 0.51 ? 'auto' : 'none',
               touchAction: scrollProgress >= 0.51 ? 'auto' : 'none'
             }}
@@ -469,7 +506,7 @@ export function AboutUsMobile({ onScrollProgress }: {
         </motion.div>
 
         {/* SERVICES Text Mask - reveals Services section through text cutout during zoom */}
-        <motion.div 
+        <motion.div
           className="absolute top-1/2 left-0 w-full h-full z-[20] pointer-events-none -translate-y-1/2"
           style={{ y: servicesY }}
         >
@@ -491,7 +528,7 @@ export function AboutUsMobile({ onScrollProgress }: {
               <mask id="servicesTextMaskMobile">
                 {/* White background - everything covered */}
                 <rect x="0" y="0" width="100%" height="100%" fill="white" />
-                
+
                 {/* Black text - creates the cutout (hole) - reveals Services section through letters */}
                 {/* Position calculated to center the "V" (4th letter) instead of the whole word */}
                 <text
@@ -512,7 +549,7 @@ export function AboutUsMobile({ onScrollProgress }: {
                     const letterSpacing = (baseLetterSpacing * fontSize) / baseFontSize;
                     const charWidth = fontSize * 0.55; // Character width for Lato Bold
                     const totalCharWidth = charWidth + letterSpacing;
-                    
+
                     // Shift right by 0.5 character widths to center on V
                     const viewportCenter = 187.5; // 50% of 375px viewport
                     const offset = 0.5 * totalCharWidth;
@@ -527,7 +564,7 @@ export function AboutUsMobile({ onScrollProgress }: {
                     // Start at same size as solid text (1x) when masking begins, zoom to 25x
                     if (scrollProgress < 0.58) return baseSize; // Same as solid text
                     if (scrollProgress >= 0.70) return baseSize * 25;
-                    
+
                     const progress = (scrollProgress - 0.58) / (0.70 - 0.58);
                     const scale = 1 + (24 * progress); // 1x to 25x scale
                     return baseSize * scale;

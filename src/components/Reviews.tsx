@@ -198,7 +198,7 @@ function Frame4Mobile() {
 // Review Card Component
 function ReviewCard({ review, author, date }: { review: string; author: string; date: string }) {
   return (
-    <motion.div 
+    <motion.div
       className="relative rounded-[16px] w-[502px] md:block hidden overflow-hidden backdrop-blur-[14px] backdrop-filter bg-[rgba(228,236,241,0.4)] border border-[rgba(46,196,182,0.3)] border-solid shadow-[0px_4px_28px_-1px_rgba(46,196,182,0.12)]"
       animate={{
         y: [-10, 10, -10],
@@ -218,7 +218,7 @@ function ReviewCard({ review, author, date }: { review: string; author: string; 
           <p className="font-['Lato:Regular',sans-serif] leading-[16px] not-italic text-[#2c4657] text-[14px] text-nowrap">{date}</p>
         </div>
       </div>
-      
+
       {/* Decorative ellipse at bottom */}
       <div className="absolute flex h-[107.628px] items-center justify-center left-[49.9px] bottom-[-60px] w-[358.491px]" style={{ "--transform-inner-width": "0", "--transform-inner-height": "0" } as React.CSSProperties}>
         <div className="flex-none rotate-[356.635deg]">
@@ -247,9 +247,9 @@ function ReviewCard({ review, author, date }: { review: string; author: string; 
 // Mobile Review Card Component - scaled down from desktop
 function ReviewCardMobile({ review, author, date, duration = 4 }: { review: string; author: string; date: string; duration?: number }) {
   return (
-    <motion.div 
-      className="relative rounded-[16px] w-[305px] overflow-hidden" 
-      style={{ 
+    <motion.div
+      className="relative rounded-[16px] w-[305px] overflow-hidden"
+      style={{
         backgroundColor: 'rgba(228,236,241,0.4)',
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)'
@@ -310,13 +310,13 @@ function ScrollIndicatorStep2() {
   );
 }
 
-export function Reviews({ 
-  onScrollProgress, 
-  isModal = false, 
+export function Reviews({
+  onScrollProgress,
+  isModal = false,
   onClose,
   aboutUsScrollProgress,
   processScrollProgress
-}: { 
+}: {
   onScrollProgress?: (progress: number) => void;
   isModal?: boolean;
   onClose?: () => void;
@@ -325,20 +325,20 @@ export function Reviews({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const lastScrollTime = useRef(0);
-  
+
   // Detect mobile view
   const [isMobile, setIsMobile] = useState(false);
-  
+
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-  
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
@@ -360,7 +360,7 @@ export function Reviews({
   // Reviews section opacity - fades in when Services Step 1 ends
   // Default to full opacity when entering Reviews section normally
   let reviewsSectionOpacity = 1;
-  
+
   // Different timing for mobile vs desktop
   // Desktop: Services Step 1 completes at 0.72, fade in from 0.72 to 0.76
   // Mobile: Services mask completes at 0.72, fade in from 0.72 to 0.76 (earlier timing)
@@ -381,7 +381,7 @@ export function Reviews({
       reviewsSectionOpacity = (aboutUsScrollProgress - 0.72) / 0.04;
     }
   }
-  
+
   // Fade out when Process section slides up (0.05 - 0.15)
   if (processScrollProgress && processScrollProgress >= 0.05) {
     reviewsSectionOpacity = 1 - Math.min((processScrollProgress - 0.05) / 0.1, 1);
@@ -393,11 +393,11 @@ export function Reviews({
   // Text size animation: Desktop 232px → 160px, Mobile 56px always
   const textSizeDesktop = useTransform(scrollYProgress, [0, 0.5], ['232px', '160px']);
   const textSizeMobile = useTransform(scrollYProgress, [0, 0.3, 0.5], ['56px', '56px', '56px']);
-  
+
   // Letter spacing animation: Desktop 48px → 32px, Mobile 16px always
   const letterSpacingDesktop = useTransform(scrollYProgress, [0, 0.5], ['48px', '32px']);
   const letterSpacingMobile = useTransform(scrollYProgress, [0, 0.5], ['16px', '16px']);
-  
+
   // Text color - Mobile fades through the card animation: 100% → 70% → 30% → 0%
   const textColorDesktop = useTransform(
     scrollYProgress,
@@ -407,7 +407,7 @@ export function Reviews({
       'rgba(44, 70, 87, 0.3)'   // End: Very light
     ]
   );
-  
+
   const textColorMobile = useTransform(
     scrollYProgress,
     [0, 0.02, 0.65, 0.75],
@@ -434,7 +434,7 @@ export function Reviews({
   // FIRST cards go beyond the top, LAST cards stay visible in the Reviews section
   // Slower animation - extended scroll ranges
   // MOBILE: Slower animation with extended ranges (15% vs 10% for desktop)
-  
+
   // Desktop card animations - 20% scroll range for SLOWER movement - ALL cards move beyond viewport
   const card1Y = useTransform(scrollYProgress, [0.50, 0.70], [800, -400]);  // First - Goes far beyond top - SLOWER (20% range)
   const card1Opacity = useTransform(scrollYProgress, [0.50, 0.52, 0.70, 0.88, 0.93], [0, 1, 1, 1, 0]);  // Fade out gradually as TEAM slides in (0.88 - 0.93)
@@ -456,19 +456,19 @@ export function Reviews({
   // Each card requires MUCH MORE scrolling to complete its animation
   // Cards start 10% apart for sequential appearance but overlap for smooth flow
   // INCREASED starting position to 1200px to keep cards off-screen initially
-  const card1YMobile = useTransform(scrollYProgress, [0.00, 0.55], [1200, -100]);  // 55% range - First card (VERY SLOW) - starts off-screen
-  const card2YMobile = useTransform(scrollYProgress, [0.10, 0.65], [1200, -100]);  // 55% range - Second card (starts at 0.10) - starts off-screen
-  const card5YMobile = useTransform(scrollYProgress, [0.20, 0.75], [1200, -100]);  // 55% range - Third card (starts at 0.20) - starts off-screen
-  const card6YMobile = useTransform(scrollYProgress, [0.30, 0.85], [1200, -100]);  // 55% range - Fourth card (starts at 0.30) - starts off-screen
-  const card7YMobile = useTransform(scrollYProgress, [0.40, 0.95], [1200, -100]);  // 55% range - Fifth card (starts at 0.40) - starts off-screen
+  const card1YMobile = useTransform(scrollYProgress, [0.00, 0.40], [1000, -1000]);
+  const card2YMobile = useTransform(scrollYProgress, [0.15, 0.55], [1000, -1000]);
+  const card5YMobile = useTransform(scrollYProgress, [0.30, 0.70], [1000, -1000]);
+  const card6YMobile = useTransform(scrollYProgress, [0.45, 0.85], [1000, -1100]); // Jess's card is long, extra height to clear
+  const card7YMobile = useTransform(scrollYProgress, [0.60, 1.00], [1000, -1000]);
 
   // Mobile card opacity - separate from desktop timing - adjusted for extended 55% scroll ranges
   // Cards fade out MUCH EARLIER - from 0.65 to 0.70 - well before TEAM masking starts (0.85)
-  const card1OpacityMobile = useTransform(scrollYProgress, [0.00, 0.02, 0.65, 0.70], [0, 1, 1, 0]);  // Fade out early at 0.65-0.70
-  const card2OpacityMobile = useTransform(scrollYProgress, [0.10, 0.12, 0.65, 0.70], [0, 1, 1, 0]);  // Fade out early at 0.65-0.70
-  const card5OpacityMobile = useTransform(scrollYProgress, [0.20, 0.22, 0.65, 0.70], [0, 1, 1, 0]);  // Fade out early at 0.65-0.70
-  const card6OpacityMobile = useTransform(scrollYProgress, [0.30, 0.32, 0.65, 0.70], [0, 1, 1, 0]);  // Fade out early at 0.65-0.70
-  const card7OpacityMobile = useTransform(scrollYProgress, [0.40, 0.42, 0.65, 0.70], [0, 1, 1, 0]);  // Fade out early at 0.65-0.70
+  const card1OpacityMobile = useTransform(scrollYProgress, [0.00, 0.05, 0.35, 0.40], [0, 1, 1, 0]);
+  const card2OpacityMobile = useTransform(scrollYProgress, [0.15, 0.20, 0.50, 0.55], [0, 1, 1, 0]);
+  const card5OpacityMobile = useTransform(scrollYProgress, [0.30, 0.35, 0.65, 0.70], [0, 1, 1, 0]);
+  const card6OpacityMobile = useTransform(scrollYProgress, [0.45, 0.50, 0.80, 0.85], [0, 1, 1, 0]);
+  const card7OpacityMobile = useTransform(scrollYProgress, [0.60, 0.65, 0.95, 1.00], [0, 1, 1, 0]);  // Fade out early at 0.65-0.70
 
   // TEAM text animations - zooms in from right side after cards finish scrolling
   // Desktop: Cards finish at 0.80, TEAM starts at 0.88 (gap for cleanup)
@@ -480,34 +480,34 @@ export function Reviews({
   const teamXMobile = useTransform(scrollYProgress, [0.85, 0.91, 0.95, 0.98, 1.00], [1200, 700, 400, 150, -50]); // EXTREMELY SLOW: 0.85 → 1.00 (15% range) with very gradual steps
   const teamScale = useTransform(scrollYProgress, [0.88, 0.96, 0.98, 0.985, 0.99, 0.995, 1], [1.5, 1.5, 2.5, 4, 8, 20, 50]); // Adjusted to match new slower timing
   const teamOpacity = useTransform(scrollYProgress, [0.88, 0.91, 1], [0, 1, 1]); // Fades in slower and stays at full opacity
-  
+
   // TEAM text color - solid during slide, then transparent during zoom for mask effect
   const teamTextColor = useTransform(
     scrollYProgress,
     [0.82, 0.93, 0.95],
     ['rgba(44, 70, 87, 1)', 'rgba(44, 70, 87, 1)', 'rgba(44, 70, 87, 0)']
   );
-  
+
   // White overlay fade - Reviews section fades to white when transitioning to Team
   const whiteFadeOpacity = useTransform(scrollYProgress, [0.82, 0.93], [0, 1]); // Fades from transparent to white
-  
+
   // Team section reveal through TEAM text mask - starts when zoom begins
   const teamSectionMaskOpacity = useTransform(scrollYProgress, [0.93, 0.98], [0, 1]); // Fades in during zoom
 
   // Handle wheel scroll when in modal mode
   const handleWheel = (e: React.WheelEvent) => {
     if (!isModal) return;
-    
+
     e.preventDefault();
     e.stopPropagation();
-    
+
     const now = Date.now();
-    
+
     // Debounce: Only allow scroll every 500ms
     if (now - lastScrollTime.current < 500) {
       return;
     }
-    
+
     // Check if we're scrolling up - go back to Services
     if (e.deltaY < -3 && onClose) {
       lastScrollTime.current = now;
@@ -521,7 +521,7 @@ export function Reviews({
       {!isModal && (
         <motion.div
           className="absolute inset-0 bg-white pointer-events-none"
-          style={{ 
+          style={{
             opacity: whiteFadeOpacity,
             zIndex: 90
           }}
@@ -538,7 +538,7 @@ export function Reviews({
         </div>
 
         {/* REVIEWS Text - CENTERED and animates size, position, spacing, weight, and color */}
-        <motion.p 
+        <motion.p
           className="absolute font-['Lato',sans-serif] leading-[normal] not-italic text-center text-nowrap uppercase whitespace-pre"
           style={{
             fontSize: isModal ? 232 : (textSizeDesktop as any),
@@ -567,54 +567,54 @@ export function Reviews({
         {!isModal && (
           <>
             {/* Card 1 - Left side */}
-            <motion.div 
+            <motion.div
               className="absolute flex items-center justify-center w-[502px] h-[145px]"
-              style={{ 
-                y: card1Y, 
-                opacity: card1Opacity, 
-                rotate: '354.19deg', 
+              style={{
+                y: card1Y,
+                opacity: card1Opacity,
+                rotate: '354.19deg',
                 zIndex: 60,
                 left: 'calc(50% - 500px)',  // Center-aligned offset - shifted left
               }}
             >
-              <ReviewCard review='"I would strongly recommend Nick if you are looking to secure a mortgage or remortgage. "' author="~Daniel" date="January, 2024" />
+              <ReviewCard review='"I would strongly recommend Nick if you are looking to secure a mortgage or remortgage. He is exceptionally proactive and genuinely cares. Nick made the process of buying a house much more relaxed." ' author="~Daniel" date="August, 2025" />
             </motion.div>
 
             {/* Card 2 - Right side */}
-            <motion.div 
+            <motion.div
               className="absolute flex items-center justify-center w-[502px] h-[145px]"
-              style={{ 
-                y: card2Y, 
-                opacity: card2Opacity, 
-                rotate: '357.749deg', 
+              style={{
+                y: card2Y,
+                opacity: card2Opacity,
+                rotate: '357.749deg',
                 zIndex: 60,
                 left: 'calc(50% + 92px)',  // Center-aligned offset - shifted left
               }}
             >
-              <ReviewCard review='"Nick is a great mortgage advisor. He helped me secure a loan quickly and efficiently. "' author="~Sarah" date="March, 2024" />
+              <ReviewCard review='"Nick was the most amazing person through my mortgage application process. I had already had an application denied with another company and Nick reassured me and worked so hard just for me to be living in my dream property now. I would recommend Jigsaw Financial to anyone after the 10/10 experience I have received. Thank you again to both Nick and Gemma for making the most stressful time in my life just that bit easier."' author="~Jess" date="December, 2025" />
             </motion.div>
 
             {/* Card 5 - Left side */}
-            <motion.div 
+            <motion.div
               className="absolute flex items-center justify-center w-[502px] h-[145px]"
-              style={{ 
-                y: card5Y, 
-                opacity: card5Opacity, 
-                rotate: '357.749deg', 
+              style={{
+                y: card5Y,
+                opacity: card5Opacity,
+                rotate: '357.749deg',
                 zIndex: 60,
                 left: 'calc(50% - 508px)',  // Center-aligned offset - shifted left
               }}
             >
-              <ReviewCard review='"Nick was very helpful in guiding me through the mortgage process. I am very satisfied with the outcome. "' author="~Michael" date="June, 2024" />
+              <ReviewCard review={`"Absolutely fantastic company! We can't thank Nick and Team enough for all they have done for us, from our first mortgage to our remortgage. Very thorough and quick to reply! Would highly recommend!"`} author="~Rebecca" date="January, 2025" />
             </motion.div>
 
             {/* Card 6 - Right side */}
-            <motion.div 
+            <motion.div
               className="absolute flex items-center justify-center w-[502px] h-[145px]"
-              style={{ 
-                y: card6Y, 
-                opacity: card6Opacity, 
-                rotate: '11.025deg', 
+              style={{
+                y: card6Y,
+                opacity: card6Opacity,
+                rotate: '11.025deg',
                 zIndex: 60,
                 left: 'calc(50% + 184px)',  // Center-aligned offset - shifted left
               }}
@@ -623,12 +623,12 @@ export function Reviews({
             </motion.div>
 
             {/* Card 7 - Left side */}
-            <motion.div 
+            <motion.div
               className="absolute flex items-center justify-center w-[502px] h-[145px]"
-              style={{ 
-                y: card7Y, 
-                opacity: card7Opacity, 
-                rotate: '354.19deg', 
+              style={{
+                y: card7Y,
+                opacity: card7Opacity,
+                rotate: '354.19deg',
                 zIndex: 60,
                 left: 'calc(50% - 500px)',  // Center-aligned offset - shifted left
               }}
@@ -639,11 +639,11 @@ export function Reviews({
         )}
 
         {/* Down Arrow Button - Bottom Right */}
-        
+
 
         {/* White overlay fade - Reviews section fades to white when transitioning to Team */}
         {!isModal && (
-          <motion.div 
+          <motion.div
             className="absolute inset-0 bg-white pointer-events-none"
             style={{
               zIndex: 95,
@@ -680,7 +680,7 @@ export function Reviews({
         {/* Mobile Navigation - Removed, using global nav from App.tsx */}
         <div className="relative w-full h-full">
           {/* REVIEWS Text - Mobile styling */}
-          <motion.p 
+          <motion.p
             className="absolute font-['Lato:Bold',sans-serif] leading-[normal] left-1/2 not-italic text-[56px] text-center text-nowrap top-[calc(50%-33px)] tracking-[16px] translate-x-[-50%] uppercase whitespace-pre"
             style={{
               color: isModal ? '#294150' : (textColorMobile as any),
@@ -693,58 +693,58 @@ export function Reviews({
           </motion.p>
 
           {/* Down Arrow Button - Mobile - Bottom Center */}
-          
+
 
           {/* Mobile Review Cards */}
           {!isModal && (
             <>
               {/* Card 1 - Top Left rotated - GOES BEYOND TOP */}
-              <motion.div 
+              <motion.div
                 className="absolute w-[305px]"
-                style={{ 
-                  y: card1YMobile, 
+                style={{
+                  y: card1YMobile,
                   opacity: card1OpacityMobile,
                   left: '16px',
                   rotate: '353.654deg',
                   zIndex: 60
                 }}
               >
-                <ReviewCardMobile review='"I would strongly recommend Nick if you are looking to secure a mortgage or remortgage. "' author="~Daniel" date="January, 2024" />
+                <ReviewCardMobile review='"I would strongly recommend Nick if you are looking to secure a mortgage or remortgage. He is exceptionally proactive and genuinely cares. Nick made the process of buying a house much more relaxed."' author="~Daniel" date="August, 2025" />
               </motion.div>
 
               {/* Card 2 - Left rotated - GOES BEYOND TOP */}
-              <motion.div 
+              <motion.div
                 className="absolute w-[305px]"
-                style={{ 
-                  y: card2YMobile, 
+                style={{
+                  y: card2YMobile,
                   opacity: card2OpacityMobile,
                   left: '32px',
                   rotate: '353.654deg',
                   zIndex: 60
                 }}
               >
-                <ReviewCardMobile review='"Nick is a great mortgage advisor. He helped me secure a loan quickly and efficiently. "' author="~Sarah" date="March, 2024" />
+                <ReviewCardMobile review='"Nick was the most amazing person through my mortgage application process. I had already had an application denied with another company and Nick reassured me and worked so hard just for me to be living in my dream property now. I would recommend Jigsaw Financial to anyone after the 10/10 experience I have received. Thank you again to both Nick and Gemma for making the most stressful time in my life just that bit easier."' author="~Jess" date="December, 2025" />
               </motion.div>
 
               {/* Card 5 - Left Center - STAYS VISIBLE */}
-              <motion.div 
+              <motion.div
                 className="absolute w-[305px]"
-                style={{ 
-                  y: card5YMobile, 
+                style={{
+                  y: card5YMobile,
                   opacity: card5OpacityMobile,
                   left: '24px',
                   rotate: '353.654deg',
                   zIndex: 60
                 }}
               >
-                <ReviewCardMobile review='"Nick was very helpful in guiding me through the mortgage process. I am very satisfied with the outcome. "' author="~Michael" date="June, 2024" />
+                <ReviewCardMobile review={`"Absolutely fantastic company! We can't thank Nick and Team enough for all they have done for us, from our first mortgage to our remortgage. Very thorough and quick to reply! Would highly recommend!"`} author="~Rebecca" date="January, 2025" />
               </motion.div>
 
               {/* Card 6 - Right Center - STAYS VISIBLE */}
-              <motion.div 
+              <motion.div
                 className="absolute w-[305px]"
-                style={{ 
-                  y: card6YMobile, 
+                style={{
+                  y: card6YMobile,
                   opacity: card6OpacityMobile,
                   right: '24px',
                   rotate: '12.845deg',
@@ -755,10 +755,10 @@ export function Reviews({
               </motion.div>
 
               {/* Card 7 - Center - STAYS VISIBLE */}
-              <motion.div 
+              <motion.div
                 className="absolute w-[305px]"
-                style={{ 
-                  y: card7YMobile, 
+                style={{
+                  y: card7YMobile,
                   opacity: card7OpacityMobile,
                   left: 'calc(50% - 152.5px)',  // Center the 305px card
                   rotate: '353.654deg',
@@ -814,10 +814,10 @@ export function Reviews({
   }
 
   return (
-    <div 
-      ref={containerRef} 
-      className="relative w-full bg-white" 
-      style={{ 
+    <div
+      ref={containerRef}
+      className="relative w-full bg-white"
+      style={{
         minHeight: isMobile ? '500vh' : '400vh',  // INCREASED mobile height from 250vh to 500vh for much longer scroll
         marginTop: '0vh',
         pointerEvents: (aboutUsScrollProgress && aboutUsScrollProgress >= 0.72 && aboutUsScrollProgress < 0.98) || (processScrollProgress && processScrollProgress >= 0.05) ? 'none' : 'auto',
@@ -828,9 +828,9 @@ export function Reviews({
         WebkitOverflowScrolling: 'touch' // Smooth scrolling on iOS
       } as React.CSSProperties}
     >
-      <div 
-        className="sticky top-0 h-screen overflow-hidden bg-white" 
-        style={{ 
+      <div
+        className="sticky top-0 h-screen overflow-hidden bg-white"
+        style={{
           pointerEvents: (aboutUsScrollProgress && aboutUsScrollProgress >= 0.72 && aboutUsScrollProgress < 0.98) || (processScrollProgress && processScrollProgress >= 0.05) ? 'none' : 'auto',
           zIndex: 20,
           opacity: reviewsSectionOpacity,
