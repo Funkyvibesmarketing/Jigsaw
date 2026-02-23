@@ -248,6 +248,9 @@ function BlogPopupMobile({
           <p className="font-['Lato:SemiBold',sans-serif] leading-[normal] not-italic shrink-0 text-[#2c4657] text-[24px] w-full">
             {blog.title}
           </p>
+          <p className="font-['Lato:Light',sans-serif] leading-[normal] not-italic text-[10px] text-[#2c4657] font-light tracking-[0.2px] opacity-80 mt-[-8px]">
+            ‘This blog has information contained within that was correct at the time of publication, but is subject to change.”
+          </p>
 
           {/* Scrollable Content */}
           <div

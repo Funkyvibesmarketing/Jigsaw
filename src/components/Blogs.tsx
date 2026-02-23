@@ -279,15 +279,20 @@ function BlogPopup({
 
         {/* Blog Content */}
         <div className="basis-0 content-stretch flex flex-col gap-[24px] grow items-start min-h-0 min-w-px relative shrink-0">
-          <div className="flex items-center justify-between w-full">
-            <p className="font-['Lato:SemiBold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2c4657] text-[32px]">
-              {blog.title}
-            </p>
-            {blog.date && (
-              <p className="font-['Lato:Light',sans-serif] leading-[normal] not-italic relative shrink-0 text-[14px] text-[#2c4657] ml-[24px]">
-                {blog.date}
+          <div className="flex flex-col gap-[8px] w-full">
+            <div className="flex items-center justify-between w-full">
+              <p className="font-['Lato:SemiBold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2c4657] text-[32px]">
+                {blog.title}
               </p>
-            )}
+              {blog.date && (
+                <p className="font-['Lato:Light',sans-serif] leading-[normal] not-italic relative shrink-0 text-[14px] text-[#2c4657] ml-[24px]">
+                  {blog.date}
+                </p>
+              )}
+            </div>
+            <p className="font-['Lato:Light',sans-serif] leading-[normal] not-italic text-[12px] text-[#2c4657] font-light tracking-[0.2px] opacity-80">
+              ‘This blog has information contained within that was correct at the time of publication, but is subject to change.”
+            </p>
           </div>
 
           {/* Scrollable Content */}
