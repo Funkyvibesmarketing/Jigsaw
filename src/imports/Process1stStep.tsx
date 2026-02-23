@@ -375,32 +375,32 @@ interface Process1stStepProps {
   barOpacities?: MotionValue<number>[];
 }
 
-export default function Process1stStep({ 
+export default function Process1stStep({
   iconSlideX,
   iconOpacity,
-  textSlideX, 
+  textSlideX,
   textOpacity,
   barOpacities
 }: Process1stStepProps) {
   return (
     <div className="bg-[#2c4657] relative size-full" data-name="Process (1st step)">
       {/* Removed Frame6 - left navigation bar - using centralized navigation instead */}
-      
+
       {/* Center content - Icon circles with slide animation */}
       <motion.div
         style={{ x: iconSlideX, opacity: iconOpacity }}
       >
         <Frame13 />
       </motion.div>
-      
+
       {/* Text content with slide in from right animation */}
       <motion.div
         style={{ x: textSlideX, opacity: textOpacity }}
       >
-        <p className="absolute font-['Lato:SemiBold',sans-serif] leading-[normal] left-1/2 -translate-x-1/2 not-italic text-[56px] text-center text-white top-[440px] whitespace-pre">1. Understand your problem</p>
-        <p className="absolute font-['Lato:Light',sans-serif] leading-[32px] left-1/2 not-italic opacity-70 text-[24px] text-center text-white top-[530px] translate-x-[-50%] whitespace-pre">Life's busy, but we focus on your future—first home.</p>
+        <p className="absolute font-['Lato:SemiBold',sans-serif] leading-[normal] left-1/2 -translate-x-1/2 not-italic text-[56px] text-center text-white top-[440px] whitespace-pre">1. Understanding You</p>
+        <p className="absolute font-['Lato:Light',sans-serif] leading-[32px] left-1/2 not-italic opacity-70 text-[24px] text-center text-white top-[530px] translate-x-[-50%] whitespace-pre">We take time to understand your needs, goals, and aspirations-so every <br />recommendation starts with you, not a product.</p>
       </motion.div>
-      
+
       {/* Progress bar removed - now handled centrally in Process.tsx */}
     </div>
   );

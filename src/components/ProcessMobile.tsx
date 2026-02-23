@@ -46,12 +46,12 @@ function BrainIcon() {
 }
 
 // Bottom progress bar component - matches desktop functionality
-function BottomProgressBar({ 
-  step2BarOpacities, 
-  step3BarOpacities, 
+function BottomProgressBar({
+  step2BarOpacities,
+  step3BarOpacities,
   step4BarOpacities,
-  currentStep 
-}: { 
+  currentStep
+}: {
   step2BarOpacities: MotionValue<number>[];
   step3BarOpacities: MotionValue<number>[];
   step4BarOpacities: MotionValue<number>[];
@@ -61,7 +61,7 @@ function BottomProgressBar({
   const [dotPosition, setDotPosition] = useState(0);
   const [dotVisible, setDotVisible] = useState(false);
   const [currentProgress, setCurrentProgress] = useState(0);
-  
+
   // State to track which bars should be bright vs dim
   const [barColors, setBarColors] = useState<string[]>(Array(29).fill("rgba(255,255,255,0.12)"));
 
@@ -69,12 +69,12 @@ function BottomProgressBar({
   useEffect(() => {
     const unsubscribe = currentStep.on("change", (progress) => {
       setCurrentProgress(progress);
-      
+
       // Update bar colors based on current progress - animate color progressively
       const newColors = Array(29).fill(0).map((_, index) => {
         // Calculate which bar should be bright based on scroll progress
         let dotBarIndex = -1;
-        
+
         if (progress >= 0.30 && progress < 0.35) {
           // Step 2 (showing): Only bar 0 is bright
           dotBarIndex = 0;
@@ -93,7 +93,7 @@ function BottomProgressBar({
           // Step 4 (showing): All bars 0-28 are bright
           dotBarIndex = 28;
         }
-        
+
         // Bars should only be bright if they are at or before the calculated position
         if (index <= dotBarIndex) {
           return "rgba(255,255,255,0.72)"; // Full brightness
@@ -101,9 +101,9 @@ function BottomProgressBar({
           return "rgba(255,255,255,0.12)"; // Dim
         }
       });
-      
+
       setBarColors(newColors);
-      
+
       // Update dot position - jumps to positions (adapted for mobile width)
       // Mobile width is ~90% of 382px max = ~344px
       // Desktop: -7, 526, 1060 out of 1069px total
@@ -111,7 +111,7 @@ function BottomProgressBar({
       const mobileBar0 = 0;
       const mobileBar14 = 172; // ~50% of width
       const mobileBar28 = 344; // ~100% of width
-      
+
       if (progress < 0.30) {
         setDotVisible(true);
         setDotPosition(mobileBar0);
@@ -129,7 +129,7 @@ function BottomProgressBar({
         setDotPosition(mobileBar28);
       }
     });
-    
+
     return () => unsubscribe();
   }, [currentStep]); // Only depend on currentStep, not the bar opacity arrays
 
@@ -181,10 +181,10 @@ function BottomProgressBar({
           />
         ))}
       </div>
-      
+
       {/* Milestone dots - show as active when reached/passed */}
       {/* Dot at Bar 0 */}
-      <div 
+      <div
         className="absolute size-[12px] top-0"
         style={{
           left: 0,
@@ -198,9 +198,9 @@ function BottomProgressBar({
           {dotPosition >= 0 && <circle cx="6" cy="6" fill="white" fillOpacity="0.72" r="1.76471" />}
         </svg>
       </div>
-      
+
       {/* Dot at Bar 14 */}
-      <div 
+      <div
         className="absolute size-[12px] top-0"
         style={{
           left: '50%',
@@ -214,9 +214,9 @@ function BottomProgressBar({
           {dotPosition >= 172 && <circle cx="6" cy="6" fill="white" fillOpacity="0.72" r="1.76471" />}
         </svg>
       </div>
-      
+
       {/* Dot at Bar 28 */}
-      <div 
+      <div
         className="absolute size-[12px] top-0"
         style={{
           left: '100%',
@@ -236,7 +236,7 @@ function BottomProgressBar({
 
 export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: ProcessMobileProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"],
@@ -254,13 +254,13 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
   const processSlideY = useTransform(scrollYProgress, [0, 0.08], ["0vh", "0vh"]);
 
   // Step 2 (Step 1): "Understand your problem" - Starts immediately
-  const step2SlideX = useTransform(scrollYProgress, 
-    [0, 0.08, 0.35, 0.40], 
+  const step2SlideX = useTransform(scrollYProgress,
+    [0, 0.08, 0.35, 0.40],
     ["0vw", "0vw", "0vw", "-100vw"]
   );
-  
+
   const step2TextOpacity = useTransform(scrollYProgress, [0.08, 0.12], [0, 1]);
-  
+
   // Step 2: Progress bar animations - only bar 0 animates (25% - 30%)
   const totalBars = 29;
   const step2BarOpacities = Array.from({ length: totalBars }, (_, i) => {
@@ -271,20 +271,20 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
     // All other bars don't animate in this step
     return useTransform(scrollYProgress, [0, 1], [0, 0]);
   });
-  
+
   // Step 3: Icon animations
   const step3IconOpacity = useTransform(scrollYProgress, [0.35, 0.42], [0, 1]);
-  
+
   // Step 3: Text animations
   const step3TextSlideX = useTransform(scrollYProgress, [0.36, 0.40], [80, 0]);
   const step3TextOpacity = useTransform(scrollYProgress, [0.36, 0.40], [0, 1]);
-  
+
   // Step 3: Slides from right (100vw) to center (0), then to left (-100vw)
-  const step3SlideX = useTransform(scrollYProgress, 
-    [0.20, 0.35, 0.40, 0.60, 0.65], 
+  const step3SlideX = useTransform(scrollYProgress,
+    [0.20, 0.35, 0.40, 0.60, 0.65],
     ["100vw", "100vw", "0vw", "0vw", "-100vw"]
   );
-  
+
   // Step 3: Progress bar animations - bars 1-14 animate during dot movement (35-40%)
   const step3BarOpacities = Array.from({ length: totalBars }, (_, i) => {
     if (i === 0) {
@@ -301,17 +301,17 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
     // Bars 15-28 don't animate in this step
     return useTransform(scrollYProgress, [0, 1], [0, 0]);
   });
-  
+
   // Step 4: Slides from right (100vw) to center (0) and stays there
-  const step4SlideX = useTransform(scrollYProgress, 
-    [0.20, 0.60, 0.65, 1.0], 
+  const step4SlideX = useTransform(scrollYProgress,
+    [0.20, 0.60, 0.65, 1.0],
     ["100vw", "100vw", "0vw", "0vw"]
   );
-  
+
   // Step 4: Text animations
   const step4TextSlideX = useTransform(scrollYProgress, [0.61, 0.65], [80, 0]);
   const step4TextOpacity = useTransform(scrollYProgress, [0.61, 0.65], [0, 1]);
-  
+
   // Step 4: Progress bar animations - bars 15-28 animate during dot movement (60-65%)
   const step4BarOpacities = Array.from({ length: totalBars }, (_, i) => {
     if (i <= 14) {
@@ -329,7 +329,7 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
     <div
       ref={containerRef}
       className="relative w-full bg-[#2c4657]"
-      style={{ 
+      style={{
         minHeight: "400vh",
         touchAction: 'pan-y',
         WebkitOverflowScrolling: 'touch',
@@ -337,16 +337,16 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
       } as React.CSSProperties}
     >
       {/* Sticky container */}
-      <motion.div 
+      <motion.div
         className="sticky top-0 h-screen w-full overflow-hidden z-[100]"
         style={{ y: processSlideY }}
       >
         {/* Background */}
         <div className="absolute inset-0 w-full h-full bg-[#2c4657]" />
-        
+
         {/* "OUR PROCESS" Title */}
         <div className="absolute top-[120px] left-1/2 -translate-x-1/2 pointer-events-none z-[5]">
-          <p 
+          <p
             className="font-['Lato',sans-serif] text-white uppercase text-center text-nowrap"
             style={{
               opacity: 0.2,
@@ -358,7 +358,7 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
             OUR PROCESS
           </p>
         </div>
-        
+
         {/* SLIDER CONTAINER - Separate container for sliding content */}
         <div className="absolute inset-0 overflow-hidden">
           {/* Horizontal Slider Container for Steps 2, 3, 4 */}
@@ -383,7 +383,7 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
               </div>
 
               {/* Icon - centered within circles */}
-              <div 
+              <div
                 className="absolute left-1/2 size-[29.4px] top-[337px] translate-x-[-50%] translate-y-[-50%] z-10"
               >
                 <HandshakeIcon />
@@ -392,15 +392,15 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
               {/* Text content */}
               <motion.div
                 className="w-full px-4"
-                style={{ 
+                style={{
                   opacity: step2TextOpacity
                 }}
               >
                 <h2 className="absolute font-['Lato:SemiBold',sans-serif] leading-[36px] left-1/2 not-italic text-[24px] text-center text-white top-[465px] translate-x-[-50%] max-w-[90%] w-[362px]">
-                  1. Understand your problem
+                  1. Understanding You
                 </h2>
                 <p className="absolute font-['Lato:Light',sans-serif] leading-[28px] left-1/2 not-italic opacity-70 text-[18px] text-center text-white top-[528px] translate-x-[-50%] w-[90%] max-w-[292px]">
-                  Life's busy, but we focus on your future—first home.
+                  We take time to understand your needs, goals, and aspirations-so every recommendation starts with you, not a product.
                 </p>
               </motion.div>
             </motion.div>
@@ -425,7 +425,7 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
               </div>
 
               {/* Icon - with slide animation */}
-              <div 
+              <div
                 className="absolute left-1/2 size-[29.4px] top-[337px] translate-x-[-50%] translate-y-[-50%] z-10"
               >
                 <ResearchIcon />
@@ -434,16 +434,16 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
               {/* Text content - with slide animation */}
               <motion.div
                 className="w-full px-4"
-                style={{ 
+                style={{
                   x: step3TextSlideX,
                   opacity: step3TextOpacity
                 }}
               >
                 <h2 className="absolute font-['Lato:SemiBold',sans-serif] leading-[36px] left-1/2 not-italic text-[24px] text-center text-white top-[465px] translate-x-[-50%] max-w-[90%] w-[362px]">
-                  2. Research for best solution
+                  2. Tailored Solutions
                 </h2>
                 <p className="absolute font-['Lato:Light',sans-serif] leading-[28px] left-1/2 not-italic opacity-70 text-[18px] text-center text-white top-[528px] translate-x-[-50%] w-[90%] max-w-[292px]">
-                  Life's busy, but we focus on your future—first home.
+                  We search the market to find mortgage and protection options matched to you-because every client matters.
                 </p>
               </motion.div>
             </motion.div>
@@ -468,7 +468,7 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
               </div>
 
               {/* Icon - with slide animation */}
-              <div 
+              <div
                 className="absolute left-1/2 size-[29.4px] top-[337px] translate-x-[-50%] translate-y-[-50%] z-10"
               >
                 <BrainIcon />
@@ -477,16 +477,16 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
               {/* Text content - with slide animation */}
               <motion.div
                 className="w-full px-4"
-                style={{ 
+                style={{
                   x: step4TextSlideX,
                   opacity: step4TextOpacity
                 }}
               >
                 <h2 className="absolute font-['Lato:SemiBold',sans-serif] leading-[36px] left-1/2 not-italic text-[24px] text-center text-white top-[465px] translate-x-[-50%] max-w-[90%] w-[362px]">
-                  3. Taking your stress away
+                  3. Ongoing Support
                 </h2>
                 <p className="absolute font-['Lato:Light',sans-serif] leading-[28px] left-1/2 not-italic opacity-70 text-[18px] text-center text-white top-[528px] translate-x-[-50%] w-[90%] max-w-[292px]">
-                  Life's busy, but we focus on your future—first home.
+                  One fee for expert advice, meaning continued support and free remortgage advice when the time is right.
                 </p>
               </motion.div>
             </motion.div>
@@ -495,7 +495,7 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
 
         {/* PROGRESS BAR CONTAINER - Completely separate, always visible */}
         <div className="absolute bottom-0 left-0 right-0 pointer-events-none z-10">
-          <BottomProgressBar 
+          <BottomProgressBar
             step2BarOpacities={step2BarOpacities}
             step3BarOpacities={step3BarOpacities}
             step4BarOpacities={step4BarOpacities}

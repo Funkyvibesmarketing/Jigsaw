@@ -270,7 +270,7 @@ interface Frame13Props {
 
 function Frame13({ iconSlideX, iconScale, iconOpacity }: Frame13Props) {
   return (
-    <motion.div 
+    <motion.div
       className="absolute bg-[rgba(255,255,255,0.1)] box-border content-stretch flex gap-[4.313px] items-center left-1/2 -translate-x-1/2 p-[39.892px] rounded-[100px] size-[200px] top-[150px]"
       style={{ x: iconSlideX, scale: iconScale, opacity: iconOpacity }}
     >
@@ -412,19 +412,19 @@ export default function Process2ndStep({
   return (
     <div className="bg-[#2c4657] relative size-full" data-name="Process (2nd step)">
       {/* Removed Frame6, Frame1, and keep scrolling text - using centralized navigation instead */}
-      
+
       {/* Center icon with animation */}
       <Frame13 iconSlideX={iconSlideX} iconScale={iconScale} iconOpacity={iconOpacity} />
-      
+
       {/* Text content with slide in from right animation */}
       <motion.div
         className="absolute inset-0"
         style={{ x: textSlideX, opacity: textOpacity }}
       >
-        <p className="absolute font-['Lato:SemiBold',sans-serif] leading-[normal] left-1/2 -translate-x-1/2 not-italic text-[56px] text-center text-white top-[440px] whitespace-pre">2. Research for best solution</p>
-        <p className="absolute font-['Lato:Light',sans-serif] leading-[32px] left-1/2 not-italic opacity-70 text-[24px] text-center text-white top-[530px] translate-x-[-50%] whitespace-pre">Life's busy, but we focus on your future—first home.</p>
+        <p className="absolute font-['Lato:SemiBold',sans-serif] leading-[normal] left-1/2 -translate-x-1/2 not-italic text-[56px] text-center text-white top-[440px] whitespace-pre">2. Tailored Solutions</p>
+        <p className="absolute font-['Lato:Light',sans-serif] leading-[32px] left-1/2 not-italic opacity-70 text-[24px] text-center text-white top-[530px] translate-x-[-50%] whitespace-pre">We search the market to find mortgage and protection options matched <br />to you-because every client matters.</p>
       </motion.div>
-      
+
       {/* Progress bar removed - now handled centrally in Process.tsx */}
     </div>
   );
