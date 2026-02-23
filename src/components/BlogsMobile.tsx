@@ -7,7 +7,7 @@ import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/navigation';
 import svgPaths from "../imports/svg-tsrio0k8sm";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Info } from "lucide-react";
 import { AnimatePresence } from "motion/react";
 import Frame1000002973 from "../imports/Frame1000002973-804-8";
 import Frame1000002974 from "../imports/Frame1000002974-804-16";
@@ -34,22 +34,24 @@ function ArrowCircleRight({ fill = "#2C4657" }: { fill?: string }) {
 }
 
 // Blog Card Component
-function BlogCard({ 
-  blog, 
-  isActive, 
-  onClick 
-}: { 
-  blog: BlogData; 
+function BlogCard({
+  blog,
+  isActive,
+  onClick
+}: {
+  blog: BlogData;
   isActive: boolean;
   onClick: () => void;
 }) {
+  const [isInfoActive, setIsInfoActive] = useState(false);
+
   return (
     <div
       className={`
         bg-gradient-to-b box-border content-stretch flex items-center overflow-clip p-[16px] relative rounded-[12px] shrink-0
         cursor-pointer transition-all duration-300
-        ${isActive 
-          ? 'from-[18.558%] from-[rgba(128,174,205,0.4)] to-[#2c4657] to-[70.769%] h-[480px] w-[292px]' 
+        ${isActive
+          ? 'from-[18.558%] from-[rgba(128,174,205,0.4)] to-[#2c4657] to-[70.769%] h-[480px] w-[292px]'
           : 'from-[18.558%] from-[rgba(228,236,241,0.4)] to-[#e4ecf1] to-[70.769%] h-[480px] w-[292px]'
         }
       `}
@@ -58,7 +60,55 @@ function BlogCard({
       <div className={`basis-0 grow h-full min-h-px min-w-px relative rounded-[8px] shrink-0`}>
         <div aria-hidden="true" className="absolute inset-0 pointer-events-none rounded-[8px]">
           <img alt="" className="absolute max-w-none object-50%-50% object-cover rounded-[8px] size-full" src={blog.image} />
-          <div className={`absolute bg-gradient-to-b from-[22.439%] from-[rgba(255,255,255,0)] inset-0 rounded-[8px] ${isActive ? 'to-[#2c4657]' : 'to-[#e4ecf1]'} to-[82.582%]`} />
+
+          {/* Info Button - Only on Active Card */}
+          {isActive && (
+            <div className="absolute top-[16px] left-[16px] pointer-events-auto z-[60]">
+              <motion.div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsInfoActive(!isInfoActive);
+                }}
+                className="flex items-start overflow-hidden pointer-events-auto"
+                animate={{
+                  width: isInfoActive ? "230px" : "40px",
+                }}
+                style={{
+                  backgroundColor: 'rgba(74, 74, 74, 0.9)',
+                  borderRadius: '14px',
+                  height: isInfoActive ? 'auto' : '40px',
+                  minHeight: '40px',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 40,
+                }}
+              >
+                <div className="size-[40px] flex items-center justify-center shrink-0">
+                  <Info className="size-[20px] text-white" strokeWidth={1.5} />
+                </div>
+                <motion.div
+                  animate={{
+                    opacity: isInfoActive ? 1 : 0,
+                    x: isInfoActive ? 0 : -10
+                  }}
+                  transition={{ duration: 0.2 }}
+                  className="pr-[12px] py-[10px]"
+                >
+                  {isInfoActive && (
+                    <p className="text-white text-[10px] leading-[normal] font-['Lato',sans-serif] font-light tracking-[0.2px]">
+                      ‘This blog has information contained within that was correct at the time of publication, but is subject to change.”
+                    </p>
+                  )}
+                </motion.div>
+              </motion.div>
+            </div>
+          )}
+
+          <div className={`absolute bg-gradient-to-b from-[22.439%] from-[rgba(255,255,255,0)] inset-0 rounded-[8px] ${isActive ? 'to-[#2c4657]' : 'to-[#e4ecf1]'} to-[82.58220000000001%]`} />
         </div>
         <div className="flex flex-col justify-end size-full">
           <div className={`box-border content-stretch flex flex-col gap-[8px] items-start justify-end ${isActive ? 'p-[12px]' : 'p-[16px]'} relative size-full`}>
@@ -93,13 +143,13 @@ function BlogCard({
 }
 
 // Blog Popup Component for Mobile
-function BlogPopupMobile({ 
-  blog, 
-  onClose, 
-  onPrevious, 
-  onNext 
-}: { 
-  blog: BlogData; 
+function BlogPopupMobile({
+  blog,
+  onClose,
+  onPrevious,
+  onNext
+}: {
+  blog: BlogData;
   onClose: () => void;
   onPrevious: () => void;
   onNext: () => void;
@@ -113,7 +163,7 @@ function BlogPopupMobile({
     };
     window.addEventListener('keydown', handleEscape);
     document.body.style.overflow = 'hidden';
-    
+
     return () => {
       window.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = '';
@@ -123,7 +173,7 @@ function BlogPopupMobile({
   // Handle content scroll
   const handleContentScroll = () => {
     if (!contentRef.current) return;
-    
+
     const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
     const maxScroll = scrollHeight - clientHeight;
     const percentage = maxScroll > 0 ? scrollTop / maxScroll : 0;
@@ -133,13 +183,13 @@ function BlogPopupMobile({
   // Prevent scroll propagation to main page
   const handleWheel = (e: React.WheelEvent) => {
     e.stopPropagation();
-    
+
     if (!contentRef.current) return;
-    
+
     const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
     const isAtTop = scrollTop === 0;
     const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
-    
+
     // Prevent scroll if we're at the edge and trying to scroll further in that direction
     if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
       e.preventDefault();
@@ -153,13 +203,13 @@ function BlogPopupMobile({
 
   const handleTouchMove = (e: React.TouchEvent) => {
     e.stopPropagation();
-    
+
     if (!contentRef.current) return;
-    
+
     const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
     const isAtTop = scrollTop === 0;
     const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
-    
+
     // Allow touch scroll within content bounds
     if (!isAtTop && !isAtBottom) {
       return;
@@ -169,11 +219,11 @@ function BlogPopupMobile({
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-[16px]">
       {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-white/20 backdrop-blur-sm" 
+      <div
+        className="absolute inset-0 bg-white/20 backdrop-blur-sm"
         onClick={onClose}
       />
-      
+
       {/* Popup Card */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
@@ -198,15 +248,15 @@ function BlogPopupMobile({
           <p className="font-['Lato:SemiBold',sans-serif] leading-[normal] not-italic shrink-0 text-[#2c4657] text-[24px] w-full">
             {blog.title}
           </p>
-          
+
           {/* Scrollable Content */}
-          <div 
+          <div
             ref={contentRef}
             onScroll={handleContentScroll}
             onWheel={handleWheel}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
-            className="flex-1 overflow-y-auto w-full pr-[8px] custom-scrollbar min-h-0" 
+            className="flex-1 overflow-y-auto w-full pr-[8px] custom-scrollbar min-h-0"
           >
             <div className="font-['Lato:Regular',sans-serif] leading-[20px] not-italic text-[14px] text-[rgba(44,70,87,0.8)] tracking-[0.2px] whitespace-pre-line pb-[20px]">
               {blog.fullContent || blog.description}
@@ -232,7 +282,7 @@ function BlogPopupMobile({
         >
           <Frame1000002973 />
         </button>
-        
+
         <button
           onClick={onNext}
           className="w-[48px] h-[48px] cursor-pointer hover:opacity-70 transition-opacity"
@@ -272,7 +322,7 @@ export function BlogsMobile({ onScrollProgress, blogs = [] }: BlogsMobileProps) 
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedBlog, setSelectedBlog] = useState<BlogData | null>(null);
-  
+
   // Duplicate blogs to create enough slides for smooth looping with coverflow effect
   const blogData = blogs.length > 0 ? Array(20).fill(blogs).flat() : [];
 
@@ -280,8 +330,8 @@ export function BlogsMobile({ onScrollProgress, blogs = [] }: BlogsMobileProps) 
   const titleY = useTransform(scrollYProgress, [0, 0.3], [100, 0]);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.2, 0.3], [0, 1, 0.3]);
   const titleColor = useTransform(
-    scrollYProgress, 
-    [0, 0.3], 
+    scrollYProgress,
+    [0, 0.3],
     ['rgba(34, 37, 38, 1)', 'rgba(34, 37, 38, 1)']
   );
 
@@ -330,13 +380,13 @@ export function BlogsMobile({ onScrollProgress, blogs = [] }: BlogsMobileProps) 
       <div className="sticky top-[80px] h-[calc(100vh-80px)] w-full overflow-hidden flex flex-col">
         {/* Background */}
         <div className="absolute inset-0 w-full h-full bg-white -z-10" />
-        
+
         {/* BLOGS Title - Moves up first */}
-        <motion.div 
+        <motion.div
           className="relative bg-white flex justify-center px-[20px] pt-[40px] pb-[10px] z-30"
           style={{ y: titleY, opacity: titleOpacity }}
         >
-          <motion.p 
+          <motion.p
             className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[40px] text-center tracking-[20px]"
             style={{ color: titleColor }}
           >
@@ -375,8 +425,8 @@ export function BlogsMobile({ onScrollProgress, blogs = [] }: BlogsMobileProps) 
               {blogData.map((blog, index) => (
                 <SwiperSlide key={`${blog.id}-${index}`}>
                   {({ isActive }) => (
-                    <BlogCard 
-                      blog={blog} 
+                    <BlogCard
+                      blog={blog}
                       isActive={isActive}
                       onClick={() => handleBlogClick(index)}
                     />
@@ -387,7 +437,7 @@ export function BlogsMobile({ onScrollProgress, blogs = [] }: BlogsMobileProps) 
           </motion.div>
 
           {/* Navigation Arrows */}
-          <motion.div 
+          <motion.div
             className="flex justify-center gap-[16px] mt-[10px]"
             style={{ y: cardsY, opacity: cardsOpacity }}
           >
@@ -397,7 +447,7 @@ export function BlogsMobile({ onScrollProgress, blogs = [] }: BlogsMobileProps) 
             >
               <Frame1000002973 />
             </button>
-            
+
             <button
               onClick={() => swiperInstance?.slideNext()}
               className="w-[48px] h-[48px] cursor-pointer hover:opacity-70 transition-opacity"
