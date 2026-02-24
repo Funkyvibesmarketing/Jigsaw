@@ -21,9 +21,9 @@ function NavArrow() {
   );
 }
 
-export function ServicesMobile({ 
+export function ServicesMobile({
   onScrollProgress,
-}: { 
+}: {
   onScrollProgress?: (progress: number) => void;
 }) {
   const [services, setServices] = useState<Service[]>([]);
@@ -46,7 +46,7 @@ export function ServicesMobile({
       setServices(data);
       setIsLoading(false);
     };
-    
+
     loadServices();
   }, []);
 
@@ -81,7 +81,7 @@ export function ServicesMobile({
 
   const handleCategoryTouchMove = (e: React.TouchEvent) => {
     if (!isDragging) return;
-    
+
     const currentX = e.touches[0].clientX;
     const currentY = e.touches[0].clientY;
     const deltaX = currentX - touchStartX.current;
@@ -91,7 +91,7 @@ export function ServicesMobile({
     if (Math.abs(deltaX) > 10 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
       e.preventDefault();
       e.stopPropagation();
-      
+
       // Apply drag without boundaries - circular navigation
       setDragX(deltaX);
     }
@@ -223,9 +223,9 @@ export function ServicesMobile({
         </div>
 
         {/* Card stack - swipeable horizontally for categories */}
-        <div 
-          className="flex-1 w-full relative flex items-center justify-center gap-[16px]" 
-          style={{ 
+        <div
+          className="flex-1 w-full relative flex items-center justify-center gap-[16px]"
+          style={{
             perspective: '2000px',
             minHeight: '450px',
             maxHeight: '513px',
@@ -248,18 +248,18 @@ export function ServicesMobile({
                 <motion.div
                   key={`left-preview-${prevService.id}`}
                   initial={{ opacity: 0, x: -20 }}
-                  animate={{ 
+                  animate={{
                     opacity: 1,
                     x: 0,
                     scaleY: 0.95
                   }}
                   exit={{ opacity: 0, x: 20 }}
-                  transition={{ 
+                  transition={{
                     duration: 0.4,
                     ease: [0.4, 0, 0.2, 1]
                   }}
                   className="absolute bg-white overflow-clip rounded-[24px] top-1/2 -translate-y-1/2"
-                  style={{ 
+                  style={{
                     width: '338px',
                     maxWidth: '80vw',
                     height: '85%',
@@ -272,9 +272,9 @@ export function ServicesMobile({
                   {/* Background decorative elements */}
                   <div className="absolute inset-0 overflow-hidden rounded-[24px] z-0">
                     {leftCard.image && (
-                      <img 
-                        alt="" 
-                        className="absolute max-w-none" 
+                      <img
+                        alt=""
+                        className="absolute max-w-none"
                         src={leftCard.image}
                         style={{
                           height: '61.28%',
@@ -340,18 +340,18 @@ export function ServicesMobile({
           })()}
 
           {/* Center card stack - current category */}
-          <div 
+          <div
             className="w-[94%] max-w-[338px] relative h-full mx-auto"
           >
             <AnimatePresence initial={false} custom={cardDirection}>
               {currentService.detailCards.map((card, index) => {
                 // Calculate position relative to current card
                 let position = (index - currentCardIndex + currentService.detailCards.length) % currentService.detailCards.length;
-                
+
                 // Only show current card (0) and next 2 cards behind (1, 2)
                 let cardConfig;
                 let shouldShow = false;
-                
+
                 if (position === 0) {
                   // Front card
                   cardConfig = { top: 0, scale: 1, opacity: 1, zIndex: 30, blur: 0 };
@@ -402,9 +402,9 @@ export function ServicesMobile({
                     {/* Background decorative elements */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-[24px] z-0">
                       {card.image && (
-                        <img 
-                          alt="" 
-                          className="absolute " 
+                        <img
+                          alt=""
+                          className="absolute "
                           src={card.imagem}
                           style={{
                             height: '71.28%',
@@ -432,7 +432,7 @@ export function ServicesMobile({
                             </p>
                           )}
                           {card.description && (
-                            <p className="font-lato-regular leading-[22px] text-[14px] w-full">
+                            <p className="font-lato-regular leading-[22px] text-[12px] w-full">
                               {card.description}
                             </p>
                           )}
@@ -516,18 +516,18 @@ export function ServicesMobile({
                 <motion.div
                   key={`right-preview-${nextService.id}`}
                   initial={{ opacity: 0, x: 20 }}
-                  animate={{ 
+                  animate={{
                     opacity: 1,
                     x: 0,
                     scaleY: 0.95
                   }}
                   exit={{ opacity: 0, x: -20 }}
-                  transition={{ 
+                  transition={{
                     duration: 0.4,
                     ease: [0.4, 0, 0.2, 1]
                   }}
                   className="absolute bg-white overflow-clip rounded-[24px] top-1/2 -translate-y-1/2"
-                  style={{ 
+                  style={{
                     width: '338px',
                     maxWidth: '80vw',
                     height: '85%',
@@ -540,9 +540,9 @@ export function ServicesMobile({
                   {/* Background decorative elements */}
                   <div className="absolute inset-0 overflow-hidden rounded-[24px] z-0">
                     {rightCard.image && (
-                      <img 
-                        alt="" 
-                        className="absolute max-w-none" 
+                      <img
+                        alt=""
+                        className="absolute max-w-none"
                         src={rightCard.image}
                         style={{
                           height: '61.28%',
@@ -619,10 +619,9 @@ export function ServicesMobile({
                 handleNextCard();
               }}
               disabled={currentCardIndex === currentService.detailCards.length - 1}
-              className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] shrink-0 size-[48px] relative transition-opacity duration-200 touch-manipulation ${
-                currentCardIndex === currentService.detailCards.length - 1 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
-              }`}
-              style={{ 
+              className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] shrink-0 size-[48px] relative transition-opacity duration-200 touch-manipulation ${currentCardIndex === currentService.detailCards.length - 1 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
+                }`}
+              style={{
                 cursor: 'pointer',
                 pointerEvents: 'auto',
                 zIndex: 99999,
@@ -650,12 +649,12 @@ export function ServicesMobile({
                 </div>
               </div>
             </button>
-            
+
             {/* Counter - shows current card / total cards in current category */}
             <p className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[24px] text-[rgba(255,255,255,0.2)] text-center text-nowrap">
               {currentCardIndex + 1}/{currentService.detailCards.length}
             </p>
-            
+
             {/* Right arrow - pointing DOWN - goes backward */}
             <button
               onPointerDown={(e) => {
@@ -664,10 +663,9 @@ export function ServicesMobile({
                 handlePrevCard();
               }}
               disabled={currentCardIndex === 0}
-              className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] size-[48px] relative transition-opacity duration-200 touch-manipulation ${
-                currentCardIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
-              }`}
-              style={{ 
+              className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] size-[48px] relative transition-opacity duration-200 touch-manipulation ${currentCardIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
+                }`}
+              style={{
                 cursor: 'pointer',
                 pointerEvents: 'auto',
                 zIndex: 99999,

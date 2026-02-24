@@ -620,11 +620,11 @@ export function Services({
                 )}
 
                 {/* Any Doubt Button - Only show for normal type */}
-                {currentCard.type === 'normal' && (
+                {/* {currentCard.type === 'normal' && (
                   <div className="absolute left-[calc(50%-345px)] top-[calc(50%+179.5px)] translate-x-[-50%] translate-y-[-50%]">
                     <AnimatedDoubtButton />
                   </div>
-                )}
+                )} */}
               </div>
 
             </div>

@@ -40,8 +40,8 @@ export const defaultServices: Service[] = [
       {
         id: 1,
         type: 'normal',
-        title: "Buying home for first time? We make it easy",
-        description: "Buying your first home can feel like learning a new language—one spoken entirely by banks. We translate the process, help you find the best deals, and support you every step of the way. So you can move in with confidence, not confusion.",
+        title: "Buying your first home can feel like learning a new language—one spoken entirely by banks.",
+        description: "We’ll translate the jargon, explain what matters, and help you make confident choices without feeling rushed. From working out what you can borrow to getting your offer over the line, we’ll keep things calm, clear, and moving. Got a“silly question”? No such thing—ask away",
         image: "https://jigsaw.funkyvibes.co.uk/service-images/ftb.webp",
         imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Firsttimebuyers.webp",
         imageInset: "-0.69% -0.15% 0.06% 21.5%"
@@ -51,10 +51,10 @@ export const defaultServices: Service[] = [
         type: 'bullet',
         bulletTitle: "We'll help you with:",
         bulletPoints: [
-          "Understand what you can borrow",
-          "Compare mortgage products",
-          "Navigate schemes and incentives, rates and lenders criteria",
-          "Avoid rookie mistakes with real, regulated advice"
+          "Work out what you can comfortably borrow (not just what a calculator says)",
+          "Compare lenders, rates and criteria without the headache",
+          "Navigate schemes, incentives and the small print",
+          "Avoid expensive “rookie mistakes” with real, regulated advice"
         ],
         image: "https://jigsaw.funkyvibes.co.uk/service-images/ftb.webp",
         imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Firsttimebuyers.webp",
@@ -64,10 +64,10 @@ export const defaultServices: Service[] = [
         id: 3,
         type: 'price',
         priceData: {
-          newClientLabel: "Transparent Fees for new Clients:",
+          newClientLabel: "Simple, transparent fees. For all new Clients:",
           newClientPrice: "£650",
           newClientDescription: "No percentages, no sliding scales, no mystery ranges.",
-          existingClientLabel: "For Existing Clients:",
+          existingClientLabel: "Bonus news for our Existing Clients:",
           existingClientPrice: "Free of Cost!",
           existingClientDescription: "Because paying again for advice you already got feels... unnecessary"
         },
@@ -86,20 +86,34 @@ export const defaultServices: Service[] = [
       {
         id: 1,
         type: 'normal',
-        title: "Moving to a new home?",
-        description: "You may save money by taking your mortgage with you—if not, we’ll assist with a mortgage upgrade. Relevant to your new property and current life and lifestyle. We’ll review your current deal, advise on porting vs. switching, and help you plan financially for the big move.",
+        title: "Moving house is exciting...and slightly chaotic.",
+        description: "You might be able to take yourmortgage with you, or it might make more sense to switch to something that fits your new homeand lifestyle.Either way, we’ll explain it clearly and keep the mortgage side organised, so the move feels manageable.Before you fall for a floorplan, let’s talk numbers.",
         image: "https://jigsaw.funkyvibes.co.uk/service-images/hmm2.webp",
         imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Homemovermortgage.webp",
         imageInset: "-2.69% -2.15% -0.94% 20.5%"
       },
       {
         id: 2,
+        type: 'bullet',
+        bulletTitle: "We'll help you with:",
+        bulletPoints: [
+          "Work out whether moving your mortgage stacks up",
+          "Compare switching options if a new deal suits you better",
+          "Factor in the true cost of moving (not just the mortgage bit)",
+          "Keep the process coordinated so you're not juggling ten things at once"
+        ],
+        image: "https://jigsaw.funkyvibes.co.uk/service-images/hmm2.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Homemovermortgage.webp",
+        imageInset: "-2.69% -2.15% -0.94% 20.5%"
+      },
+      {
+        id: 3,
         type: 'price',
         priceData: {
-          newClientLabel: "Transparent Fees for new Clients:",
-          newClientPrice: "£495",
+          newClientLabel: "Simple, transparent fees. For all new Clients:",
+          newClientPrice: "£650",
           newClientDescription: "No percentages, no sliding scales, no mystery ranges.",
-          existingClientLabel: "For Existing Clients:",
+          existingClientLabel: "Bonus news for our Existing Clients:",
           existingClientPrice: "Free of Cost!",
           existingClientDescription: "Because paying again for advice you already got feels... unnecessary"
         },
@@ -118,8 +132,8 @@ export const defaultServices: Service[] = [
       {
         id: 1,
         type: 'normal',
-        title: "Rates change. Life changes. Your mortgage should, too.",
-        description: "Whether you’re looking for a better deal, borrowing more, or just escaping your current lender’s“surprise”fees, we’ll guide you through the switch.",
+        title: "Rates change. Life changes. Your mortgage should keep up.",
+        description: "Whether you want a better deal, to borrow more, or to escape your lender’s“surprise”fees, we’ll help you switch smoothly andsensibly.We’ll look at timing, true cost, and what actually benefits you-not just the headline rate.If your mortgage feels a bit“meh”,let’s fix that.",
         image: "https://jigsaw.funkyvibes.co.uk/service-images/remo.webp",
         imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Remortgage.webp",
         imageInset: "-0.69% -0.15% -0.94% 19.5%"
@@ -127,11 +141,12 @@ export const defaultServices: Service[] = [
       {
         id: 2,
         type: 'bullet',
-        bulletTitle: "We'll help you:",
+        bulletTitle: "We’ll help you with:",
         bulletPoints: [
-          "Rate comparisons",
-          "Equity release",
-          "Debt Consolidation strategies"
+          "Compare rates and deals (without spreadsheet stress)",
+          "Work out whether switching is worth it after fees and timing",
+          "Borrow more for home improvements or big plans",
+          "Talk through debt consolidation clearly (no scary buzzwords)"
         ],
         image: "https://jigsaw.funkyvibes.co.uk/service-images/remo.webp",
         imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Remortgage.webp",
@@ -141,10 +156,10 @@ export const defaultServices: Service[] = [
         id: 3,
         type: 'price',
         priceData: {
-          newClientLabel: "Transparent Fees for new Clients:",
+          newClientLabel: "Simple, transparent fees. For all new Clients:",
           newClientPrice: "£650",
           newClientDescription: "No percentages, no sliding scales, no mystery ranges.",
-          existingClientLabel: "For Existing Clients:",
+          existingClientLabel: "Bonus news for our Existing Clients:",
           existingClientPrice: "Free of Cost!",
           existingClientDescription: "Because paying again for advice you already got feels... unnecessary"
         },
@@ -163,8 +178,8 @@ export const defaultServices: Service[] = [
       {
         id: 1,
         type: 'normal',
-        title: "Serving your country shouldn’t make it harder to own a home",
-        description: "We understand the realities of life in the forces—postings, deployments, limited time, unpredictable paperwork—and we shape our service around it.",
+        title: "Forces life doesn’tcome with neat paperwork or a predictable schedule.",
+        description: "We get postings, deployments, and“can we do this at 7pm?”calls-and we build the mortgage process around that reality.Clear advice, flexible appointments, and a steady hand to keep things moving when life changes fast.Serving’s hard enough-let’s make the mortgage bit easier.",
         image: "https://jigsaw.funkyvibes.co.uk/service-images/mmp.webp",
         imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Mortgageformilitarypersonnel.webp",
         imageInset: "-0.69% -0.15% -0.94% 19.5%"
@@ -172,11 +187,12 @@ export const defaultServices: Service[] = [
       {
         id: 2,
         type: 'bullet',
-        bulletTitle: "We provide you with:",
+        bulletTitle: "We’ll help you with:",
         bulletPoints: [
-          "Tailored advice for armed forces buyers",
-          "Flexible appointment times",
-          "Experience with military-specific mortgage products"
+          "Work around deployments, shift patterns and tight timelines",
+          "Navigate lenders who understand armed forces circumstances",
+          "Keep the paperwork tidy and the process on track",
+          "Get clear answers quickly (without chasing you for weeks)"
         ],
         image: "https://jigsaw.funkyvibes.co.uk/service-images/mmp.webp",
         imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Mortgageformilitarypersonnel.webp",
@@ -186,10 +202,10 @@ export const defaultServices: Service[] = [
         id: 3,
         type: 'price',
         priceData: {
-          newClientLabel: "Transparent Fees for new Clients:",
+          newClientLabel: "Simple, transparent fees. For all new Clients:",
           newClientPrice: "£650",
           newClientDescription: "No percentages, no sliding scales, no mystery ranges.",
-          existingClientLabel: "For Existing Clients:",
+          existingClientLabel: "Bonus news for our Existing Clients:",
           existingClientPrice: "Free of Cost!",
           existingClientDescription: "Because paying again for advice you already got feels... unnecessary"
         },
@@ -208,10 +224,10 @@ export async function fetchServices(): Promise<Service[]> {
     // const response = await fetch('https://your-api.com/api/services');
     // if (!response.ok) throw new Error('Failed to fetch services');
     // const data = await response.json();
-    
+
     // Simulate API call with a delay for realistic loading
     await new Promise(resolve => setTimeout(resolve, 500));
-    
+
     // TODO: Transform your API response to match the Service interface
     // Example transformation:
     // return data.services.map((service: any) => ({
@@ -226,7 +242,7 @@ export async function fetchServices(): Promise<Service[]> {
     //     image: card.imageUrl
     //   }))
     // }));
-    
+
     return defaultServices;
   } catch (error) {
     console.error('Error fetching services:', error);
