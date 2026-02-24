@@ -39,8 +39,14 @@ function LinkedInButton({ linkedinUrl }: { linkedinUrl: string }) {
       target="_blank"
       rel="noopener noreferrer"
       className="bg-[rgba(255,255,255,0.1)] box-border content-stretch flex gap-[8px] items-center p-[16px] rounded-[100px] size-[56px] relative transition-all cursor-pointer"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => {
+        setIsHovered(true);
+        window.dispatchEvent(new Event('hideCursorOverlay'));
+      }}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        window.dispatchEvent(new Event('showCursorOverlay'));
+      }}
       style={{
         boxShadow: isHovered ? '0 0 0 1px rgba(0, 118, 178, 0.3), 0 0 20px 8px rgba(0, 118, 178, 0.2), 0 0 40px 16px rgba(0, 118, 178, 0.1)' : 'none'
       }}

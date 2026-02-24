@@ -252,7 +252,14 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
                   <p>
                     <span>{carouselTexts[carouselIndex].text}</span>
                     {carouselTexts[carouselIndex].hasLearnMore && (
-                      <a className="cursor-pointer pointer-events-auto" onClick={handleLearnMoreClick}>Learn more</a>
+                      <a
+                        className="cursor-pointer pointer-events-auto"
+                        onClick={handleLearnMoreClick}
+                        onMouseEnter={() => window.dispatchEvent(new Event('hideCursorOverlay'))}
+                        onMouseLeave={() => window.dispatchEvent(new Event('showCursorOverlay'))}
+                      >
+                        Learn more
+                      </a>
                     )}
                     {carouselTexts[carouselIndex].boldText && (
                       <span className="font-lato-semibold">{carouselTexts[carouselIndex].boldText}</span>

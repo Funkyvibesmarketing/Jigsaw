@@ -7,7 +7,7 @@ import svgPathsAfterZoom from '../imports/svg-wkqtg88nrk';
 import svgPathsReviews from '../imports/svg-bolpleu54r';
 import svgPathsSplash from '../imports/svg-4kj0u9tsz3';
 
-export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, reviewsScrollProgress, teamScrollProgress, processScrollProgress, blogsScrollProgress, contactUsScrollProgress, currentScrollY }: { 
+export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, reviewsScrollProgress, teamScrollProgress, processScrollProgress, blogsScrollProgress, contactUsScrollProgress, currentScrollY }: {
   aboutUsScrollProgress: number;
   servicesScrollProgress?: number;
   reviewsScrollProgress?: number;
@@ -27,10 +27,10 @@ export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, re
   useEffect(() => {
     const handleHideCursor = () => setHideOverlay(true);
     const handleShowCursor = () => setHideOverlay(false);
-    
+
     window.addEventListener('hideCursorOverlay', handleHideCursor);
     window.addEventListener('showCursorOverlay', handleShowCursor);
-    
+
     return () => {
       window.removeEventListener('hideCursorOverlay', handleHideCursor);
       window.removeEventListener('showCursorOverlay', handleShowCursor);
@@ -42,7 +42,7 @@ export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, re
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768); // md breakpoint
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -54,37 +54,37 @@ export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, re
       setCursorType('splash');
       return;
     }
-    
+
     // Contact Us section - dark background, use light cursor
     if (contactUsScrollProgress !== undefined && contactUsScrollProgress >= 0.01) {
       setCursorType('light');
       return;
     }
-    
+
     // Blogs section - light background, use dark cursor (reviews style)
     if (blogsScrollProgress !== undefined && blogsScrollProgress >= 0.01) {
       setCursorType('reviews');
       return;
     }
-    
+
     // Process section - dark background, use light cursor
     if (processScrollProgress !== undefined && processScrollProgress >= 0.01) {
       setCursorType('light');
       return;
     }
-    
+
     // Team section - dark background, use light cursor
     if (teamScrollProgress !== undefined && teamScrollProgress >= 0.01) {
       setCursorType('light');
       return;
     }
-    
+
     // Reviews section - light background, use dark cursor (reviews style)
     if (reviewsScrollProgress !== undefined && reviewsScrollProgress >= 0.01) {
       setCursorType('reviews');
       return;
     }
-    
+
     // Services Step 2 (modal view) - hide global cursor (servicesScrollProgress === 1)
     // Services Step 1 (scroll view) - show light cursor (servicesScrollProgress > 0.1 && < 1)
     if (servicesScrollProgress && servicesScrollProgress >= 1) {
@@ -92,7 +92,7 @@ export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, re
       return;
     } else if (servicesScrollProgress && servicesScrollProgress > 0.1) {
       setCursorType('light');
-    } 
+    }
     // Check if we're in the About Us section - light background
     else if (aboutUsScrollProgress > 0.05 && aboutUsScrollProgress < 0.55) {
       // Before zoom - show "keep scrolling" cursor
@@ -159,7 +159,7 @@ export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, re
         .use-default-cursor, .use-default-cursor * { cursor: pointer !important; }
       `;
       document.head.appendChild(style);
-      
+
       return () => {
         const existingStyle = document.getElementById('custom-cursor-style');
         if (existingStyle) {
@@ -172,7 +172,7 @@ export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, re
       if (existingStyle) {
         existingStyle.remove();
       }
-      
+
       // Create SVG data URLs for cursors
       const lightCursorSVG = `
         <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -226,8 +226,7 @@ export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, re
       const afterZoomCursorURL = encodeSVG(afterZoomCursorSVG);
       const reviewsCursorURL = encodeSVG(reviewsCursorSVG);
       const splashCursorURL = encodeSVG(splashCursorSVG);
-      
-      // Apply cursor to document
+
       let cursorURL = lightCursorURL;
       if (cursorType === 'splash') {
         cursorURL = splashCursorURL;
@@ -235,16 +234,19 @@ export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, re
         cursorURL = darkCursorURL;
       } else if (cursorType === 'afterZoom') {
         cursorURL = afterZoomCursorURL;
-      } else if (cursorType === 'reviews') {
-        cursorURL = reviewsCursorURL;
       }
-      
+
       // Apply to both html and body to override the cursor: inherit in globals.css
-      const cursorStyle = `url("${cursorURL}") 24 24, auto`;
-      document.documentElement.style.cursor = cursorStyle;
-      document.body.style.cursor = cursorStyle;
+      if (hideOverlay) {
+        document.documentElement.style.cursor = '';
+        document.body.style.cursor = '';
+      } else {
+        const cursorStyle = `url("${cursorURL}") 24 24, auto`;
+        document.documentElement.style.cursor = cursorStyle;
+        document.body.style.cursor = cursorStyle;
+      }
     }
-  }, [cursorType, isMobile, servicesScrollProgress]);
+  }, [cursorType, isMobile, servicesScrollProgress, hideOverlay]);
 
   // Don't render custom cursor on mobile (after all hooks have been called)
   if (isMobile) {
@@ -266,7 +268,7 @@ export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, re
   }
 
   return (
-    <div 
+    <div
       className="fixed pointer-events-none z-[9999]"
       style={{
         left: `${position.x}px`,
@@ -275,7 +277,7 @@ export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, re
       }}
     >
       <div className="relative size-[48px]">
-        <div 
+        <div
           className="absolute left-0 size-[48px] top-0 rounded-full"
         >
           <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
