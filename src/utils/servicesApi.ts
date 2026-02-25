@@ -67,7 +67,7 @@ export const defaultServices: Service[] = [
           newClientLabel: "Simple, transparent fees. For all new Clients:",
           newClientPrice: "£650",
           newClientDescription: "No percentages, no sliding scales, no mystery ranges.",
-          existingClientLabel: "Bonus news for our Existing Clients:",
+          existingClientLabel: "Bonus news for future re-mortgages:",
           existingClientPrice: "Free of Cost!",
           existingClientDescription: "Because paying again for advice you already got feels... unnecessary"
         },
