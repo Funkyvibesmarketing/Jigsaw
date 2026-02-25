@@ -238,7 +238,7 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
             </p>
 
             {/* Carousel text - slides up/down */}
-            <div className="relative w-full max-w-[1113px] h-[200px] mb-[56px] overflow-visible mx-auto">
+            <div className="relative w-full max-w-[1113px] h-[200px] mb-[80px] overflow-visible mx-auto">
               <AnimatePresence mode='wait'>
                 <motion.div
                   key={carouselIndex}
@@ -249,11 +249,11 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
                   className="absolute w-full leading-[50px] text-[40px]"
                 >
                   <p className="font-lato-semibold">{carouselTexts[carouselIndex].header}</p><br />
-                  <p>
+                  <p className="font-lato-regular text-[40px] leading-[48px] font-[400] text-[#222526] mb-40">
                     <span>{carouselTexts[carouselIndex].text}</span>
                     {carouselTexts[carouselIndex].hasLearnMore && (
                       <a
-                        className="cursor-pointer pointer-events-auto"
+                        className="cursor-pointer pointer-events-auto underline"
                         onClick={handleLearnMoreClick}
                         onMouseEnter={() => window.dispatchEvent(new Event('hideCursorOverlay'))}
                         onMouseLeave={() => window.dispatchEvent(new Event('showCursorOverlay'))}

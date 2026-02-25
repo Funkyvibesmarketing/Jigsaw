@@ -1469,6 +1469,10 @@
     margin-bottom: 60px;
   }
 
+  .mb-\[80px\] {
+    margin-bottom: 80px;
+  }
+
   .mb-\[100px\] {
     margin-bottom: 100px;
   }
@@ -3445,9 +3449,14 @@
     padding-block: 30.857px;
   }
 
+  .pt-\[10px\] {
+    padding-top: 10px;
+  }
+
   .pt-\[24px\] {
     padding-top: 24px;
   }
+  
 
   .pt-\[40px\] {
     padding-top: 40px;

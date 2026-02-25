@@ -972,7 +972,12 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
               {(isHovered: boolean) => <BiFacebook isHovered={isHovered} />}
             </SocialButton>
           </a>
-          <div className="absolute left-1/2 size-[56px] top-[calc(100vh+130px)] translate-x-[-50%]">
+          <a 
+            href="https://www.instagram.com/jigsaw_financial"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute left-1/2 size-[56px] top-[calc(100vh+130px)] translate-x-[-50%]"
+          >
             <SocialButton 
               shadowColor="inset 0px 4px 4px 0px rgba(200, 55, 171, 0.12), inset 0px -5px 4px 0px rgba(200, 55, 171, 0.08)"
               glowColor="0 0 0 1px rgba(200, 55, 171, 0.3), 0 0 20px 8px rgba(200, 55, 171, 0.2), 0 0 40px 16px rgba(200, 55, 171, 0.1)"
@@ -980,7 +985,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
             >
               {(isHovered: boolean) => <UilInstagramAlt isHovered={isHovered} />}
             </SocialButton>
-          </div>
+          </a>
           <a 
             href="https://www.linkedin.com/company/jigsaw-financial-ltd/"
             target="_blank"

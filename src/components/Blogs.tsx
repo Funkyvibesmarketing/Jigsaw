@@ -92,7 +92,7 @@ function BlogCard({ blog, isActive, onClick }: { blog: BlogData; isActive: boole
                   className="pr-[16px] py-[14px]"
                 >
                   {isInfoHovered && (
-                    <p className="text-white text-[12px] text-align-center leading-[normal] font-['Lato',sans-serif] font-weight-[300] tracking-[0.2px]">
+                    <p className="text-white text-[12px] text-align-center leading-[normal] font-['Lato',sans-serif] font-weight-[300] tracking-[0.2px] pt-[10px] pb-[10px]">
                       ‘This blog has information contained within that was correct at the time of publication, but is subject to change.”
                     </p>
                   )}

@@ -577,7 +577,7 @@ export function Reviews({
                 left: 'calc(50% - 500px)',  // Center-aligned offset - shifted left
               }}
             >
-              <ReviewCard review='"I would strongly recommend Nick if you are looking to secure a mortgage or remortgage. He is exceptionally proactive and genuinely cares. Nick made the process of buying a house much more relaxed." ' author="~Daniel" date="August, 2025" />
+              <ReviewCard review='"Amazing customer service, updates every step of the way and easy to get in contact with for information if I were ever lost or confused. As a first-time buyer, I couldn’t ask for more with this team. Thankyou!" ' author="~Cameron" date="October, 2025" />
             </motion.div>
 
             {/* Card 2 - Right side */}
@@ -591,7 +591,7 @@ export function Reviews({
                 left: 'calc(50% + 92px)',  // Center-aligned offset - shifted left
               }}
             >
-              <ReviewCard review='"Nick was the most amazing person through my mortgage application process. I had already had an application denied with another company and Nick reassured me and worked so hard just for me to be living in my dream property now. I would recommend Jigsaw Financial to anyone after the 10/10 experience I have received. Thank you again to both Nick and Gemma for making the most stressful time in my life just that bit easier."' author="~Jess" date="December, 2025" />
+              <ReviewCard review='"Gemma and Nick were both so helpful, not only with the mortgage process but also during the house-buying process from start to completion and beyond. HIGHLY recommend!!"' author="~Amber" date="September, 2025" />
             </motion.div>
 
             {/* Card 5 - Left side */}
@@ -605,7 +605,7 @@ export function Reviews({
                 left: 'calc(50% - 508px)',  // Center-aligned offset - shifted left
               }}
             >
-              <ReviewCard review={`"Absolutely fantastic company! We can't thank Nick and Team enough for all they have done for us, from our first mortgage to our remortgage. Very thorough and quick to reply! Would highly recommend!"`} author="~Rebecca" date="January, 2025" />
+              <ReviewCard review={`"I would strongly recommend Nick if you are looking to secure a mortgage or remortgage. He is exceptionally proactive and genuinely cares. Nick made the process of buying a house much more relaxed."`} author="~Daniel" date="August, 2025" />
             </motion.div>
 
             {/* Card 6 - Right side */}
@@ -619,7 +619,7 @@ export function Reviews({
                 left: 'calc(50% + 184px)',  // Center-aligned offset - shifted left
               }}
             >
-              <ReviewCard review='"Nick is a great communicator and provided clear explanations throughout the mortgage process. "' author="~Laura" date="September, 2024" />
+              <ReviewCard review={`"Nick was the most amazing person through my mortgage application process. I had already had an application denied with another company and Nick reassured me and worked so hard just for me to be living in my dream property now. I would recommend Jigsaw Financial to anyone after the 10/10 experience I have received. Thank you again to both Nick and Gemma for making the most stressful time in my life just that bit easier."`} author="~Jess" date="December, 2025" />
             </motion.div>
 
             {/* Card 7 - Left side */}
@@ -633,7 +633,8 @@ export function Reviews({
                 left: 'calc(50% - 500px)',  // Center-aligned offset - shifted left
               }}
             >
-              <ReviewCard review='"Nick is a professional and experienced mortgage advisor. I am very impressed with his service. "' author="~David" date="December, 2024" />
+              <ReviewCard review={`"Absolutely fantastic company! We can't thank Nick and Team enough for all they have done for us, from our first mortgage to our remortgage.
+Very thorough and quick to reply! Would highly recommend!"`} author="~Rebecca" date="January, 2026" />
             </motion.div>
           </>
         )}
@@ -709,7 +710,7 @@ export function Reviews({
                   zIndex: 60
                 }}
               >
-                <ReviewCardMobile review='"I would strongly recommend Nick if you are looking to secure a mortgage or remortgage. He is exceptionally proactive and genuinely cares. Nick made the process of buying a house much more relaxed."' author="~Daniel" date="August, 2025" />
+                <ReviewCardMobile review='"Amazing customer service, updates every step of the way and easy to get in contact with for information if I were ever lost or confused. As a first-time buyer, I couldn’t ask for more with this team. Thankyou!"' author="~Cameron" date="October, 2025" />
               </motion.div>
 
               {/* Card 2 - Left rotated - GOES BEYOND TOP */}
@@ -723,7 +724,7 @@ export function Reviews({
                   zIndex: 60
                 }}
               >
-                <ReviewCardMobile review='"Nick was the most amazing person through my mortgage application process. I had already had an application denied with another company and Nick reassured me and worked so hard just for me to be living in my dream property now. I would recommend Jigsaw Financial to anyone after the 10/10 experience I have received. Thank you again to both Nick and Gemma for making the most stressful time in my life just that bit easier."' author="~Jess" date="December, 2025" />
+                <ReviewCardMobile review='"Gemma and Nick were both so helpful, not only with the mortgage process but also during the house-buying process from start to completion and beyond. HIGHLY recommend!!"' author="~Amber" date="September, 2025" />
               </motion.div>
 
               {/* Card 5 - Left Center - STAYS VISIBLE */}
@@ -737,7 +738,7 @@ export function Reviews({
                   zIndex: 60
                 }}
               >
-                <ReviewCardMobile review={`"Absolutely fantastic company! We can't thank Nick and Team enough for all they have done for us, from our first mortgage to our remortgage. Very thorough and quick to reply! Would highly recommend!"`} author="~Rebecca" date="January, 2025" />
+                <ReviewCardMobile review={`"I would strongly recommend Nick if you are looking to secure a mortgage or remortgage. He is exceptionally proactive and genuinely cares. Nick made the process of buying a house much more relaxed."`} author="~Daniel" date="August, 2025" />
               </motion.div>
 
               {/* Card 6 - Right Center - STAYS VISIBLE */}
@@ -751,7 +752,7 @@ export function Reviews({
                   zIndex: 60
                 }}
               >
-                <ReviewCardMobile review='"Nick is a great communicator and provided clear explanations throughout the mortgage process. "' author="~Laura" date="September, 2024" />
+                <ReviewCardMobile review='"Nick was the most amazing person through my mortgage application process. I had already had an application denied with another company and Nick reassured me and worked so hard just for me to be living in my dream property now. I would recommend Jigsaw Financial to anyone after the 10/10 experience I have received. Thank you again to both Nick and Gemma for making the most stressful time in my life just that bit easier."' author="~Jess" date="December, 2025" />
               </motion.div>
 
               {/* Card 7 - Center - STAYS VISIBLE */}
@@ -765,7 +766,8 @@ export function Reviews({
                   zIndex: 60
                 }}
               >
-                <ReviewCardMobile review='"Nick is a professional and experienced mortgage advisor. I am very impressed with his service. "' author="~David" date="December, 2024" />
+                <ReviewCardMobile review={`"Absolutely fantastic company! We can't thank Nick and Team enough for all they have done for us, from our first mortgage to our remortgage.
+Very thorough and quick to reply! Would highly recommend!"`} author="~Rebecca" date="January, 2026" />
               </motion.div>
             </>
           )}
