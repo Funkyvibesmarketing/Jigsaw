@@ -89,7 +89,7 @@ function MobileUpArrow() {
   };
 
   return (
-    <div 
+    <div
       className="bg-[#2ec4b6] relative rounded-[48px] size-[48px] cursor-pointer"
       onClick={scrollToTop}
     >
@@ -113,19 +113,19 @@ function UilInstagramAlt({ isHovered }: { isHovered: boolean }) {
     <div className="relative shrink-0 size-[24px]" data-name="uil:instagram-alt">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
         <g clipPath="url(#clip0_823_187)" id="uil:instagram-alt">
-          <path 
-            d={svgPaths.p2f6d7600} 
-            fill={isHovered ? "url(#paint0_radial_instagram)" : "var(--fill-0, white)"} 
-            id="Vector" 
+          <path
+            d={svgPaths.p2f6d7600}
+            fill={isHovered ? "url(#paint0_radial_instagram)" : "var(--fill-0, white)"}
+            id="Vector"
           />
         </g>
         <defs>
-          <radialGradient 
-            cx="0" 
-            cy="0" 
-            gradientTransform="translate(6.375 25.8485) rotate(-90) scale(23.7858 22.1227)" 
-            gradientUnits="userSpaceOnUse" 
-            id="paint0_radial_instagram" 
+          <radialGradient
+            cx="0"
+            cy="0"
+            gradientTransform="translate(6.375 25.8485) rotate(-90) scale(23.7858 22.1227)"
+            gradientUnits="userSpaceOnUse"
+            id="paint0_radial_instagram"
             r="1"
           >
             <stop stopColor="#FFDD55" />
@@ -147,12 +147,12 @@ function AkarIconsLinkedinV1Fill({ isHovered }: { isHovered: boolean }) {
     <div className="relative shrink-0 size-[24px]" data-name="akar-icons:linkedin-v1-fill">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
         <g clipPath="url(#clip0_823_190)" id="akar-icons:linkedin-v1-fill">
-          <path 
-            clipRule="evenodd" 
-            d={svgPaths.p106ed680} 
-            fill={isHovered ? "#0076B2" : "var(--fill-0, white)"} 
-            fillRule="evenodd" 
-            id="Vector" 
+          <path
+            clipRule="evenodd"
+            d={svgPaths.p106ed680}
+            fill={isHovered ? "#0076B2" : "var(--fill-0, white)"}
+            fillRule="evenodd"
+            id="Vector"
           />
         </g>
         <defs>
@@ -170,10 +170,10 @@ function BiFacebook({ isHovered }: { isHovered: boolean }) {
     <div className="relative shrink-0 size-[24px]" data-name="bi:facebook">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
         <g clipPath="url(#clip0_823_195)" id="bi:facebook">
-          <path 
-            d={svgPaths.pa2aea00} 
-            fill={isHovered ? "#1877F2" : "var(--fill-0, white)"} 
-            id="Vector" 
+          <path
+            d={svgPaths.pa2aea00}
+            fill={isHovered ? "#1877F2" : "var(--fill-0, white)"}
+            id="Vector"
           />
         </g>
         <defs>
@@ -186,12 +186,12 @@ function BiFacebook({ isHovered }: { isHovered: boolean }) {
   );
 }
 
-function SocialButton({ 
-  children, 
+function SocialButton({
+  children,
   shadowColor,
   glowColor,
   onHoverChange
-}: { 
+}: {
   children: React.ReactNode;
   shadowColor?: string;
   glowColor?: string;
@@ -210,7 +210,7 @@ function SocialButton({
   };
 
   return (
-    <div 
+    <div
       className="bg-[rgba(255,255,255,0.1)] box-border content-stretch flex gap-[8px] items-center p-[16px] rounded-[100px] size-[56px] relative md:cursor-none transition-all"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -221,9 +221,9 @@ function SocialButton({
       <div aria-hidden="true" className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" />
       {typeof children === 'function' ? children(isHovered) : children}
       {isHovered && shadowColor && (
-        <div 
-          className="absolute inset-0 pointer-events-none rounded-[100px]" 
-          style={{ 
+        <div
+          className="absolute inset-0 pointer-events-none rounded-[100px]"
+          style={{
             boxShadow: shadowColor
           }}
         />
@@ -244,7 +244,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  
+
   // Track hover state for each social button
   const [facebookHovered, setFacebookHovered] = useState(false);
   const [instagramHovered, setInstagramHovered] = useState(false);
@@ -314,7 +314,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
     } else if (currentStep === 4) {
       // Validate form data
       const validation = validateFormData(formData);
-      
+
       if (!validation.isValid) {
         // Show first validation error
         const firstError = Object.values(validation.errors)[0];
@@ -329,10 +329,10 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
 
       try {
         const response = await submitContactForm(formData as ContactFormData);
-        
+
         if (response.success) {
           setIsSubmitted(true);
-          
+
           // Hide success message after 3 seconds
           setTimeout(() => {
             setIsSubmitted(false);
@@ -461,7 +461,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
     >
       {/* Custom Cursor - Desktop Only */}
       {showCursor && !hideCursorForLinks && !pdfViewerOpen && (
-        <div 
+        <div
           className="fixed pointer-events-none z-[9999] hidden md:block"
           style={{
             left: `${cursorPosition.x}px`,
@@ -482,9 +482,9 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
       )}
 
       {/* Sticky Form Section */}
-      <div className="sticky top-0 h-[200vh] w-full overflow-hidden pb-[60px]">
+      <div className="sticky top-0 h-[200vh] md:h-[calc(100vh+300px)] w-full overflow-hidden pb-[60px]">
         {/* Mobile View */}
-        <motion.div 
+        <motion.div
           className="md:hidden bg-[#2c4657] relative size-full"
           style={{ y: slideY, opacity }}
         >
@@ -512,7 +512,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
 
           {/* Success Message */}
           {isSubmitted && (
-            <motion.div 
+            <motion.div
               className="absolute left-1/2 top-[calc(50%-350px)] translate-x-[-50%] translate-y-[-50%] flex flex-col gap-[24px] items-center w-[90%] max-w-[382px] px-4"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -625,15 +625,14 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
                   (currentStep === 3 && !formData.phone) ||
                   (currentStep === 4 && !formData.message)
                 }
-                className={`absolute bg-[#222526] box-border content-stretch flex gap-[8px] items-center justify-center left-1/2 px-[24px] py-[12px] rounded-[56px] top-[calc(50%-400px)] translate-x-[-50%] transition-opacity border-none ${
-                  isSubmitting ||
+                className={`absolute bg-[#222526] box-border content-stretch flex gap-[8px] items-center justify-center left-1/2 px-[24px] py-[12px] rounded-[56px] top-[calc(50%-400px)] translate-x-[-50%] transition-opacity border-none ${isSubmitting ||
                   (currentStep === 1 && !formData.name) ||
                   (currentStep === 2 && !formData.email) ||
                   (currentStep === 3 && !formData.phone) ||
                   (currentStep === 4 && !formData.message)
-                    ? 'opacity-50 cursor-not-allowed'
-                    : 'opacity-100 cursor-pointer'
-                }`}
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'opacity-100 cursor-pointer'
+                  }`}
               >
                 <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic relative shrink-0 text-[16px] text-nowrap text-white whitespace-pre">
                   {isSubmitting ? 'Sending...' : currentStep === 4 ? 'Submit' : 'Next'}
@@ -642,7 +641,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
 
               {/* Error Message */}
               {submitError && (
-                <motion.p 
+                <motion.p
                   className="absolute left-1/2 translate-x-[-50%] top-[calc(50%-280px)] font-['Lato:Regular',sans-serif] text-[14px] text-red-400 text-center max-w-[95%] px-4"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -677,10 +676,10 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
               <span className="[text-decoration-skip-ink:none] decoration-solid font-['Lato:Regular',sans-serif] leading-[20px] text-white underline">Suite 2f2 Sovereign House, Stockport Road, Cheadle, England, SK8 2EA. Company No: 11821948</span>
             </p>
             <p className="font-['Lato:Light',sans-serif] leading-[20px] min-w-full relative shrink-0 text-[14px] text-[rgba(255,255,255,0.6)] w-[min-content] whitespace-pre-wrap">{`Jigsaw Financial usually charges a fee for mortgage advice. The amount of the fee will depend on your circumstances and will be discussed and agreed with you at the earliest opportunity. `}</p>
-            
+
             {/* Complaints Process and Privacy Policy Links */}
             <div className="content-stretch flex font-['Lato:Regular',sans-serif] items-center justify-between leading-[18px] relative shrink-0 text-[16px] text-white underline w-full">
-              <button 
+              <button
                 onClick={() => openPDF('/pdfs/complaints-process.pdf', 'Complaints Process')}
                 onMouseEnter={() => setHideCursorForLinks(true)}
                 onMouseLeave={() => setHideCursorForLinks(false)}
@@ -688,7 +687,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
               >
                 Complaints Process
               </button>
-              <button 
+              <button
                 onClick={() => openPDF('/pdfs/privacy-policy.pdf', 'Privacy Policy')}
                 onMouseEnter={() => setHideCursorForLinks(true)}
                 onMouseLeave={() => setHideCursorForLinks(false)}
@@ -702,10 +701,10 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
           {/* Social Media Section */}
           <div className="absolute left-1/2 -translate-x-1/2 bottom-[240px] content-stretch flex flex-col gap-[32px] items-center justify-center w-[90%] max-w-[382px]">
             <p className="font-['Lato:Regular',sans-serif] leading-[26px] not-italic text-[24px] text-white">Follow us on:</p>
-            
+
             <div className="content-stretch flex items-center justify-between w-full">
               {/* Facebook */}
-              <a 
+              <a
                 href="https://www.facebook.com/JigsawFinancialLtd/#"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -752,7 +751,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
               </div>
 
               {/* LinkedIn */}
-              <a 
+              <a
                 href="https://www.linkedin.com/company/jigsaw-financial-ltd/"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -794,9 +793,9 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
             <p className="font-['Poppins:Regular',sans-serif] leading-[16px] relative shrink-0 text-[12px] text-center">
               <span className="font-['Lato:Light',sans-serif]">Website by</span>
               <span className="font-['Lato:Regular',sans-serif]"> </span>
-              <a 
-                href="https://funkyvibes.co.uk/" 
-                target="_blank" 
+              <a
+                href="https://funkyvibes.co.uk/"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="font-['Lato:SemiBold',sans-serif] hover:underline transition-all"
               >
@@ -807,8 +806,8 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
         </motion.div>
 
         {/* Desktop View */}
-        <motion.div 
-          className="hidden md:block bg-[#2c4657] relative size-full" 
+        <motion.div
+          className="hidden md:block bg-[#2c4657] relative size-full"
           data-name="Contact us Form"
           style={{ y: slideY, opacity }}
         >
@@ -836,7 +835,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
 
           {/* Success Message */}
           {isSubmitted && (
-            <motion.div 
+            <motion.div
               className="absolute left-1/2 top-[calc(50%-250px)] translate-x-[-50%] translate-y-[-50%] flex flex-col gap-[36px] items-center"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -876,15 +875,14 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
                   (currentStep === 3 && !formData.phone) ||
                   (currentStep === 4 && !formData.message)
                 }
-                className={`absolute bg-[#222526] box-border content-stretch flex gap-[8px] items-center justify-center left-[50%] translate-x-[-50%] px-[40px] py-[24px] rounded-[56px] top-[calc(50%-275px)] transition-opacity border-none ${
-                  isSubmitting ||
+                className={`absolute bg-[#222526] box-border content-stretch flex gap-[8px] items-center justify-center left-[50%] translate-x-[-50%] px-[40px] py-[24px] rounded-[56px] top-[calc(50%-275px)] transition-opacity border-none ${isSubmitting ||
                   (currentStep === 1 && !formData.name) ||
                   (currentStep === 2 && !formData.email) ||
                   (currentStep === 3 && !formData.phone) ||
                   (currentStep === 4 && !formData.message)
-                    ? 'opacity-50 cursor-not-allowed md:cursor-none'
-                    : 'opacity-100 cursor-pointer md:cursor-none hover:opacity-90'
-                }`}
+                  ? 'opacity-50 cursor-not-allowed md:cursor-none'
+                  : 'opacity-100 cursor-pointer md:cursor-none hover:opacity-90'
+                  }`}
               >
                 <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic relative shrink-0 text-[24px] text-nowrap text-white whitespace-pre">
                   {isSubmitting ? 'Sending...' : currentStep === 4 ? 'Submit' : 'Next'}
@@ -894,7 +892,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
 
               {/* Error Message */}
               {submitError && (
-                <motion.p 
+                <motion.p
                   className="absolute left-1/2 translate-x-[-50%] top-[calc(50%-50px)] font-['Lato:Regular',sans-serif] text-[18px] text-red-400 text-center max-w-[600px]"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -917,114 +915,121 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
             </>
           )}
 
-          {/* Legal/Compliance Text - Desktop */}
-          <div className="absolute left-1/2 -translate-x-1/2 top-[calc(100vh+240px)] content-stretch flex flex-col gap-[24px] items-center not-italic w-[1152px]">
-            <p className="font-['Lato:Light',sans-serif] leading-[20px] min-w-full relative shrink-0 text-[14px] text-[rgba(255,255,255,0.6)] w-[min-content] whitespace-pre-wrap">{`Your home  may be repossessed if you do not keep up repayments on your mortgage. Jigsaw Financial Limited are registered in England and Wales, and an Appointed Representative of PRIMIS Mortgage Network, a trading name of First Complete Ltd. First Complete Ltd is authorised and regulated by the Financial Conduct Authority.`}</p>
-            <p className="font-['Lato:Light',sans-serif] leading-[0] min-w-full relative shrink-0 text-[14px] text-[rgba(255,255,255,0.6)] w-[min-content] whitespace-pre-wrap">
-              <span className="leading-[20px]">
-                The guidance contained within this website is subject to the UK regulatory regime and is therefore primarily targeted at consumers based in the UK
-                <br aria-hidden="true" />
-                {`Registered office address - `}
-              </span>
-              <span className="[text-decoration-skip-ink:none] decoration-solid font-['Lato:Regular',sans-serif] leading-[20px] text-white underline">Suite 2f2 Sovereign House, Stockport Road, Cheadle, England, SK8 2EA. Company No: 11821948</span>
-            </p>
-            <p className="font-['Lato:Light',sans-serif] leading-[20px] min-w-full relative shrink-0 text-[14px] text-[rgba(255,255,255,0.6)] w-[min-content] whitespace-pre-wrap">{`Jigsaw Financial usually charges a fee for mortgage advice. The amount of the fee will depend on your circumstances and will be discussed and agreed with you at the earliest opportunity. `}</p>
-            
-            {/* Complaints Process and Privacy Policy Links */}
-            <div className="content-stretch flex font-['Lato:Regular',sans-serif] items-center justify-between leading-[18px] relative shrink-0 text-[16px] text-white underline w-full">
-              <button 
-                onClick={() => openPDF('/pdfs/complaints-process.pdf', 'Complaints Process')}
-                onMouseEnter={() => setHideCursorForLinks(true)}
-                onMouseLeave={() => setHideCursorForLinks(false)}
-                className="decoration-solid relative shrink-0 hover:opacity-70 transition-opacity bg-transparent border-none text-white underline cursor-pointer font-['Lato:Regular',sans-serif] text-[16px] leading-[18px]"
-              >
-                Complaints Process
-              </button>
-              <button 
-                onClick={() => openPDF('/pdfs/privacy-policy.pdf', 'Privacy Policy')}
-                onMouseEnter={() => setHideCursorForLinks(true)}
-                onMouseLeave={() => setHideCursorForLinks(false)}
-                className="decoration-solid relative shrink-0 hover:opacity-70 transition-opacity bg-transparent border-none text-white underline cursor-pointer font-['Lato:Regular',sans-serif] text-[16px] leading-[18px]"
-              >
-                Privacy Policy
-              </button>
+          <div className="absolute flex flex-col gap-[32px] items-center pb-[60px] bottom-[40px] left-1/2 -translate-x-1/2 w-[90%] max-w-[1190px]">
+            {/* Social Media Section */}
+            <div className="flex flex-col gap-[24px] items-center w-full">
+              <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[20px] text-center text-nowrap text-white tracking-[0.2px]">Follow us on:</p>
+
+              <div className="flex items-center justify-center gap-[64px] w-full h-[100px]">
+                <a
+                  href="https://www.facebook.com/JigsawFinancialLtd/#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col gap-[8px] items-center relative"
+                >
+                  <div className="size-[56px] relative">
+                    <SocialButton
+                      shadowColor="inset 0px 4px 4px 0px rgba(24, 119, 242, 0.12), inset 0px -5px 4px 0px rgba(24, 119, 242, 0.08)"
+                      glowColor="0 0 0 1px rgba(24, 119, 242, 0.3), 0 0 20px 8px rgba(24, 119, 242, 0.2), 0 0 40px 16px rgba(24, 119, 242, 0.1)"
+                      onHoverChange={setFacebookHovered}
+                    >
+                      {(isHovered: boolean) => <BiFacebook isHovered={isHovered} />}
+                    </SocialButton>
+                  </div>
+                  <p className={`leading-[24px] not-italic text-[16px] text-nowrap text-white tracking-[0.2px] transition-all text-center ${facebookHovered ? "font-['Lato:Bold',sans-serif]" : "font-['Lato:Light',sans-serif]"}`}>Facebook</p>
+                </a>
+
+                <a
+                  href="https://www.instagram.com/jigsaw_financial"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col gap-[8px] items-center relative"
+                >
+                  <div className="size-[56px] relative">
+                    <SocialButton
+                      shadowColor="inset 0px 4px 4px 0px rgba(200, 55, 171, 0.12), inset 0px -5px 4px 0px rgba(200, 55, 171, 0.08)"
+                      glowColor="0 0 0 1px rgba(200, 55, 171, 0.3), 0 0 20px 8px rgba(200, 55, 171, 0.2), 0 0 40px 16px rgba(200, 55, 171, 0.1)"
+                      onHoverChange={setInstagramHovered}
+                    >
+                      {(isHovered: boolean) => <UilInstagramAlt isHovered={isHovered} />}
+                    </SocialButton>
+                  </div>
+                  <p className={`leading-[24px] not-italic text-[16px] text-nowrap text-white tracking-[0.2px] transition-all text-center ${instagramHovered ? "font-['Lato:Bold',sans-serif]" : "font-['Lato:Light',sans-serif]"}`}>Instagram</p>
+                </a>
+
+                <a
+                  href="https://www.linkedin.com/company/jigsaw-financial-ltd/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col gap-[8px] items-center relative"
+                >
+                  <div className="size-[56px] relative">
+                    <SocialButton
+                      shadowColor="inset 0px 4px 4px 0px rgba(0, 118, 178, 0.12), inset 0px -5px 4px 0px rgba(0, 118, 178, 0.08)"
+                      glowColor="0 0 0 1px rgba(0, 118, 178, 0.3), 0 0 20px 8px rgba(0, 118, 178, 0.2), 0 0 40px 16px rgba(0, 118, 178, 0.1)"
+                      onHoverChange={setLinkedinHovered}
+                    >
+                      {(isHovered: boolean) => <AkarIconsLinkedinV1Fill isHovered={isHovered} />}
+                    </SocialButton>
+                  </div>
+                  <p className={`leading-[24px] not-italic text-[16px] text-nowrap text-white tracking-[0.2px] transition-all text-center ${linkedinHovered ? "font-['Lato:Bold',sans-serif]" : "font-['Lato:Light',sans-serif]"}`}>LinkedIn</p>
+                </a>
+              </div>
             </div>
-          </div>
 
-          {/* Social Media Icons */}
-          <p className="absolute font-['Lato:Regular',sans-serif] leading-[24px] left-1/2 not-italic text-[20px] text-center text-nowrap text-white top-[calc(100vh+80px)] tracking-[0.2px] translate-x-[-50%] whitespace-pre">Follow us on:</p>
-          
-          <p className={`absolute leading-[24px] left-[calc(50%-140px)] not-italic text-[16px] text-nowrap text-white top-[calc(100vh+190px)] tracking-[0.2px] translate-x-[-50%] whitespace-pre transition-all ${facebookHovered ? "font-['Lato:Bold',sans-serif]" : "font-['Lato:Light',sans-serif]"}`}>Facebook</p>
-          <p className={`absolute leading-[24px] left-1/2 not-italic text-[16px] text-center text-nowrap text-white top-[calc(100vh+190px)] tracking-[0.2px] translate-x-[-50%] whitespace-pre transition-all ${instagramHovered ? "font-['Lato:Bold',sans-serif]" : "font-['Lato:Light',sans-serif]"}`}>Instagram</p>
-          <p className={`absolute leading-[24px] left-[calc(50%+140px)] not-italic text-[16px] text-center text-nowrap text-white top-[calc(100vh+190px)] tracking-[0.2px] translate-x-[-50%] whitespace-pre transition-all ${linkedinHovered ? "font-['Lato:Bold',sans-serif]" : "font-['Lato:Light',sans-serif]"}`}>LinkedIn</p>
+            {/* Legal/Compliance Text - Desktop */}
+            <div className="content-stretch flex flex-col gap-[24px] items-start not-italic w-full mt-[40px]">
+              <p className="font-['Lato:Light',sans-serif] leading-[20px] relative text-[14px] text-[rgba(255,255,255,0.6)] text-left whitespace-pre-wrap">{`Your home  may be repossessed if you do not keep up repayments on your mortgage. Jigsaw Financial Limited are registered in England and Wales, and an Appointed Representative of PRIMIS Mortgage Network, a trading name of First Complete Ltd. First Complete Ltd is authorised and regulated by the Financial Conduct Authority.`}</p>
+              <p className="font-['Lato:Light',sans-serif] leading-[20px] relative text-[14px] text-[rgba(255,255,255,0.6)] text-left whitespace-pre-wrap">
+                <span className="leading-[20px]">
+                  The guidance contained within this website is subject to the UK regulatory regime and is therefore primarily targeted at consumers based in the UK
+                  <br aria-hidden="true" />
+                  {`Registered office address - `}
+                </span>
+                <span className="[text-decoration-skip-ink:none] decoration-solid font-['Lato:Regular',sans-serif] leading-[20px] text-white underline">Suite 2f2 Sovereign House, Stockport Road, Cheadle, England, SK8 2EA. Company No: 11821948</span>
+              </p>
+              <p className="font-['Lato:Light',sans-serif] leading-[20px] relative text-[14px] text-[rgba(255,255,255,0.6)] text-left whitespace-pre-wrap">{`Jigsaw Financial usually charges a fee for mortgage advice. The amount of the fee will depend on your circumstances and will be discussed and agreed with you at the earliest opportunity. `}</p>
 
-          <a 
-            href="https://www.facebook.com/JigsawFinancialLtd/#"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="absolute left-[calc(50%-140px)] size-[56px] top-[calc(100vh+130px)] translate-x-[-50%]"
-          >
-            <SocialButton 
-              shadowColor="inset 0px 4px 4px 0px rgba(24, 119, 242, 0.12), inset 0px -5px 4px 0px rgba(24, 119, 242, 0.08)"
-              glowColor="0 0 0 1px rgba(24, 119, 242, 0.3), 0 0 20px 8px rgba(24, 119, 242, 0.2), 0 0 40px 16px rgba(24, 119, 242, 0.1)"
-              onHoverChange={setFacebookHovered}
-            >
-              {(isHovered: boolean) => <BiFacebook isHovered={isHovered} />}
-            </SocialButton>
-          </a>
-          <a 
-            href="https://www.instagram.com/jigsaw_financial"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="absolute left-1/2 size-[56px] top-[calc(100vh+130px)] translate-x-[-50%]"
-          >
-            <SocialButton 
-              shadowColor="inset 0px 4px 4px 0px rgba(200, 55, 171, 0.12), inset 0px -5px 4px 0px rgba(200, 55, 171, 0.08)"
-              glowColor="0 0 0 1px rgba(200, 55, 171, 0.3), 0 0 20px 8px rgba(200, 55, 171, 0.2), 0 0 40px 16px rgba(200, 55, 171, 0.1)"
-              onHoverChange={setInstagramHovered}
-            >
-              {(isHovered: boolean) => <UilInstagramAlt isHovered={isHovered} />}
-            </SocialButton>
-          </a>
-          <a 
-            href="https://www.linkedin.com/company/jigsaw-financial-ltd/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="absolute left-[calc(50%+140px)] size-[56px] top-[calc(100vh+130px)] translate-x-[-50%]"
-          >
-            <SocialButton 
-              shadowColor="inset 0px 4px 4px 0px rgba(0, 118, 178, 0.12), inset 0px -5px 4px 0px rgba(0, 118, 178, 0.08)"
-              glowColor="0 0 0 1px rgba(0, 118, 178, 0.3), 0 0 20px 8px rgba(0, 118, 178, 0.2), 0 0 40px 16px rgba(0, 118, 178, 0.1)"
-              onHoverChange={setLinkedinHovered}
-            >
-              {(isHovered: boolean) => <AkarIconsLinkedinV1Fill isHovered={isHovered} />}
-            </SocialButton>
-          </a>
-
-          {/* Footer Divider Line */}
-          <div className="absolute h-0 left-1/2 translate-x-[-50%] w-[1152px] top-[calc(100vh+478px)]">
-            <div className="absolute bottom-0 left-0 right-0 top-[-1px]">
-              <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 1152 1">
-                <line stroke="var(--stroke-0, white)" strokeOpacity="0.5" x2="1152" y1="0.5" y2="0.5" />
-              </svg>
+              {/* Complaints Process and Privacy Policy Links */}
+              <div className="content-stretch flex font-['Lato:Regular',sans-serif] items-center justify-between leading-[18px] relative shrink-0 text-[16px] text-white underline w-full">
+                <button
+                  onClick={() => openPDF('/pdfs/complaints-process.pdf', 'Complaints Process')}
+                  onMouseEnter={() => setHideCursorForLinks(true)}
+                  onMouseLeave={() => setHideCursorForLinks(false)}
+                  className="decoration-solid relative shrink-0 hover:opacity-70 transition-opacity bg-transparent border-none text-white underline cursor-pointer font-['Lato:Regular',sans-serif] text-[16px] leading-[18px]"
+                >
+                  Complaints Process
+                </button>
+                <button
+                  onClick={() => openPDF('/pdfs/privacy-policy.pdf', 'Privacy Policy')}
+                  onMouseEnter={() => setHideCursorForLinks(true)}
+                  onMouseLeave={() => setHideCursorForLinks(false)}
+                  className="decoration-solid relative shrink-0 hover:opacity-70 transition-opacity bg-transparent border-none text-white underline cursor-pointer font-['Lato:Regular',sans-serif] text-[16px] leading-[18px]"
+                >
+                  Privacy Policy
+                </button>
+              </div>
             </div>
-          </div>
 
-          {/* Footer - Copyright and Website by */}
-          <div className="absolute content-stretch flex h-[18px] items-center justify-between not-italic left-1/2 translate-x-[-50%] text-[16px] text-white w-[1152px] top-[calc(100vh+518px)]">
-            <p className="font-['Lato:Regular',sans-serif] leading-[18px] relative shrink-0">© Copyright Jigsaw Financial. 2025. All Rights Reserved.</p>
-            <p className="font-['Poppins:Regular',sans-serif] leading-[0] relative shrink-0 text-right">
-              <span className="font-['Lato:Light',sans-serif] leading-[18px]">Website by</span>
-              <span className="font-['Lato:Regular',sans-serif] leading-[18px]"> </span>
-              <a 
-                href="https://funkyvibes.co.uk/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="font-['Lato:SemiBold',sans-serif] leading-[18px] hover:underline transition-all md:cursor-none"
-              >
-                Funky Vibes Marketing
-              </a>
-            </p>
+            {/* Footer Divider Line */}
+            <div className="w-full h-[1px] bg-white opacity-40 mt-[32px] mb-[24px]" />
+
+            {/* Footer - Copyright and Website by */}
+            <div className="content-stretch flex items-center justify-between not-italic text-[16px] text-white w-full">
+              <p className="font-['Lato:Regular',sans-serif] leading-[18px] shrink-0">© Copyright Jigsaw Financial. 2025. All Rights Reserved.</p>
+              <p className="font-['Poppins:Regular',sans-serif] leading-[0] shrink-0 text-right">
+                <span className="font-['Lato:Light',sans-serif] leading-[18px]">Website by</span>
+                <span className="font-['Lato:Regular',sans-serif] leading-[18px]"> </span>
+                <a
+                  href="https://funkyvibes.co.uk/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-['Lato:SemiBold',sans-serif] leading-[18px] hover:underline transition-all md:cursor-none"
+                >
+                  Funky Vibes Marketing
+                </a>
+              </p>
+            </div>
           </div>
         </motion.div>
       </div>
