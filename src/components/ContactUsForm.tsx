@@ -915,7 +915,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
             </>
           )}
 
-          <div className="absolute flex flex-col gap-[32px] items-center pb-[60px] bottom-[40px] left-1/2 -translate-x-1/2 w-[90%] max-w-[1190px]">
+          <div className="absolute flex flex-col gap-[32px] items-center pb-[100px] bottom-[15px] left-1/2 -translate-x-1/2 w-[90%] max-w-[1190px]">
             {/* Social Media Section */}
             <div className="flex flex-col gap-[24px] items-center w-full">
               <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[20px] text-center text-nowrap text-white tracking-[0.2px]">Follow us on:</p>
