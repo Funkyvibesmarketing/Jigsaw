@@ -15,18 +15,18 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
   const [isHovered, setIsHovered] = useState(false);
   const [isContactHovered, setIsContactHovered] = useState(false);
   const [hoveredMenuItem, setHoveredMenuItem] = useState<string | null>(null);
-  
+
   // Scroll to section handler
   const scrollToSection = (sectionName: string) => {
     // Get the current scroll position
     const currentScrollY = window.scrollY;
     const viewportHeight = window.innerHeight;
-    
+
     // Calculate target scroll positions based on actual section layout
     // These are more accurate multipliers based on the actual structure
     let targetScrollY = 0;
-    
-    switch(sectionName) {
+
+    switch (sectionName) {
       case 'Home':
         // Scroll to top (Hero section)
         targetScrollY = viewportHeight * 1;
@@ -65,19 +65,19 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
       default:
         targetScrollY = 0;
     }
-    
+
     // Smooth scroll to the target position
     window.scrollTo({
       top: targetScrollY,
       behavior: 'smooth'
     });
   };
-  
+
   // Navigation appears during hero section at same time as down arrow (scroll progress 0.32-0.37)
   // Using heroScrollProgress instead of absolute scrollY for consistency
   // If splash has been viewed and we're at the top (heroProgress < 0.32), show navigation immediately
   const heroProgress = heroScrollProgress ?? 0;
-  
+
   // Navigation visibility:
   // - If splash has been viewed, show at scroll position 0 to 0.32 (before normal fade-in)
   // - Otherwise, fades in during hero at step 4 (32-37% of hero, same as down arrow)
@@ -85,7 +85,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
   const isHeroVisible = (splashViewed && heroProgress < 0.32) || heroProgress >= 0.32; // Show at top if splash viewed, or at 0.32 normally
   const isAboutUsVisible = aboutUsScrollProgress > 0;
   const navOpacity = (isHeroVisible || isAboutUsVisible) ? 1 : 0;
-  
+
   // Determine active menu item based on scroll progress
   // Home is active during hero section (before About Us starts)
   // When SERVICES text reaches middle of screen (at 0.50), switch to Services
@@ -104,7 +104,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
   const isServicesActive = isContactUsSection ? false : (aboutUsScrollProgress >= 0.50 && aboutUsScrollProgress < 0.82 && !isReviewsActiveOrInView && !isTeamActive && !isProcessActive && !isBlogsActive); // Services inactive in Contact Us, active when SERVICES text reaches middle (0.50), deactivates when Reviews is fully visible (0.82)
   const isAboutUsActive = isContactUsSection ? false : (aboutUsScrollProgress >= 0.01 && aboutUsScrollProgress < 0.50 && !isReviewsActiveOrInView && !isTeamActive && !isProcessActive && !isBlogsActive); // About Us active when section starts but before SERVICES text reaches middle (0.50)
   const isHomeActive = aboutUsScrollProgress < 0.01 && !isContactUsSection; // Home active only during hero section
-  
+
   // Determine if current section has dark background
   // Dark sections: Hero, Services (with blue screen), Team, Process, Contact Us Form
   // Light sections: About Us, Reviews, Blogs, Contact Us (intro)
@@ -121,15 +121,15 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
     <motion.div
       className={`fixed left-[40px] rounded-[72px] top-[calc(50%+0.5px)] translate-y-[-50%] z-[999] w-[80px]`}
       id="AboutUsNavigation"
-      style={{ 
+      style={{
         opacity: navOpacity
       }}
       data-name="AboutUsNavigation"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       animate={{
-        backgroundColor: isHovered 
-          ? (isDarkBackground ? 'rgba(255,255,255,0.15)' : 'rgba(228,236,241,0.6)') 
+        backgroundColor: isHovered
+          ? (isDarkBackground ? 'rgba(255,255,255,0.15)' : 'rgba(228,236,241,0.6)')
           : 'rgba(255,255,255,0)',
         backdropFilter: isHovered ? 'blur(12px) saturate(180%)' : 'blur(0px) saturate(100%)',
         WebkitBackdropFilter: isHovered ? 'blur(12px) saturate(180%)' : 'blur(0px) saturate(100%)',
@@ -138,7 +138,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
       transition={{ duration: 0.4, ease: "easeInOut" }}
     >
       <div className="flex flex-col items-center size-full">
-        <motion.div 
+        <motion.div
           className="box-border content-stretch flex flex-col items-center px-[12px] relative w-full"
           animate={{
             gap: isContactHovered ? '16px' : '25px',
@@ -148,8 +148,8 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
           transition={{ duration: 0.4, ease: "easeInOut" }}
         >
           {/* Logo Button */}
-          <motion.div 
-            className="flex h-[56px] items-center justify-center relative shrink-0 w-full pointer-events-none" 
+          <motion.div
+            className="flex h-[56px] items-center justify-center relative shrink-0 w-full pointer-events-none"
             style={{ "--transform-inner-width": "56", "--transform-inner-height": "56" } as React.CSSProperties}
             initial={{ opacity: 0 }}
             animate={{ opacity: isHovered ? 1 : 0 }}
@@ -180,7 +180,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
           </motion.div>
 
           {/* Navigation Icons */}
-          <motion.div 
+          <motion.div
             className="content-stretch flex flex-col items-start relative shrink-0 w-[50px]"
             animate={{
               gap: isContactHovered ? '12px' : '16px',
@@ -188,7 +188,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
             transition={{ duration: 0.4, ease: "easeInOut" }}
           >
             {/* Home Icon */}
-            <div 
+            <div
               className="relative"
               onMouseEnter={() => !isHomeActive && setHoveredMenuItem('Home')}
               onMouseLeave={() => setHoveredMenuItem(null)}
@@ -206,10 +206,10 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                           </div>
                         </div>
                         <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "16", "--transform-inner-height": "16" } as React.CSSProperties}>
-                          <div className="flex-none rotate-[270deg]">
+                          <div className="flex-none">
                             <div className="relative shrink-0 size-[16px]">
                               <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
-                                <path d={svgPathsAboutNav.p35230a00} fill={isDarkBackground ? "white" : "#2EC4B6"} />
+                                <path d={svgPathsHeroNav.pActiveHome} fill={isDarkBackground ? "white" : "#2EC4B6"} />
                               </svg>
                             </div>
                           </div>
@@ -225,7 +225,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                   </div>
                 </div>
               </div>
-              
+
               {/* Tooltip */}
               {!isHomeActive && hoveredMenuItem === 'Home' && (
                 <motion.div
@@ -248,7 +248,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
             </div>
 
             {/* About Us Icon - Conditional Active */}
-            <div 
+            <div
               className="relative"
               onMouseEnter={() => !isAboutUsActive && setHoveredMenuItem('About us')}
               onMouseLeave={() => setHoveredMenuItem(null)}
@@ -297,7 +297,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                   </div>
                 </div>
               </div>
-              
+
               {/* Tooltip */}
               {!isAboutUsActive && hoveredMenuItem === 'About us' && (
                 <motion.div
@@ -319,7 +319,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
             </div>
 
             {/* Services Icon - Conditional Active */}
-            <div 
+            <div
               className="relative"
               onMouseEnter={() => !isServicesActive && setHoveredMenuItem('Services')}
               onMouseLeave={() => setHoveredMenuItem(null)}
@@ -362,7 +362,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                   </div>
                 </div>
               </div>
-              
+
               {/* Tooltip */}
               {!isServicesActive && hoveredMenuItem === 'Services' && (
                 <motion.div
@@ -384,7 +384,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
             </div>
 
             {/* Reviews Icon - Conditional Active */}
-            <div 
+            <div
               className="relative"
               onMouseEnter={() => !isReviewsActiveOrInView && setHoveredMenuItem('Reviews')}
               onMouseLeave={() => setHoveredMenuItem(null)}
@@ -402,11 +402,11 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                           </div>
                         </div>
                         <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "16", "--transform-inner-height": "16" } as React.CSSProperties}>
-                          <div className="flex-none rotate-[270deg]">
+                          <div className="flex-none">
                             <div className="relative size-[16px]">
-                              <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
+                              <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 14 14">
                                 <g>
-                                  <path d={svgPathsAboutNav.p343a5e00} fill={isDarkBackground ? "white" : "#2EC4B6"} />
+                                  <path d={svgPathsHeroNav.pActiveReviews} fill={isDarkBackground ? "white" : "#2EC4B6"} />
                                 </g>
                               </svg>
                             </div>
@@ -425,7 +425,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                   </div>
                 </div>
               </div>
-              
+
               {/* Tooltip */}
               {!isReviewsActiveOrInView && hoveredMenuItem === 'Reviews' && (
                 <motion.div
@@ -447,7 +447,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
             </div>
 
             {/* Team Icon - Conditional Active */}
-            <div 
+            <div
               className="relative"
               onMouseEnter={() => !isTeamActive && setHoveredMenuItem('Our team')}
               onMouseLeave={() => setHoveredMenuItem(null)}
@@ -480,7 +480,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                   </div>
                 </div>
               </div>
-              
+
               {/* Tooltip */}
               {!isTeamActive && hoveredMenuItem === 'Our team' && (
                 <motion.div
@@ -502,7 +502,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
             </div>
 
             {/* Process Icon - Conditional Active */}
-            <div 
+            <div
               className="relative"
               onMouseEnter={() => !isProcessActive && setHoveredMenuItem('Our process')}
               onMouseLeave={() => setHoveredMenuItem(null)}
@@ -539,7 +539,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                   </div>
                 </div>
               </div>
-              
+
               {/* Tooltip */}
               {!isProcessActive && hoveredMenuItem === 'Our process' && (
                 <motion.div
@@ -561,7 +561,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
             </div>
 
             {/* Blogs Icon - Conditional Active */}
-            <div 
+            <div
               className="relative"
               onMouseEnter={() => !isBlogsActive && setHoveredMenuItem('Blogs')}
               onMouseLeave={() => setHoveredMenuItem(null)}
@@ -602,7 +602,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                   </div>
                 </div>
               </div>
-              
+
               {/* Tooltip */}
               {!isBlogsActive && hoveredMenuItem === 'Blogs' && (
                 <motion.div
@@ -625,10 +625,10 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
           </motion.div>
 
           {/* Contact Button */}
-          <motion.div 
-            className="flex items-center justify-center relative shrink-0 w-full" 
+          <motion.div
+            className="flex items-center justify-center relative shrink-0 w-full"
             initial={{ opacity: 0 }}
-            animate={{ 
+            animate={{
               opacity: isHovered ? 1 : 0,
               marginTop: isContactHovered ? '54px' : '0px'
             }}
@@ -638,7 +638,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
           >
             <div className="flex-none rotate-[270deg]">
               <a href="tel:01616675990" className="block">
-                <motion.div 
+                <motion.div
                   className="bg-white box-border flex flex-row items-center relative rounded-[56px] h-[56px] overflow-hidden cursor-pointer"
                   animate={{
                     width: isContactHovered ? '175px' : '56px',
@@ -664,7 +664,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
                   </div>
 
                   {/* "Contact us" text - fades in when hovered */}
-                  <motion.div 
+                  <motion.div
                     className="flex items-center justify-center overflow-hidden whitespace-nowrap"
                     animate={{
                       opacity: isContactHovered ? 1 : 0,
@@ -682,11 +682,11 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
           </motion.div>
         </motion.div>
       </div>
-      <motion.div 
-        aria-hidden="true" 
+      <motion.div
+        aria-hidden="true"
         className="absolute border border-solid inset-0 pointer-events-none rounded-[72px]"
         initial={{ opacity: 0 }}
-        animate={{ 
+        animate={{
           opacity: isHovered ? 1 : 0,
           borderColor: isHovered ? 'rgba(44, 70, 87, 0.15)' : 'rgba(255, 255, 255, 0)'
         }}
