@@ -415,7 +415,7 @@ export function ServicesMobile({
                         />
                       )}
                     </div>
-                    <div className="absolute inset-[38.4%_-35.86%_-66.28%_-35.86%] z-0">
+                    <div className="absolute inset-[33.4%_-35.86%_-66.28%_-35.86%] z-0">
                       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 580.44 656">
                         <ellipse cx="290.22" cy="328" fill="white" rx="290.22" ry="328" />
                       </svg>
@@ -427,13 +427,16 @@ export function ServicesMobile({
                       {card.type === 'normal' && (
                         <>
                           {card.title && (
-                            <p className="font-lato-semibold leading-[26px] text-[20px] w-full">
+                            <p className="font-lato-semibold leading-[26px] text-[18px] w-full">
                               {card.title}
                             </p>
                           )}
                           {card.description && (
-                            <p className="font-lato-regular leading-[22px] text-[12px] w-full">
-                              {card.description}
+                            <p className="font-lato-regular leading-[18px] text-[14px] w-full" dangerouslySetInnerHTML={{ __html: card.description }}></p>
+                          )}
+                          {card.textItalic && (
+                            <p className="font-lato-regular leading-[18px] relative shrink-0 text-[14px] w-full">
+                              <i>{card.textItalic}</i>
                             </p>
                           )}
                           {!card.description && card.text && (
@@ -448,18 +451,28 @@ export function ServicesMobile({
                       {card.type === 'bullet' && (
                         <>
                           {card.bulletTitle && (
-                            <p className="font-lato-semibold leading-[26px] text-[20px] w-full">
+                            <p className="font-lato-semibold leading-[18px] text-[18px] w-full">
                               {card.bulletTitle}
                             </p>
                           )}
+                          {card.bulletSubTitle && (
+                            <p className="font-lato-regular leading-[18px] not-italic text-[14px] w-full">
+                              {card.bulletSubTitle}
+                            </p>
+                          )}
                           {card.bulletPoints && (
-                            <ul className="font-lato-regular text-[14px] w-full list-disc pl-[20px]">
+                            <ul className="font-lato-regular text-[14px] leading-[18px] w-full list-disc pl-[20px]">
                               {card.bulletPoints.map((point, idx) => (
-                                <li key={idx} className="leading-[22px] mb-[4px]">
+                                <li key={idx} className="leading-[18px] mb-[4px]">
                                   {point}
                                 </li>
                               ))}
                             </ul>
+                          )}
+                          {card.textItalic2 && (
+                            <p className="font-lato-regular leading-[18px] relative shrink-0 text-[14px] w-full">
+                              <i>{card.textItalic2}</i>
+                            </p>
                           )}
                         </>
                       )}
@@ -469,21 +482,24 @@ export function ServicesMobile({
                         <div className="content-stretch flex gap-[12px] items-start justify-center w-full">
                           {/* New Client Pricing */}
                           <div className="basis-0 content-stretch flex flex-col gap-[10px] grow items-start min-h-px min-w-px relative shrink-0">
-                            <p className="font-lato-regular leading-[19px] not-italic text-[14px] text-[rgba(34,37,38,0.5)] w-full">
+                            <p className="font-lato-semibold leading-[26px] not-italic text-[18px] w-full">
                               {card.priceData.newClientLabel}
                             </p>
-                            <div className="content-stretch flex flex-col gap-[2px] items-start justify-center not-italic text-[#222526] w-full">
-                              <p className="font-lato-bold leading-[21px] text-[17px] text-nowrap">
+                            <p className="font-lato-semibold leading-[16px] not-italic text-[16px] w-full">
+                              {card.priceData.newClientSubLabel}
+                            </p>
+                            <div className="content-stretch flex flex-col gap-[2px] items-start justify-center not-italic w-full">
+                              <p className="font-lato-regular leading-[20px] text-[14px] text-[#222526] w-full">
                                 {card.priceData.newClientPrice}
                               </p>
-                              <p className="font-lato-regular leading-[18px] min-w-full text-[12.5px] w-[min-content]">
+                              <p className="font-lato-regular leading-[16px] min-w-full text-[14px] text-[rgba(34,37,38,0.5)] w-full">
                                 {card.priceData.newClientDescription}
                               </p>
                             </div>
                           </div>
 
                           {/* Divider Line */}
-                          <div className="h-auto w-[1px] bg-black opacity-20 self-stretch shrink-0"></div>
+                          <div className="h-auto w-[1px] bg-black opacity-20 self-stretch shrink-0 rotate-[90deg]"></div>
 
                           {/* Existing Client Pricing */}
                           <div className="basis-0 content-stretch flex flex-col gap-[10px] grow items-start min-h-px min-w-px shrink-0">

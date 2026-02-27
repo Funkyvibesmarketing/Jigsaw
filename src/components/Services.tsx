@@ -432,14 +432,19 @@ export function Services({
                     )}
 
                     {prevCard.description && (
-                      <p className="font-lato-regular leading-[16px] relative shrink-0 text-[11.5px] w-full">
-                        {prevCard.description}
+                      <p className="font-lato-regular leading-[16px] relative shrink-0 text-[11.5px] w-full" dangerouslySetInnerHTML={{ __html: prevCard.description }}>
                       </p>
                     )}
 
                     {!prevCard.description && prevCard.text && (
                       <p className="font-lato-regular leading-[16px] relative shrink-0 text-[11.5px] w-full">
                         {prevCard.text}
+                      </p>
+                    )}
+
+                    {prevCard.textItalic && (
+                      <p className="font-lato-regular leading-[16px] relative shrink-0 text-[11.5px] w-full">
+                        <i>{prevCard.textItalic}</i>
                       </p>
                     )}
                   </div>
@@ -525,7 +530,7 @@ export function Services({
             <div className="absolute" style={{ inset: currentCard.imageInset || '-107.69% -45.15% -64.94% 19.5%' }}>
               <img alt="" className="block max-w-none size-full" height="1524" src={currentCard.image} width="1205" />
             </div>
-            <div className="absolute inset-[-40.07%_36.39%_-31.48%_-36.39%]">
+            <div className="absolute inset-[-30.07%_30.39%_-31.48%_-36.39%]">
               <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 959 959">
                 <circle cx="479.5" cy="479.5" fill="white" r="479.5" />
               </svg>
@@ -537,22 +542,29 @@ export function Services({
               <div className="flex-1 flex flex-col justify-between">
                 {/* Type: Normal */}
                 {currentCard.type === 'normal' && (
-                  <div className="absolute content-stretch flex flex-col gap-[24px] items-start left-[40px] not-italic text-[#222526] top-[60px] w-[512px]">
+                  <div className="absolute content-stretch flex flex-col gap-[24px] items-start left-[40px] not-italic text-[#222526] top-[50px] w-[512px]">
                     {currentCard.title && (
-                      <p className="font-lato-semibold leading-[36px] relative shrink-0 text-[28px] w-full">
+                      <p className="font-lato-semibold leading-[36px] relative shrink-0 text-[28px] font-[600] w-full">
                         {currentCard.title}
                       </p>
                     )}
 
                     {currentCard.description && (
-                      <p className="font-lato-regular leading-[28px] relative shrink-0 text-[20px] w-full">
-                        {currentCard.description}
+                      // <p className="font-lato-regular leading-[28px] relative shrink-0 text-[20px] w-full">
+                      //   {currentCard.description}
+                      // </p>
+                      <div className="services-p" dangerouslySetInnerHTML={{ __html: currentCard.description }} />
+                    )}
+
+                    {currentCard.textItalic && (
+                      <p className="font-lato-regular leading-[24px] relative shrink-0 text-[20px] w-full">
+                        <i>{currentCard.textItalic}</i>
                       </p>
                     )}
 
                     {/* Fallback to text if no description */}
                     {!currentCard.description && currentCard.text && (
-                      <p className="font-lato-regular leading-[28px] relative shrink-0 text-[20px] w-full">
+                      <p className="font-lato-regular leading-[24px] relative shrink-0 text-[20px] w-full">
                         {currentCard.text}
                       </p>
                     )}
@@ -561,10 +573,15 @@ export function Services({
 
                 {/* Type: Bullet */}
                 {currentCard.type === 'bullet' && (
-                  <div className="absolute left-[40px] top-[60px] flex flex-col gap-[24px] items-start w-[512px] text-[#222526]">
+                  <div className="absolute left-[40px] top-[60px] flex flex-col gap-[24px] items-start w-[534px] text-[#222526]">
                     <p className="font-lato-semibold leading-[36px] not-italic text-[28px] w-full">
                       {currentCard.bulletTitle}
                     </p>
+                    {currentCard.bulletSubTitle && (
+                      <p className="font-lato-regular leading-[28px] not-italic text-[20px] w-full">
+                        {currentCard.bulletSubTitle}
+                      </p>
+                    )}
                     <ul className="block font-lato-regular leading-[0] text-[20px] w-full list-disc pl-[30px]">
                       {currentCard.bulletPoints?.map((point, index) => (
                         <li key={index} className="mb-[16px] last:mb-0">
@@ -572,23 +589,39 @@ export function Services({
                         </li>
                       ))}
                     </ul>
+                    {currentCard.textItalic2 && (
+                      <p className="font-lato-regular leading-[28px] relative shrink-0 text-[20px] w-full">
+                        <i>{currentCard.textItalic2}</i>
+                      </p>
+                    )}
                   </div>
                 )}
 
                 {/* Type: Price */}
                 {currentCard.type === 'price' && currentCard.priceData && (
-                  <div className="absolute left-[40px] top-[82px] flex flex-col gap-[40px] items-start w-[512px]">
+                  <div className="absolute left-[40px] top-[50px] flex flex-col gap-[40px] items-start w-[540px]">
                     {/* New Client Pricing */}
-                    <div className="content-stretch flex flex-col gap-[24px] items-start w-full">
-                      <p className="font-lato-regular leading-[36px] not-italic text-[#222526] text-[20px] w-full">
-                        {currentCard.priceData.newClientLabel}
+                    <div className="content-stretch flex flex-col gap-[20px] items-start w-full">
+                      <p className="font-lato-bold leading-[36px] text-[#222526] text-[28px] w-full">
+                          {currentCard.priceData.newClientLabel}
                       </p>
-                      <div className="content-stretch flex flex-col gap-[12px] items-start w-full">
-                        <p className="font-lato-bold leading-[28px] text-[#222526] text-[40px] w-full">
+                      {currentCard.priceData.newClientSubLabel && (
+                        <p className="font-lato-bold leading-[28px] not-italic text-[#222526] text-[24px] w-full">
+                          {currentCard.priceData.newClientSubLabel}
+                        </p>
+                      )}
+                      
+                      <div className="content-stretch flex flex-col gap-[10px] items-start w-full">
+                        <p className="font-lato-regular leading-[36px] text-[#222526] text-[20px] w-full">
                           {currentCard.priceData.newClientPrice}
                         </p>
-                        <p className="font-lato-regular leading-[36px] text-[20px] text-[rgba(34,37,38,0.5)] w-full">
-                          {currentCard.priceData.newClientDescription}
+                        {currentCard.priceData.existingClientZeroPrice && (
+                          <p className="font-lato-bold leading-[28px] not-italic text-[#222526] text-[24px] w-full">
+                            {currentCard.priceData.existingClientZeroPrice}
+                          </p>
+                        )}
+                        <p className="font-lato-regular leading-[28px] text-[20px] text-[rgba(34,37,38,0.5)] w-full">
+                          <i>{currentCard.priceData.newClientDescription}</i>
                         </p>
                       </div>
                     </div>
@@ -603,16 +636,23 @@ export function Services({
                     </div>
 
                     {/* Existing Client Pricing */}
-                    <div className="content-stretch flex flex-col gap-[24px] items-start w-full">
-                      <p className="font-lato-regular leading-[36px] not-italic text-[#222526] text-[20px] w-full">
-                        {currentCard.priceData.existingClientLabel}
-                      </p>
+                    <div className="content-stretch flex flex-col gap-[6px] items-start w-full">
+                      {currentCard.priceData.existingClientSubLabel && (
+                        <p className="font-lato-bold leading-[36px] text-[#222526] text-[28px] w-full">
+                          {currentCard.priceData.existingClientSubLabel}
+                        </p>
+                      )}
+                      {currentCard.priceData.existingClientLabel && (
+                        <p className="font-lato-bold leading-[28px] not-italic text-[#222526] text-[24px] w-full">
+                          {currentCard.priceData.existingClientLabel}
+                        </p>
+                      )}
                       <div className="content-stretch flex flex-col gap-[12px] items-start w-full">
-                        <p className="font-lato-bold leading-[28px] min-w-full text-[#222526] text-[40px] w-[min-content]">
+                        <p className="font-lato-regular leading-[26px] min-w-full text-[#222526] text-[20px] w-[min-content]">
                           {currentCard.priceData.existingClientPrice}
                         </p>
-                        <p className="font-lato-regular leading-[36px] text-[20px] text-[rgba(34,37,38,0.5)] w-[465px]">
-                          {currentCard.priceData.existingClientDescription}
+                        <p className="font-lato-regular leading-[26px] text-[20px] text-[rgba(34,37,38,0.5)] w-[540px]">
+                          <i>{currentCard.priceData.existingClientDescription}</i>
                         </p>
                       </div>
                     </div>
@@ -664,14 +704,18 @@ export function Services({
                     )}
 
                     {nextCard.description && (
-                      <p className="font-lato-regular leading-[16px] relative shrink-0 text-[11.5px] w-full">
-                        {nextCard.description}
-                      </p>
+                      <p className="font-lato-regular leading-[16px] relative shrink-0 text-[11.5px] w-full" dangerouslySetInnerHTML={{ __html: nextCard.description }} />
                     )}
 
                     {!nextCard.description && nextCard.text && (
                       <p className="font-lato-regular leading-[16px] relative shrink-0 text-[11.5px] w-full">
                         {nextCard.text}
+                      </p>
+                    )}
+
+                    {nextCard.textItalic && (
+                      <p className="font-lato-regular leading-[16px] relative shrink-0 text-[11.5px] w-full">
+                        <i>{nextCard.textItalic}</i>
                       </p>
                     )}
                   </div>

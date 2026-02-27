@@ -249,7 +249,7 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
                   className="absolute w-full leading-[50px] text-[40px]"
                 >
                   <p className="font-lato-semibold">{carouselTexts[carouselIndex].header}</p><br />
-                  <p className="font-lato-regular text-[40px] leading-[56px] font-[400] text-[#222526]">
+                  <p className="font-lato-regular text-[40px] leading-[56px] text-[#222526]">
                     <span>{carouselTexts[carouselIndex].text}</span>
                     {carouselTexts[carouselIndex].hasLearnMore && (
                       <a
