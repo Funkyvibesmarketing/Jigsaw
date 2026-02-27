@@ -9,7 +9,7 @@ function NavArrow() {
   return (
     <div className="overflow-clip relative size-[30px]">
       <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
-        <div className="flex-none h-[12.964px] rotate-[359.849deg] w-[21.406px]">
+        <div className="flex-none h-[12.964px] rotate-[0deg] w-[21.406px]">
           <div className="relative size-full">
             <div className="absolute inset-[-2.07%_-1.25%]">
               <img alt="" className="block max-w-none size-full" height="13.5" src={imgVector} width="21.942" />
@@ -479,41 +479,46 @@ export function ServicesMobile({
 
                       {/* Type: Price */}
                       {card.type === 'price' && card.priceData && (
-                        <div className="content-stretch flex gap-[12px] items-start justify-center w-full">
+                        <div className="content-stretch flex flex-col justify-center w-full">
                           {/* New Client Pricing */}
-                          <div className="basis-0 content-stretch flex flex-col gap-[10px] grow items-start min-h-px min-w-px relative shrink-0">
-                            <p className="font-lato-semibold leading-[26px] not-italic text-[18px] w-full">
+                          <div className="w-full flex flex-col gap-[8px]">
+                            <p className="font-lato-bold text-[18px] leading-[26px] text-[#222526]">
                               {card.priceData.newClientLabel}
                             </p>
-                            <p className="font-lato-semibold leading-[16px] not-italic text-[16px] w-full">
+                            <p className="font-lato-semibold text-[16px] leading-[16px] text-[rgba(34,37,38,0.7)]">
                               {card.priceData.newClientSubLabel}
                             </p>
-                            <div className="content-stretch flex flex-col gap-[2px] items-start justify-center not-italic w-full">
-                              <p className="font-lato-regular leading-[20px] text-[14px] text-[#222526] w-full">
-                                {card.priceData.newClientPrice}
-                              </p>
-                              <p className="font-lato-regular leading-[16px] min-w-full text-[14px] text-[rgba(34,37,38,0.5)] w-full">
-                                {card.priceData.newClientDescription}
-                              </p>
-                            </div>
+                            <p className="font-lato-regular text-[14px] leading-[20px] text-[#222526]">
+                              {card.priceData.newClientPrice}
+                            </p>
+                            <p className="font-lato-regular text-[14px] leading-[16px] text-[rgba(34,37,38,0.5)]">
+                              <i>{card.priceData.newClientDescription}</i>
+                            </p>
                           </div>
 
                           {/* Divider Line */}
-                          <div className="h-auto w-[1px] bg-black opacity-20 self-stretch shrink-0 rotate-[90deg]"></div>
+                          <div
+                            className="h-[1px] w-full bg-[rgba(34,37,38,0.2)] my-[16px]"
+                            style={{
+                              backgroundColor: 'rgba(34, 37, 38, 0.2)',
+                              height: '1px',
+                              width: '100%',
+                              margin: '16px 0',
+                              display: 'block'
+                            }}
+                          ></div>
 
                           {/* Existing Client Pricing */}
-                          <div className="basis-0 content-stretch flex flex-col gap-[10px] grow items-start min-h-px min-w-px shrink-0">
-                            <p className="font-lato-regular leading-[19px] not-italic text-[14px] text-[rgba(34,37,38,0.5)] w-full">
+                          <div className="w-full flex flex-col gap-[8px]">
+                            <p className="font-lato-semibold text-[16px] leading-[16px] text-[rgba(34,37,38,0.7)]">
                               {card.priceData.existingClientLabel}
                             </p>
-                            <div className="content-stretch flex flex-col gap-[2px] items-start not-italic text-[#222526] w-full">
-                              <p className="font-lato-bold leading-[21px] text-[17px] w-full">
-                                {card.priceData.existingClientPrice}
-                              </p>
-                              <p className="font-lato-regular leading-[18px] text-[12.5px] w-full">
-                                {card.priceData.existingClientDescription}
-                              </p>
-                            </div>
+                            <p className="font-lato-regular text-[14px] leading-[18px] text-[#222526]">
+                              {card.priceData.existingClientPrice}
+                            </p>
+                            <p className="font-lato-regular text-[14px] leading-[16px] text-[rgba(34,37,38,0.5)]">
+                              {card.priceData.existingClientDescription}
+                            </p>
                           </div>
                         </div>
                       )}
