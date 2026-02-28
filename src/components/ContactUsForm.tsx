@@ -192,7 +192,7 @@ function SocialButton({
   glowColor,
   onHoverChange
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode | ((isHovered: boolean) => React.ReactNode);
   shadowColor?: string;
   glowColor?: string;
   onHoverChange?: (isHovered: boolean) => void;
@@ -219,7 +219,7 @@ function SocialButton({
       }}
     >
       <div aria-hidden="true" className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" />
-      {typeof children === 'function' ? children(isHovered) : children}
+      {typeof children === 'function' ? (children as (isHovered: boolean) => React.ReactNode)(isHovered) : children}
       {isHovered && shadowColor && (
         <div
           className="absolute inset-0 pointer-events-none rounded-[100px]"
@@ -482,7 +482,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
       )}
 
       {/* Sticky Form Section */}
-      <div className="sticky top-0 h-[200vh] md:h-[calc(100vh+300px)] w-full overflow-hidden pb-[60px]">
+      <div className="sticky top-0 h-[180vh] md:h-[100vh] w-full overflow-hidden pb-[60px]">
         {/* Mobile View */}
         <motion.div
           className="md:hidden bg-[#2c4657] relative size-full"
@@ -915,9 +915,9 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
             </>
           )}
 
-          <div className="absolute flex flex-col gap-[32px] items-center pb-[100px] bottom-[15px] left-1/2 -translate-x-1/2 w-[90%] max-w-[1190px]">
-            {/* Social Media Section */}
-            <div className="flex flex-col gap-[24px] items-center w-full">
+          <div className="absolute flex flex-col gap-[16px] items-center pb-[10px] bottom-[380px] left-1/2 -translate-x-1/2 w-[90%] max-w-[1190px] z-[90]">
+            {/* Social Media Section (moved up for desktop) */}
+            <div className="flex flex-col gap-[16px] items-center w-full">
               <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[20px] text-center text-nowrap text-white tracking-[0.2px]">Follow us on:</p>
 
               <div className="flex items-center justify-center gap-[64px] w-full h-[100px]">
@@ -976,6 +976,12 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
                 </a>
               </div>
             </div>
+          </div>
+          <div className="absolute flex flex-col gap-[16px] items-center pb-[10px] pt-[80px] bottom-[0px] left-1/2 -translate-x-1/2 w-[90%] max-w-[1190px]">
+            {/* Text Content Section */}
+            <div className="content-stretch flex flex-col gap-[24px] items-center w-full">
+              {/* Social buttons moved above for desktop; legal text follows */}
+            </div>
 
             {/* Legal/Compliance Text - Desktop */}
             <div className="content-stretch flex flex-col gap-[24px] items-start not-italic w-full mt-[40px]">
@@ -1012,7 +1018,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
             </div>
 
             {/* Footer Divider Line */}
-            <div className="w-full h-[1px] bg-white opacity-40 mt-[32px] mb-[24px]" />
+            <div className="w-full h-[1px] bg-white opacity-40 mt-[32px] mb-[32px]" />
 
             {/* Footer - Copyright and Website by */}
             <div className="content-stretch flex items-center justify-between not-italic text-[16px] text-white w-full">
