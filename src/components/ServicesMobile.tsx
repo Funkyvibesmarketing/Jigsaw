@@ -173,7 +173,7 @@ export function ServicesMobile({
         </div>
 
         {/* Category names carousel slider */}
-        <div className="flex-shrink-0 w-full" style={{ marginTop: '26px', height: '80px' }}>
+        <div className="flex-shrink-0 w-full" style={{ marginTop: '20px', height: '60px' }}>
           <div className="relative w-full h-full overflow-hidden">
             {/* Previous category - left edge, partially visible - clips from LEFT side */}
             <div className="hidden absolute left-0 top-1/2 -translate-y-1/2 overflow-hidden flex items-center" style={{ maxWidth: '18%' }}>
@@ -224,12 +224,12 @@ export function ServicesMobile({
 
         {/* Card stack - swipeable horizontally for categories */}
         <div
-          className="flex-1 w-full relative flex items-center justify-center gap-[16px]"
+          className="flex-1 w-full relative flex items-center justify-center gap-[10px]"
           style={{
             perspective: '2000px',
             minHeight: '450px',
             maxHeight: '513px',
-            marginTop: '10px',
+            marginTop: '5px',
             marginBottom: '40px',
             paddingLeft: '7.5%',
             paddingRight: '7.5%',
@@ -292,7 +292,7 @@ export function ServicesMobile({
                   </div>
 
                   {/* Card content */}
-                  <div className="absolute flex flex-col gap-[16px] items-start left-[4.73%] right-[4.73%] text-[#222526] top-[calc(50%+106.5px)] -translate-y-1/2 z-10">
+                  <div className="absolute flex flex-col gap-[10px] items-start left-[4.73%] right-[4.73%] text-[#222526] top-[calc(50%+106.5px)] -translate-y-1/2 z-10">
                     {/* Type: Normal */}
                     {leftCard.type === 'normal' && (
                       <>
@@ -358,7 +358,7 @@ export function ServicesMobile({
                   shouldShow = true;
                 } else if (position === 1) {
                   // First card behind
-                  cardConfig = { top: 25, scale: 0.93, opacity: 0.5, zIndex: 20, blur: 0 };
+                  cardConfig = { top: 20, scale: 0.93, opacity: 0.5, zIndex: 20, blur: 0 };
                   shouldShow = true;
                 } else if (position === 2) {
                   // Second card behind
@@ -407,7 +407,7 @@ export function ServicesMobile({
                           className="absolute "
                           src={card.imagem}
                           style={{
-                            height: '71.28%',
+                            height: '60.28%',
                             left: '0%',
                             top: '0%',
                             width: '100%'
@@ -415,14 +415,14 @@ export function ServicesMobile({
                         />
                       )}
                     </div>
-                    <div className="absolute inset-[33.4%_-35.86%_-66.28%_-35.86%] z-0">
+                    <div className="absolute inset-[26.4%_-35.86%_-66.28%_-35.86%] z-0">
                       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 580.44 656">
                         <ellipse cx="290.22" cy="328" fill="white" rx="290.22" ry="328" />
                       </svg>
                     </div>
 
                     {/* Card content */}
-                    <div className="absolute flex flex-col gap-[16px] items-start left-[4.73%] right-[4.73%] text-[#222526] top-[calc(50%+106.5px)] -translate-y-1/2 z-10">
+                    <div className="absolute flex flex-col gap-[16px] items-start left-[4.73%] right-[4.73%] text-[#222526] top-[calc(50%+86.5px)] -translate-y-1/2 z-10">
                       {/* Type: Normal */}
                       {card.type === 'normal' && (
                         <>
@@ -485,14 +485,21 @@ export function ServicesMobile({
                             <p className="font-lato-bold text-[18px] leading-[26px] text-[#222526]">
                               {card.priceData.newClientLabel}
                             </p>
-                            <p className="font-lato-semibold text-[16px] leading-[16px] text-[rgba(34,37,38,0.7)]">
-                              {card.priceData.newClientSubLabel}
-                            </p>
+                            {card.priceData.newClientSubLabel && (
+                              <p className="font-lato-semibold text-[16px] leading-[16px] text-[rgba(34,37,38,0.7)]">
+                                {card.priceData.newClientSubLabel}
+                              </p>
+                            )}
                             <p className="font-lato-regular text-[14px] leading-[20px] text-[#222526]">
                               {card.priceData.newClientPrice}
                             </p>
-                            <p className="font-lato-regular text-[14px] leading-[16px] text-[rgba(34,37,38,0.5)]">
-                              <i>{card.priceData.newClientDescription}</i>
+                            {card.priceData.existingClientZeroPrice && (
+                              <p className="font-lato-bold leading-[16px] not-italic text-[#222526] text-[16px] w-full">
+                                {card.priceData.existingClientZeroPrice}
+                              </p>
+                            )}
+                            <p className="font-lato-regular text-[14px] leading-[20px]">
+                              {card.priceData.newClientDescription}
                             </p>
                           </div>
 
@@ -509,15 +516,17 @@ export function ServicesMobile({
                           ></div>
 
                           {/* Existing Client Pricing */}
-                          <div className="w-full flex flex-col gap-[8px]">
-                            <p className="font-lato-semibold text-[16px] leading-[16px] text-[rgba(34,37,38,0.7)]">
-                              {card.priceData.existingClientLabel}
-                            </p>
+                          <div className="w-full flex flex-col gap-[6.4px]">
+                            {card.priceData.existingClientLabel && (
+                              <p className="font-lato-semibold text-[16px] leading-[16px] text-[rgba(34,37,38,0.7)]">
+                                {card.priceData.existingClientLabel}
+                              </p>
+                            )}
                             <p className="font-lato-regular text-[14px] leading-[18px] text-[#222526]">
                               {card.priceData.existingClientPrice}
                             </p>
                             <p className="font-lato-regular text-[14px] leading-[16px] text-[rgba(34,37,38,0.5)]">
-                              {card.priceData.existingClientDescription}
+                              <i>{card.priceData.existingClientDescription}</i>
                             </p>
                           </div>
                         </div>
