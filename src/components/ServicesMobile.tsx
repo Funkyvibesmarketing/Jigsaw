@@ -228,9 +228,9 @@ export function ServicesMobile({
           style={{
             perspective: '2000px',
             minHeight: '450px',
-            maxHeight: '513px',
+            maxHeight: '523px',
             marginTop: '5px',
-            marginBottom: '40px',
+            marginBottom: '30px',
             paddingLeft: '7.5%',
             paddingRight: '7.5%',
             touchAction: 'pan-y'
@@ -422,7 +422,7 @@ export function ServicesMobile({
                     </div>
 
                     {/* Card content */}
-                    <div className="absolute flex flex-col gap-[16px] items-start left-[4.73%] right-[4.73%] text-[#222526] top-[calc(50%+86.5px)] -translate-y-1/2 z-10">
+                    <div className="absolute flex flex-col gap-[14px] items-start left-[4.73%] right-[4.73%] text-[#222526] top-[calc(50%+86.5px)] -translate-y-1/2 z-10">
                       {/* Type: Normal */}
                       {card.type === 'normal' && (
                         <>

@@ -76,6 +76,9 @@ export function TeamMobile({
   const [isDragging, setIsDragging] = useState(false);
   const hasSwiped = useRef(false);
 
+  // State for the Read More popup
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+
   // Only show first 3 team members
   const displayMembers = teamMembers.slice(0, 3);
   const totalSlides = 3;
@@ -335,7 +338,7 @@ export function TeamMobile({
                         </p>
 
                         {/* Member photo - responsive with reduced height */}
-                        <div className="w-full min-h-[200px] max-h-[260px] h-[30vh] mb-[20px] sm:mb-[24px] overflow-hidden flex-shrink-0">
+                        <div className="w-full min-h-[180px] max-h-[240px] h-[25vh] mb-[20px] sm:mb-[24px] overflow-hidden flex-shrink-0">
                           <img
                             alt={member.name}
                             className="w-full h-full object-cover"
@@ -343,11 +346,24 @@ export function TeamMobile({
                           />
                         </div>
 
-                        {/* Bio text - scrollable container with custom scrollbar */}
-                        <div className="flex-1 overflow-y-auto pr-2 bio-scrollbar min-h-0 touch-pan-y">
-                          <p className="font-['Lato:Regular',sans-serif] leading-[20px] sm:leading-[24px] not-italic text-[12px] sm:text-[14px] text-white tracking-[0.12px] sm:tracking-[0.14px]">
-                            {member.bio}
-                          </p>
+                        {/* Bio text - truncated with Read more button */}
+                        <div className="flex-1 flex flex-col mb-4">
+                          <div className="w-full" style={{ display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                            <p className="font-['Lato:Regular',sans-serif] leading-[20px] sm:leading-[24px] not-italic text-[12px] sm:text-[14px] text-white tracking-[0.12px] sm:tracking-[0.14px]">
+                              {member.bio}
+                            </p>
+                          </div>
+                          <div className="w-full flex justify-end mt-[12px]">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedMember(member);
+                              }}
+                              className="px-[16px] py-[12px] font-['Lato:Regular',sans-serif] text-[14px] sm:text-[14px] text-white cursor-pointer hover:bg-[rgba(255,255,255,0.1)] transition-colors"
+                            >
+                              Read more
+                            </button>
+                          </div>
                         </div>
 
                         {/* LinkedIn Button */}
@@ -403,6 +419,50 @@ export function TeamMobile({
                 </div>
               </div>
             </div>
+
+            {/* Read More Popup Overlay */}
+            <AnimatePresence>
+              {selectedMember && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="fixed inset-0 z-[100] flex items-center justify-center p-[24px]"
+                  style={{ backdropFilter: 'blur(10px)', backgroundColor: 'rgba(23, 40, 52, 0.4)' }}
+                  onClick={() => setSelectedMember(null)}
+                >
+                  <motion.div
+                    initial={{ scale: 0.95, y: 20 }}
+                    animate={{ scale: 1, y: 0 }}
+                    exit={{ scale: 0.95, y: 20 }}
+                    transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 25 }}
+                    className="rounded-[12px] p-[16px] w-full max-w-[400px] max-h-[85vh] flex flex-col relative shadow-[0px_8px_32px_rgba(0,0,0,0.4)] overflow-hidden pointer-events-auto"
+                    style={{ backgroundColor: '#EDF2F4' }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {/* Close Button */}
+                    <button
+                      onClick={() => setSelectedMember(null)}
+                      className="absolute top-5 right-5 bg-transparent border-none p-2 cursor-pointer text-[#2c4657] hover:opacity-70 transition-opacity z-10"
+                      aria-label="Close"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+
+                    <h3 className="font-['Lato:Bold',sans-serif] text-[20px] text-[#2c4657] mb-5 pr-8">{selectedMember.name}</h3>
+
+                    <div className="overflow-y-auto pr-2 bio-scrollbar flex-1 pb-[10px] pt-[10px]">
+                      <p className="font-['Lato:Regular',sans-serif] leading-[28px] text-[15px] text-[#2c4657] whitespace-pre-wrap tracking-[0.14px]">
+                        {selectedMember.bio}
+                      </p>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         </>
       )}
