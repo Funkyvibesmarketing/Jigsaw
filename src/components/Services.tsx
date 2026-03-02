@@ -620,9 +620,17 @@ export function Services({
                             {currentCard.priceData.existingClientZeroPrice}
                           </p>
                         )}
-                        <p className="font-lato-regular leading-[28px] text-[20px] text-[rgba(34,37,38,0.5)] w-full">
-                          <i>{currentCard.priceData.newClientDescription}</i>
-                        </p>
+                        {currentCard.priceData.newClientDescription && (
+                          <p className="font-lato-regular leading-[28px] text-[20px] text-[rgba(34,37,38,0.5)] w-full">
+                            {currentCard.priceData.newClientDescription}
+                          </p>
+                        )}
+
+                        {currentCard.priceData.newClientDescription2 && (
+                          <p className="font-lato-regular leading-[36px] text-[20px] w-full">
+                            {currentCard.priceData.newClientDescription2}
+                          </p>
+                        )}
                       </div>
                     </div>
 

@@ -18,6 +18,7 @@ export interface DetailCard {
     newClientSubLabel?: string;
     newClientPrice: string;
     newClientDescription?: string;
+    newClientDescription2?: string;
     existingClientLabel?: string;
     existingClientZeroPrice?: string;
     existingClientPrice?: string;
@@ -330,8 +331,9 @@ export const defaultServices: Service[] = [
           newClientLabel: "The Money Bit",
           //newClientSubLabel: "Simple, transparent fees.",
           newClientPrice: "Our advice fee:",
-          newClientDescription: "We’re paid by the insurer when cover is placed.",
-          //existingClientLabel: "",
+          //newClientDescription: "We’re paid by the insurer when cover is placed.",
+          newClientDescription2: "We’re paid by the insurer when cover is placed.",
+          //existingClientLabel: "aa",
           //existingClientSubLabel: "For our Existing Clients",
           existingClientZeroPrice: "£0",
           existingClientPrice: "That doesn’t change our advice — it simply means protection guidance is accessible, properly structured, and built around you from day one.",
