@@ -3906,6 +3906,11 @@
     letter-spacing: 16px;
   }
 
+  .tracking-\[18px\] {
+    --tw-tracking: 18px;
+    letter-spacing: 18px;
+  }
+
   .tracking-\[20px\] {
     --tw-tracking: 20px;
     letter-spacing: 20px;

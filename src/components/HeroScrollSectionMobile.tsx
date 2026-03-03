@@ -347,12 +347,13 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
           </motion.div>
 
           {/* Sentence - Step 3 */}
-          <motion.p 
-            className="absolute left-1/2 translate-x-[-50%] font-lato-semibold leading-[48px] not-italic text-[30px] text-center text-white tracking-[20px] top-[calc(50%+225px)] w-[100%] max-w-[382px] px-4 z-[15]"
+          <motion.div
+            className="absolute left-1/2 translate-x-[-50%] text-center top-[calc(50%+225px)] w-[100%] max-w-[382px] px-4 z-[15]"
             style={{ opacity: sentenceOpacity, y: sentenceY }}
           >
-            ADVICE <br />THAT FITS
-          </motion.p>
+            <p className="font-lato-semibold leading-[48px] not-italic text-[30px] tracking-[20px] text-white">ADVICE</p>
+            <p className="font-lato-semibold leading-[48px] not-italic text-[30px] tracking-[20px] text-white">THAT FITS</p>
+          </motion.div>
 
           {/* Down Arrow Button - Step 5 */}
           <motion.div
