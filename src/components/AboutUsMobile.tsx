@@ -219,6 +219,46 @@ export function AboutUsMobile({ onScrollProgress }: {
   const onScrollProgressRef = useRef(onScrollProgress);
   const viewportHeight = window.innerHeight;
 
+  // Swipe handling for carousel (pointer events)
+  const touchStartXRef = useRef<number | null>(null);
+  const touchDeltaXRef = useRef<number>(0);
+  const isPointerDownRef = useRef<boolean>(false);
+
+  const handlePointerDownCarousel = (e: React.PointerEvent) => {
+    touchStartXRef.current = e.clientX;
+    touchDeltaXRef.current = 0;
+    isPointerDownRef.current = true;
+    try { (e.target as Element).setPointerCapture?.(e.pointerId); } catch (_) {}
+  };
+
+  const handlePointerMoveCarousel = (e: React.PointerEvent) => {
+    if (!isPointerDownRef.current || touchStartXRef.current === null) return;
+    touchDeltaXRef.current = e.clientX - touchStartXRef.current;
+  };
+
+  const handlePointerUpCarousel = (e: React.PointerEvent) => {
+    if (!isPointerDownRef.current) return;
+    isPointerDownRef.current = false;
+    try { (e.target as Element).releasePointerCapture?.(e.pointerId); } catch (_) {}
+    const delta = touchDeltaXRef.current;
+    const threshold = 40; // px
+    if (Math.abs(delta) > threshold) {
+      if (delta > 0) {
+        setCarouselIndex((prev) => (prev - 1 + carouselTexts.length) % carouselTexts.length);
+      } else {
+        setCarouselIndex((prev) => (prev + 1) % carouselTexts.length);
+      }
+    }
+    touchStartXRef.current = null;
+    touchDeltaXRef.current = 0;
+  };
+
+  const handlePointerCancelCarousel = () => {
+    isPointerDownRef.current = false;
+    touchStartXRef.current = null;
+    touchDeltaXRef.current = 0;
+  };
+
   // Update ref when callback changes
   useEffect(() => {
     onScrollProgressRef.current = onScrollProgress;
@@ -341,7 +381,14 @@ export function AboutUsMobile({ onScrollProgress }: {
           </p>
 
           {/* Carousel Text */}
-          <div className="relative min-h-[180px] flex flex-col items-center justify-start overflow-visible mb-10 pointer-events-none select-none">
+          <div
+            className="relative min-h-[180px] flex flex-col items-center justify-start overflow-visible mb-10 pointer-events-auto select-none"
+            style={{ touchAction: 'pan-y' }}
+            onPointerDown={handlePointerDownCarousel}
+            onPointerMove={handlePointerMoveCarousel}
+            onPointerUp={handlePointerUpCarousel}
+            onPointerCancel={handlePointerCancelCarousel}
+          >
             <AnimatePresence mode="wait">
               <motion.div
                 key={carouselTexts[carouselIndex].id}
