@@ -494,7 +494,7 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: 
         </div>
 
         {/* PROGRESS BAR CONTAINER - Completely separate, always visible */}
-        <div className="absolute bottom-0 left-0 right-0 pointer-events-none z-10">
+        <div className="hidden absolute bottom-0 left-0 right-0 pointer-events-none z-10">
           <BottomProgressBar
             step2BarOpacities={step2BarOpacities}
             step3BarOpacities={step3BarOpacities}
