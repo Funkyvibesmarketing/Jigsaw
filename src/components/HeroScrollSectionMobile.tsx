@@ -352,7 +352,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
             style={{ opacity: sentenceOpacity, y: sentenceY }}
           >
             <p className="font-lato-semibold leading-[48px] not-italic text-[30px] tracking-[20px] text-white">ADVICE</p>
-            <p className="font-lato-semibold leading-[48px] not-italic text-[30px] tracking-[20px] text-white">THAT FITS</p>
+            <p className="font-lato-semibold pl-[14px] leading-[48px] not-italic text-[30px] tracking-[20px] text-white">THAT FITS</p>
           </motion.div>
 
           {/* Down Arrow Button - Step 5 */}

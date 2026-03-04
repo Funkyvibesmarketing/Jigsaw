@@ -3615,6 +3615,10 @@
     padding-left: calc(var(--spacing) * 4);
   }
 
+  .pl-\[14px\] {
+    padding-left: 14px;
+  }
+
   .pl-\[17px\] {
     padding-left: 17px;
   }
