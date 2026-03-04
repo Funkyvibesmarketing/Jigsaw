@@ -203,6 +203,7 @@ export function AboutUsMobile({ onScrollProgress }: {
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
 
   const handleLearnMoreMClick = () => {
     if (containerRef.current) {
@@ -212,6 +213,22 @@ export function AboutUsMobile({ onScrollProgress }: {
         behavior: 'smooth'
       });
     }
+  };
+
+  // Animation variants for carousel
+  const variants = {
+    enter: (direction: 'left' | 'right') => ({
+      x: direction === 'left' ? 50 : -50,
+      opacity: 0
+    }),
+    center: {
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction: 'left' | 'right') => ({
+      x: direction === 'left' ? -50 : 50,
+      opacity: 0
+    })
   };
 
   const [carouselIndex, setCarouselIndex] = useState(0);
@@ -244,8 +261,10 @@ export function AboutUsMobile({ onScrollProgress }: {
     const threshold = 40; // px
     if (Math.abs(delta) > threshold) {
       if (delta > 0) {
+        setSwipeDirection('right');
         setCarouselIndex((prev) => (prev - 1 + carouselTexts.length) % carouselTexts.length);
       } else {
+        setSwipeDirection('left');
         setCarouselIndex((prev) => (prev + 1) % carouselTexts.length);
       }
     }
@@ -383,18 +402,20 @@ export function AboutUsMobile({ onScrollProgress }: {
           {/* Carousel Text */}
           <div
             className="relative min-h-[180px] flex flex-col items-center justify-start overflow-visible mb-10 pointer-events-auto select-none"
-            style={{ touchAction: 'pan-y' }}
+            style={{ touchAction: 'pan-x' }}
             onPointerDown={handlePointerDownCarousel}
             onPointerMove={handlePointerMoveCarousel}
             onPointerUp={handlePointerUpCarousel}
             onPointerCancel={handlePointerCancelCarousel}
           >
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait" custom={swipeDirection}>
               <motion.div
                 key={carouselTexts[carouselIndex].id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
+                custom={swipeDirection}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
                 transition={{ duration: 0.5, ease: "easeInOut" }}
                 className="w-full flex flex-col gap-0"
               >
@@ -422,6 +443,7 @@ export function AboutUsMobile({ onScrollProgress }: {
               onPointerDown={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
+                setSwipeDirection('right');
                 setCarouselIndex((prev) => (prev - 1 + carouselTexts.length) % carouselTexts.length);
               }}
               className="content-stretch flex items-center justify-center p-[3px] relative rounded-[24px] shrink-0 size-[48px] transition-all duration-200 ease-out active:bg-[rgba(46,196,182,0.1)] group touch-manipulation"
@@ -487,6 +509,7 @@ export function AboutUsMobile({ onScrollProgress }: {
               onPointerDown={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
+                setSwipeDirection('left');
                 setCarouselIndex((prev) => (prev + 1) % carouselTexts.length);
               }}
               className="content-stretch flex items-center justify-center p-[3px] relative rounded-[24px] shrink-0 size-[48px] transition-all duration-200 ease-out active:bg-[rgba(46,196,182,0.1)] group touch-manipulation"
