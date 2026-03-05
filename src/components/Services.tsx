@@ -562,6 +562,10 @@ export function Services({
                       </p>
                     )}
 
+                    <p className="font-inter-regular leading-[24px] relative shrink-0 text-[14px] w-full">
+                        <i>Your home may be repossessed if you do not keep up with your mortgage repayments</i>
+                    </p>
+
                     {/* Fallback to text if no description */}
                     {!currentCard.description && currentCard.text && (
                       <p className="font-lato-regular leading-[24px] relative shrink-0 text-[20px] w-full">

@@ -404,7 +404,7 @@ export function ServicesMobile({
                       {/* Info Bar for Type: Normal - positioned above image */}
                       {card.type === 'normal' && (
                         <div 
-                          className="absolute left-[4.73%] right-[4.73%] top-[20px] z-10 flex items-center gap-[12px] w-[calc(100%-9.46%)] p-[8px]"
+                          className="absolute left-[4.73%] right-[4.73%] top-[16px] z-10 flex items-center gap-[12px] w-[calc(100%-9.46%)] p-[8px]"
                           style={{
                             borderRadius: '8px',
                             background: 'rgba(0, 0, 0, 0.50)',
