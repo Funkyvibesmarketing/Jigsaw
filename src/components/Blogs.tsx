@@ -490,7 +490,7 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
               className="absolute left-[calc(50%+0.5px)] bottom-0 translate-x-[-50%] z-30"
               style={{ opacity: titleOpacity, y: titleY }}
             >
-              <p className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[#222526] text-[110px] text-center text-nowrap tracking-[40px] whitespace-pre">
+              <p className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[#2C4657] text-[110px] text-center text-nowrap tracking-[40px] whitespace-pre">
                 BLOGS
               </p>
             </motion.div>
