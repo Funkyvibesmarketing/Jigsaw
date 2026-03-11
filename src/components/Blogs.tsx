@@ -384,6 +384,7 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [popupBlog, setPopupBlog] = useState<BlogData | null>(null);
+  const [pendingPopupBlog, setPendingPopupBlog] = useState<BlogData | null>(null);
 
   const width = window.innerWidth;
   const height = window.innerHeight;
@@ -524,6 +525,12 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
                     setActiveIndex(swiper.activeIndex);
                   }}
                   onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+                  onSlideChangeTransitionEnd={() => {
+                    if (pendingPopupBlog) {
+                      setPopupBlog(pendingPopupBlog);
+                      setPendingPopupBlog(null);
+                    }
+                  }}
                   className="!pb-[80px]"
                   style={{
                     overflow: 'visible'
@@ -532,7 +539,18 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
                   {blogData.map((blog, index) => (
                     <SwiperSlide key={`${blog.id}-${index}`} className="!w-auto flex items-end justify-center">
                       {({ isActive }) => (
-                        <BlogCard blog={blog} isActive={isActive} onClick={() => openPopup(blog)} />
+                        <BlogCard
+                          blog={blog}
+                          isActive={isActive}
+                          onClick={() => {
+                            if (isActive) {
+                              openPopup(blog);
+                            } else {
+                              swiperInstance?.slideToLoop(index);
+                              setPendingPopupBlog(blog);
+                            }
+                          }}
+                        />
                       )}
                     </SwiperSlide>
                   ))}
