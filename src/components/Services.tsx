@@ -96,6 +96,11 @@ export function Services({
   const containerRef = useRef<HTMLDivElement>(null);
   const activeCategoryRef = useRef<HTMLDivElement>(null);
   const [activeCategoryWidth, setActiveCategoryWidth] = useState(0);
+  const isScrollingRef = useRef(false);
+  const cardStackRef = useRef<HTMLDivElement>(null);
+  // Refs to hold live state for the stable wheel listener
+  const detailCardIndexRef = useRef(0);
+  const currentServiceRef = useRef(services[0]);
 
   const width = window.innerWidth;
   const height = window.innerHeight;
@@ -113,6 +118,10 @@ export function Services({
   const currentService = services[currentServiceIndex];
   const prevServiceIndex = (currentServiceIndex - 1 + services.length) % services.length;
   const nextServiceIndex = (currentServiceIndex + 1) % services.length;
+
+  // Keep refs in sync with state for use in stable wheel listener
+  detailCardIndexRef.current = detailCardIndex;
+  currentServiceRef.current = currentService;
 
   useEffect(() => {
     const checkMobile = () => {
@@ -145,10 +154,6 @@ export function Services({
   // Enable pointer events right after mask reveal completes (0.68)
   const servicesSectionPointerEvents = scrollProgress >= 0.69 ? 'auto' : 'none';
 
-  // Only show if scroll progress is in the Services range (0.55+) - when mask cutout starts
-  if (scrollProgress < 0.55) {
-    return null;
-  }
 
   // Category navigation (top arrows)
   const handleCategoryPrev = () => {
@@ -183,6 +188,49 @@ export function Services({
       setNavigationSource('card');
     }
   };
+
+
+  // Stable wheel listener - reads live state via refs, never needs to be re-registered
+  useEffect(() => {
+    const stack = cardStackRef.current;
+    if (!stack) return;
+
+    const onWheel = (e: WheelEvent) => {
+      // Always prevent page scroll when mouse is over the card stack
+      e.preventDefault();
+
+      if (isScrollingRef.current) return;
+
+      const idx = detailCardIndexRef.current;
+      const svc = currentServiceRef.current;
+
+      if (Math.abs(e.deltaY) > 20) {
+        if (e.deltaY > 0) {
+          // Scroll down -> advance to next card
+          if (idx < svc.detailCards.length - 1) {
+            setDirection('left');
+            setDetailCardIndex(prev => prev + 1);
+            setNavigationSource('card');
+            isScrollingRef.current = true;
+            setTimeout(() => { isScrollingRef.current = false; }, 800);
+          }
+        } else {
+          // Scroll up -> go to previous card
+          if (idx > 0) {
+            setDirection('right');
+            setDetailCardIndex(prev => prev - 1);
+            setNavigationSource('card');
+            isScrollingRef.current = true;
+            setTimeout(() => { isScrollingRef.current = false; }, 800);
+          }
+        }
+      }
+    };
+
+    stack.addEventListener('wheel', onWheel, { passive: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => stack.removeEventListener('wheel', onWheel);
+  }, []); // Empty deps: listener is set up once and reads state via refs
 
   const currentCard = currentService.detailCards[detailCardIndex];
 
@@ -288,6 +336,8 @@ export function Services({
   const leftCategoryRight = `calc(50% - ${halfActiveCategoryWidth + minGap}px)`;
   const rightCategoryLeft = `calc(50% + ${halfActiveCategoryWidth + minGap}px)`;
 
+  if (scrollProgress < 0.55) return null;
+
   return (
     <motion.div
       ref={containerRef}
@@ -370,9 +420,36 @@ export function Services({
       </div>
 
       {/* Card Stack - Desktop Only */}
-      <div className="hidden md:block absolute left-1/2 top-1/2 z-10" style={{
-        transform: 'translate(-50%, -50%) scale(' + scale + ')'
-      }}>
+      <div 
+        ref={cardStackRef}
+        data-scroll-lock
+        className="hidden md:block absolute left-1/2 top-1/2 z-10" 
+        style={{
+          transform: 'translate(-50%, -50%) scale(' + scale + ')'
+        }}
+        onMouseEnter={() => window.dispatchEvent(new Event('lenisStop'))}
+        onMouseLeave={() => window.dispatchEvent(new Event('lenisStart'))}
+        onWheel={(e) => {
+          if (isScrollingRef.current) return;
+          const idx = detailCardIndexRef.current;
+          const svc = currentServiceRef.current;
+          if (Math.abs(e.deltaY) > 20) {
+            if (e.deltaY > 0 && idx < svc.detailCards.length - 1) {
+              setDirection('left');
+              setDetailCardIndex(prev => prev + 1);
+              setNavigationSource('card');
+              isScrollingRef.current = true;
+              setTimeout(() => { isScrollingRef.current = false; }, 800);
+            } else if (e.deltaY < 0 && idx > 0) {
+              setDirection('right');
+              setDetailCardIndex(prev => prev - 1);
+              setNavigationSource('card');
+              isScrollingRef.current = true;
+              setTimeout(() => { isScrollingRef.current = false; }, 800);
+            }
+          }
+        }}
+      >
         {/* Back Card (furthest back, center-bottom) */}
         <motion.div
           key={`back-card-static-${currentService.id}`}
