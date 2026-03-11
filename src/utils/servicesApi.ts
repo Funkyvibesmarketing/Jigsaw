@@ -47,7 +47,7 @@ export const defaultServices: Service[] = [
       {
         id: 1,
         type: 'normal',
-        title: "The Big Picture",
+        title: "First Time Buyers",
         description: `<p>Buying your first home can feel like learning a new language — one spoken entirely by banks.</p><br />
                       <p>We’ll translate the jargon, explain what matters, and help you make confident choices without feeling rushed.</p><br />
                       <p>From working out what you can borrow to getting your offer over the line, we’ll keep things calm, clear, and moving.</p>`,
@@ -100,7 +100,7 @@ export const defaultServices: Service[] = [
       {
         id: 1,
         type: 'normal',
-        title: "The Big Picture",
+        title: "Home Mover Mortgages",
         description: `<p>Moving house is exciting… and slightly chaotic.</p><br />
                       <p>You might be able to take your mortgage with you, or it might make more sense to switch to something that fits your new home and lifestyle.</p><br />
                       <p>Either way, we’ll explain it clearly and keep the mortgage side organised, so the move feels manageable.</p>`,
@@ -153,7 +153,7 @@ export const defaultServices: Service[] = [
       {
         id: 1,
         type: 'normal',
-        title: "The Big Picture",
+        title: "Remortgage",
         description: `<p>Rates change. Life changes. Your mortgage should keep up.</p><br />
                       <p>Whether you want a better deal, to borrow more, or to escape your lender’s “surprise” fees, we’ll help you switch smoothly and sensibly.</p><br />
                       <p>We’ll look at timing, true cost, and what actually benefits you - not just the headline rate.</p>`,
@@ -206,7 +206,7 @@ export const defaultServices: Service[] = [
       {
         id: 1,
         type: 'normal',
-        title: "The Big Picture",
+        title: "Mortgages for Military Personnel",
         description: `<p>Forces life doesn’t come with neat paperwork or a predictable schedule.</p><br />
                       <p>We get postings, deployments, and “can we do this at 7pm?” calls - and we build the mortgage process around that reality.</p><br />
                       <p>Clear advice, flexible appointments, and a steady hand to keep things moving when life changes fast.</p>`,
@@ -259,7 +259,7 @@ export const defaultServices: Service[] = [
       {
         id: 1,
         type: 'normal',
-        title: "The Big Picture",
+        title: "Protection",
         description: `<P><b>Talking about protection isn’t exactly dinner-party chat. But not planning for it? That’s usually far more expensive.</b></P><br />
                       <P>We’ll explain what matters, what doesn’t, and how each type of cover works in real life — without scare tactics or pressure.</P><br />
                       <P>Life changes. Income shifts. Health isn’t guaranteed. Protection simply makes sure your plans don’t fall apart if something unexpected happens.</P>`,
