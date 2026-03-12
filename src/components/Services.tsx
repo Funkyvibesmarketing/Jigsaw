@@ -39,11 +39,11 @@ function CategoryArrowButton({ direction, onClick }: { direction: 'left' | 'righ
       <div className="flex items-center justify-center relative shrink-0 z-10 w-full h-full">
         {direction === 'left' ? (
           <svg xmlns="http://www.w3.org/2000/svg" width="30" height="19" viewBox="0 0 30 19" fill="none" className="transition-transform duration-200 group-hover:scale-110">
-            <path d="M8.91931 17.7855C8.62522 14.9708 6.52957 9.33734 0.499674 9.32147M8.9648 0.49984C8.6559 3.313 6.53063 8.93535 0.500732 8.91948M4.92212 9.13211L29.0417 9.19559" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="1.43 1.43"/>
+            <path d="M8.91931 17.7855C8.62522 14.9708 6.52957 9.33734 0.499674 9.32147M8.9648 0.49984C8.6559 3.313 6.53063 8.93535 0.500732 8.91948M4.92212 9.13211L29.0417 9.19559" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="1.43 1.43" />
           </svg>
         ) : (
           <svg xmlns="http://www.w3.org/2000/svg" width="30" height="19" viewBox="0 0 30 19" fill="none" className="transition-transform duration-200 group-hover:scale-110">
-            <path d="M20.6217 17.7855C20.9158 14.9708 23.0114 9.33734 29.0413 9.32147M20.5762 0.49984C20.8851 3.313 23.0104 8.93535 29.0403 8.91948M24.6189 9.13211L0.499307 9.19559" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="1.43 1.43"/>
+            <path d="M20.6217 17.7855C20.9158 14.9708 23.0114 9.33734 29.0413 9.32147M20.5762 0.49984C20.8851 3.313 23.0104 8.93535 29.0403 8.91948M24.6189 9.13211L0.499307 9.19559" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="1.43 1.43" />
           </svg>
         )}
       </div>
@@ -377,44 +377,51 @@ export function Services({
       </div>
 
       {/* Category Carousel - Desktop Only */}
-      <div className="hidden md:block absolute left-1/2 top-[50px] -translate-x-1/2 z-50 w-full">
-        <div className="flex items-center justify-center gap-6">
-          {/* Previous Category Name */}
-          <p
-            className="font-lato-regular text-[32px] text-[rgba(255,255,255,0.4)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden w-[240px] text-center mr-4"
-            onClick={handleCategoryPrev}
-          >
-            {services[prevServiceIndex].title}
-          </p>
-
-          {/* Left Arrow */}
-          <CategoryArrowButton direction="left" onClick={handleCategoryPrev} />
-
-          {/* Active Category Name */}
-          <div ref={activeCategoryRef} className="px-4">
-            <p className="font-lato-regular text-[60px] text-white text-center whitespace-nowrap">
-              {currentService.title}
+      <div className="hidden md:block absolute left-0 top-[50px] z-50 w-full px-8">
+        <div className="relative flex items-center justify-center w-full max-w-[1600px] mx-auto h-[60px]">
+          {/* Left - Previous Category Name */}
+          <div className="absolute left-0 flex items-center h-full">
+            <p
+              className="font-lato-regular text-[32px] text-[rgba(255,255,255,0.4)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden text-ellipsis max-w-[300px]"
+              onClick={handleCategoryPrev}
+            >
+              {services[prevServiceIndex].title}
             </p>
           </div>
 
-          {/* Right Arrow */}
-          <CategoryArrowButton direction="right" onClick={handleCategoryNext} />
+          {/* Center - Active Category Navigation */}
+          <div className="flex items-center justify-center gap-6">
+            {/* Left Arrow */}
+            <CategoryArrowButton direction="left" onClick={handleCategoryPrev} />
 
-          {/* Next Category Name */}
-          <p 
-            className="font-lato-regular text-[32px] text-[rgba(255,255,255,0.4)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden w-[240px] text-center ml-4"
-            onClick={handleCategoryNext}
-          >
-            {services[nextServiceIndex].title}
-          </p>
+            {/* Active Category Name */}
+            <div ref={activeCategoryRef} className="px-4">
+              <p className="font-lato-regular text-[60px] text-white text-center whitespace-nowrap">
+                {currentService.title}
+              </p>
+            </div>
+
+            {/* Right Arrow */}
+            <CategoryArrowButton direction="right" onClick={handleCategoryNext} />
+          </div>
+
+          {/* Right - Next Category Name */}
+          <div className="absolute right-0 flex items-center h-full">
+            <p
+              className="font-lato-regular text-[32px] text-[rgba(255,255,255,0.4)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden text-ellipsis max-w-[300px]"
+              onClick={handleCategoryNext}
+            >
+              {services[nextServiceIndex].title}
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Card Stack - Desktop Only */}
-      <div 
+      <div
         ref={cardStackRef}
         data-scroll-lock
-        className="hidden md:block absolute left-1/2 top-1/2 z-10" 
+        className="hidden md:block absolute left-1/2 top-1/2 z-10"
         style={{
           transform: 'translate(-50%, -50%) scale(' + scale + ')'
         }}
@@ -633,7 +640,7 @@ export function Services({
                     )}
 
                     <p className="font-inter-regular leading-[24px] relative shrink-0 text-[14px] w-full">
-                        <i>Your home may be repossessed if you do not keep up with your mortgage repayments</i>
+                      <i>Your home may be repossessed if you do not keep up with your mortgage repayments</i>
                     </p>
 
                     {/* Fallback to text if no description */}
@@ -677,14 +684,14 @@ export function Services({
                     {/* New Client Pricing */}
                     <div className="content-stretch flex flex-col gap-[20px] items-start w-full">
                       <p className="font-lato-bold leading-[36px] text-[#222526] text-[28px] w-full">
-                          {currentCard.priceData.newClientLabel}
+                        {currentCard.priceData.newClientLabel}
                       </p>
                       {currentCard.priceData.newClientSubLabel && (
                         <p className="font-lato-bold leading-[28px] not-italic text-[#222526] text-[24px] w-full">
                           {currentCard.priceData.newClientSubLabel}
                         </p>
                       )}
-                      
+
                       <div className="content-stretch flex flex-col gap-[10px] items-start w-full">
                         <p className="font-lato-regular leading-[36px] text-[#222526] text-[20px] w-full">
                           {currentCard.priceData.newClientPrice}
@@ -752,9 +759,9 @@ export function Services({
             </div>
           </motion.div>
         </AnimatePresence>
-        
+
         {/* Dot Indicators */}
-        <div 
+        <div
           className="absolute flex flex-col gap-[20px] z-50"
           style={{
             left: 'calc(50% + 500px)',
@@ -896,7 +903,7 @@ export function Services({
       </div>
 
       {/* Bottom Navigation - Card Counter and Arrows - Desktop Only */}
-      <div className="hidden md:flex absolute content-stretch gap-[32px] items-center left-1/2 -translate-x-1/2 bottom-[15px]">
+      {/* <div className="hidden md:flex absolute content-stretch gap-[32px] items-center left-1/2 -translate-x-1/2 bottom-[15px]">
         <CardArrowButton
           direction="left"
           onClick={handleCardNext}
@@ -910,7 +917,7 @@ export function Services({
           onClick={handleCardPrev}
           disabled={detailCardIndex === 0}
         />
-      </div>
+      </div> */}
 
       {/* Mobile Version - Shows service cards directly after zoom */}
       <div className="md:hidden flex flex-col items-center justify-center h-screen px-4 pb-8">
