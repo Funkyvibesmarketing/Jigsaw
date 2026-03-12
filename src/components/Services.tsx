@@ -10,7 +10,7 @@ function CategoryArrowButton({ direction, onClick }: { direction: 'left' | 'righ
   return (
     <button
       onClick={onClick}
-      className="relative content-stretch flex items-center justify-center p-[4px] rounded-[32px] size-[64px] transition-all duration-200 ease-out group overflow-hidden"
+      className="relative content-stretch flex items-center justify-center p-[4px] rounded-full size-[48px] transition-all duration-200 ease-out group overflow-hidden"
       style={{
         background: 'rgba(255, 255, 255, 0.05)',
         backdropFilter: 'blur(12px)',
@@ -24,32 +24,28 @@ function CategoryArrowButton({ direction, onClick }: { direction: 'left' | 'righ
       {/* Border overlay */}
       <div
         aria-hidden="true"
-        className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[32px] transition-all duration-200 ease-out group-hover:border-[#2ec4b6] group-hover:border-2"
+        className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-full transition-all duration-200 ease-out group-hover:border-[#2ec4b6] group-hover:border-2"
       />
 
       {/* Hover glow effect */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 rounded-[32px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-out pointer-events-none"
+        className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-out pointer-events-none"
         style={{
           background: 'radial-gradient(circle at center, rgba(46, 196, 182, 0.15) 0%, transparent 70%)'
         }}
       />
 
-      <div className="flex items-center justify-center relative shrink-0 z-10">
-        <div className={`flex-none ${direction === 'left' ? 'rotate-[180deg] scale-y-[-100%]' : ''}`}>
-          <div className="overflow-clip relative size-[40px]">
-            <div className="absolute flex inset-[28.38%_14.25%_28.21%_14.29%] items-center justify-center">
-              <div className="flex-none h-[17.286px] rotate-[359.849deg] w-[28.542px]">
-                <div className="relative size-full">
-                  <div className="absolute inset-[-2.89%_-1.75%]">
-                    <img alt="" className="block max-w-none size-full" height="18.286" src={imgVector3} width="29.542" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="flex items-center justify-center relative shrink-0 z-10 w-full h-full">
+        {direction === 'left' ? (
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="19" viewBox="0 0 30 19" fill="none" className="transition-transform duration-200 group-hover:scale-110">
+            <path d="M8.91931 17.7855C8.62522 14.9708 6.52957 9.33734 0.499674 9.32147M8.9648 0.49984C8.6559 3.313 6.53063 8.93535 0.500732 8.91948M4.92212 9.13211L29.0417 9.19559" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="1.43 1.43"/>
+          </svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="19" viewBox="0 0 30 19" fill="none" className="transition-transform duration-200 group-hover:scale-110">
+            <path d="M20.6217 17.7855C20.9158 14.9708 23.0114 9.33734 29.0413 9.32147M20.5762 0.49984C20.8851 3.313 23.0104 8.93535 29.0403 8.91948M24.6189 9.13211L0.499307 9.19559" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="1.43 1.43"/>
+          </svg>
+        )}
       </div>
     </button>
   );
@@ -381,41 +377,37 @@ export function Services({
       </div>
 
       {/* Category Carousel - Desktop Only */}
-      <div className="hidden md:block absolute content-stretch left-1/2 top-[50px] translate-x-[-50%] w-[80vw] max-w-[1800px] z-50">
-        <div className="relative w-full h-[80px]">
-          {/* Left side: Button + Category name - FIXED position */}
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center gap-4 max-w-[15%]">
-            {/* Left category navigation button */}
-            <div className="shrink-0 size-[64px]">
-              <CategoryArrowButton direction="left" onClick={handleCategoryPrev} />
-            </div>
-            {/* Left category name - truncate from LEFT side without ellipsis */}
-            <p
-              className="font-lato-regular leading-[normal] not-italic text-[32px] text-[rgba(255,255,255,0.4)] text-nowrap pointer-events-none overflow-hidden"
-              style={{ direction: 'rtl', textAlign: 'left' }}
-            >
-              {services[prevServiceIndex].title}
-            </p>
-          </div>
+      <div className="hidden md:block absolute left-1/2 top-[50px] -translate-x-1/2 z-50 w-full">
+        <div className="flex items-center justify-center gap-6">
+          {/* Previous Category Name */}
+          <p
+            className="font-lato-regular text-[28px] text-[rgba(255,255,255,0.3)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden max-w-[200px] mr-8"
+            style={{ direction: 'rtl', textAlign: 'left' }}
+            onClick={handleCategoryPrev}
+          >
+            {services[prevServiceIndex].title}
+          </p>
 
-          {/* Center category name - active - absolutely centered */}
-          <div ref={activeCategoryRef} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-16">
-            <p className="font-lato-regular leading-[normal] not-italic text-[60px] text-white text-center text-nowrap pointer-events-none">
+          {/* Left Arrow */}
+          <CategoryArrowButton direction="left" onClick={handleCategoryPrev} />
+
+          {/* Active Category Name */}
+          <div ref={activeCategoryRef} className="px-4">
+            <p className="font-lato-regular text-[60px] text-white text-center whitespace-nowrap">
               {currentService.title}
             </p>
           </div>
 
-          {/* Right side: Category name + Button - FIXED position */}
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-4 max-w-[15%]">
-            {/* Right category name - truncate from RIGHT side without ellipsis */}
-            <p className="font-lato-regular leading-[normal] not-italic text-[32px] text-[rgba(255,255,255,0.4)] text-right text-nowrap pointer-events-none overflow-hidden">
-              {services[nextServiceIndex].title}
-            </p>
-            {/* Right category navigation button */}
-            <div className="shrink-0 size-[64px]">
-              <CategoryArrowButton direction="right" onClick={handleCategoryNext} />
-            </div>
-          </div>
+          {/* Right Arrow */}
+          <CategoryArrowButton direction="right" onClick={handleCategoryNext} />
+
+          {/* Next Category Name */}
+          <p 
+            className="font-lato-regular text-[28px] text-[rgba(255,255,255,0.3)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden max-w-[200px] ml-8"
+            onClick={handleCategoryNext}
+          >
+            {services[nextServiceIndex].title}
+          </p>
         </div>
       </div>
 
