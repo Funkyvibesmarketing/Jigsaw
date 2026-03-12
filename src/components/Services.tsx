@@ -378,11 +378,11 @@ export function Services({
 
       {/* Category Carousel - Desktop Only */}
       <div className="hidden md:block absolute left-0 top-[50px] z-50 w-full px-8">
-        <div className="relative flex items-center justify-center w-full max-w-[1600px] mx-auto h-[60px]">
+        <div className="relative flex items-center justify-center w-full max-w-[1600px] mx-auto h-[60px] gap-[64px]">
           {/* Left - Previous Category Name */}
-          <div className="absolute left-0 flex items-center h-full">
+          <div className="flex-1 flex justify-end items-center h-full">
             <p
-              className="font-lato-regular text-[32px] text-[rgba(255,255,255,0.4)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden text-ellipsis max-w-[300px]"
+              className="font-lato-regular text-[32px] text-[rgba(255,255,255,0.4)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden text-ellipsis max-w-[350px] text-right"
               onClick={handleCategoryPrev}
             >
               {services[prevServiceIndex].title}
@@ -390,7 +390,7 @@ export function Services({
           </div>
 
           {/* Center - Active Category Navigation */}
-          <div className="flex items-center justify-center gap-6">
+          <div className="flex items-center justify-center gap-6 shrink-0">
             {/* Left Arrow */}
             <CategoryArrowButton direction="left" onClick={handleCategoryPrev} />
 
@@ -406,9 +406,9 @@ export function Services({
           </div>
 
           {/* Right - Next Category Name */}
-          <div className="absolute right-0 flex items-center h-full">
+          <div className="flex-1 flex justify-start items-center h-full">
             <p
-              className="font-lato-regular text-[32px] text-[rgba(255,255,255,0.4)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden text-ellipsis max-w-[300px]"
+              className="font-lato-regular text-[32px] text-[rgba(255,255,255,0.4)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden text-ellipsis max-w-[350px] text-left"
               onClick={handleCategoryNext}
             >
               {services[nextServiceIndex].title}

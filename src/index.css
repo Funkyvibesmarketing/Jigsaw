@@ -2534,6 +2534,10 @@
     max-width: 800px;
   }
 
+  .max-w-\[900px\] {
+    max-width: 900px;
+  }
+
   .max-w-\[1113px\] {
     max-width: 1113px;
   }
@@ -2548,6 +2552,10 @@
 
   .max-w-\[1296px\] {
     max-width: 1296px;
+  }
+
+  .max-w-\[1600px\] {
+    max-width: 1600px;
   }
 
   .max-w-\[1800px\] {
@@ -2876,6 +2884,10 @@
 
   .gap-\[64px\] {
     gap: 64px;
+  }
+
+  .gap-\[120px\] {
+    gap: 120px;
   }
 
   .self-stretch {
