@@ -485,7 +485,7 @@ export function Services({
               animate={{ opacity: 0.5, x: 0, scale: 1 }}
               exit={navigationSource === 'category' ? { opacity: 0, x: direction === 'right' ? 0 : -100, scale: 0.95 } : false}
               transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="absolute bg-white h-[318px] left-[calc(50%-811.23px)] overflow-hidden rounded-[22.755px] top-[calc(50%+146px)] translate-x-[-50%] translate-y-[-50%] w-[545.549px] pointer-events-none"
+              className="absolute bg-white h-[318px] left-[calc(50%-830px)] overflow-hidden rounded-[22.755px] top-[calc(50%+25.5px)] translate-x-[-50%] translate-y-[-50%] w-[545.549px] pointer-events-none"
             >
               {/* Decorative background */}
               <div className="absolute" style={{ inset: prevCard.imageInset || '-107.69% -45.15% -64.94% 19.5%' }}>
@@ -759,6 +759,34 @@ export function Services({
             </div>
           </motion.div>
         </AnimatePresence>
+        
+        {/* Dot Indicators */}
+        <div 
+          className="absolute flex flex-col gap-[20px] z-50"
+          style={{
+            left: 'calc(50% + 500px)',
+            top: 'calc(50% + 25.5px)',
+            transform: 'translateY(-50%)'
+          }}
+        >
+          {currentService.detailCards.map((_, idx) => (
+            <motion.div
+              key={`dot-${idx}`}
+              className="w-[10px] h-[10px] rounded-full cursor-pointer"
+              animate={{
+                backgroundColor: detailCardIndex === idx ? "#0AD1B2" : "rgba(255, 255, 255, 0.2)",
+                scale: detailCardIndex === idx ? 1.2 : 1,
+                boxShadow: detailCardIndex === idx ? "0 0 8px rgba(10, 209, 178, 0.4)" : "none"
+              }}
+              transition={{ duration: 0.3 }}
+              onClick={() => {
+                setDirection(idx > detailCardIndex ? 'left' : 'right');
+                setDetailCardIndex(idx);
+                setNavigationSource('card');
+              }}
+            />
+          ))}
+        </div>
 
         {/* Right Preview Card */}
         {nextCard && (
@@ -769,7 +797,7 @@ export function Services({
               animate={{ opacity: 0.5, x: 0, scale: 1 }}
               exit={navigationSource === 'category' ? { opacity: 0, x: direction === 'right' ? 100 : 0, scale: 0.95 } : false}
               transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="absolute bg-white h-[318px] left-[calc(50%+812.5px)] overflow-hidden rounded-[22.755px] top-[calc(50%+146px)] translate-x-[-50%] translate-y-[-50%] w-[545.549px] pointer-events-none"
+              className="absolute bg-white h-[318px] left-[calc(50%+830px)] overflow-hidden rounded-[22.755px] top-[calc(50%+25.5px)] translate-x-[-50%] translate-y-[-50%] w-[545.549px] pointer-events-none"
             >
               {/* Decorative background */}
               <div className="absolute" style={{ inset: nextCard.imageInset || '-107.69% -45.15% -64.94% 19.5%' }}>

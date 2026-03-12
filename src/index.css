@@ -843,6 +843,10 @@
     top: calc(50% + 146px);
   }
 
+  .top-\[calc\(50\%\+25\.5px\)\] {
+    top: calc(50% + 25.5px);
+  }
+
   .top-\[calc\(50\%\+179\.5px\)\] {
     top: calc(50% + 179.5px);
   }
@@ -1216,6 +1220,10 @@
     left: calc(50% + 812.5px);
   }
 
+  .left-\[calc\(50\%\+830px\)\] {
+    left: calc(50% + 830px);
+  }
+
   .left-\[calc\(50\%-0\.27px\)\] {
     left: calc(50% - .27px);
   }
@@ -1238,6 +1246,10 @@
 
   .left-\[calc\(50\%-811\.23px\)\] {
     left: calc(50% - 811.23px);
+  }
+
+  .left-\[calc\(50\%-830px\)\] {
+    left: calc(50% - 830px);
   }
 
   .left-\[calc\(100\%\+12px\)\] {
