@@ -381,8 +381,7 @@ export function Services({
         <div className="flex items-center justify-center gap-6">
           {/* Previous Category Name */}
           <p
-            className="font-lato-regular text-[28px] text-[rgba(255,255,255,0.3)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden max-w-[200px] mr-8"
-            style={{ direction: 'rtl', textAlign: 'left' }}
+            className="font-lato-regular text-[32px] text-[rgba(255,255,255,0.4)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden w-[240px] text-center mr-4"
             onClick={handleCategoryPrev}
           >
             {services[prevServiceIndex].title}
@@ -403,7 +402,7 @@ export function Services({
 
           {/* Next Category Name */}
           <p 
-            className="font-lato-regular text-[28px] text-[rgba(255,255,255,0.3)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden max-w-[200px] ml-8"
+            className="font-lato-regular text-[32px] text-[rgba(255,255,255,0.4)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden w-[240px] text-center ml-4"
             onClick={handleCategoryNext}
           >
             {services[nextServiceIndex].title}
