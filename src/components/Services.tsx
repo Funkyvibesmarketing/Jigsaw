@@ -485,7 +485,9 @@ export function Services({
               animate={{ opacity: 0.5, x: 0, scale: 1 }}
               exit={navigationSource === 'category' ? { opacity: 0, x: direction === 'right' ? 0 : -100, scale: 0.95 } : false}
               transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="absolute bg-white h-[318px] left-[calc(50%-830px)] overflow-hidden rounded-[22.755px] top-[calc(50%+25.5px)] translate-x-[-50%] translate-y-[-50%] w-[545.549px] pointer-events-none"
+              className="absolute bg-white h-[318px] left-[calc(50%-830px)] overflow-hidden rounded-[22.755px] top-[calc(50%+25.5px)] translate-x-[-50%] translate-y-[-50%] w-[545.549px] cursor-pointer"
+              whileHover={{ scale: 1.02, opacity: 0.7 }}
+              onClick={handleCategoryPrev}
             >
               {/* Decorative background */}
               <div className="absolute" style={{ inset: prevCard.imageInset || '-107.69% -45.15% -64.94% 19.5%' }}>
@@ -797,7 +799,9 @@ export function Services({
               animate={{ opacity: 0.5, x: 0, scale: 1 }}
               exit={navigationSource === 'category' ? { opacity: 0, x: direction === 'right' ? 100 : 0, scale: 0.95 } : false}
               transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="absolute bg-white h-[318px] left-[calc(50%+830px)] overflow-hidden rounded-[22.755px] top-[calc(50%+25.5px)] translate-x-[-50%] translate-y-[-50%] w-[545.549px] pointer-events-none"
+              className="absolute bg-white h-[318px] left-[calc(50%+830px)] overflow-hidden rounded-[22.755px] top-[calc(50%+25.5px)] translate-x-[-50%] translate-y-[-50%] w-[545.549px] cursor-pointer"
+              whileHover={{ scale: 1.02, opacity: 0.7 }}
+              onClick={handleCategoryNext}
             >
               {/* Decorative background */}
               <div className="absolute" style={{ inset: nextCard.imageInset || '-107.69% -45.15% -64.94% 19.5%' }}>
