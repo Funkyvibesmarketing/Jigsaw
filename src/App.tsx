@@ -22,6 +22,7 @@ import { MobileNavigationLight } from './components/MobileNavigationLight';
 import { MobileMenu } from './components/MobileMenu';
 import { MobileUpArrow } from './components/MobileUpArrow';
 import { UpArrowButton } from './components/UpArrowButton';
+import { WhatsAppButton } from './components/WhatsAppButton';
 import { fetchTeamMembers, defaultTeamMembers, type TeamMember } from './utils/teamApi';
 import { fetchServices, defaultServices, type Service } from './utils/servicesApi';
 import { fetchBlogs, defaultBlogs, type BlogData } from './utils/blogsApi';
@@ -251,7 +252,7 @@ export default function App() {
         backgroundColor: bgColor,
         touchAction: 'pan-y', // Enable vertical touch scrolling
         WebkitOverflowScrolling: 'touch' // Smooth scrolling on iOS
-      } as React.CSSProperties}
+      } as any}
     >
       {/* Custom Cursor */}
       <CustomCursor 
@@ -417,6 +418,17 @@ export default function App() {
           <UpArrowButton onClick={handleScrollToTop} />
         </div>
       )}
+      <WhatsAppButton 
+        heroScrollProgress={heroScrollProgress}
+        aboutUsScrollProgress={aboutUsScrollProgress}
+        reviewsScrollProgress={reviewsScrollProgress}
+        teamScrollProgress={teamScrollProgress}
+        processScrollProgress={processScrollProgress}
+        blogsScrollProgress={blogsScrollProgress}
+        contactUsFormScrollProgress={contactUsFormScrollProgress}
+        contactUsScrollProgress={contactUsScrollProgress}
+        splashHasBeenViewed={splashHasBeenViewed}
+      />
     </motion.div>
   );
 }
