@@ -6,10 +6,11 @@ import imgModernHouseAtTwilight4 from 'figma:asset/77b24f13b4242da58b9f7acf069a8
 import imgModernHouseAtTwilight4Mobile from 'figma:asset/b6dd7b7dd618b958e5aaca66f91a1e86e6151a35.png';
 import imgVector from 'figma:asset/98e22ea118a61d8d843204140092d61e8f5f90c4.png';
 import imgRectangle14200 from "figma:asset/2b522be0adda68686cd941d2da701840d5a124a6.png";
+import complianceShield from '../assets/compliance_shield.png';
 
 function MobileDownArrow({ onClick }: { onClick?: () => void }) {
   return (
-    <button 
+    <button
       onClick={onClick}
       className="box-border content-stretch flex gap-[6.4px] items-center p-[16px] rounded-[32px] size-[64px] cursor-pointer hover:bg-white/10 transition-all duration-300"
     >
@@ -36,15 +37,15 @@ function MobileDownArrow({ onClick }: { onClick?: () => void }) {
 export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { onScrollProgress?: (progress: number) => void; splashViewed?: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hideDownArrow, setHideDownArrow] = useState(false);
-  
+
   // Handle down arrow click - scroll to next section (About Us)
   const handleScrollToNext = () => {
-    window.scrollTo({ 
-        top: window.innerHeight * 3.8, // Position as We rewered
-        behavior: 'smooth' 
-      });
+    window.scrollTo({
+      top: window.innerHeight * 3.8, // Position as We rewered
+      behavior: 'smooth'
+    });
   };
-  
+
   // Track scroll progress through this section
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -64,84 +65,84 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
   // Step 1: JIGSAW text fades in (0 to 0.08)
   // If splash has been viewed, start at full visibility when at top
   const jigsawOpacity = useTransform(
-    scrollYProgress, 
-    [0, 0.04, 0.08], 
+    scrollYProgress,
+    [0, 0.04, 0.08],
     splashViewed ? [0.7, 0.7, 0.7] : [0, 0.5, 0.7]
   );
-  
+
   // Step 2: House image slides up (0.04 to 0.10) - stays visible during compliance with reduced opacity
   // If splash has been viewed, show house immediately at top
   const bgImageOpacity = useTransform(
-    scrollYProgress, 
-    [0, 0.04, 0.06, 0.10, 0.60, 0.62, 0.85, 1], 
+    scrollYProgress,
+    [0, 0.04, 0.06, 0.10, 0.60, 0.62, 0.85, 1],
     splashViewed ? [0.08, 0.08, 0.08, 0.08, 0.08, 0, 0, 0] : [0, 0, 0, 0.08, 0.08, 0, 0, 0]
   );
   const bgImageY = useTransform(
-    scrollYProgress, 
-    [0, 0.04, 0.10, 0.50, 0.95, 1], 
+    scrollYProgress,
+    [0, 0.04, 0.10, 0.50, 0.95, 1],
     splashViewed ? [0, 0, 0, 0, -900, -1200] : [100, 100, 0, 0, -900, -1200]
   );
   const mainImageOpacity = useTransform(
-    scrollYProgress, 
-    [0, 0.04, 0.06, 0.10, 0.60, 0.62, 0.85, 1], 
+    scrollYProgress,
+    [0, 0.04, 0.06, 0.10, 0.60, 0.62, 0.85, 1],
     splashViewed ? [1, 1, 1, 1, 1, 0, 0, 0] : [0, 0, 0.5, 1, 1, 0, 0, 0]
   );
   const mainImageY = useTransform(
-    scrollYProgress, 
-    [0, 0.04, 0.10, 0.50, 0.95, 1], 
+    scrollYProgress,
+    [0, 0.04, 0.10, 0.50, 0.95, 1],
     splashViewed ? [0, 0, 0, 0, -900, -1200] : [100, 100, 0, 0, -900, -1200]
   );
-  
+
   // Hero house image (original) - fades out when compliance appears
   const heroHouseOpacity = useTransform(
-    scrollYProgress, 
-    [0, 0.04, 0.06, 0.10, 0.60, 0.62], 
+    scrollYProgress,
+    [0, 0.04, 0.06, 0.10, 0.60, 0.62],
     splashViewed ? [1, 1, 1, 1, 1, 0] : [0, 0, 0.5, 1, 1, 0]
   );
-  
+
   // Compliance house image (mobile) - fades in when compliance appears, replaces hero house
   const complianceHouseOpacity = useTransform(scrollYProgress, [0.60, 0.62, 0.85, 0.95, 1], [0, 0.6, 0.6, 0, 0]);
-  
+
   // Step 3: Sentence appears right after house settles (0.10 to 0.14), stays briefly, then slides up with compliance
   // If splash has been viewed, show sentence immediately at top
   const sentenceOpacity = useTransform(
-    scrollYProgress, 
-    [0, 0.10, 0.14, 0.30, 0.45], 
+    scrollYProgress,
+    [0, 0.10, 0.14, 0.30, 0.45],
     splashViewed ? [1, 1, 1, 1, 0] : [0, 0, 1, 1, 0]
   );
   // Mobile: start from marking position (centered on house as shown in image)
   // Sentence stays in position until 0.25, then starts sliding up
   const sentenceY = useTransform(
-    scrollYProgress, 
-    [0, 0.10, 0.14, 0.25, 0.30, 0.45], 
+    scrollYProgress,
+    [0, 0.10, 0.14, 0.25, 0.30, 0.45],
     splashViewed ? [-200, -200, -200, -200, -400, -1000] : [-200, -200, -200, -200, -400, -1000]
   );
-  
+
   // Step 4: Navigation appears (compressed from 0.375-0.5 to 0.18-0.28)
   const navY = useTransform(scrollYProgress, [0.18, 0.28], [-50, 0]);
   const navOpacity = useTransform(scrollYProgress, [0.18, 0.28, 0.45, 0.50], [0, 1, 1, 0]);
-  
+
   // Step 5: Down arrow appears earlier - right after sentence appears (0.20 to 0.25)
   const arrowY = useTransform(scrollYProgress, [0.20, 0.25], [100, 0]);
   const arrowOpacity = useTransform(scrollYProgress, [0, 0.20, 0.25, 0.40, 0.42], [0, 0, 1, 1, 0]);
-  
+
   // Step 6: Bottom gradient appears with sentence and stays with arrow
   const step6GradientOpacity = useTransform(scrollYProgress, [0.14, 0.20, 0.75, 0.80], [1, 1, 0, 0]);
-  
+
   // Step 7: Top JIGSAW text fades out (compressed from 0.77-0.82 to 0.60-0.65)
   const topJigsawOpacity = useTransform(
-    scrollYProgress, 
-    [0, 0.1, 0.45, 0.50], 
+    scrollYProgress,
+    [0, 0.1, 0.45, 0.50],
     splashViewed ? [0.7, 0.7, 0.7, 0] : [0, 0.7, 0.7, 0]
   );
-  
+
   // Step 7.5: Bottom gradient appears (compressed)
   const bottomGradientOpacity = useTransform(scrollYProgress, [0.82, 0.85, 0.88], [0, 1, 0]);
 
   // Step 8: Compliance content appears and slides up with the sentence
   const complianceY = useTransform(scrollYProgress, [0.50, 0.70, 0.95], [800, -400, -700]);
   const complianceOpacity = useTransform(scrollYProgress, [0.28, 0.32, 0.82, 0.85, 0.88], [0, 1, 1, 0.3, 0]);
-  
+
   // Text color transition for compliance section - white to dark
   const complianceTextColor = useTransform(
     scrollYProgress,
@@ -169,7 +170,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
         AboutUsNavigation.style.zIndex = '0';
       }
     }
-    
+
     if (latest >= 0.83) {
       setHideDownArrow(true);
     } else {
@@ -183,13 +184,13 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
       <div className="sticky top-0 h-screen w-full overflow-hidden m-0 p-0">
         <div className="relative size-full overflow-hidden m-0 p-0">
           {/* Base background */}
-          <motion.div 
+          <motion.div
             className="absolute inset-0 z-[0] m-0 p-0"
-            style={{ 
+            style={{
               background: useTransform(
                 scrollYProgress,
                 [0, 0.04, 0.08, 0.12, 0.25, 0.60, 0.65],
-                splashViewed 
+                splashViewed
                   ? ['#2c4657', '#2c4657', '#2c4657', '#2c4657', '#2c4657', '#2c4657', '#ffffff']
                   : ['#ffffff', '#ffffff', '#b8d4e0', '#8eaab8', '#2c4657', '#2c4657', '#ffffff']
               )
@@ -197,7 +198,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
           />
 
           {/* JIGSAW Text - Fades in Step 1, fades out Step 7 */}
-          <motion.div 
+          <motion.div
             className="absolute h-[73.309px] left-1/2 top-[calc(50%-256.56px)] translate-x-[-50%] translate-y-[-50%] w-[95%] max-w-[410px] px-2"
             style={{ opacity: topJigsawOpacity }}
           >
@@ -240,31 +241,31 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
           </motion.div>
 
           {/* Background House Image - Step 2 */}
-          <motion.div 
+          <motion.div
             className="absolute flex h-[875px] items-center justify-center left-[-449px] top-[20px] w-[1306.42px] z-[1]"
             style={{ opacity: bgImageOpacity, y: bgImageY }}
           >
             <div className="flex-none rotate-[180deg] scale-y-[-100%]">
               <div className="h-[875px] relative w-[1306.42px]">
-                <img 
-                  alt="" 
-                  className="absolute inset-0 max-w-none object-50%-50% object-cover opacity-[0.08] pointer-events-none size-full" 
+                <img
+                  alt=""
+                  className="absolute inset-0 max-w-none object-50%-50% object-cover opacity-[0.08] pointer-events-none size-full"
                   src={imgModernHouseAtTwilight4}
                 />
               </div>
             </div>
           </motion.div>
-          
+
           {/* Hero House Image (Original) - visible during hero section, fades out when compliance appears */}
-          <motion.div 
+          <motion.div
             className="absolute flex h-[875px] items-center justify-center left-[-449px] top-[40px] w-[1306.42px] z-[2]"
             style={{ opacity: heroHouseOpacity, y: mainImageY }}
           >
             <div className="flex-none rotate-[180deg] scale-y-[-100%]">
               <div className="h-[875px] relative w-[1306.42px]">
-                <img 
-                  alt="" 
-                  className="absolute inset-0 max-w-none object-50%-50% object-cover pointer-events-none size-full" 
+                <img
+                  alt=""
+                  className="absolute inset-0 max-w-none object-50%-50% object-cover pointer-events-none size-full"
                   src={imgModernHouseAtTwilight4}
                 />
               </div>
@@ -272,15 +273,15 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
           </motion.div>
 
           {/* Compliance House Image (Mobile) - fades in when compliance appears, replaces hero house */}
-          <motion.div 
+          <motion.div
             className="absolute flex h-[875px] items-center justify-center left-[-449px] top-[47px] w-[1306.42px] z-[2]"
             style={{ opacity: complianceHouseOpacity, y: mainImageY }}
           >
             <div className="flex-none rotate-[180deg] scale-y-[-100%]">
               <div className="h-[875px] relative w-[1306.42px]">
-                <img 
-                  alt="" 
-                  className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" 
+                <img
+                  alt=""
+                  className="absolute inset-0 max-w-none object-cover pointer-events-none size-full"
                   style={{ objectPosition: '50% 75%' }}
                   src={imgModernHouseAtTwilight4}
                 />
@@ -289,18 +290,18 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
           </motion.div>
 
           {/* Gradient overlay at bottom of house */}
-          <motion.div 
+          <motion.div
             className="absolute bg-gradient-to-b from-[14.787%] from-[rgba(44,70,87,0)] h-[541px] left-0 to-[#2c4657] to-[85.86%] bottom-0 w-full z-[3]"
             style={{ opacity: gradientOverlayOpacity }}
           />
 
           {/* Step 6 Bottom Gradient */}
-          <motion.div 
+          <motion.div
             className="absolute left-0 bottom-0 w-full h-full z-[5]"
             style={{ opacity: step6GradientOpacity }}
           >
-            <div 
-              className="absolute inset-0" 
+            <div
+              className="absolute inset-0"
               style={{
                 background: 'linear-gradient(to bottom, rgba(26, 42, 53, 0) 0%, rgba(26, 42, 53, 0.3) 30%, rgba(26, 42, 53, 0.8) 50%, #1a2a35 70%, #0d1419 100%)'
               }}
@@ -308,12 +309,12 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
           </motion.div>
 
           {/* Bottom Gradient - Step 7.5 */}
-          <motion.div 
+          <motion.div
             className="absolute left-0 bottom-0 w-full h-full z-[4]"
             style={{ opacity: bottomGradientOpacity }}
           >
-            <div 
-              className="absolute inset-0" 
+            <div
+              className="absolute inset-0"
               style={{
                 background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.75) 100%)'
               }}
@@ -321,12 +322,12 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
           </motion.div>
 
           {/* White Gradient - Step 9 - Light blue to white gradient at top */}
-          <motion.div 
+          <motion.div
             className="absolute left-0 top-0 w-full h-full z-[9]"
             style={{ opacity: whiteGradientOpacity }}
           >
-            <div 
-              className="absolute inset-0" 
+            <div
+              className="absolute inset-0"
               style={{
                 background: 'linear-gradient(to bottom, rgba(232, 244, 248, 0.4) 0%, rgba(232, 244, 248, 0.5) 10%, rgba(255, 255, 255, 0.7) 20%, #ffffff 40%, #ffffff 100%)'
               }}
@@ -334,12 +335,12 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
           </motion.div>
 
           {/* Bottom gradient to hide house image bottom portion during compliance */}
-          <motion.div 
+          <motion.div
             className="absolute left-0 bottom-0 w-full h-[300px] z-[8]"
             style={{ opacity: whiteGradientOpacity }}
           >
-            <div 
-              className="absolute inset-0" 
+            <div
+              className="absolute inset-0"
               style={{
                 background: 'linear-gradient(to top, #2c4657 0%, rgba(44, 70, 87, 0.95) 20%, rgba(44, 70, 87, 0.8) 40%, rgba(44, 70, 87, 0) 100%)'
               }}
@@ -358,8 +359,8 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
           {/* Down Arrow Button - Step 5 */}
           <motion.div
             className="absolute left-1/2 top-[calc(50%+310px)] translate-x-[-50%] translate-y-[-50%] z-[50]"
-            style={{ 
-              y: arrowY, 
+            style={{
+              y: arrowY,
               opacity: arrowOpacity,
               pointerEvents: hideDownArrow ? 'none' : 'auto'
             }}
@@ -374,7 +375,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
             style={{ y: complianceY, opacity: complianceOpacity }}
           >
             {/* Dynamic gradient background that transitions to white */}
-            <motion.div 
+            <motion.div
               className="absolute inset-0"
               style={{
                 background: useTransform(
@@ -395,34 +396,30 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
 
             {/* FCA Compliance Section - Mobile Design */}
             <div className="absolute left-1/2 top-[calc(50%+100px)] -translate-x-1/2 w-[90%] max-w-[500px] flex flex-col gap-[20px] items-center justify-center z-[101] pointer-events-auto px-4">
-              {/* Mask Group - FCA Logo */}
-              <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid items-[start] justify-items-[start] relative shrink-0 pointer-events-auto">
-                <div 
-                  className="bg-white col-1 h-[52px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[0px_0px] mask-size-[159px_52px] ml-0 mt-0 row-1 w-[159px] pointer-events-auto" 
-                  style={{ 
-                    maskImage: `url('${imgRectangle14200}')`,
-                    WebkitMaskImage: `url('${imgRectangle14200}')`,
-                    maskSize: '159px 52px',
-                    WebkitMaskSize: '159px 52px',
-                    maskRepeat: 'no-repeat',
-                    WebkitMaskRepeat: 'no-repeat'
-                  }} 
+              {/* Shield Icon Replacement */}
+              <div className="shrink-0 pointer-events-auto mt-[-5px]">
+                <img
+                  src={complianceShield}
+                  alt="Compliance Shield"
+                  className="w-[50px] h-auto object-contain"
                 />
               </div>
 
               {/* FCA Text */}
               <p className="font-lato-light min-h-px min-w-px not-italic relative text-[14px] text-white text-center pointer-events-auto">
-                <span className="leading-[20px]">Jigsaw Financial is authorised and regulated by the Financial Conduct Authority (FCA), giving you confidence that our advice meets the highest professional and regulatory standards. You can verify our registration directly on the FCA Register </span>
-                <a 
-                  href="https://register.fca.org.uk/s/firm?id=0010X00004QO8QvQAL" 
-                  target="_blank" 
+                <span className="leading-[20px]">Jigsaw Financial operates as an Appointed Representative of a mortgage network authorised and regulated by the Financial Conduct Authority.
+
+                  This structure provides additional oversight, with experienced compliance specialists supporting cases and helping ensure advice remains accurate and responsible. We also stay closely informed of regulatory developments so our clients can feel confident they are being properly looked after.</span>
+                <a
+                  href="https://register.fca.org.uk/s/firm?id=0010X00004QO8QvQAL"
+                  target="_blank"
                   rel="noopener noreferrer"
-                  className="font-lato-semibold leading-[20px] underline decoration-solid hover:text-[#2ec4b6] transition-colors duration-200 cursor-pointer pointer-events-auto relative z-[102]"
+                  className="hidden font-lato-semibold leading-[20px] underline decoration-solid hover:text-[#2ec4b6] transition-colors duration-200 cursor-pointer pointer-events-auto relative z-[102]"
                   style={{ pointerEvents: 'auto' }}
                 >
                   here
                 </a>
-                <span className="leading-[20px]">.</span>
+                <span className="leading-[20px]"></span>
               </p>
             </div>
           </motion.div>

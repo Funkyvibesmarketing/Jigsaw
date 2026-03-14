@@ -6,6 +6,7 @@ import imgModernHouseAtTwilight4 from 'figma:asset/77b24f13b4242da58b9f7acf069a8
 import imgVector from 'figma:asset/29d00c96d16b578c0374f784d6e51ab7656ee486.png';
 import imgJigsawLogo from 'figma:asset/a4641c1a776e3a061386003b194f52b5d42a8c11.png';
 import imgRectangle14200 from "figma:asset/2b522be0adda68686cd941d2da701840d5a124a6.png";
+import complianceShield from '../assets/compliance_shield.png';
 import { DownArrowButton } from './DownArrowButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import AboutUsScrollEffect from '../imports/AboutUsScrollEffect';
@@ -357,35 +358,30 @@ export function HeroScrollSection({ onScrollProgress, splashViewed }: { onScroll
           >
 
             {/* FCA Compliance Section - New Design */}
-            <div className="absolute left-1/2 top-[calc(50%-40px)] -translate-x-1/2 w-[min(90vw,1200px)] flex gap-[29px] items-center justify-center z-[101] pointer-events-auto">
-              {/* Mask Group - FCA Logo */}
-              <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid items-[start] justify-items-[start] relative shrink-0 pointer-events-auto">
-                <div
-                  className="bg-white col-1 h-[71.361px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[0px_0px] mask-size-[218px_71.361px] ml-0 mt-0 row-1 w-[218px] pointer-events-auto"
-                  style={{
-                    maskImage: `url('${imgRectangle14200}')`,
-                    WebkitMaskImage: `url('${imgRectangle14200}')`,
-                    maskSize: '218px 71.361px',
-                    WebkitMaskSize: '218px 71.361px',
-                    maskRepeat: 'no-repeat',
-                    WebkitMaskRepeat: 'no-repeat'
-                  }}
+            <div className="absolute left-1/2 top-[calc(50%-40px)] -translate-x-1/2 w-[min(90vw,1200px)] flex gap-[40px] items-center justify-center z-[101] pointer-events-auto">
+              {/* Shield Icon Replacement */}
+              <div className="shrink-0 pointer-events-auto">
+                <img 
+                  src={complianceShield} 
+                  alt="Compliance Shield" 
+                  className="w-[70px] h-auto object-contain"
                 />
               </div>
 
               {/* FCA Text */}
               <p className="flex-[1_0_0] font-lato-light min-h-px min-w-px not-italic relative text-[18px] text-white pointer-events-auto">
-                <span className="leading-[26px]">Jigsaw Financial is authorised and regulated by the Financial Conduct Authority (FCA), giving you confidence that our advice meets the highest professional and regulatory standards. You can verify our registration directly on the FCA Register </span>
+                <span className="leading-[26px]">Jigsaw Financial operates as an Appointed Representative of a mortgage network authorised and regulated by the Financial Conduct Authority.
+                  This structure provides additional oversight, with experienced compliance specialists supporting cases and helping ensure advice remains accurate and responsible. We also stay closely informed of regulatory developments so our clients can feel confident they are being properly looked after.</span>
                 <a
                   href="https://register.fca.org.uk/s/firm?id=0010X00004QO8QvQAL"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-lato-semibold leading-[26px] underline decoration-solid hover:text-[#2ec4b6] transition-colors duration-200 cursor-pointer pointer-events-auto relative z-[102]"
+                  className="hidden font-lato-semibold leading-[26px] underline decoration-solid hover:text-[#2ec4b6] transition-colors duration-200 cursor-pointer pointer-events-auto relative z-[102]"
                   style={{ pointerEvents: 'auto' }}
                 >
                   here
                 </a>
-                <span className="leading-[26px]">.</span>
+                <span className="leading-[26px]"></span>
               </p>
             </div>
           </motion.div>
