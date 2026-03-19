@@ -675,7 +675,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
               </span>
               <span className="[text-decoration-skip-ink:none] decoration-solid font-['Lato:Regular',sans-serif] leading-[20px] text-white underline">Suite 2f2 Sovereign House, Stockport Road, Cheadle, England, SK8 2EA. Company No: 11821948</span>
             </p>
-            <p className="font-['Lato:Light',sans-serif] leading-[20px] min-w-full relative shrink-0 text-[14px] text-[rgba(255,255,255,0.6)] w-[min-content] whitespace-pre-wrap">{`Jigsaw Financial usually charges a fee for mortgage advice. The amount of the fee will depend on your circumstances and will be discussed and agreed with you at the earliest opportunity. `}</p>
+            <p className="font-['Lato:Light',sans-serif] leading-[20px] min-w-full relative shrink-0 text-[14px] text-[rgba(255,255,255,0.6)] w-[min-content] whitespace-pre-wrap">{`Jigsaw charge a flat fee of £650 for new clients. Residential re-mortgages will then be free of charge. The amount of the fee will depend on your circumstances and will be discussed and agreed with you at the earliest opportunity. `}</p>
 
             {/* Complaints Process and Privacy Policy Links */}
             <div className="content-stretch flex font-['Lato:Regular',sans-serif] items-center justify-between leading-[18px] relative shrink-0 text-[16px] text-white underline w-full">
@@ -994,7 +994,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
                 </span>
                 <span className="[text-decoration-skip-ink:none] decoration-solid font-['Lato:Regular',sans-serif] leading-[20px] text-white underline">Suite 2f2 Sovereign House, Stockport Road, Cheadle, England, SK8 2EA. Company No: 11821948</span>
               </p>
-              <p className="font-['Lato:Light',sans-serif] leading-[20px] relative text-[14px] text-[rgba(255,255,255,0.6)] text-left whitespace-pre-wrap">{`Jigsaw Financial usually charges a fee for mortgage advice. The amount of the fee will depend on your circumstances and will be discussed and agreed with you at the earliest opportunity. `}</p>
+              <p className="font-['Lato:Light',sans-serif] leading-[20px] relative text-[14px] text-[rgba(255,255,255,0.6)] text-left whitespace-pre-wrap">{`Jigsaw charge a flat fee of £650 for new clients. Residential re-mortgages will then be free of charge. The amount of the fee will depend on your circumstances and will be discussed and agreed with you at the earliest opportunity. `}</p>
 
               {/* Complaints Process and Privacy Policy Links */}
               <div className="content-stretch flex font-['Lato:Regular',sans-serif] items-center justify-between leading-[18px] relative shrink-0 text-[16px] text-white underline w-full">
