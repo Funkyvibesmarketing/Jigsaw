@@ -158,9 +158,9 @@ export const defaultServices: Service[] = [
                       <p>Whether you want a better deal, to borrow more, or to escape your lender’s “surprise” fees, we’ll help you switch smoothly and sensibly.</p><br />
                       <p>We’ll look at timing, true cost, and what actually benefits you - not just the headline rate.</p>`,
         textItalic: "If your mortgage feels a bit “meh”,  let’s fix that.",
-        image: "https://jigsaw.funkyvibes.co.uk/service-images/remo.webp",
-        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Remortgage.webp",
-        imageInset: "-0.69% -0.15% -0.94% 19.5%"
+        image: "https://jigsaw.funkyvibes.co.uk/service-images/Remortgage.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/RemortgageM.webp",
+        imageInset: "-0.69% -15.15% -0.94% 57.5%"
       },
       {
         id: 2,
@@ -174,9 +174,9 @@ export const defaultServices: Service[] = [
           "Talk through debt consolidation clearly (no scary buzzwords)"
         ],
         textItalic2: "Send us your current deal - we’ll tell you what it’s really doing.",
-        image: "https://jigsaw.funkyvibes.co.uk/service-images/remo.webp",
-        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Remortgage.webp",
-        imageInset: "-0.69% -0.15% -0.94% 19.5%"
+        image: "https://jigsaw.funkyvibes.co.uk/service-images/Remortgage.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/RemortgageM.webp",
+        imageInset: "-0.69% -15.15% -0.94% 57.5%"
       },
       {
         id: 3,
@@ -191,9 +191,9 @@ export const defaultServices: Service[] = [
           existingClientPrice: "Future residential remortgages for existing clients are free. Because paying again for advice you already got feels… unnecessary.",
           existingClientDescription: "Fancy a second opinion before you commit?  We’re here."
         },
-        image: "https://jigsaw.funkyvibes.co.uk/service-images/remo.webp",
-        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Remortgage.webp",
-        imageInset: "-0.69% -0.15% -0.94% 19.5%"
+        image: "https://jigsaw.funkyvibes.co.uk/service-images/Remortgage.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/RemortgageM.webp",
+        imageInset: "-0.69% -15.15% -0.94% 57.5%"
       }
     ]
   },
@@ -264,9 +264,9 @@ export const defaultServices: Service[] = [
                       <P>We’ll explain what matters, what doesn’t, and how each type of cover works in real life — without scare tactics or pressure.</P><br />
                       <P>Life changes. Income shifts. Health isn’t guaranteed. Protection simply makes sure your plans don’t fall apart if something unexpected happens.</P>`,
         //textItalic: "Serving’s hard enough - let’s make the mortgage bit easier.",
-        image: "https://jigsaw.funkyvibes.co.uk/service-images/mmp.webp",
-        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Mortgageformilitarypersonnel.webp",
-        imageInset: "-0.69% -0.15% -0.94% 19.5%"
+        image: "https://jigsaw.funkyvibes.co.uk/service-images/protection2.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/protectionM.webp",
+        imageInset: "-0.69% -19.15% -0.94% 40.5%"
       },
       {
         id: 2,
@@ -279,9 +279,9 @@ export const defaultServices: Service[] = [
           "Compare insurers, definitions and claims records — not just the cheapest premium."
         ],
         //textItalic2: "Want more information? We’re happy to walk you through it.",
-        image: "https://jigsaw.funkyvibes.co.uk/service-images/mmp.webp",
-        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Mortgageformilitarypersonnel.webp",
-        imageInset: "-0.69% -0.15% -0.94% 19.5%"
+        image: "https://jigsaw.funkyvibes.co.uk/service-images/protection2.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/protectionM.webp",
+        imageInset: "-0.69% -19.15% -0.94% 40.5%"
       },
       {
         id: 3,
@@ -293,9 +293,9 @@ export const defaultServices: Service[] = [
           "Avoid gaps, overlaps and policies that look good on paper but disappoint later."
         ],
         textItalic2: "Want more information? We’re happy to walk you through it.",
-        image: "https://jigsaw.funkyvibes.co.uk/service-images/mmp.webp",
-        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Mortgageformilitarypersonnel.webp",
-        imageInset: "-0.69% -0.15% -0.94% 19.5%"
+          image: "https://jigsaw.funkyvibes.co.uk/service-images/protection2.webp",
+          imagem: "https://jigsaw.funkyvibes.co.uk/service-images/protectionM.webp",
+          imageInset: "-0.69% -19.15% -0.94% 40.5%"
       },
       {
         id: 4,
@@ -306,9 +306,9 @@ export const defaultServices: Service[] = [
                       <p><b>Critical Illness Cover</b></p>
                       <p>Pays a lump sum if you’re diagnosed with a specified serious condition — giving breathing space when income may pause but expenses don’t.</p>`,
         //textItalic: "Not sure which fits? That’s what we’re here for.",
-        image: "https://jigsaw.funkyvibes.co.uk/service-images/mmp.webp",
-        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Mortgageformilitarypersonnel.webp",
-        imageInset: "-0.69% -0.15% -0.94% 19.5%"
+        image: "https://jigsaw.funkyvibes.co.uk/service-images/protection2.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/protectionM.webp",
+        imageInset: "-0.69% -19.15% -0.94% 40.5%"
       },
       {
         id: 5,
@@ -320,9 +320,9 @@ export const defaultServices: Service[] = [
                       <p>Pays a monthly income instead of a lump sum —
                       often a more cost-effective way to replace earnings.</p><br />`,
         textItalic: "Not sure which fits? That’s what we’re here for.",
-        image: "https://jigsaw.funkyvibes.co.uk/service-images/mmp.webp",
-        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Mortgageformilitarypersonnel.webp",
-        imageInset: "-0.69% -0.15% -0.94% 19.5%"
+        image: "https://jigsaw.funkyvibes.co.uk/service-images/protection2.webp",
+        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/protectionM.webp",
+        imageInset: "-0.69% -19.15% -0.94% 40.5%"
       },
       {
         id: 6,
@@ -339,9 +339,9 @@ export const defaultServices: Service[] = [
           existingClientPrice: "That doesn’t change our advice — it simply means protection guidance is accessible, properly structured, and built around you from day one.",
           existingClientDescription: "Want to sense-check what you’ve already got? We’re happy to review it."
         },
-        image: "https://jigsaw.funkyvibes.co.uk/service-images/mmp.webp",
-        imagem: "https://jigsaw.funkyvibes.co.uk/service-images/Mortgageformilitarypersonnel.webp",
-        imageInset: "-0.69% -0.15% -0.94% 19.5%"
+          image: "https://jigsaw.funkyvibes.co.uk/service-images/protection2.webp",
+          imagem: "https://jigsaw.funkyvibes.co.uk/service-images/protectionM.webp",
+          imageInset: "-0.69% -19.15% -0.94% 40.5%"
       }
     ]
   },
