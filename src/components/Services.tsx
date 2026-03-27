@@ -105,7 +105,7 @@ export function Services({
     scale = 1;
   }
 
-  console.log('Viewport size:', width, 'x', height);
+  //console.log('Viewport size:', width, 'x', height);
 
   // Check if mobile for conditional slide-up behavior
   const [isMobileView, setIsMobileView] = useState(false);

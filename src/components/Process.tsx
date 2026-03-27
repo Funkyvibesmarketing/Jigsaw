@@ -209,7 +209,7 @@ export default function Process({ onScrollProgress }: ProcessProps) {
 
   useEffect(() => {
     const unsubscribe = scrollYProgress.on("change", (latest) => {
-      console.log('Process scrollYProgress:', latest); // Debug log
+      //console.log('Process scrollYProgress:', latest); // Debug log
       onScrollProgress?.(latest);
     });
 

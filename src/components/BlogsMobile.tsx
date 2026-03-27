@@ -325,6 +325,11 @@ export function BlogsMobile({ onScrollProgress, blogs = [] }: BlogsMobileProps) 
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedBlog, setSelectedBlog] = useState<BlogData | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Duplicate blogs to create enough slides for smooth looping with coverflow effect
   const blogData = blogs.length > 0 ? Array(20).fill(blogs).flat() : [];
@@ -400,7 +405,9 @@ export function BlogsMobile({ onScrollProgress, blogs = [] }: BlogsMobileProps) 
         {/* Swiper Carousel Container - Moves up after title */}
         <div className="flex-1 flex flex-col justify-center pb-[40px] z-10">
           <motion.div style={{ y: cardsY, opacity: cardsOpacity }}>
+            {isMounted && (
             <Swiper
+              key={`${isMounted}-${blogs.length}`}
               modules={[EffectCoverflow, Navigation]}
               effect="coverflow"
               grabCursor={true}
@@ -408,6 +415,11 @@ export function BlogsMobile({ onScrollProgress, blogs = [] }: BlogsMobileProps) 
               slidesPerView="auto"
               loop={true}
               speed={500}
+              // @ts-ignore
+              loopAddBlankSlides={true}
+              updateOnWindowResize={true}
+              observer={true}
+              observeParents={true}
               touchRatio={1}
               resistance={true}
               resistanceRatio={0.85}
@@ -437,6 +449,7 @@ export function BlogsMobile({ onScrollProgress, blogs = [] }: BlogsMobileProps) 
                 </SwiperSlide>
               ))}
             </Swiper>
+            )}
           </motion.div>
 
           {/* Navigation Arrows */}

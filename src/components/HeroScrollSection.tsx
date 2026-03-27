@@ -195,7 +195,7 @@ export function HeroScrollSection({ onScrollProgress, splashViewed }: { onScroll
       //WeRewarded.style.opacity = 1;
 
 
-      console.log("Step 8 reached! Hiding down arrow. Scroll progress:", latest);
+      //console.log("Step 8 reached! Hiding down arrow. Scroll progress:", latest);
     } else {
       //setHideDownArrow(false);
       //Reward section hiding

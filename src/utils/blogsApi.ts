@@ -231,10 +231,10 @@ export async function fetchBlogs(): Promise<BlogData[]> {
     const response = await fetch('https://jigsaw.funkyvibes.co.uk/api/blogs.php');
     if (!response.ok) throw new Error('Failed to fetch blogs');
     const data = await response.json();
-    
+
     // Simulate API call with a delay for realistic loading
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
+    await new Promise(resolve => setTimeout(resolve, 200));
+
     // TODO: Transform your API response to match the BlogData interface
     // Example transformation:
     // return data.blogs.map((blog: any) => ({
@@ -263,10 +263,10 @@ export async function fetchBlogById(id: number): Promise<BlogData | null> {
     // const response = await fetch(`https://your-api.com/api/blogs/${id}`);
     // if (!response.ok) throw new Error('Failed to fetch blog');
     // const data = await response.json();
-    
+
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 300));
-    
+
     const blogs = await fetchBlogs();
     return blogs.find(blog => blog.id === id) || null;
   } catch (error) {

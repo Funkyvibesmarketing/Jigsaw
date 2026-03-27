@@ -385,6 +385,11 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
   const [activeIndex, setActiveIndex] = useState(0);
   const [popupBlog, setPopupBlog] = useState<BlogData | null>(null);
   const [pendingPopupBlog, setPendingPopupBlog] = useState<BlogData | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const width = window.innerWidth;
   const height = window.innerHeight;
@@ -394,17 +399,7 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
   }
 
   // Duplicate the blogs for smooth infinite loop
-  const blogData = blogs.length > 0 ? [
-    ...blogs,
-    ...blogs,
-    ...blogs,
-    ...blogs,
-    ...blogs,
-    ...blogs,
-    ...blogs,
-    ...blogs,
-    ...blogs,
-  ] : [];
+  const blogData = blogs.length > 0 ? Array(10).fill(blogs).flat() : [];
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -418,6 +413,16 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
 
     return () => unsubscribe();
   }, [scrollYProgress, onScrollProgress]);
+
+  // Force swiper update after initialization and data loading
+  useEffect(() => {
+    if (swiperInstance && blogs.length > 0) {
+      const timer = setTimeout(() => {
+        swiperInstance.update();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [swiperInstance, blogs.length]);
 
   // Desktop animations
   // Step 1: White screen slides up from bottom (0 - 0.30)
@@ -502,7 +507,9 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
               style={{ opacity: cardsOpacity, y: cardsY }}
             >
               <div className="relative w-full">
-                <Swiper
+                {isMounted && (
+                  <Swiper
+                  key={`${isMounted}-${blogs.length}`}
                   effect={'coverflow'}
                   grabCursor={true}
                   centeredSlides={true}
@@ -510,7 +517,12 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
                   loop={true}
                   speed={600}
                   loopAdditionalSlides={5}
+                  // @ts-ignore
+                  loopAddBlankSlides={true}
+                  updateOnWindowResize={true}
                   watchSlidesProgress={true}
+                  observer={true}
+                  observeParents={true}
                   initialSlide={0}
                   spaceBetween={60}
                   coverflowEffect={{
@@ -556,6 +568,7 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
                     </SwiperSlide>
                   ))}
                 </Swiper>
+                )}
 
                 {/* Navigation Buttons - Hidden when popup is open */}
                 {!popupBlog && (

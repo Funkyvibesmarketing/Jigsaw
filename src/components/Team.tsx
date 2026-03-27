@@ -110,13 +110,13 @@ export function Team({
 
   // Debug logging for Process scroll
   useEffect(() => {
-    if (processScrollProgress && processScrollProgress > 0) {
-      console.log('Process Scroll Debug:', {
-        processScrollProgress,
-        teamTranslateY,
-        calculation: `${-100 * Math.min(processScrollProgress / 0.15, 1)}vh`
-      });
-    }
+    // if (processScrollProgress && processScrollProgress > 0) {
+    //   console.log('Process Scroll Debug:', {
+    //     processScrollProgress,
+    //     teamTranslateY,
+    //     calculation: `${-100 * Math.min(processScrollProgress / 0.15, 1)}vh`
+    //   });
+    // }
   }, [processScrollProgress, teamTranslateY]);
 
   // Check if Services Step 1 is currently visible (AboutUs scroll 0.72-0.98)
@@ -126,16 +126,16 @@ export function Team({
   const isServicesStep2Active = servicesScrollProgress && servicesScrollProgress > 0.1;
 
   // Debug logging
-  if (teamContentOpacity > 0) {
-    console.log('Team Debug:', {
-      teamContentOpacity,
-      aboutUsScrollProgress,
-      isServicesStep1Active,
-      servicesScrollProgress,
-      isServicesStep2Active,
-      pointerEvents: (teamContentOpacity > 0 && !isServicesStep1Active && !isServicesStep2Active) ? 'auto' : 'none'
-    });
-  }
+  // if (teamContentOpacity > 0) {
+  //   console.log('Team Debug:', {
+  //     teamContentOpacity,
+  //     aboutUsScrollProgress,
+  //     isServicesStep1Active,
+  //     servicesScrollProgress,
+  //     isServicesStep2Active,
+  //     pointerEvents: (teamContentOpacity > 0 && !isServicesStep1Active && !isServicesStep2Active) ? 'auto' : 'none'
+  //   });
+  // }
 
   // Dynamic calculation based on number of team members
   const totalMembers = teamMembers.length;
