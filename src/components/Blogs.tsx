@@ -403,6 +403,7 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
     ...blogs,
     ...blogs,
     ...blogs,
+    ...blogs,
   ] : [];
 
   const { scrollYProgress } = useScroll({

@@ -228,12 +228,12 @@ Don't leave your family's financial security to chance. Contact us for a free pr
 export async function fetchBlogs(): Promise<BlogData[]> {
   try {
     // TODO: Replace this URL with your actual API endpoint
-    // const response = await fetch('https://your-api.com/api/blogs');
-    // if (!response.ok) throw new Error('Failed to fetch blogs');
-    // const data = await response.json();
+    const response = await fetch('https://jigsaw.funkyvibes.co.uk/api/blogs.php');
+    if (!response.ok) throw new Error('Failed to fetch blogs');
+    const data = await response.json();
     
     // Simulate API call with a delay for realistic loading
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 300));
     
     // TODO: Transform your API response to match the BlogData interface
     // Example transformation:
@@ -247,8 +247,8 @@ export async function fetchBlogs(): Promise<BlogData[]> {
     //   date: blog.publishedDate,
     //   category: blog.category
     // }));
-    
-    return defaultBlogs;
+    return data.blogs; // Adjust this based on your actual API response structure
+    //return defaultBlogs;
   } catch (error) {
     console.error('Error fetching blogs:', error);
     // Return default data if API fails

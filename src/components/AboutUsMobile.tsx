@@ -4,45 +4,9 @@ import svgPaths from '../imports/svg-4nnubvddnl';
 import imgVector from 'figma:asset/4234f71b7d4a1998f6e3282ba90ea09ce5633514.png';
 import backgroundGradient from 'figma:asset/42d2cf4a66b5216ee41ff6ee702481dc6863d649.png';
 import { ServicesMobile } from './ServicesMobile';
+import type { carouselTexts } from '../utils/aboutApi';
 
-// Carousel text items (same as desktop)
-// Carousel text items
-interface CarouselText {
-  id: number;
-  header: string;
-  text: string | React.ReactNode;
-  hasLearnMore?: boolean;
-  boldText?: string;
-}
-
-const carouselTexts: CarouselText[] = [
-  {
-    id: 1,
-    header: "The Origin Story.",
-    text: "Founded on the principles Nick picked up on a less-than-traditional career path—calm under pressure, straight-talking, and doing things properly - ",
-    hasLearnMore: true
-  },
-  {
-    id: 2,
-    header: "Straight Talking.",
-    text: "We keep things simple: straight answers, no jargon, no waffle. We’ll chat things through properly, so you know exactly what you’re signing up to-and why.",
-  },
-  {
-    id: 3,
-    header: "Pay What’s Fair.",
-    text: "We believe no one should pay more than necessary for any financial product — especially their mortgage — and that fees should always be clear, fair and fully explained upfront."
-  },
-  {
-    id: 4,
-    header: "Regulated, Reliable, On Your Side.",
-    text: "We’re fully authorised and regulated, which means advice you can trust-and a process that’s done properly. Friendly? Yes.Professional? Absolutely."
-  },
-  {
-    id: 5,
-    header: "One Fee, Ongoing Support.",
-    text: "You pay once for expert advice, and we don’t disappear after completion. We’ll be here for the long run-including free remortgage support when it’s time for your next step."
-  }
-];
+// Carousel text items (handled by prop)
 
 function Main() {
   return (
@@ -198,8 +162,9 @@ function UpArrowButton() {
   );
 }
 
-export function AboutUsMobile({ onScrollProgress }: {
+export function AboutUsMobile({ onScrollProgress, carouselTexts }: {
   onScrollProgress?: (progress: number) => void;
+  carouselTexts: carouselTexts[];
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -380,15 +345,16 @@ export function AboutUsMobile({ onScrollProgress }: {
       >
 
         {/* Text Carousel with Pagination - Mobile Version */}
-        <motion.div
-          className="absolute font-lato-light not-italic text-[#222526] text-center top-[140px] w-full px-6 z-[10000]"
-          style={{
-            y: middleTextY,
-            opacity: middleTextOpacity,
-            filter: middleTextBlur,
-            pointerEvents: scrollProgress < 0.60 ? 'auto' : 'none'
-          }}
-        >
+        {carouselTexts && carouselTexts.length > 0 && (
+          <motion.div
+            className="absolute font-lato-light not-italic text-[#222526] text-center top-[140px] w-full px-6 z-[10000]"
+            style={{
+              y: middleTextY,
+              opacity: middleTextOpacity,
+              filter: middleTextBlur,
+              pointerEvents: scrollProgress < 0.60 ? 'auto' : 'none'
+            }}
+          >
           {/* "ABOUT US" Title - Large centered text at top, slides with carousel */}
           <p
             className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[50px] text-[rgba(44,70,87,0.2)] text-center uppercase mb-[60px] whitespace-nowrap pointer-events-none select-none"
@@ -543,6 +509,7 @@ export function AboutUsMobile({ onScrollProgress }: {
             </button>
           </div>
         </motion.div>
+        )}
 
         {/* Full blue screen overlay at the end - appears after zoom completes */}
         <motion.div

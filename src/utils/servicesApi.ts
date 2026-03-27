@@ -351,12 +351,12 @@ export const defaultServices: Service[] = [
 export async function fetchServices(): Promise<Service[]> {
   try {
     // TODO: Replace this URL with your actual API endpoint
-    // const response = await fetch('https://your-api.com/api/services');
-    // if (!response.ok) throw new Error('Failed to fetch services');
-    // const data = await response.json();
+    const response = await fetch('https://jigsaw.funkyvibes.co.uk/api/services.php');
+    if (!response.ok) throw new Error('Failed to fetch services');
+    const data = await response.json();
 
     // Simulate API call with a delay for realistic loading
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 300));
 
     // TODO: Transform your API response to match the Service interface
     // Example transformation:
@@ -372,8 +372,8 @@ export async function fetchServices(): Promise<Service[]> {
     //     image: card.imageUrl
     //   }))
     // }));
-
-    return defaultServices;
+    return data.services;
+    //return defaultServices;
   } catch (error) {
     console.error('Error fetching services:', error);
     // Return default data if API fails

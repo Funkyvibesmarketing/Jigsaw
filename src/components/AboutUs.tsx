@@ -7,44 +7,47 @@ import imgRectangle from "figma:asset/ac4222b2f56bb8c362d5b0a6238628c6fa0aab37.p
 import { Services } from './Services';
 import backgroundGradient from 'figma:asset/42d2cf4a66b5216ee41ff6ee702481dc6863d649.png';
 import type { Service } from '../utils/servicesApi';
+import type { carouselTexts } from '../utils/aboutApi';
 
-// Carousel text items
-interface CarouselText {
-  id: number;
-  header: string;
-  text: string;
-  hasLearnMore?: boolean;
-  boldText?: string;
-}
+//const carouselTexts: CarouselText[] = ;
 
-const carouselTexts: CarouselText[] = [
-  {
-    id: 1,
-    header: "The Origin Story.",
-    text: "Founded on the principles Nick picked up on a less-than-traditional career path—calm under pressure, straight-talking, and doing things properly - ",
-    hasLearnMore: true
-  },
-  {
-    id: 2,
-    header: "Straight Talking.",
-    text: "We keep things simple: straight answers, no jargon, no waffle. We’ll chat things through properly, so you know exactly what you’re signing up to-and why.",
-  },
-  {
-    id: 3,
-    header: "Pay What’s Fair.",
-    text: "We believe no one should pay more than necessary for any financial product — especially their mortgage — and that fees should always be clear, fair and fully explained upfront."
-  },
-  {
-    id: 4,
-    header: "Regulated, Reliable, On Your Side.",
-    text: "We’re fully authorised and regulated, which means advice you can trust-and a process that’s done properly. Friendly? Yes.Professional? Absolutely."
-  },
-  {
-    id: 5,
-    header: "One Fee, Ongoing Support.",
-    text: "You pay once for expert advice, and we don’t disappear after completion. We’ll be here for the long run-including free remortgage support when it’s time for your next step."
-  }
-];
+//Carousel text items
+// interface CarouselText {
+//   id: number;
+//   header: string;
+//   text: string;
+//   hasLearnMore?: boolean;
+//   boldText?: string;
+// }
+
+// const carouselTexts: CarouselText[] = [
+//   {
+//     id: 1,
+//     header: "The Origin Story.",
+//     text: "Founded on the principles Nick picked up on a less-than-traditional career path—calm under pressure, straight-talking, and doing things properly - ",
+//     hasLearnMore: true
+//   },
+//   {
+//     id: 2,
+//     header: "Straight Talking.",
+//     text: "We keep things simple: straight answers, no jargon, no waffle. We’ll chat things through properly, so you know exactly what you’re signing up to-and why.",
+//   },
+//   {
+//     id: 3,
+//     header: "Pay What’s Fair.",
+//     text: "We believe no one should pay more than necessary for any financial product — especially their mortgage — and that fees should always be clear, fair and fully explained upfront."
+//   },
+//   {
+//     id: 4,
+//     header: "Regulated, Reliable, On Your Side.",
+//     text: "We’re fully authorised and regulated, which means advice you can trust-and a process that’s done properly. Friendly? Yes.Professional? Absolutely."
+//   },
+//   {
+//     id: 5,
+//     header: "One Fee, Ongoing Support.",
+//     text: "You pay once for expert advice, and we don’t disappear after completion. We’ll be here for the long run-including free remortgage support when it’s time for your next step."
+//   }
+// ];
 
 // Service data for Step 1 (simplified - just title and nextTitle)
 interface ServiceStep1 {
@@ -62,11 +65,12 @@ function getServicesStep1(services: Service[]): ServiceStep1[] {
   }));
 }
 
-export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScrollProgress, services }: {
+export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScrollProgress, services, carouselTexts }: {
   onScrollProgress?: (progress: number) => void;
   onServicesScrollProgress?: (progress: number) => void;
   reviewsScrollProgress?: number;
   services: Service[];
+  carouselTexts: carouselTexts[];
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -238,7 +242,8 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
             </p>
 
             {/* Carousel text - slides up/down */}
-            <div className="relative w-full max-w-[1113px] h-[200px] mb-[100px] overflow-visible mx-auto">
+            {carouselTexts && carouselTexts.length > 0 && (
+              <div className="relative w-full max-w-[1113px] h-[200px] mb-[100px] overflow-visible mx-auto">
               <AnimatePresence mode='wait'>
                 <motion.div
                   key={carouselIndex}
@@ -268,8 +273,9 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
                 </motion.div>
               </AnimatePresence>
             </div>
+          )}
 
-            {/* Navigation: Left Arrow + Pagination Dots + Right Arrow */}
+          {/* Navigation: Left Arrow + Pagination Dots + Right Arrow */}
             <div
               className="flex items-center justify-center gap-[40px] relative z-[9999] use-default-cursor"
               onMouseEnter={() => {

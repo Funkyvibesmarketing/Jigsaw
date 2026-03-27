@@ -26,6 +26,7 @@ import { WhatsAppButton } from './components/WhatsAppButton';
 import { fetchTeamMembers, defaultTeamMembers, type TeamMember } from './utils/teamApi';
 import { fetchServices, defaultServices, type Service } from './utils/servicesApi';
 import { fetchBlogs, defaultBlogs, type BlogData } from './utils/blogsApi';
+import { fetchAboutUsCarouselData, defaultAboutUsCarouselData, type carouselTexts } from './utils/aboutApi';
 import { useLenis } from './hooks/useLenis'; // Import Lenis hook
 
 export default function App() {
@@ -51,6 +52,8 @@ export default function App() {
   const [isLoadingServices, setIsLoadingServices] = useState(true);
   const [blogs, setBlogs] = useState<BlogData[]>(defaultBlogs);
   const [isLoadingBlogs, setIsLoadingBlogs] = useState(true);
+  const [carouselTexts, setCarouselTexts] = useState<carouselTexts[]>(defaultAboutUsCarouselData);
+  const [isLoadingCarousel, setIsLoadingCarousel] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Initialize Lenis smooth scroll for desktop
@@ -171,6 +174,22 @@ export default function App() {
     };
 
     fetchBlogList();
+  }, []);
+
+  // Fetch about us carousel data from API
+  useEffect(() => {
+    const fetchCarousel = async () => {
+      try {
+        const carouselData = await fetchAboutUsCarouselData();
+        setCarouselTexts(carouselData);
+      } catch (error) {
+        console.error('Error fetching about us carousel data:', error);
+      } finally {
+        setIsLoadingCarousel(false);
+      }
+    };
+
+    fetchCarousel();
   }, []);
 
   // Track active section using Intersection Observer
@@ -359,13 +378,14 @@ export default function App() {
       {/* About Us Section */}
       <div id="AboutUsSection" style={{marginTop: isMobile ? '-345px' : '0'}}>
         {isMobile ? (
-          <AboutUsMobile onScrollProgress={setAboutUsScrollProgress} />
+          <AboutUsMobile onScrollProgress={setAboutUsScrollProgress} carouselTexts={carouselTexts} />
         ) : (
           <AboutUs 
             onScrollProgress={setAboutUsScrollProgress}
             onServicesScrollProgress={setServicesScrollProgress}
             reviewsScrollProgress={reviewsScrollProgress}
             services={services}
+            carouselTexts={carouselTexts}
           />
         )}
       </div>

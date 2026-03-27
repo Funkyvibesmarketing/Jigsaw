@@ -75,12 +75,12 @@ export function parseBioText(text: string): React.ReactNode {
 export async function fetchTeamMembers(): Promise<TeamMember[]> {
   try {
     // TODO: Replace this URL with your actual API endpoint
-    // const response = await fetch('https://your-api.com/api/team-members');
-    // if (!response.ok) throw new Error('Failed to fetch team members');
-    // const data = await response.json();
+    const response = await fetch('https://jigsaw.funkyvibes.co.uk/api/teams.php');
+    if (!response.ok) throw new Error('Failed to fetch team members');
+    const data = await response.json();
 
     // For now, simulate API call with delay and return mock data
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 300));
 
     // TODO: Transform your API response to match the TeamMember interface
     // Example transformation:
@@ -91,8 +91,8 @@ export async function fetchTeamMembers(): Promise<TeamMember[]> {
     //   bio: parseBioText(member.bioText), // Use helper to format bio
     //   image: member.imageUrl
     // }));
-
-    return getDefaultTeamMembers();
+    return data.teams;
+    //return getDefaultTeamMembers();
   } catch (error) {
     console.error('Error fetching team members:', error);
     // Return fallback data if API fails
