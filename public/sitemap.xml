@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://jigsaw.funkyvibes.co.uk/</loc>
+    <lastmod>2026-03-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <!-- Main Sections for direct indexing -->
+  <url>
+    <loc>https://jigsaw.funkyvibes.co.uk/#AboutUsSection</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jigsaw.funkyvibes.co.uk/#ServiceSection</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jigsaw.funkyvibes.co.uk/#TeamSection</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jigsaw.funkyvibes.co.uk/#BlogsSection</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://jigsaw.funkyvibes.co.uk/#ContactUsSection</loc>
+    <priority>0.7</priority>
+  </url>
+</urlset>
