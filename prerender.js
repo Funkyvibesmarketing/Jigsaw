@@ -1,32 +1,66 @@
-const puppeteer = require("puppeteer");
+﻿const puppeteer = require("puppeteer");
 const fs = require("fs");
 const path = require("path");
+const { spawn } = require("child_process");
+
+const PREVIEW_PORT = 4173;
+const PREVIEW_URL = `http://127.0.0.1:${PREVIEW_PORT}`;
+
+async function waitForServer(url, timeoutMs = 30000) {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    try {
+      const res = await fetch(url, { method: 'HEAD' });
+      if (res.ok) return;
+    } catch (_err) {
+      // ignore until server is ready
+    }
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+  throw new Error(`Server did not become ready within ${timeoutMs}ms: ${url}`);
+}
 
 (async () => {
-  const browser = await puppeteer.launch({
-    headless: "new",
-    args: ["--no-sandbox", "--disable-setuid-sandbox"]
+  const previewCmd = process.platform === "win32" ? "npx.cmd" : "npx";
+  const previewProcess = spawn(previewCmd, [
+    "vite",
+    "preview",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    String(PREVIEW_PORT),
+    "--strictPort"
+  ], {
+    stdio: ["ignore", "inherit", "inherit"],
+    shell: true
   });
 
-  const page = await browser.newPage();
+  try {
+    await waitForServer(PREVIEW_URL);
 
-  const url = "https://jigsaw.funkyvibes.co.uk";
-  console.log("Rendering:", url);
+    const browser = await puppeteer.launch({
+      headless: "new",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"]
+    });
 
-  await page.goto(url, {
-    waitUntil: "domcontentloaded",
-    timeout: 0
-  });
+    const page = await browser.newPage();
+    console.log("Rendering local build:", PREVIEW_URL);
 
-  // wait for React to fully render
-  await new Promise(resolve => setTimeout(resolve, 5000));
+    await page.goto(PREVIEW_URL, {
+      waitUntil: "domcontentloaded",
+      timeout: 0
+    });
 
-  const html = await page.content();
+    // wait for React to fully render
+    await new Promise((resolve) => setTimeout(resolve, 5000));
 
-  fs.writeFileSync(
-    path.join(__dirname, "build", "index.html"),
-    html
-  );
+    const html = await page.content();
+    fs.writeFileSync(path.join(__dirname, "build", "index.html"), html);
 
-  await browser.close();
+    await browser.close();
+  } finally {
+    if (previewProcess) {
+      previewProcess.kill("SIGINT");
+    }
+  }
 })();

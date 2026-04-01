@@ -1040,6 +1040,40 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
         </motion.div>
       </div>
 
+      <div
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          opacity: 0,
+          overflow: 'hidden',
+          pointerEvents: 'none',
+          whiteSpace: 'nowrap',
+          border: 0,
+          margin: 0,
+          padding: 0,
+        }}
+        aria-hidden="true"
+      >
+        <p>
+          Jigsaw Financial is authorised and regulated by the Financial Conduct Authority (FCA), giving you confidence that our advice meets the highest professional and regulatory standards. You can verify our registration directly on the FCA Register here.
+        </p>
+        <svg
+          width="150"
+          height="50"
+          viewBox="0 0 150 50"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          role="img"
+          aria-label="Financial Conduct Authority logo"
+        >
+          <title>Financial Conduct Authority logo</title>
+          <rect width="150" height="50" fill="#7B1F45" />
+          <text x="10" y="32" fill="#FFFFFF" fontFamily="Arial, sans-serif" fontSize="24" fontWeight="700">FCA</text>
+          <text x="10" y="46" fill="#FFFFFF" fontFamily="Arial, sans-serif" fontSize="10">Financial Conduct Authority</text>
+        </svg>
+      </div>
+
       {/* PDF Viewer Modal */}
       {pdfViewerOpen && currentPdf && (
         <PDFViewer
