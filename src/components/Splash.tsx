@@ -11,6 +11,7 @@ export function Splash({ onComplete }: { onComplete: () => void }) {
   const [progress, setProgress] = useState(0);
   const [showFinancial, setShowFinancial] = useState(false);
   const [fadeProgress, setFadeProgress] = useState(false);
+  const [showScrollHint, setShowScrollHint] = useState(false);
 
   useEffect(() => {
     // Detect mobile on mount and resize
@@ -29,26 +30,34 @@ export function Splash({ onComplete }: { onComplete: () => void }) {
     const duration = 3500; // 3.5 seconds total animation
     const steps = 100;
     const stepDuration = duration / steps;
+    const timeouts: number[] = [];
 
-    const interval = setInterval(() => {
+    const interval = window.setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
           // Hold at 100% for 400ms before fading
-          setTimeout(() => {
+          timeouts.push(window.setTimeout(() => {
             setFadeProgress(true);
-          }, 400);
+          }, 400));
           // Show financial banner after fade starts
-          setTimeout(() => {
+          timeouts.push(window.setTimeout(() => {
             setShowFinancial(true);
-          }, 700);
+          }, 700));
+          // Show the scroll hint after the final animation has appeared
+          timeouts.push(window.setTimeout(() => {
+            setShowScrollHint(true);
+          }, 1200));
           return 100;
         }
         return prev + 1;
       });
     }, stepDuration);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      timeouts.forEach(clearTimeout);
+    };
   }, []);
 
   // Render mobile version on mobile devices
@@ -59,12 +68,50 @@ export function Splash({ onComplete }: { onComplete: () => void }) {
   // Desktop version
   return (
     <div className="min-h-screen w-full overflow-hidden bg-white m-0 p-0 border-0">
-      <AnimatedLogoScreen progress={progress} showFinancial={showFinancial} fadeProgress={fadeProgress} />
+      <AnimatedLogoScreen
+        progress={progress}
+        showFinancial={showFinancial}
+        fadeProgress={fadeProgress}
+        showScrollHint={showScrollHint}
+      />
     </div>
   );
 }
 
-function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progress: number, showFinancial: boolean, fadeProgress: boolean }) {
+function ScrollDownHint({ visible }: { visible: boolean }) {
+  return (
+    <motion.button
+      type="button"
+      className="flex flex-col items-center gap-1 rounded-full bg-white/95 px-4 py-2 text-center text-[#2C4657] shadow-[0_20px_40px_rgba(0,0,0,0.12)] backdrop-blur-sm"
+      style={{ position: 'fixed', left: 0, right: 0, bottom: 48, margin: '0 auto', zIndex: 50, width: 'max-content' }}
+      initial={{ opacity: 0, y: 16 }}
+      animate={visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+      transition={{ duration: 0.6, ease: [0.24, 1, 0.32, 1] }}
+      onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+      aria-label="Scroll down"
+    >
+      <span className="font-['Lato:Regular',sans-serif] text-[14px] uppercase tracking-[0.24em]">Scroll down</span>
+      <motion.svg
+        className="h-[22px] w-[22px]"
+        viewBox="0 0 36 36"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        animate={visible ? { y: [0, 6, 0] } : { y: 0 }}
+        transition={{ repeat: Infinity, repeatType: 'loop', duration: 1.4, ease: 'easeInOut', delay: 0.2 }}
+      >
+        <path
+          d="M25.8025 23.2713C23.2692 23.5359 18.1991 25.422 18.1848 30.8489M10.2454 23.2303C12.7772 23.5083 17.8373 25.4211 17.823 30.848M18.0144 26.8687L18.0715 5.1611"
+          stroke="#2C4657"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeDasharray="1.29 1.29"
+        />
+      </motion.svg>
+    </motion.button>
+  );
+}
+
+function AnimatedLogoScreen({ progress, showFinancial, fadeProgress, showScrollHint }: { progress: number, showFinancial: boolean, fadeProgress: boolean, showScrollHint: boolean }) {
   return (
     <motion.div 
       className="relative size-full min-h-screen bg-white border-0" 
@@ -192,6 +239,7 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress }: { progres
           <Frame1000002994 />
         </motion.div>
       )}
+      <ScrollDownHint visible={showScrollHint} />
     </motion.div>
   );
 }
