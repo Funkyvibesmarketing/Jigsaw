@@ -1,4 +1,6 @@
 import imgRectangle14120 from "figma:asset/1f4323015aa5bd0f08e5ce951e568156ed52ce87.png";
+import { getApiUrl } from "./apiConfig";
+
 
 // TypeScript interface for team member data
 export interface TeamMember {

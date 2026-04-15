@@ -1,4 +1,7 @@
+import { getApiUrl } from './apiConfig';
+
 // TypeScript interfaces for API data
+
 export interface DetailCard {
   id: number;
   type: 'normal' | 'bullet' | 'price'; // Card content type
@@ -346,8 +349,6 @@ export const defaultServices: Service[] = [
     ]
   },
 ];
-
-import { getApiUrl } from './apiConfig';
 
 // API fetch function
 export async function fetchServices(): Promise<Service[]> {

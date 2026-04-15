@@ -1,4 +1,7 @@
+import { getApiUrl } from "./apiConfig";
+
 // TypeScript interface for contact form data
+
 export interface ContactFormData {
   name: string;
   email: string;

@@ -1,4 +1,6 @@
+import { getApiUrl } from "./apiConfig";
 import imgFrame1000003005 from "figma:asset/685ae034862fec8a08b70546bfa8cca049aecf63.webp";
+
 import imgFrame1000003006 from "figma:asset/dec0fdee7a1eca13319fba5ba99e495193caffd9.webp";
 import imgFrame1000003007 from "figma:asset/91c7ae1cb9500d6b5e27fc351d57788518b3a2c9.webp";
 

@@ -1,4 +1,7 @@
+import { getApiUrl } from "./apiConfig";
+
 // TypeScript interfaces for API data
+
 export interface carouselTexts {
   id: number;
   header: string;
