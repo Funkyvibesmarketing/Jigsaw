@@ -380,7 +380,7 @@ export function Team({
                         style={{ pointerEvents: 'none' }}
                       >
                         {/* Main team member photo */}
-                        <div className="absolute h-[450px] left-[101px] top-[calc(50%+100px)] translate-y-[-50%] w-[300px]">
+                        <div className="absolute h-[400px] left-[101px] top-[calc(50%+50px)] translate-y-[-50%] w-[300px]">
                           <img
                             alt={member.name}
                             className="absolute inset-0 max-w-none object-50%-50% object-cover pointer-events-none size-full"
