@@ -39,8 +39,7 @@ export const defaultAboutUsCarouselData: carouselTexts[] = [
 // API fetch function
 export async function fetchAboutUsCarouselData(): Promise<carouselTexts[]> {
   try {
-    // TODO: Replace this URL with your actual API endpoint
-    const response = await fetch('https://jigsaw.funkyvibes.co.uk/api/about-us-carousel.php');
+    const response = await fetch(getApiUrl('about-us-carousel.php'));
     if (!response.ok) throw new Error('Failed to fetch about us carousel data');
     const data = await response.json();
 

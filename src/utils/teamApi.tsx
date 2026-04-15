@@ -74,8 +74,7 @@ export function parseBioText(text: string): React.ReactNode {
 // API fetch function - Replace with your actual API endpoint
 export async function fetchTeamMembers(): Promise<TeamMember[]> {
   try {
-    // TODO: Replace this URL with your actual API endpoint
-    const response = await fetch('https://jigsaw.funkyvibes.co.uk/api/teams.php');
+    const response = await fetch(getApiUrl('teams.php'));
     if (!response.ok) throw new Error('Failed to fetch team members');
     const data = await response.json();
 

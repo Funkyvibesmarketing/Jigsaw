@@ -347,11 +347,12 @@ export const defaultServices: Service[] = [
   },
 ];
 
+import { getApiUrl } from './apiConfig';
+
 // API fetch function
 export async function fetchServices(): Promise<Service[]> {
   try {
-    // TODO: Replace this URL with your actual API endpoint
-    const response = await fetch('https://jigsaw.funkyvibes.co.uk/api/services.php');
+    const response = await fetch(getApiUrl('services.php'));
     if (!response.ok) throw new Error('Failed to fetch services');
     const data = await response.json();
 

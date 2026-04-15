@@ -16,8 +16,7 @@ export interface ContactApiResponse {
 // API function to submit contact form
 export async function submitContactForm(formData: ContactFormData): Promise<ContactApiResponse> {
   try {
-    // TODO: Replace this URL with your actual API endpoint
-    const response = await fetch('https://jigsaw.funkyvibes.co.uk/api/contact.php', {
+    const response = await fetch(getApiUrl('contact.php'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -227,8 +227,7 @@ Don't leave your family's financial security to chance. Contact us for a free pr
 // API fetch function
 export async function fetchBlogs(): Promise<BlogData[]> {
   try {
-    // TODO: Replace this URL with your actual API endpoint
-    const response = await fetch('https://jigsaw.funkyvibes.co.uk/api/blogs.php');
+    const response = await fetch(getApiUrl('blogs.php'));
     if (!response.ok) throw new Error('Failed to fetch blogs');
     const data = await response.json();
 
