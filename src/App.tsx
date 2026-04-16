@@ -147,8 +147,10 @@ export default function App() {
   // Calculate if splash is still visible (navigation should be hidden)
   const isSplashVisible = !splashHasBeenViewed && currentScrollY < window.innerHeight * 0.3;
 
-  // Fetch team members from API
+  // Fetch team members from API - Defer until splash is finish for performance
   useEffect(() => {
+    if (!splashAnimationComplete && !splashHasBeenViewed) return;
+    
     const fetchMembers = async () => {
       try {
         const members = await fetchTeamMembers();
@@ -161,10 +163,12 @@ export default function App() {
     };
 
     fetchMembers();
-  }, []);
+  }, [splashAnimationComplete, splashHasBeenViewed]);
 
-  // Fetch services from API
+  // Fetch services from API - Defer until splash is finish for performance
   useEffect(() => {
+    if (!splashAnimationComplete && !splashHasBeenViewed) return;
+
     const fetchServiceList = async () => {
       try {
         const serviceList = await fetchServices();
@@ -177,10 +181,12 @@ export default function App() {
     };
 
     fetchServiceList();
-  }, []);
+  }, [splashAnimationComplete, splashHasBeenViewed]);
 
-  // Fetch blogs from API
+  // Fetch blogs from API - Defer until splash is finish for performance
   useEffect(() => {
+    if (!splashAnimationComplete && !splashHasBeenViewed) return;
+
     const fetchBlogList = async () => {
       try {
         const blogList = await fetchBlogs();
@@ -193,10 +199,12 @@ export default function App() {
     };
 
     fetchBlogList();
-  }, []);
+  }, [splashAnimationComplete, splashHasBeenViewed]);
 
-  // Fetch about us carousel data from API
+  // Fetch about us carousel data from API - Defer until splash is finish for performance
   useEffect(() => {
+    if (!splashAnimationComplete && !splashHasBeenViewed) return;
+
     const fetchCarousel = async () => {
       try {
         const carouselData = await fetchAboutUsCarouselData();
@@ -209,7 +217,7 @@ export default function App() {
     };
 
     fetchCarousel();
-  }, []);
+  }, [splashAnimationComplete, splashHasBeenViewed]);
 
   // Track active section using Intersection Observer
   useEffect(() => {
@@ -393,65 +401,63 @@ export default function App() {
         {isMobile ? <HeroScrollSectionMobile onScrollProgress={setHeroScrollProgress} splashViewed={splashHasBeenViewed} /> : <HeroScrollSection onScrollProgress={setHeroScrollProgress} splashViewed={splashHasBeenViewed} />}
       </div>
 
-      {/* About Us Section */}
-      <div id="AboutUsSection" style={{marginTop: isMobile ? '-345px' : '0'}}>
-        {isMobile ? (
-          <AboutUsMobile onScrollProgress={setAboutUsScrollProgress} carouselTexts={carouselTexts} />
-        ) : (
-          <AboutUs 
-            onScrollProgress={setAboutUsScrollProgress}
-            onServicesScrollProgress={setServicesScrollProgress}
-            reviewsScrollProgress={reviewsScrollProgress}
-            services={services}
-            carouselTexts={carouselTexts}
-          />
-        )}
-      </div>
+      {/* Heavy Content Sections - Deferred Mounting for Performance */}
+      {(splashAnimationComplete || splashHasBeenViewed) && (
+        <>
+          {/* About Us Section */}
+          <div id="AboutUsSection" style={{marginTop: isMobile ? '-345px' : '0'}}>
+            {isMobile ? (
+              <AboutUsMobile onScrollProgress={setAboutUsScrollProgress} carouselTexts={carouselTexts} />
+            ) : (
+              <AboutUs 
+                onScrollProgress={setAboutUsScrollProgress}
+                onServicesScrollProgress={setServicesScrollProgress}
+                reviewsScrollProgress={reviewsScrollProgress}
+                services={services}
+                carouselTexts={carouselTexts}
+              />
+            )}
+          </div>
 
-      {/* Services Section - same as About Us on mobile */}
-      <div id="ServiceSection">
-        {/* This ID points to the same section as About Us since Services is part of About Us */}
-      </div>
-      
-      {/* Reviews Section - appears after About Us/Services */}
-      <div id="ReviewsSection">
-        <Suspense fallback={<SectionLoader />}>
-          <Reviews onScrollProgress={setReviewsScrollProgress} aboutUsScrollProgress={aboutUsScrollProgress} processScrollProgress={processScrollProgress} />
-        </Suspense>
-      </div>
-      
-      {/* Team Section - appears after Reviews with TEAM text transition */}
-      <div id="TeamSection" className={isMobile ? "min-h-[50vh] bg-[#2c4657]" : ""}>
-        <Suspense fallback={<SectionLoader />}>
-          {!isMobile && <Team reviewsScrollProgress={reviewsScrollProgress} aboutUsScrollProgress={aboutUsScrollProgress} teamMembers={teamMembers} processScrollProgress={processScrollProgress} />}
-          {isMobile && <TeamMobile reviewsScrollProgress={reviewsScrollProgress} teamMembers={teamMembers} processScrollProgress={processScrollProgress} onScrollProgress={setTeamScrollProgress} />}
-        </Suspense>
-      </div>
-      
-      {/* Process Section - appears after Team section */}
-      <div id="ProcessSection" className={isMobile ? "" : ""}>
-        <Suspense fallback={<SectionLoader />}>
-          {!isMobile && <Process onScrollProgress={setProcessScrollProgress} />}
-          {isMobile && <ProcessMobile onScrollProgress={setProcessScrollProgress} teamScrollProgress={teamInternalScrollProgress} />}
-        </Suspense>
-      </div>
-      
-      {/* Blogs Section - appears after Process section */}
-      <div id="BlogsSection">
-        <Suspense fallback={<SectionLoader />}>
-          {!isMobile && <Blogs onScrollProgress={setBlogsScrollProgress} blogs={blogs} contactUsScrollProgress={contactUsScrollProgress} />}
-          {isMobile && <BlogsMobile onScrollProgress={setBlogsScrollProgress} blogs={blogs} />}
-        </Suspense>
-      </div>
-      
-      {/* Contact Us Section - appears after Blogs section (Desktop only) */}
-      <div id="ContactUsSection">
-        <Suspense fallback={<SectionLoader />}>
-          <ContactUs onScrollProgress={setContactUsScrollProgress} />
-          {/* Contact Us Form Section - appears after Contact Us section (Desktop only) */}
-          <ContactUsForm onScrollProgress={setContactUsFormScrollProgress} />
-        </Suspense>
-      </div>
+          <div id="ServiceSection">
+            {/* This ID points to the same section as About Us since Services is part of About Us */}
+          </div>
+          
+          <div id="ReviewsSection">
+            <Suspense fallback={<SectionLoader />}>
+              <Reviews onScrollProgress={setReviewsScrollProgress} aboutUsScrollProgress={aboutUsScrollProgress} processScrollProgress={processScrollProgress} />
+            </Suspense>
+          </div>
+          
+          <div id="TeamSection" className={isMobile ? "min-h-[50vh] bg-[#2c4657]" : ""}>
+            <Suspense fallback={<SectionLoader />}>
+              {!isMobile && <Team reviewsScrollProgress={reviewsScrollProgress} aboutUsScrollProgress={aboutUsScrollProgress} teamMembers={teamMembers} processScrollProgress={processScrollProgress} />}
+              {isMobile && <TeamMobile reviewsScrollProgress={reviewsScrollProgress} teamMembers={teamMembers} processScrollProgress={processScrollProgress} onScrollProgress={setTeamScrollProgress} />}
+            </Suspense>
+          </div>
+          
+          <div id="ProcessSection" className={isMobile ? "" : ""}>
+            <Suspense fallback={<SectionLoader />}>
+              {!isMobile && <Process onScrollProgress={setProcessScrollProgress} />}
+              {isMobile && <ProcessMobile onScrollProgress={setProcessScrollProgress} teamScrollProgress={teamInternalScrollProgress} />}
+            </Suspense>
+          </div>
+          
+          <div id="BlogsSection">
+            <Suspense fallback={<SectionLoader />}>
+              {!isMobile && <Blogs onScrollProgress={setBlogsScrollProgress} blogs={blogs} contactUsScrollProgress={contactUsScrollProgress} />}
+              {isMobile && <BlogsMobile onScrollProgress={setBlogsScrollProgress} blogs={blogs} />}
+            </Suspense>
+          </div>
+          
+          <div id="ContactUsSection">
+            <Suspense fallback={<SectionLoader />}>
+              <ContactUs onScrollProgress={setContactUsScrollProgress} />
+              <ContactUsForm onScrollProgress={setContactUsFormScrollProgress} />
+            </Suspense>
+          </div>
+        </>
+      )}
       
       {/* Up Arrow Button - Mobile only - appears across all sections from Hero compliance onwards */}
       {isMobile && (heroScrollProgress >= 0.82 || aboutUsScrollProgress > 0 || reviewsScrollProgress > 0 || teamScrollProgress > 0 || processScrollProgress > 0) && (
@@ -474,7 +480,7 @@ export default function App() {
         blogsScrollProgress={blogsScrollProgress}
         contactUsFormScrollProgress={contactUsFormScrollProgress}
         contactUsScrollProgress={contactUsScrollProgress}
-        splashHasBeenViewed={splashHasBeenViewed}
+        splashHasBeenViewed={splashHasBeenViewed || splashAnimationComplete}
       />
     </motion.div>
   );

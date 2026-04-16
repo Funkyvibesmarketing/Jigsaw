@@ -26,37 +26,33 @@ export function Splash({ onComplete }: { onComplete: () => void }) {
   }, []);
 
   useEffect(() => {
-    // Animate progress from 0 to 100 over the duration of the letter animations
+    // Use high-resolution time for smooth counting even under CPU load
     const duration = 2200; // 2.2 seconds total animation
-    const steps = 100;
-    const stepDuration = duration / steps;
-    const timeouts: number[] = [];
+    const startTime = performance.now();
+    let animationFrameId: number;
+    let completed = false;
 
-    const interval = window.setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          // Hold at 100% for 200ms before fading
-          timeouts.push(window.setTimeout(() => {
-            setFadeProgress(true);
-          }, 200));
-          // Show financial banner after fade starts
-          timeouts.push(window.setTimeout(() => {
-            setShowFinancial(true);
-          }, 400));
-          // Show the scroll hint after the final animation has appeared
-          timeouts.push(window.setTimeout(() => {
-            setShowScrollHint(true);
-          }, 700));
-          return 100;
-        }
-        return prev + 1;
-      });
-    }, stepDuration);
+    const updateProgress = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const currentProgress = Math.min(100, Math.floor((elapsed / duration) * 100));
+      
+      setProgress(currentProgress);
+
+      if (currentProgress < 100) {
+        animationFrameId = requestAnimationFrame(updateProgress);
+      } else if (!completed) {
+        completed = true;
+        // Animation sequence after reaching 100%
+        setTimeout(() => setFadeProgress(true), 200);
+        setTimeout(() => setShowFinancial(true), 400);
+        setTimeout(() => setShowScrollHint(true), 700);
+      }
+    };
+
+    animationFrameId = requestAnimationFrame(updateProgress);
 
     return () => {
-      clearInterval(interval);
-      timeouts.forEach(clearTimeout);
+      cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
