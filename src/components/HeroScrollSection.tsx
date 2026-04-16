@@ -6,7 +6,7 @@ import imgModernHouseAtTwilight4 from 'figma:asset/77b24f13b4242da58b9f7acf069a8
 import imgVector from 'figma:asset/29d00c96d16b578c0374f784d6e51ab7656ee486.png';
 import imgJigsawLogo from 'figma:asset/a4641c1a776e3a061386003b194f52b5d42a8c11.png';
 import imgRectangle14200 from "figma:asset/2b522be0adda68686cd941d2da701840d5a124a6.png";
-import complianceShield from '../assets/compliance_shield.png';
+import complianceShield from '../assets/compliance_shield.webp';
 import { DownArrowButton } from './DownArrowButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import AboutUsScrollEffect from '../imports/AboutUsScrollEffect';
