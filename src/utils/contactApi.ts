@@ -7,6 +7,7 @@ export interface ContactFormData {
   email: string;
   phone: string;
   message: string;
+  captcha?: string; // Answer to logic challenge
 }
 
 // TypeScript interface for API response
@@ -84,6 +85,11 @@ export function validateFormData(formData: ContactFormData): {
 
   if (!formData.message.trim()) {
     errors.message = 'Message is required';
+  }
+
+  // Captcha answer is required
+  if (formData.captcha === undefined || formData.captcha === '') {
+    errors.captcha = 'Security answer is required';
   }
 
   return {

@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
 import { useRef, useEffect, useState } from "react";
 import svgPaths from "../imports/svg-cxhurimysf";
 import successSvgPaths from "../imports/svg-o2ors8ir2r";
@@ -250,6 +250,28 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
   const [instagramHovered, setInstagramHovered] = useState(false);
   const [linkedinHovered, setLinkedinHovered] = useState(false);
 
+  // Environment Config
+  const SHOW_SECURITY_CHECK = import.meta.env.VITE_SHOW_SECURITY_CHECK === 'true';
+
+  // CAPTCHA State
+  const [captchaQuestion, setCaptchaQuestion] = useState({ q: '', a: '' });
+  const [userAnswer, setUserAnswer] = useState('');
+  const [isCaptchaModalOpen, setIsCaptchaModalOpen] = useState(false);
+
+  const generateCaptcha = () => {
+    const num1 = Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * 10) + 1;
+    setCaptchaQuestion({
+      q: `${num1} + ${num2} = ?`,
+      a: (num1 + num2).toString()
+    });
+    setUserAnswer('');
+  };
+
+  useEffect(() => {
+    generateCaptcha();
+  }, []);
+
   // Custom cursor tracking for desktop
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [showCursor, setShowCursor] = useState(false);
@@ -312,49 +334,79 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
     if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     } else if (currentStep === 4) {
-      // Validate form data
-      const validation = validateFormData(formData);
+      if (SHOW_SECURITY_CHECK) {
+        setIsCaptchaModalOpen(true);
+      } else {
+        // Direct submission if captcha is disabled
+        handleFinalSubmit(true);
+      }
+    }
+  };
 
-      if (!validation.isValid) {
-        // Show first validation error
-        const firstError = Object.values(validation.errors)[0];
-        setSubmitError(firstError);
+  const handleFinalSubmit = async (bypassCaptcha = false) => {
+    // Verify Captcha locally if not bypassed
+    if (!bypassCaptcha) {
+      if (userAnswer !== captchaQuestion.a) {
+        setSubmitError('Incorrect security answer. Please try again.');
+        generateCaptcha();
         setTimeout(() => setSubmitError(null), 3000);
         return;
       }
+    }
 
-      // Submit the form via API
-      setIsSubmitting(true);
-      setSubmitError(null);
+    // Validate form data (sending 'skipped' if bypassed to satisfy API utility)
+    const validation = validateFormData({ 
+      ...formData, 
+      captcha: bypassCaptcha ? 'skipped' : userAnswer 
+    });
 
-      try {
-        const response = await submitContactForm(formData as ContactFormData);
+    if (!validation.isValid) {
+      const firstError = Object.values(validation.errors)[0];
+      setSubmitError(firstError);
+      setIsCaptchaModalOpen(false); // Close to show error on main form if needed
+      setTimeout(() => setSubmitError(null), 3000);
+      return;
+    }
 
-        if (response.success) {
-          setIsSubmitted(true);
+    // Submit the form via API
+    setIsSubmitting(true);
+    setSubmitError(null);
 
-          // Hide success message after 3 seconds
-          setTimeout(() => {
-            setIsSubmitted(false);
-            // Reset form
-            setFormData({
-              name: '',
-              email: '',
-              phone: '',
-              message: ''
-            });
-            setCurrentStep(1);
-          }, 3000);
-        } else {
-          setSubmitError(response.message);
-          setTimeout(() => setSubmitError(null), 3000);
-        }
-      } catch (error) {
-        setSubmitError('An unexpected error occurred. Please try again.');
+    try {
+      const response = await submitContactForm({ 
+        ...formData, 
+        captcha: bypassCaptcha ? 'skipped' : userAnswer 
+      } as ContactFormData);
+
+      if (response.success) {
+        setIsSubmitted(true);
+        setIsCaptchaModalOpen(false);
+
+        // Hide success message after 3 seconds
+        setTimeout(() => {
+          setIsSubmitted(false);
+          // Reset form
+          setFormData({
+            name: '',
+            email: '',
+            phone: '',
+            message: ''
+          });
+          setUserAnswer('');
+          generateCaptcha();
+          setCurrentStep(1);
+        }, 3000);
+      } else {
+        setSubmitError(response.message);
+        setIsCaptchaModalOpen(false);
         setTimeout(() => setSubmitError(null), 3000);
-      } finally {
-        setIsSubmitting(false);
       }
+    } catch (error) {
+      setSubmitError('An unexpected error occurred. Please try again.');
+      setIsCaptchaModalOpen(false);
+      setTimeout(() => setSubmitError(null), 3000);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -537,7 +589,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
           {!isSubmitted && (
             <>
               {/* Step Indicator - Mobile - Above the title */}
-              <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 translate-x-[-50%] not-italic text-[32px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-650px)] whitespace-pre">{currentStep}/4</p>
+              <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 translate-x-[-50%] not-italic text-[32px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-650px)] whitespace-pre">{currentStep}/5</p>
 
               {/* Form Field */}
               {currentStep === 1 && (
@@ -1078,6 +1130,75 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
           <text x="10" y="46" fill="#FFFFFF" fontFamily="Arial, sans-serif" fontSize="10">Financial Conduct Authority</text>
         </svg>
       </div>
+
+      {/* Captcha Modal */}
+      <AnimatePresence>
+        {isCaptchaModalOpen && (
+          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-md"
+              onClick={() => !isSubmitting && setIsCaptchaModalOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative bg-[#2c4657] border border-white/20 p-6 rounded-[24px] w-full max-w-[320px] shadow-2xl overflow-hidden"
+            >
+              {/* Decorative elements */}
+              <div className="absolute top-0 right-0 -mr-12 -mt-12 w-24 h-24 bg-[#2ec4b6]/15 rounded-full blur-2xl" />
+              <div className="absolute bottom-0 left-0 -ml-12 -mb-12 w-24 h-24 bg-[#2d85bf]/15 rounded-full blur-2xl" />
+
+              <div className="relative z-10 flex flex-col items-center">
+                <div className="mb-4 bg-white/5 p-3 rounded-xl border border-white/10">
+                  <Menu className="size-5 text-[#2ec4b6]" />
+                </div>
+                
+                <h3 className="font-['Lato:Bold',sans-serif] text-xl text-white mb-1 tracking-wide uppercase">Security Check</h3>
+                <p className="font-['Lato:Light',sans-serif] text-sm text-white/50 text-center mb-6">Verify you're human to send.</p>
+                
+                <div className="w-full bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col items-center gap-3 mb-6">
+                  <span className="font-['Lato:Regular',sans-serif] text-2xl text-white tracking-[6px]">{captchaQuestion.q}</span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={userAnswer}
+                    onChange={(e) => setUserAnswer(e.target.value)}
+                    placeholder="Result"
+                    className="w-full bg-transparent border-b border-white/20 focus:border-[#2ec4b6] outline-none text-center text-3xl py-1 text-white font-['Lato:Light',sans-serif] transition-colors"
+                    autoFocus
+                    onKeyDown={(e) => e.key === 'Enter' && userAnswer && handleFinalSubmit()}
+                  />
+                </div>
+
+                {submitError && (
+                  <p className="text-red-400 text-xs mb-4 font-['Lato:Regular',sans-serif] text-center">{submitError}</p>
+                )}
+
+                <div className="flex flex-col gap-2 w-full">
+                  <button
+                    onClick={() => handleFinalSubmit(false)}
+                    disabled={isSubmitting || !userAnswer}
+                    className="w-full py-3 bg-[#2ec4b6] text-[#2c4657] font-['Lato:Bold',sans-serif] rounded-xl hover:bg-[#26a69a] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 uppercase text-sm tracking-widest shadow-lg shadow-[#2ec4b6]/10"
+                  >
+                    {isSubmitting ? 'Sending...' : 'Verify & Send'}
+                  </button>
+                  <button
+                    onClick={() => setIsCaptchaModalOpen(false)}
+                    disabled={isSubmitting}
+                    className="w-full py-2 bg-transparent text-white/30 font-['Lato:Regular',sans-serif] rounded-xl hover:text-white transition-colors text-xs"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* PDF Viewer Modal */}
       {pdfViewerOpen && currentPdf && (
