@@ -103,7 +103,21 @@ export default function App() {
       setSplashAnimationComplete(true);
     }, 2200); // Match the splash animation duration
 
-    return () => clearTimeout(timer);
+    // Signal the inlined preloader to remove itself (once React is stable)
+    const cleanupTimer = setTimeout(() => {
+      if (typeof (window as any).__REMOVE_PRELOADER__ === 'function') {
+        (window as any).__REMOVE_PRELOADER__();
+      }
+      // Only set splash viewed after a small delay to ensure cleanup is done
+      setTimeout(() => {
+        // Set a global flag or local state if needed
+      }, 300);
+    }, 50);
+
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(cleanupTimer);
+    };
   }, []);
 
   // Track scroll position to hide navigation during splash
@@ -288,8 +302,7 @@ export default function App() {
         contactUsScrollProgress={contactUsScrollProgress}
         currentScrollY={currentScrollY}
       />
-
-      {/* Navigation Bar - Desktop and Tablet only */}
+   {/* Navigation Bar - Desktop and Tablet only */}
       {!isMobile && (
         <AboutUsNavigation 
           aboutUsScrollProgress={aboutUsScrollProgress}

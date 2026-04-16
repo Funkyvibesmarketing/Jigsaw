@@ -50,7 +50,8 @@ export function SplashMobile({ onComplete }: { onComplete: () => void }) {
   }, []);
 
   return (
-    <div className="min-h-screen w-full overflow-hidden bg-white m-0 p-0 border-0">
+    <div className="min-h-screen w-full overflow-hidden bg-white m-0 p-0 border-0 transition-opacity duration-300"
+         style={{ opacity: progress > 0 ? 1 : 0 }}>
       <AnimatedLogoScreen
         progress={progress}
         showFinancial={showFinancial}

@@ -940,7 +940,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
                 </a>
 
                 <a
-                  href="https://www.instagram.com/jigsaw_financial"
+                  href="https://www.instagram.com/jigsaw_financial?igsh=N2luMzM1dHU1dWNs"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex flex-col gap-[8px] items-center relative"

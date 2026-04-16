@@ -23,7 +23,55 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="image" href="/src/assets/77b24f13b4242da58b9f7acf069a8d06393d7e02.webp" fetchpriority="high">
+    
+    <!-- Adaptive LCP Preloading -->
+    <link rel="preload" as="image" href="/src/assets/hero-mobile.webp" media="(max-width: 768px)" fetchpriority="high">
+    <link rel="preload" as="image" href="/src/assets/77b24f13b4242da58b9f7acf069a8d06393d7e02.webp" media="(min-width: 769px)" fetchpriority="high">
+
+    <style>
+      /* Critical CSS for Instant Splash Paint */
+      body { margin: 0; background: #ffffff; }
+      #splash-preloader {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #ffffff;
+        transition: opacity 0.3s ease;
+      }
+      .logo-container {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 392px;
+        height: 60px;
+        margin-top: -40px;
+      }
+      @media (min-width: 769px) {
+        .logo-container { 
+          width: 802px; 
+          max-width: none;
+          height: 143px; 
+          margin-top: 0;
+          top: calc(50% - 64.5px);
+        }
+      }
+      .logo-svg { width: 100%; height: 100%; display: block; }
+      .letter { opacity: 0; }
+      .a-logo { 
+        position: absolute; 
+        opacity: 0; 
+        left: 50%; top: 50%;
+        transform: translate(-50%, -50%) scale(0.5);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+      
+      /* Simple Static Fade-in (No movement) */
+      .ready .a-logo { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      .ready .letter { opacity: 1; }
+    </style>
+
     <script type="application/ld+json">
       {
       "@context": "https://schema.org",
@@ -39,12 +87,46 @@
         "contactType": "customer service"
       }
       }
-  </script>
-    </head>
+    </script>
+  </head>
 
-    <body>
-      <div id="root"></div>
-      <script type="module" src="/src/main.tsx"></script>
-    </body>
-  </html>
+  <body>
+    <div id="splash-preloader">
+      <div class="logo-container" id="logo-shell">
+        <!-- Minimal SVG Container for the A Logo (Prevents letters flashing) -->
+        <svg class="logo-svg" viewBox="0 0 802 143" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Letters removed to avoid conflict with React animation -->
+        </svg>
+
+        <!-- The A Logo -->
+        <div class="a-logo" id="a-logo-pre">
+          <svg width="132" height="140" viewBox="0 0 132 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M58.7752 123.254C58.0271 122.226 57.1854 121.15 56.3905 120.075C54.1462 117.784 52.8369 114.464 53.1175 111.097C53.8656 103.756 59.7571 100.062 65.6019 100.109H65.6486C71.4466 100.109 77.2914 103.803 78.0395 111.097C78.32 114.417 77.0108 117.784 74.7664 120.075C73.9715 121.197 73.1299 122.226 72.3818 123.254C69.436 127.276 72.1947 129.38 75.0002 129.987H127.229L67.706 3.46028H63.3107L9.95982 129.941H56.2035C58.9622 129.333 61.721 127.229 58.7752 123.254Z" fill="#2EC4B6" />
+            <path d="M75.0934 0H55.9694L0 139.9H14.6353C16.2718 139.9 17.6278 139.432 18.75 138.544C19.8722 137.656 20.6203 136.58 20.9944 135.411L32.8241 104.831H32.6839L40.3989 85.0996L61.3465 31.1408C62.796 27.634 64.1988 23.2387 65.5547 17.9551C66.2094 20.48 66.9107 22.8647 67.6121 25.1091C68.3135 27.3534 69.0148 29.3173 69.6694 31.0006L90.0559 83.7904L98.1451 104.785L110.022 135.411C110.536 136.72 111.331 137.796 112.36 138.638C113.388 139.479 114.744 139.9 116.474 139.9H131.109L75.0934 0Z" fill="#2C4657" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Simple fade in shown logo shell
+      const shell = document.getElementById('logo-shell');
+      setTimeout(() => shell.classList.add('ready'), 50);
+      
+      // Global cleanup hook for React
+      window.__REMOVE_PRELOADER__ = function() {
+        const preloader = document.getElementById('splash-preloader');
+        if (preloader) {
+          preloader.style.opacity = '0';
+          setTimeout(() => {
+            if (preloader.parentNode) preloader.remove();
+          }, 300);
+        }
+      };
+    </script>
+
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
   

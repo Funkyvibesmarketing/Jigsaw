@@ -2,11 +2,10 @@ import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
 import svgPathsHero from '../imports/svg-ypzv7eolo3';
 import svgPathsCompliance from '../imports/svg-u4aqnlggjb';
-import imgModernHouseAtTwilight4 from 'figma:asset/77b24f13b4242da58b9f7acf069a8d06393d7e02.png';
-import imgModernHouseAtTwilight4Mobile from 'figma:asset/b6dd7b7dd618b958e5aaca66f91a1e86e6151a35.png';
+import imgModernHouseAtTwilight4 from '../assets/hero-mobile.webp';
 import imgVector from 'figma:asset/98e22ea118a61d8d843204140092d61e8f5f90c4.png';
 import imgRectangle14200 from "figma:asset/2b522be0adda68686cd941d2da701840d5a124a6.png";
-import complianceShield from '../assets/compliance_shield.png';
+import complianceShield from '../assets/compliance_shield.webp';
 
 function MobileDownArrow({ onClick }: { onClick?: () => void }) {
   return (
