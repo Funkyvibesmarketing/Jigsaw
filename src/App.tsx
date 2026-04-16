@@ -108,11 +108,7 @@ export default function App() {
       if (typeof (window as any).__REMOVE_PRELOADER__ === 'function') {
         (window as any).__REMOVE_PRELOADER__();
       }
-      // Only set splash viewed after a small delay to ensure cleanup is done
-      setTimeout(() => {
-        // Set a global flag or local state if needed
-      }, 300);
-    }, 50);
+    }, 100);
 
     return () => {
       clearTimeout(timer);
@@ -300,16 +296,18 @@ export default function App() {
         WebkitOverflowScrolling: 'touch' // Smooth scrolling on iOS
       } as any}
     >
-      {/* Custom Cursor */}
-      <CustomCursor 
-        aboutUsScrollProgress={aboutUsScrollProgress}
-        reviewsScrollProgress={reviewsScrollProgress}
-        teamScrollProgress={teamScrollProgress}
-        processScrollProgress={processScrollProgress}
-        blogsScrollProgress={blogsScrollProgress}
-        contactUsScrollProgress={contactUsScrollProgress}
-        currentScrollY={currentScrollY}
-      />
+      {/* Custom Cursor - Fully deferred for performance */}
+      {(splashAnimationComplete || splashHasBeenViewed) && (
+        <CustomCursor 
+          aboutUsScrollProgress={aboutUsScrollProgress}
+          reviewsScrollProgress={reviewsScrollProgress}
+          teamScrollProgress={teamScrollProgress}
+          processScrollProgress={processScrollProgress}
+          blogsScrollProgress={blogsScrollProgress}
+          contactUsScrollProgress={contactUsScrollProgress}
+          currentScrollY={currentScrollY}
+        />
+      )}
    {/* Navigation Bar - Desktop and Tablet only */}
       {!isMobile && (
         <AboutUsNavigation 
@@ -402,7 +400,8 @@ export default function App() {
       </div>
 
       {/* Heavy Content Sections - Deferred Mounting for Performance */}
-      {(splashAnimationComplete || splashHasBeenViewed) && (
+      {/* Hydration Shield: Exclude from static HTML if prebuilding to keep initial payload lean */}
+      {((splashAnimationComplete || splashHasBeenViewed) && !((window as any).__PRERENDER_IN_PROGRESS__)) && (
         <>
           {/* About Us Section */}
           <div id="AboutUsSection" style={{marginTop: isMobile ? '-345px' : '0'}}>
@@ -459,29 +458,34 @@ export default function App() {
         </>
       )}
       
-      {/* Up Arrow Button - Mobile only - appears across all sections from Hero compliance onwards */}
-      {isMobile && (heroScrollProgress >= 0.82 || aboutUsScrollProgress > 0 || reviewsScrollProgress > 0 || teamScrollProgress > 0 || processScrollProgress > 0) && (
-        <div className="fixed bottom-[40px] right-[24px] z-[250]">
-          <MobileUpArrow onClick={handleScrollToTop} />
-        </div>
+      {/* Deferred Secondary UI Elements */}
+      {(splashAnimationComplete || splashHasBeenViewed) && (
+        <>
+          {/* Up Arrow Button - Mobile only - appears across all sections from Hero compliance onwards */}
+          {isMobile && (heroScrollProgress >= 0.82 || aboutUsScrollProgress > 0 || reviewsScrollProgress > 0 || teamScrollProgress > 0 || processScrollProgress > 0) && (
+            <div className="fixed bottom-[40px] right-[24px] z-[250]">
+              <MobileUpArrow onClick={handleScrollToTop} />
+            </div>
+          )}
+          {/* Up Arrow Button - Desktop only - appears across all sections from Hero compliance onwards */}
+          {!isMobile && (heroScrollProgress >= 0.82 || aboutUsScrollProgress > 0 || reviewsScrollProgress > 0 || teamScrollProgress > 0 || processScrollProgress > 0 || blogsScrollProgress > 0 || contactUsScrollProgress > 0 || contactUsFormScrollProgress > 0) && (
+            <div className="fixed bottom-[40px] right-[24px] z-[250]">
+              <UpArrowButton onClick={handleScrollToTop} />
+            </div>
+          )}
+          <WhatsAppButton 
+            heroScrollProgress={heroScrollProgress}
+            aboutUsScrollProgress={aboutUsScrollProgress}
+            reviewsScrollProgress={reviewsScrollProgress}
+            teamScrollProgress={teamScrollProgress}
+            processScrollProgress={processScrollProgress}
+            blogsScrollProgress={blogsScrollProgress}
+            contactUsFormScrollProgress={contactUsFormScrollProgress}
+            contactUsScrollProgress={contactUsScrollProgress}
+            splashHasBeenViewed={splashHasBeenViewed || splashAnimationComplete}
+          />
+        </>
       )}
-      {/* Up Arrow Button - Desktop only - appears across all sections from Hero compliance onwards */}
-      {!isMobile && (heroScrollProgress >= 0.82 || aboutUsScrollProgress > 0 || reviewsScrollProgress > 0 || teamScrollProgress > 0 || processScrollProgress > 0 || blogsScrollProgress > 0 || contactUsScrollProgress > 0 || contactUsFormScrollProgress > 0) && (
-        <div className="fixed bottom-[40px] right-[24px] z-[250]">
-          <UpArrowButton onClick={handleScrollToTop} />
-        </div>
-      )}
-      <WhatsAppButton 
-        heroScrollProgress={heroScrollProgress}
-        aboutUsScrollProgress={aboutUsScrollProgress}
-        reviewsScrollProgress={reviewsScrollProgress}
-        teamScrollProgress={teamScrollProgress}
-        processScrollProgress={processScrollProgress}
-        blogsScrollProgress={blogsScrollProgress}
-        contactUsFormScrollProgress={contactUsFormScrollProgress}
-        contactUsScrollProgress={contactUsScrollProgress}
-        splashHasBeenViewed={splashHasBeenViewed || splashAnimationComplete}
-      />
     </motion.div>
   );
 }

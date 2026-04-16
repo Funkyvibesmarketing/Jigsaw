@@ -23,6 +23,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
     
     <!-- Adaptive LCP Preloading -->
     <link rel="preload" as="image" href="/src/assets/hero-mobile.webp" media="(max-width: 768px)" fetchpriority="high">
@@ -30,7 +31,9 @@
 
     <style>
       /* Critical CSS for Instant Splash Paint */
-      body { margin: 0; background: #ffffff; }
+      :root { --background: #ffffff; }
+      body { margin: 0; background: #ffffff; font-family: 'Lato', sans-serif; }
+      #root { min-height: 100vh; position: relative; }
       #splash-preloader {
         position: fixed;
         inset: 0;

@@ -1,4 +1,4 @@
-﻿const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer");
 const fs = require("fs");
 const path = require("path");
 const { spawn } = require("child_process");
@@ -51,7 +51,12 @@ async function waitForServer(url, timeoutMs = 30000) {
       timeout: 0
     });
 
-    // wait for React to fully render
+    // signal to the app that we are prerendering
+    await page.evaluate(() => {
+      window.__PRERENDER_IN_PROGRESS__ = true;
+    });
+
+    // wait for React to fully render the hero/splash area
     await new Promise((resolve) => setTimeout(resolve, 5000));
 
     const html = await page.content();
