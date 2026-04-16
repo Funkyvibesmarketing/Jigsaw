@@ -730,7 +730,12 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
               </a>
 
               {/* Instagram */}
-              <div className="content-stretch flex flex-col gap-[8px] items-center shrink-0">
+              <a
+                href="https://www.instagram.com/jigsaw_financial?igsh=N2luMzM1dHU1dWNs"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="content-stretch flex flex-col gap-[8px] items-center shrink-0"
+              >
                 <div className="bg-[rgba(255,255,255,0.1)] box-border content-stretch flex gap-[8px] items-center p-[16px] rounded-[100px] size-[56px] relative">
                   <div aria-hidden="true" className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" />
                   <div className="relative shrink-0 size-[24px]">
@@ -748,7 +753,7 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
                   <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_4px_4px_0px_rgba(255,255,255,0.12),inset_0px_-5px_4px_0px_rgba(255,255,255,0.08)]" />
                 </div>
                 <p className="font-['Lato:Light',sans-serif] leading-[28px] not-italic text-center text-[20px] text-white tracking-[0.2px]">Instagram</p>
-              </div>
+              </a>
 
               {/* LinkedIn */}
               <a
