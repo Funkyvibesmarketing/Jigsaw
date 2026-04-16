@@ -385,6 +385,7 @@ export function Team({
                             alt={member.name}
                             className="absolute inset-0 max-w-none object-50%-50% object-cover pointer-events-none size-full"
                             src={member.image}
+                            loading="lazy"
                           />
                         </div>
 

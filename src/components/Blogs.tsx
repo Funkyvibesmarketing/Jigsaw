@@ -54,7 +54,7 @@ function BlogCard({ blog, isActive, onClick }: { blog: BlogData; isActive: boole
     >
       <div className="box-border content-stretch flex flex-col gap-[8px] items-start justify-end p-[16px] relative rounded-[8px] shrink-0 h-full w-[388px]">
         <div aria-hidden="true" className="absolute inset-0 pointer-events-none rounded-[8px]">
-          <img alt="" className="absolute max-w-none object-50%-50% object-cover rounded-[8px] size-full" src={blog.image} />
+          <img alt="" className="absolute max-w-none object-50%-50% object-cover rounded-[8px] size-full" src={blog.image} loading="lazy" />
 
           {/* Info Button - Only on Active Card */}
           {isActive && (
@@ -274,7 +274,7 @@ function BlogPopup({
       >
         {/* Blog Image */}
         <div className="h-full relative shrink-0 w-[373px] rounded-[8px] overflow-hidden">
-          <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[8px] size-full" src={blog.image} />
+          <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[8px] size-full" src={blog.image} loading="lazy" />
         </div>
 
         {/* Blog Content */}

@@ -2094,6 +2094,10 @@
     min-height: 150vh;
   }
 
+  .min-h-\[150px\] {
+    min-height: 150px;
+  }
+
   .min-h-\[180px\] {
     min-height: 180px;
   }

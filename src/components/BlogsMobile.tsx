@@ -59,7 +59,7 @@ function BlogCard({
     >
       <div className={`basis-0 grow h-full min-h-px min-w-px relative rounded-[8px] shrink-0`}>
         <div aria-hidden="true" className="absolute inset-0 pointer-events-none rounded-[8px]">
-          <img alt="" className="absolute max-w-none object-50%-50% object-cover rounded-[8px] size-full" src={blog.image} />
+          <img alt="" className="absolute max-w-none object-50%-50% object-cover rounded-[8px] size-full" src={blog.image} loading="lazy" />
 
           {/* Info Button - Only on Active Card */}
           {isActive && (
@@ -235,7 +235,7 @@ function BlogPopupMobile({
       >
         {/* Blog Image */}
         <div className="h-[160px] relative shrink-0 w-full rounded-[8px] overflow-hidden">
-          <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[8px] size-full" src={blog.image} />
+          <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[8px] size-full" src={blog.image} loading="lazy" />
         </div>
 
         {/* Blog Content */}

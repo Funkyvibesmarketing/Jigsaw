@@ -27,7 +27,7 @@ export function Splash({ onComplete }: { onComplete: () => void }) {
 
   useEffect(() => {
     // Animate progress from 0 to 100 over the duration of the letter animations
-    const duration = 3500; // 3.5 seconds total animation
+    const duration = 2200; // 2.2 seconds total animation
     const steps = 100;
     const stepDuration = duration / steps;
     const timeouts: number[] = [];
@@ -36,18 +36,18 @@ export function Splash({ onComplete }: { onComplete: () => void }) {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
-          // Hold at 100% for 400ms before fading
+          // Hold at 100% for 200ms before fading
           timeouts.push(window.setTimeout(() => {
             setFadeProgress(true);
-          }, 400));
+          }, 200));
           // Show financial banner after fade starts
           timeouts.push(window.setTimeout(() => {
             setShowFinancial(true);
-          }, 700));
+          }, 400));
           // Show the scroll hint after the final animation has appeared
           timeouts.push(window.setTimeout(() => {
             setShowScrollHint(true);
-          }, 1200));
+          }, 700));
           return 100;
         }
         return prev + 1;
@@ -131,7 +131,7 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress, showScrollH
               fill="#2C4657"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
+              transition={{ delay: 0.2, duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
             />
             
             {/* I - appears from left */}
@@ -140,7 +140,7 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress, showScrollH
               fill="#2C4657"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.7, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
+              transition={{ delay: 0.4, duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
             />
             
             {/* G - appears from left */}
@@ -149,7 +149,7 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress, showScrollH
               fill="#2C4657"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.0, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
+              transition={{ delay: 0.6, duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
             />
             
             {/* S - appears from left */}
@@ -158,7 +158,7 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress, showScrollH
               fill="#2C4657"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.3, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
+              transition={{ delay: 0.8, duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
             />
             
             {/* W - appears from right */}
@@ -167,7 +167,7 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress, showScrollH
               fill="#2C4657"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.6, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
+              transition={{ delay: 1.0, duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
             />
           </g>
         </svg>
@@ -186,8 +186,8 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress, showScrollH
           transition={{ 
             opacity: { delay: 0, duration: 0.5 },
             scale: { delay: 0, duration: 0.8, ease: [0.34, 1.56, 0.64, 1] },
-            left: { delay: 0.4, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] },
-            x: { delay: 0.4, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }
+            left: { delay: 0.2, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] },
+            x: { delay: 0.2, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }
           }}
         >
           <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 132 140">

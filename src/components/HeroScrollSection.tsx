@@ -233,6 +233,7 @@ export function HeroScrollSection({ onScrollProgress, splashViewed }: { onScroll
               src={imgJigsawLogo}
               alt="JIGSAW"
               className="w-full h-full object-contain"
+              fetchpriority="high"
               style={{
                 maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%)',
                 WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%)'
@@ -273,6 +274,7 @@ export function HeroScrollSection({ onScrollProgress, splashViewed }: { onScroll
                     alt=""
                     className="absolute inset-0 max-w-none object-center object-cover pointer-events-none size-full"
                     src={imgModernHouseAtTwilight4}
+                    fetchpriority="high"
                   />
                 </div>
               </div>

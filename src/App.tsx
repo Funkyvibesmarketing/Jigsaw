@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { motion, useScroll, useTransform, useMotionValue } from 'motion/react';
 import { Splash } from './components/Splash';
 import { SplashMobile } from './components/SplashMobile';
@@ -6,15 +6,6 @@ import { HeroScrollSection } from './components/HeroScrollSection';
 import { HeroScrollSectionMobile } from './components/HeroScrollSectionMobile';
 import { AboutUs } from './components/AboutUs';
 import { AboutUsMobile } from './components/AboutUsMobile';
-import { Reviews } from './components/Reviews';
-import { Team } from './components/Team';
-import { TeamMobile } from './components/TeamMobile';
-import Process from './components/Process';
-import ProcessMobile from './components/ProcessMobile';
-import Blogs from './components/Blogs';
-import { BlogsMobile } from './components/BlogsMobile';
-import ContactUs from './components/ContactUs';
-import ContactUsForm from './components/ContactUsForm';
 import { CustomCursor } from './components/CustomCursor';
 import { AboutUsNavigation } from './components/AboutUsNavigation';
 import { MobileNavigation } from './components/MobileNavigation';
@@ -28,6 +19,20 @@ import { fetchServices, defaultServices, type Service } from './utils/servicesAp
 import { fetchBlogs, defaultBlogs, type BlogData } from './utils/blogsApi';
 import { fetchAboutUsCarouselData, defaultAboutUsCarouselData, type carouselTexts } from './utils/aboutApi';
 import { useLenis } from './hooks/useLenis'; // Import Lenis hook
+
+// Lazy load components that are not immediately visible
+const Reviews = lazy(() => import('./components/Reviews').then(module => ({ default: module.Reviews })));
+const Team = lazy(() => import('./components/Team').then(module => ({ default: module.Team })));
+const TeamMobile = lazy(() => import('./components/TeamMobile').then(module => ({ default: module.TeamMobile })));
+const Process = lazy(() => import('./components/Process'));
+const ProcessMobile = lazy(() => import('./components/ProcessMobile'));
+const Blogs = lazy(() => import('./components/Blogs'));
+const BlogsMobile = lazy(() => import('./components/BlogsMobile').then(module => ({ default: module.BlogsMobile })));
+const ContactUs = lazy(() => import('./components/ContactUs'));
+const ContactUsForm = lazy(() => import('./components/ContactUsForm'));
+
+// Loading skeleton/fallback component
+const SectionLoader = () => <div className="min-h-[200px] w-full flex items-center justify-center bg-transparent" />;
 
 export default function App() {
   const [splashAnimationComplete, setSplashAnimationComplete] = useState(false);
@@ -96,7 +101,7 @@ export default function App() {
     // Wait for splash animation to complete before enabling scroll
     const timer = setTimeout(() => {
       setSplashAnimationComplete(true);
-    }, 3500); // Match the splash animation duration
+    }, 2200); // Match the splash animation duration
 
     return () => clearTimeout(timer);
   }, []);
@@ -397,34 +402,43 @@ export default function App() {
       
       {/* Reviews Section - appears after About Us/Services */}
       <div id="ReviewsSection">
-        <Reviews onScrollProgress={setReviewsScrollProgress} aboutUsScrollProgress={aboutUsScrollProgress} processScrollProgress={processScrollProgress} />
+        <Suspense fallback={<SectionLoader />}>
+          <Reviews onScrollProgress={setReviewsScrollProgress} aboutUsScrollProgress={aboutUsScrollProgress} processScrollProgress={processScrollProgress} />
+        </Suspense>
       </div>
       
       {/* Team Section - appears after Reviews with TEAM text transition */}
       <div id="TeamSection" className={isMobile ? "min-h-[50vh] bg-[#2c4657]" : ""}>
-        {!isMobile && <Team reviewsScrollProgress={reviewsScrollProgress} aboutUsScrollProgress={aboutUsScrollProgress} teamMembers={teamMembers} processScrollProgress={processScrollProgress} />}
-        {isMobile && <TeamMobile reviewsScrollProgress={reviewsScrollProgress} teamMembers={teamMembers} processScrollProgress={processScrollProgress} onScrollProgress={setTeamScrollProgress} />}
+        <Suspense fallback={<SectionLoader />}>
+          {!isMobile && <Team reviewsScrollProgress={reviewsScrollProgress} aboutUsScrollProgress={aboutUsScrollProgress} teamMembers={teamMembers} processScrollProgress={processScrollProgress} />}
+          {isMobile && <TeamMobile reviewsScrollProgress={reviewsScrollProgress} teamMembers={teamMembers} processScrollProgress={processScrollProgress} onScrollProgress={setTeamScrollProgress} />}
+        </Suspense>
       </div>
       
       {/* Process Section - appears after Team section */}
       <div id="ProcessSection" className={isMobile ? "" : ""}>
-        {!isMobile && <Process onScrollProgress={setProcessScrollProgress} />}
-        {isMobile && <ProcessMobile onScrollProgress={setProcessScrollProgress} teamScrollProgress={teamInternalScrollProgress} />}
+        <Suspense fallback={<SectionLoader />}>
+          {!isMobile && <Process onScrollProgress={setProcessScrollProgress} />}
+          {isMobile && <ProcessMobile onScrollProgress={setProcessScrollProgress} teamScrollProgress={teamInternalScrollProgress} />}
+        </Suspense>
       </div>
       
       {/* Blogs Section - appears after Process section */}
       <div id="BlogsSection">
-        {!isMobile && <Blogs onScrollProgress={setBlogsScrollProgress} blogs={blogs} contactUsScrollProgress={contactUsScrollProgress} />}
-        {isMobile && <BlogsMobile onScrollProgress={setBlogsScrollProgress} blogs={blogs} />}
+        <Suspense fallback={<SectionLoader />}>
+          {!isMobile && <Blogs onScrollProgress={setBlogsScrollProgress} blogs={blogs} contactUsScrollProgress={contactUsScrollProgress} />}
+          {isMobile && <BlogsMobile onScrollProgress={setBlogsScrollProgress} blogs={blogs} />}
+        </Suspense>
       </div>
       
       {/* Contact Us Section - appears after Blogs section (Desktop only) */}
       <div id="ContactUsSection">
-        <ContactUs onScrollProgress={setContactUsScrollProgress} />
+        <Suspense fallback={<SectionLoader />}>
+          <ContactUs onScrollProgress={setContactUsScrollProgress} />
+          {/* Contact Us Form Section - appears after Contact Us section (Desktop only) */}
+          <ContactUsForm onScrollProgress={setContactUsFormScrollProgress} />
+        </Suspense>
       </div>
-      
-      {/* Contact Us Form Section - appears after Contact Us section (Desktop only) */}
-      <ContactUsForm onScrollProgress={setContactUsFormScrollProgress} />
       
       {/* Up Arrow Button - Mobile only - appears across all sections from Hero compliance onwards */}
       {isMobile && (heroScrollProgress >= 0.82 || aboutUsScrollProgress > 0 || reviewsScrollProgress > 0 || teamScrollProgress > 0 || processScrollProgress > 0) && (

@@ -333,7 +333,7 @@ export function TeamMobile({
                         </div>
 
                         {/* Job title - responsive with proper wrapping */}
-                        <p className="font-['Lato:SemiBold',sans-serif] leading-[32px] sm:leading-[38px] not-italic text-[24px] sm:text-[32px] text-[rgba(255,255,255,0.5)] mb-[24px] sm:mb-[32px] max-w-full break-words min-h-[64px] sm:min-h-[76px]" style={{ fontWeight: 600 }}>
+                        <p className="font-['Lato:SemiBold',sans-serif] leading-[32px] sm:leading-[38px] not-italic text-[20px] sm:text-[32px] text-[rgba(255,255,255,0.5)] mb-[24px] sm:mb-[32px] max-w-full break-words min-h-[29px] sm:min-h-[76px]" style={{ fontWeight: 600 }}>
                           {member.title}
                         </p>
 
@@ -343,6 +343,7 @@ export function TeamMobile({
                             alt={member.name}
                             className="w-full h-full object-cover"
                             src={member.image}
+                            loading="lazy"
                           />
                         </div>
 
