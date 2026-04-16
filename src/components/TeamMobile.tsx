@@ -338,7 +338,7 @@ export function TeamMobile({
                         </p>
 
                         {/* Member photo - responsive with reduced height */}
-                        <div className="w-full min-h-[180px] max-h-[240px] h-[25vh] mb-[20px] sm:mb-[24px] overflow-hidden flex-shrink-0">
+                        <div className="w-full min-h-[180px] max-h-[240px] h-[30vh] mb-[20px] sm:mb-[24px] overflow-hidden flex-shrink-0">
                           <img
                             alt={member.name}
                             className="w-full h-full object-cover object-top"
