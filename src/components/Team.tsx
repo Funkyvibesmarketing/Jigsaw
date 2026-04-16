@@ -383,7 +383,7 @@ export function Team({
                         <div className="absolute h-[400px] left-[101px] top-[calc(50%+50px)] translate-y-[-50%] w-[300px]">
                           <img
                             alt={member.name}
-                            className="absolute inset-0 max-w-none object-50%-50% object-cover pointer-events-none size-full"
+                            className="absolute inset-0 max-w-none object-cover object-top pointer-events-none size-full"
                             src={member.image}
                             loading="lazy"
                           />
