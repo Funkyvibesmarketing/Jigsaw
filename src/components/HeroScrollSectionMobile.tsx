@@ -40,7 +40,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
   // Handle down arrow click - scroll to next section (About Us)
   const handleScrollToNext = () => {
     window.scrollTo({
-      top: window.innerHeight * 3.8, // Position as We rewered
+      top: window.innerHeight * 3.8, // Position as rewered
       behavior: 'smooth'
     });
   };
@@ -78,7 +78,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
   );
   const bgImageY = useTransform(
     scrollYProgress,
-    [0, 0.04, 0.10, 0.50, 0.95, 1],
+    [0, 0.04, 0.10, 0.42, 0.90, 1],
     splashViewed ? [0, 0, 0, 0, -900, -1200] : [100, 100, 0, 0, -900, -1200]
   );
   const mainImageOpacity = useTransform(
@@ -88,7 +88,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
   );
   const mainImageY = useTransform(
     scrollYProgress,
-    [0, 0.04, 0.10, 0.50, 0.95, 1],
+    [0, 0.04, 0.10, 0.42, 0.90, 1],
     splashViewed ? [0, 0, 0, 0, -900, -1200] : [100, 100, 0, 0, -900, -1200]
   );
 
@@ -106,14 +106,14 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
   // If splash has been viewed, show sentence immediately at top
   const sentenceOpacity = useTransform(
     scrollYProgress,
-    [0, 0.10, 0.14, 0.30, 0.45],
+    [0, 0.10, 0.14, 0.30, 0.42],
     splashViewed ? [1, 1, 1, 1, 0] : [0, 0, 1, 1, 0]
   );
   // Mobile: start from marking position (centered on house as shown in image)
-  // Sentence stays in position until 0.25, then starts sliding up
+  // Sentence stays in position until 0.25, then starts sliding up and is gone by 0.42
   const sentenceY = useTransform(
     scrollYProgress,
-    [0, 0.10, 0.14, 0.25, 0.30, 0.45],
+    [0, 0.10, 0.14, 0.25, 0.30, 0.42],
     splashViewed ? [-200, -200, -200, -200, -400, -1000] : [-200, -200, -200, -200, -400, -1000]
   );
 
@@ -138,8 +138,8 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
   // Step 7.5: Bottom gradient appears (compressed)
   const bottomGradientOpacity = useTransform(scrollYProgress, [0.82, 0.85, 0.88], [0, 1, 0]);
 
-  // Step 8: Compliance content appears and slides up with the sentence
-  const complianceY = useTransform(scrollYProgress, [0.50, 0.70, 0.95], [800, -400, -700]);
+  // Step 8: Compliance content appears and slides up — starts at 0.42 to close gap after sentence exits
+  const complianceY = useTransform(scrollYProgress, [0.42, 0.65, 0.95], [800, -300, -700]);
   const complianceOpacity = useTransform(scrollYProgress, [0.28, 0.32, 0.82, 0.85, 0.88], [0, 1, 1, 0.3, 0]);
 
   // Text color transition for compliance section - white to dark
