@@ -1918,6 +1918,10 @@
     height: 200px;
   }
 
+  .h-\[280px\] {
+    height: 280px;
+  }
+
   .h-\[150vh\] {
     height: 150vh;
   }

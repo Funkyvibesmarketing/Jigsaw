@@ -347,7 +347,7 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts }: {
         {/* Text Carousel with Pagination - Mobile Version */}
         {carouselTexts && carouselTexts.length > 0 && (
           <motion.div
-            className="absolute font-lato-light not-italic text-[#222526] text-center top-[140px] w-full px-6 z-[10000]"
+            className="absolute font-lato-light not-italic text-[#222526] text-center top-[160px] w-full px-6 z-[10000]"
             style={{
               y: middleTextY,
               opacity: middleTextOpacity,
@@ -364,10 +364,10 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts }: {
           >
             About Us
           </p>
-
+          
           {/* Carousel Text */}
           <div
-            className="relative min-h-[180px] flex flex-col items-center justify-start overflow-visible mb-10 pointer-events-auto select-none"
+            className="relative h-[280px] flex flex-col items-center justify-start overflow-visible mb-10 pointer-events-auto select-none"
             style={{ touchAction: 'pan-x' }}
             onPointerDown={handlePointerDownCarousel}
             onPointerMove={handlePointerMoveCarousel}
