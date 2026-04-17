@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform, useMotionValue, useMotionValueEvent } 
 import svgPaths from '../imports/svg-1tzim1euwq';
 import logoImage from 'figma:asset/b67552075865b1754199c544ec4803af3ee4fc83.png';
 import contactImage from 'figma:asset/32150d2da7444f71cf517def3075b8fb3e9bac6e.png';
+import callIcon from '../assets/call.svg';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { useState, useRef, useEffect } from 'react';
 
@@ -176,15 +177,25 @@ export function Navigation() {
               } as React.CSSProperties}
             >
               <div className="flex-none rotate-[270deg] w-full">
-                <div className="bg-white h-[56px] relative rounded-[56px] w-full">
+                <div 
+                  onClick={() => {
+                    const viewportHeight = window.innerHeight;
+                    window.scrollTo({ top: viewportHeight * 20.1, behavior: 'smooth' });
+                  }} 
+                  className="bg-white h-[56px] relative rounded-[56px] w-full cursor-pointer"
+                >
                   <div className="flex flex-row items-center justify-center size-full">
                     <div className="box-border content-stretch flex gap-[8px] h-[56px] items-center justify-center px-[32px] py-[24px] relative w-full">
                       <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "24", "--transform-inner-height": "24" } as React.CSSProperties}>
-                        <div className="flex-none rotate-[90deg]">
+                        <motion.div 
+                          className="flex-none"
+                          animate={{ rotate: isHovered ? 45 : 90 }}
+                          transition={{ duration: 0.4, ease: "easeInOut" }}
+                        >
                           <div className="relative size-[24px]">
-                            <ImageWithFallback src={contactImage} alt="Contact" className="block size-full object-contain" />
+                            <ImageWithFallback src={callIcon} alt="Contact" className="block size-full object-contain" />
                           </div>
-                        </div>
+                        </motion.div>
                       </div>
                     </div>
                   </div>

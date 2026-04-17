@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import logoImage from 'figma:asset/9dfebdcaec6bb839286570622d9e5b46ef1d865c.png';
-import contactImage from 'figma:asset/b7ea016db68dfd106334cc5034f7dfd28781693e.png';
+import callIcon from '../assets/call.svg';
 import svgPathsMenu from '../imports/svg-hkse6zvihd';
 import svgPathsCross from '../imports/svg-trmtdcmgb9';
 
@@ -56,13 +56,15 @@ function Frame3({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) {
   return (
     <div className="content-stretch flex gap-[16px] items-center relative shrink-0">
       {/* Phone icon - clickable with tel: link */}
-      <a 
-        href="tel:01616675990"
-        className="flex h-[48px] items-center justify-center relative shrink-0 w-[48px] cursor-pointer"
-        aria-label="Call 0161 667 5990"
+      <div 
+        onClick={() => {
+          document.getElementById('ContactUsSection')?.scrollIntoView({ behavior: 'smooth' });
+        }}
+        className="bg-white flex h-[48px] items-center justify-center relative rounded-full shrink-0 w-[48px] cursor-pointer"
+        aria-label="Scroll to Contact"
       >
-        <img src={contactImage} alt="Contact" className="size-full object-contain" />
-      </a>
+        <img src={callIcon} alt="Contact" className="size-[20px] object-contain" />
+      </div>
       <Frame2 isOpen={isOpen} onClick={onClick} />
     </div>
   );

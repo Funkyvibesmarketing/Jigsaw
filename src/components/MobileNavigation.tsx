@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { useState } from 'react';
+import callIcon from '../assets/call.svg';
 import svgPaths from '../imports/svg-hkse6zvihd';
 import svgPathsCross from '../imports/svg-trmtdcmgb9';
 
@@ -42,13 +43,8 @@ function Frame() {
 
 function PhoneOutgoing() {
   return (
-    <div className="relative size-[20.571px]" data-name="PhoneOutgoing">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 21 21">
-        <g id="PhoneOutgoing">
-          <path d={svgPaths.p3ff1cb00} fill="#2C4657" id="Vector" />
-          <path d={svgPaths.p70d3700} fill="#2EC4B6" id="Vector_2" />
-        </g>
-      </svg>
+    <div className="relative size-[20px]" data-name="PhoneOutgoing">
+      <img src={callIcon} alt="Contact" className="size-full object-contain" />
     </div>
   );
 }
@@ -121,16 +117,18 @@ function Frame3({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) {
   return (
     <div className="content-stretch flex gap-[16px] items-center relative shrink-0">
       {/* Phone icon - clickable with tel: link */}
-      <a 
-        href="tel:01616675990"
+      <div 
+        onClick={() => {
+          document.getElementById('ContactUsSection')?.scrollIntoView({ behavior: 'smooth' });
+        }}
         className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))] cursor-pointer"
         style={{ "--transform-inner-width": "48", "--transform-inner-height": "48" } as React.CSSProperties}
-        aria-label="Call 0161 667 5990"
+        aria-label="Scroll to Contact"
       >
         <div className="flex-none rotate-[270deg]">
           <Frame2 />
         </div>
-      </a>
+      </div>
       <Frame1 isOpen={isOpen} onClick={onClick} />
     </div>
   );
