@@ -46,18 +46,19 @@ async function waitForServer(url, timeoutMs = 30000) {
     const page = await browser.newPage();
     console.log("Rendering local build:", PREVIEW_URL);
 
-    await page.goto(PREVIEW_URL, {
-      waitUntil: "domcontentloaded",
-      timeout: 0
-    });
-
-    // signal to the app that we are prerendering
-    await page.evaluate(() => {
+    // CRITICAL: Inject the flag BEFORE the page loads so React sees it on first render.
+    // Previously this was set after load, meaning React rendered without it.
+    await page.evaluateOnNewDocument(() => {
       window.__PRERENDER_IN_PROGRESS__ = true;
     });
 
-    // wait for React to fully render the hero/splash area
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await page.goto(PREVIEW_URL, {
+      waitUntil: "networkidle0",
+      timeout: 30000
+    });
+
+    // Extra wait for any async React renders triggered by the flag
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const html = await page.content();
     fs.writeFileSync(path.join(__dirname, "build", "index.html"), html);
