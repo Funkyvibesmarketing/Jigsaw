@@ -1,5 +1,6 @@
 import imgRectangle14120 from "figma:asset/1f4323015aa5bd0f08e5ce951e568156ed52ce87.png";
 import { getApiUrl } from "./apiConfig";
+import { fetchJSON } from "./apiHelper";
 
 
 // TypeScript interface for team member data
@@ -76,9 +77,12 @@ export function parseBioText(text: string): React.ReactNode {
 // API fetch function - Replace with your actual API endpoint
 export async function fetchTeamMembers(): Promise<TeamMember[]> {
   try {
-    const response = await fetch(getApiUrl('teams.php'));
-    if (!response.ok) throw new Error('Failed to fetch team members');
-    const data = await response.json();
+    // Use helper with 5s timeout and 2 retries for iOS reliability
+    const data = await fetchJSON<{ teams: TeamMember[] }>(
+      getApiUrl('teams.php'),
+      {},
+      { timeout: 5000, maxRetries: 2, retryDelay: 1000 }
+    );
 
     // For now, simulate API call with delay and return mock data
     await new Promise(resolve => setTimeout(resolve, 300));

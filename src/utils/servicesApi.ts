@@ -1,4 +1,5 @@
 import { getApiUrl } from './apiConfig';
+import { fetchJSON } from './apiHelper';
 
 // TypeScript interfaces for API data
 
@@ -353,9 +354,12 @@ export const defaultServices: Service[] = [
 // API fetch function
 export async function fetchServices(): Promise<Service[]> {
   try {
-    const response = await fetch(getApiUrl('services.php'));
-    if (!response.ok) throw new Error('Failed to fetch services');
-    const data = await response.json();
+    // Use helper with 5s timeout and 2 retries for iOS reliability
+    const data = await fetchJSON<{ services: Service[] }>(
+      getApiUrl('services.php'),
+      {},
+      { timeout: 5000, maxRetries: 2, retryDelay: 1000 }
+    );
 
     // Simulate API call with a delay for realistic loading
     await new Promise(resolve => setTimeout(resolve, 300));

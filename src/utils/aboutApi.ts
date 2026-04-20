@@ -1,4 +1,5 @@
 import { getApiUrl } from "./apiConfig";
+import { fetchJSON } from "./apiHelper";
 
 // TypeScript interfaces for API data
 
@@ -42,9 +43,12 @@ export const defaultAboutUsCarouselData: carouselTexts[] = [
 // API fetch function
 export async function fetchAboutUsCarouselData(): Promise<carouselTexts[]> {
   try {
-    const response = await fetch(getApiUrl('about-us-carousel.php'));
-    if (!response.ok) throw new Error('Failed to fetch about us carousel data');
-    const data = await response.json();
+    // Use helper with 5s timeout and 2 retries for iOS reliability
+    const data = await fetchJSON<carouselTexts[]>(
+      getApiUrl('about-us-carousel.php'),
+      {},
+      { timeout: 5000, maxRetries: 2, retryDelay: 1000 }
+    );
 
     // Simulate API call with a delay for realistic loading
     await new Promise(resolve => setTimeout(resolve, 300));

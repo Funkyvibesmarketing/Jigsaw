@@ -466,9 +466,9 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
           style={{ willChange: 'opacity, transform' }}
         >
           <div 
-            className={`${isDark ? 'bg-[rgba(44,70,87,0.92)] backdrop-blur-[40px]' : 'bg-[rgba(228,236,241,0.88)] backdrop-blur-[40px]'} relative rounded-[32px] w-full`}
+            className={`${isDark ? 'bg-[rgba(44,70,87,0.92)] backdrop-blur-[20px]' : 'bg-[rgba(228,236,241,0.88)] backdrop-blur-[20px]'} relative rounded-[32px] w-full`}
             style={{ 
-              WebkitBackdropFilter: 'blur(40px)',
+              WebkitBackdropFilter: 'blur(20px)',
               transform: 'translateZ(0)',
               willChange: 'backdrop-filter'
             } as React.CSSProperties}

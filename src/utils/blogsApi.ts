@@ -1,4 +1,5 @@
 import { getApiUrl } from "./apiConfig";
+import { fetchJSON } from "./apiHelper";
 import imgFrame1000003005 from "figma:asset/685ae034862fec8a08b70546bfa8cca049aecf63.webp";
 
 import imgFrame1000003006 from "figma:asset/dec0fdee7a1eca13319fba5ba99e495193caffd9.webp";
@@ -229,9 +230,12 @@ Don't leave your family's financial security to chance. Contact us for a free pr
 // API fetch function
 export async function fetchBlogs(): Promise<BlogData[]> {
   try {
-    const response = await fetch(getApiUrl('blogs.php'));
-    if (!response.ok) throw new Error('Failed to fetch blogs');
-    const data = await response.json();
+    // Use helper with 5s timeout and 2 retries for iOS reliability
+    const data = await fetchJSON<{ blogs: BlogData[] }>(
+      getApiUrl('blogs.php'),
+      {},
+      { timeout: 5000, maxRetries: 2, retryDelay: 1000 }
+    );
 
     // Simulate API call with a delay for realistic loading
     await new Promise(resolve => setTimeout(resolve, 200));

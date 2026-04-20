@@ -19,6 +19,7 @@ import { fetchServices, defaultServices, type Service } from './utils/servicesAp
 import { fetchBlogs, defaultBlogs, type BlogData } from './utils/blogsApi';
 import { fetchAboutUsCarouselData, defaultAboutUsCarouselData, type carouselTexts } from './utils/aboutApi';
 import { useLenis } from './hooks/useLenis'; // Import Lenis hook
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Lazy load components that are not immediately visible
 const Reviews = lazy(() => import('./components/Reviews').then(module => ({ default: module.Reviews })));
@@ -33,6 +34,31 @@ const ContactUsForm = lazy(() => import('./components/ContactUsForm'));
 
 // Loading skeleton/fallback component
 const SectionLoader = () => <div className="min-h-[200px] w-full flex items-center justify-center bg-transparent" />;
+
+// Detect iOS device for performance optimizations
+const isIOS = () => {
+  if (typeof navigator === 'undefined') return false;
+  return /iPad|iPhone|iPod/.test(navigator.userAgent);
+};
+
+// Detect mobile device (iOS, Android, or any device with narrow viewport)
+const isMobileDevice = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  // Check both userAgent patterns and viewport width
+  const mobileUserAgents = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+  return mobileUserAgents.test(navigator.userAgent) || window.innerWidth < 768;
+};
+
+// Calculate splash animation duration based on device type
+// Mobile (iOS & Android): 2.0s animation + 0.5s buffer = 2.5s total
+// Desktop: 2.2s animation + 0.5s buffer = 2.7s total
+const getSplashDuration = (): number => {
+  const MOBILE_ANIMATION_DURATION = 2000; // ms (from SplashMobile.tsx for both iOS and Android)
+  const DESKTOP_ANIMATION_DURATION = 2200; // ms (from Splash.tsx)
+  const UI_TRANSITION_BUFFER = 500; // ms (for post-animation UI transitions)
+
+  return (isMobileDevice() ? MOBILE_ANIMATION_DURATION : DESKTOP_ANIMATION_DURATION) + UI_TRANSITION_BUFFER;
+};
 
 export default function App() {
   const [splashAnimationComplete, setSplashAnimationComplete] = useState(false);
@@ -59,6 +85,7 @@ export default function App() {
   const [isLoadingBlogs, setIsLoadingBlogs] = useState(true);
   const [carouselTexts, setCarouselTexts] = useState<carouselTexts[]>(defaultAboutUsCarouselData);
   const [isLoadingCarousel, setIsLoadingCarousel] = useState(true);
+  const [mountStage, setMountStage] = useState(0); // 0: Splash, 1: Hero+AboutUs, 2: Mid, 3: Full
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Initialize Lenis smooth scroll for desktop
@@ -74,10 +101,10 @@ export default function App() {
 
   // Track scroll for splash fade transition
   const { scrollY } = useScroll();
-  
+
   // Create a motion value for splash opacity
   const splashOpacityValue = useMotionValue(1);
-  
+
   // Background color transition - starts white, matches splash bg
   const bgColor = useTransform(
     scrollY,
@@ -90,28 +117,48 @@ export default function App() {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   useEffect(() => {
-    // Wait for splash animation to complete before enabling scroll
+    // If we are currently prerendering for SEO, mount everything immediately (Stage 3)
+    if ((window as any).__PRERENDER_IN_PROGRESS__) {
+      setSplashAnimationComplete(true);
+      setMountStage(3);
+      return;
+    }
+
+    // Start background loading waves immediately but spread them out to prevent logo jitter.
+    // Wave 1: Hero + About Us (Small initial hydration)
+    const wave1Timer = setTimeout(() => setMountStage(prev => Math.max(prev, 1)), 800);
+
+    // Wave 2: Middle Sections (Reviews/Team/Process) - Start at 2.5s
+    const wave2Timer = setTimeout(() => setMountStage(prev => Math.max(prev, 2)), 2500);
+
+    // Wave 3: Bottom Sections (Blogs/Contact) - Start at 4.0s
+    const wave3Timer = setTimeout(() => setMountStage(prev => Math.max(prev, 3)), 4000);
+
+    // This timer controls when the "Scroll Down" button and site visibility triggers
     const timer = setTimeout(() => {
       setSplashAnimationComplete(true);
-    }, 2200); // Match the splash animation duration
+    }, 5500); // 5000ms (splash duration) + 500ms buffer
 
     // Signal the inlined preloader to remove itself (once React is stable)
     const cleanupTimer = setTimeout(() => {
       if (typeof (window as any).__REMOVE_PRELOADER__ === 'function') {
         (window as any).__REMOVE_PRELOADER__();
       }
-    }, 100);
+    }, 500);
 
     return () => {
       clearTimeout(timer);
+      clearTimeout(wave1Timer);
+      clearTimeout(wave2Timer);
+      clearTimeout(wave3Timer);
       clearTimeout(cleanupTimer);
     };
   }, []);
@@ -120,14 +167,20 @@ export default function App() {
   useEffect(() => {
     const unsubscribe = scrollY.on('change', (value) => {
       setCurrentScrollY(value);
-      
+
       // Mark splash as viewed once user scrolls past the splash fade threshold
       // Splash fades out at 0.8vh, so mark it as viewed after that
       const splashFadeThreshold = window.innerHeight * 0.8;
       if (value > splashFadeThreshold && !splashHasBeenViewed) {
         setSplashHasBeenViewed(true);
       }
-      
+
+      // OPTIMIZATION: If the user starts scrolling, mount all remaining sections immediately
+      // This prevents "grey holes" if the user scrolls faster than the staggered timers.
+      if (value > 50 && mountStage > 0 && mountStage < 3) {
+        setMountStage(3);
+      }
+
       // Update splash opacity based on scroll and viewed state
       if (splashHasBeenViewed) {
         splashOpacityValue.set(0);
@@ -143,11 +196,13 @@ export default function App() {
   // Calculate if splash is still visible (navigation should be hidden)
   const isSplashVisible = !splashHasBeenViewed && currentScrollY < window.innerHeight * 0.3;
 
-  // Fetch team members from API - Defer until splash is finish for performance
+  // Fetch team members from API - Defer until Stage 2 (Mid-page) for core performance
   useEffect(() => {
-    if (!splashAnimationComplete && !splashHasBeenViewed) return;
-    
+    if (mountStage < 2 && !splashHasBeenViewed) return;
+
     const fetchMembers = async () => {
+      // Small staggered delay to prevent main thread lockup on iOS
+      await new Promise(resolve => setTimeout(resolve, 0));
       try {
         const members = await fetchTeamMembers();
         setTeamMembers(members);
@@ -159,13 +214,15 @@ export default function App() {
     };
 
     fetchMembers();
-  }, [splashAnimationComplete, splashHasBeenViewed]);
+  }, [mountStage, splashAnimationComplete, splashHasBeenViewed]);
 
-  // Fetch services from API - Defer until splash is finish for performance
+  // Fetch services from API - Defer until Stage 1 (Top-page) for core performance
   useEffect(() => {
-    if (!splashAnimationComplete && !splashHasBeenViewed) return;
+    if (mountStage < 1 && !splashHasBeenViewed) return;
 
     const fetchServiceList = async () => {
+      // Small staggered delay to prevent main thread lockup on iOS
+      await new Promise(resolve => setTimeout(resolve, 80));
       try {
         const serviceList = await fetchServices();
         setServices(serviceList);
@@ -177,13 +234,15 @@ export default function App() {
     };
 
     fetchServiceList();
-  }, [splashAnimationComplete, splashHasBeenViewed]);
+  }, [mountStage, splashAnimationComplete, splashHasBeenViewed]);
 
-  // Fetch blogs from API - Defer until splash is finish for performance
+  // Fetch blogs from API - Defer until Stage 3 (Page bottom) for core performance
   useEffect(() => {
-    if (!splashAnimationComplete && !splashHasBeenViewed) return;
+    if (mountStage < 3 && !splashHasBeenViewed) return;
 
     const fetchBlogList = async () => {
+      // Small staggered delay to prevent main thread lockup on iOS
+      await new Promise(resolve => setTimeout(resolve, 160));
       try {
         const blogList = await fetchBlogs();
         setBlogs(blogList);
@@ -195,13 +254,15 @@ export default function App() {
     };
 
     fetchBlogList();
-  }, [splashAnimationComplete, splashHasBeenViewed]);
+  }, [mountStage, splashAnimationComplete, splashHasBeenViewed]);
 
-  // Fetch about us carousel data from API - Defer until splash is finish for performance
+  // Fetch about us carousel data from API - Defer until Stage 1 (Top-page) for core performance
   useEffect(() => {
-    if (!splashAnimationComplete && !splashHasBeenViewed) return;
+    if (mountStage < 1 && !splashHasBeenViewed) return;
 
     const fetchCarousel = async () => {
+      // Small staggered delay to prevent main thread lockup on iOS
+      await new Promise(resolve => setTimeout(resolve, 240));
       try {
         const carouselData = await fetchAboutUsCarouselData();
         setCarouselTexts(carouselData);
@@ -213,7 +274,7 @@ export default function App() {
     };
 
     fetchCarousel();
-  }, [splashAnimationComplete, splashHasBeenViewed]);
+  }, [mountStage, splashAnimationComplete, splashHasBeenViewed]);
 
   // Track active section using Intersection Observer
   useEffect(() => {
@@ -287,10 +348,10 @@ export default function App() {
   }, []);
 
   return (
-    <motion.div 
-      ref={containerRef} 
+    <motion.div
+      ref={containerRef}
       className="relative"
-      style={{ 
+      style={{
         backgroundColor: bgColor,
         touchAction: 'pan-y', // Enable vertical touch scrolling
         WebkitOverflowScrolling: 'touch' // Smooth scrolling on iOS
@@ -298,7 +359,7 @@ export default function App() {
     >
       {/* Custom Cursor - Fully deferred for performance */}
       {(splashAnimationComplete || splashHasBeenViewed) && (
-        <CustomCursor 
+        <CustomCursor
           aboutUsScrollProgress={aboutUsScrollProgress}
           reviewsScrollProgress={reviewsScrollProgress}
           teamScrollProgress={teamScrollProgress}
@@ -308,9 +369,9 @@ export default function App() {
           currentScrollY={currentScrollY}
         />
       )}
-   {/* Navigation Bar - Desktop and Tablet only */}
+      {/* Navigation Bar - Desktop and Tablet only */}
       {!isMobile && (
-        <AboutUsNavigation 
+        <AboutUsNavigation
           aboutUsScrollProgress={aboutUsScrollProgress}
           reviewsScrollProgress={reviewsScrollProgress}
           processScrollProgress={processScrollProgress}
@@ -360,21 +421,21 @@ export default function App() {
 
       {/* Mobile Menu */}
       {isMobile && (
-        <MobileMenu 
-          isMobileMenuOpen={isMobileMenuOpen} 
-          setIsMobileMenuOpen={setIsMobileMenuOpen} 
-          activeSection={activeSection} 
+        <MobileMenu
+          isMobileMenuOpen={isMobileMenuOpen}
+          setIsMobileMenuOpen={setIsMobileMenuOpen}
+          activeSection={activeSection}
           setActiveSection={setActiveSection}
           theme={
             // Determine theme based on current section
             // Light theme sections: About Us (before Services), Reviews, Blogs, "Reach us at"
             // Dark theme sections: Hero, Services (after masking), Team, Process, Contact Us Form
             (heroScrollProgress >= 0.90 && aboutUsScrollProgress < 0.05) || // Hero white transition
-            (aboutUsScrollProgress > 0 && aboutUsScrollProgress < 0.68) || // About Us section (before Services masking complete)
-            (reviewsScrollProgress > 0 && teamScrollProgress === 0) || // Reviews section
-            (blogsScrollProgress > 0 && contactUsScrollProgress === 0) || // Blogs section
-            (contactUsScrollProgress > 0 && contactUsFormScrollProgress === 0) // "Reach us at" section (before form)
-              ? 'light' 
+              (aboutUsScrollProgress > 0 && aboutUsScrollProgress < 0.68) || // About Us section (before Services masking complete)
+              (reviewsScrollProgress > 0 && teamScrollProgress === 0) || // Reviews section
+              (blogsScrollProgress > 0 && contactUsScrollProgress === 0) || // Blogs section
+              (contactUsScrollProgress > 0 && contactUsFormScrollProgress === 0) // "Reach us at" section (before form)
+              ? 'light'
               : 'dark'
           }
         />
@@ -383,15 +444,15 @@ export default function App() {
       {/* Splash Screen - Fades up on scroll */}
       <motion.div
         className="fixed inset-0 z-50 pointer-events-none overflow-hidden"
-        style={{ 
+        style={{
           opacity: splashOpacityValue,
           top: '-2px',
           bottom: '-2px',
-          left: '-2px', 
+          left: '-2px',
           right: '-2px'
         }}
       >
-        {isMobile ? <SplashMobile onComplete={() => {}} /> : <Splash onComplete={() => {}} />}
+        {isMobile ? <SplashMobile onComplete={() => { }} /> : <Splash onComplete={() => { }} />}
       </motion.div>
 
       {/* Hero Screen - Conditional rendering based on screen size */}
@@ -399,16 +460,15 @@ export default function App() {
         {isMobile ? <HeroScrollSectionMobile onScrollProgress={setHeroScrollProgress} splashViewed={splashHasBeenViewed} /> : <HeroScrollSection onScrollProgress={setHeroScrollProgress} splashViewed={splashHasBeenViewed} />}
       </div>
 
-      {/* Heavy Content Sections - Deferred Mounting for Performance */}
-      {/* Hydration Shield: Exclude from static HTML if prebuilding to keep initial payload lean */}
-      {((splashAnimationComplete || splashHasBeenViewed) && !((window as any).__PRERENDER_IN_PROGRESS__)) && (
+      {/* Wave 1 Components: Hero + About Us (The content the user sees immediately) */}
+      {(mountStage >= 1 || splashHasBeenViewed) && (
         <>
           {/* About Us Section */}
-          <div id="AboutUsSection" style={{marginTop: isMobile ? '-345px' : '0'}}>
+          <div id="AboutUsSection" style={{ marginTop: isMobile ? '-345px' : '0' }}>
             {isMobile ? (
               <AboutUsMobile onScrollProgress={setAboutUsScrollProgress} carouselTexts={carouselTexts} />
             ) : (
-              <AboutUs 
+              <AboutUs
                 onScrollProgress={setAboutUsScrollProgress}
                 onServicesScrollProgress={setServicesScrollProgress}
                 reviewsScrollProgress={reviewsScrollProgress}
@@ -421,45 +481,65 @@ export default function App() {
           <div id="ServiceSection">
             {/* This ID points to the same section as About Us since Services is part of About Us */}
           </div>
-          
+        </>
+      )}
+
+      {/* Wave 2 Components: Middle Content (Mounts after 2s delay) */}
+      {(mountStage >= 2 || splashHasBeenViewed) && (
+        <>
           <div id="ReviewsSection">
-            <Suspense fallback={<SectionLoader />}>
-              <Reviews onScrollProgress={setReviewsScrollProgress} aboutUsScrollProgress={aboutUsScrollProgress} processScrollProgress={processScrollProgress} />
-            </Suspense>
+            <ErrorBoundary>
+              <Suspense fallback={<SectionLoader />}>
+                <Reviews onScrollProgress={setReviewsScrollProgress} aboutUsScrollProgress={aboutUsScrollProgress} processScrollProgress={processScrollProgress} />
+              </Suspense>
+            </ErrorBoundary>
           </div>
-          
+
           <div id="TeamSection" className={isMobile ? "min-h-[50vh] bg-[#2c4657]" : ""}>
-            <Suspense fallback={<SectionLoader />}>
-              {!isMobile && <Team reviewsScrollProgress={reviewsScrollProgress} aboutUsScrollProgress={aboutUsScrollProgress} teamMembers={teamMembers} processScrollProgress={processScrollProgress} />}
-              {isMobile && <TeamMobile reviewsScrollProgress={reviewsScrollProgress} teamMembers={teamMembers} processScrollProgress={processScrollProgress} onScrollProgress={setTeamScrollProgress} />}
-            </Suspense>
+            <ErrorBoundary>
+              <Suspense fallback={<SectionLoader />}>
+                {!isMobile && <Team reviewsScrollProgress={reviewsScrollProgress} aboutUsScrollProgress={aboutUsScrollProgress} teamMembers={teamMembers} processScrollProgress={processScrollProgress} />}
+                {isMobile && <TeamMobile reviewsScrollProgress={reviewsScrollProgress} teamMembers={teamMembers} processScrollProgress={processScrollProgress} onScrollProgress={setTeamScrollProgress} />}
+              </Suspense>
+            </ErrorBoundary>
           </div>
-          
+
           <div id="ProcessSection" className={isMobile ? "" : ""}>
-            <Suspense fallback={<SectionLoader />}>
-              {!isMobile && <Process onScrollProgress={setProcessScrollProgress} />}
-              {isMobile && <ProcessMobile onScrollProgress={setProcessScrollProgress} teamScrollProgress={teamInternalScrollProgress} />}
-            </Suspense>
-          </div>
-          
-          <div id="BlogsSection">
-            <Suspense fallback={<SectionLoader />}>
-              {!isMobile && <Blogs onScrollProgress={setBlogsScrollProgress} blogs={blogs} contactUsScrollProgress={contactUsScrollProgress} />}
-              {isMobile && <BlogsMobile onScrollProgress={setBlogsScrollProgress} blogs={blogs} />}
-            </Suspense>
-          </div>
-          
-          <div id="ContactUsSection">
-            <Suspense fallback={<SectionLoader />}>
-              <ContactUs onScrollProgress={setContactUsScrollProgress} />
-              <ContactUsForm onScrollProgress={setContactUsFormScrollProgress} />
-            </Suspense>
+            <ErrorBoundary>
+              <Suspense fallback={<SectionLoader />}>
+                {!isMobile && <Process onScrollProgress={setProcessScrollProgress} />}
+                {isMobile && <ProcessMobile onScrollProgress={setProcessScrollProgress} teamScrollProgress={teamInternalScrollProgress} />}
+              </Suspense>
+            </ErrorBoundary>
           </div>
         </>
       )}
-      
+
+      {/* Wave 3 Components: Bottom Content (Mounts after 4s delay) */}
+      {(mountStage >= 3 || splashHasBeenViewed) && (
+        <>
+          <div id="BlogsSection">
+            <ErrorBoundary>
+              <Suspense fallback={<SectionLoader />}>
+                {!isMobile && <Blogs onScrollProgress={setBlogsScrollProgress} blogs={blogs} contactUsScrollProgress={contactUsScrollProgress} />}
+                {isMobile && <BlogsMobile onScrollProgress={setBlogsScrollProgress} blogs={blogs} />}
+              </Suspense>
+            </ErrorBoundary>
+          </div>
+
+          <div id="ContactUsSection">
+            <ErrorBoundary>
+              <Suspense fallback={<SectionLoader />}>
+                <ContactUs onScrollProgress={setContactUsScrollProgress} />
+                <ContactUsForm onScrollProgress={setContactUsFormScrollProgress} />
+              </Suspense>
+            </ErrorBoundary>
+          </div>
+        </>
+      )}
+
       {/* Deferred Secondary UI Elements */}
-      {(splashAnimationComplete || splashHasBeenViewed) && (
+      {(mountStage >= 1 || splashHasBeenViewed || ((window as any).__PRERENDER_IN_PROGRESS__)) && (
         <>
           {/* Up Arrow Button - Mobile only - appears across all sections from Hero compliance onwards */}
           {isMobile && (heroScrollProgress >= 0.82 || aboutUsScrollProgress > 0 || reviewsScrollProgress > 0 || teamScrollProgress > 0 || processScrollProgress > 0) && (
@@ -473,7 +553,7 @@ export default function App() {
               <UpArrowButton onClick={handleScrollToTop} />
             </div>
           )}
-          <WhatsAppButton 
+          <WhatsAppButton
             heroScrollProgress={heroScrollProgress}
             aboutUsScrollProgress={aboutUsScrollProgress}
             reviewsScrollProgress={reviewsScrollProgress}
