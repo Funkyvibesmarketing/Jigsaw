@@ -1,8 +1,18 @@
 import { useEffect } from 'react';
 import Lenis from 'lenis';
 
+// Detect iOS device - Lenis MUST NOT run on iOS as it conflicts with
+// Safari's native momentum scroll, causing 30-40s main-thread freezes.
+const isIOS = () =>
+  typeof navigator !== 'undefined' &&
+  /iPad|iPhone|iPod/.test(navigator.userAgent);
+
 export function useLenis() {
   useEffect(() => {
+    // Bail out entirely on iOS — native momentum scroll is superior and
+    // Lenis competes with it, locking the main thread for up to 40 seconds.
+    if (isIOS()) return;
+
     // Document-level wheel interceptor - runs BEFORE Lenis captures events.
     // Blocks all scroll when mouse is over any [data-scroll-lock] element.
     const wheelInterceptor = (e: WheelEvent) => {
@@ -17,7 +27,7 @@ export function useLenis() {
     // Must be added with capture: true so it runs before Lenis's listener
     document.addEventListener('wheel', wheelInterceptor, { passive: false, capture: true });
 
-    // Initialize Lenis
+    // Initialize Lenis (desktop / Android only)
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

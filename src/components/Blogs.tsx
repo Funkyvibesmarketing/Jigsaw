@@ -17,6 +17,7 @@ interface BlogsProps {
   onScrollProgress?: (progress: number) => void;
   blogs?: BlogData[];
   contactUsScrollProgress?: number;
+  onReady?: () => void;
 }
 
 
@@ -379,7 +380,7 @@ function BlogPopup({
   );
 }
 
-export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollProgress = 0 }: BlogsProps) {
+export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollProgress = 0, onReady }: BlogsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -389,6 +390,9 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
 
   useEffect(() => {
     setIsMounted(true);
+    if (onReady) {
+      onReady();
+    }
   }, []);
 
   const width = window.innerWidth;

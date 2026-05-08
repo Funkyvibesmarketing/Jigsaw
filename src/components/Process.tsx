@@ -7,6 +7,7 @@ import cursorSvgPaths from "../imports/svg-3ga094bafp";
 
 interface ProcessProps {
   onScrollProgress?: (progress: number) => void;
+  onReady?: () => void;
 }
 
 // Bottom progress bar component - always visible
@@ -195,7 +196,7 @@ function BottomProgressBar({
   );
 }
 
-export default function Process({ onScrollProgress }: ProcessProps) {
+export default function Process({ onScrollProgress, onReady }: ProcessProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Custom cursor tracking for desktop
@@ -215,6 +216,14 @@ export default function Process({ onScrollProgress }: ProcessProps) {
 
     return () => unsubscribe();
   }, [scrollYProgress, onScrollProgress]);
+
+  // Signal readiness on mount
+  useEffect(() => {
+    if (onReady) {
+      const timer = setTimeout(onReady, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [onReady]);
 
   // Mouse tracking effect for custom cursor (desktop only)
   useEffect(() => {

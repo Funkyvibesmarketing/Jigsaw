@@ -65,12 +65,13 @@ function getServicesStep1(services: Service[]): ServiceStep1[] {
   }));
 }
 
-export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScrollProgress, services, carouselTexts }: {
+export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScrollProgress, services, carouselTexts, onReady }: {
   onScrollProgress?: (progress: number) => void;
   onServicesScrollProgress?: (progress: number) => void;
   reviewsScrollProgress?: number;
   services: Service[];
   carouselTexts: carouselTexts[];
+  onReady?: () => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -102,6 +103,14 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Signal readiness on mount
+  useEffect(() => {
+    if (onReady) {
+      const timer = setTimeout(onReady, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [onReady]);
 
 
   // Handle down arrow click - scroll to About Us section

@@ -16,6 +16,7 @@ import { type BlogData } from '../utils/blogsApi';
 interface BlogsMobileProps {
   onScrollProgress?: (progress: number) => void;
   blogs?: BlogData[];
+  onReady?: () => void;
 }
 
 
@@ -315,12 +316,19 @@ function BlogPopupMobile({
   );
 }
 
-export function BlogsMobile({ onScrollProgress, blogs = [] }: BlogsMobileProps) {
+export function BlogsMobile({ onScrollProgress, blogs = [], onReady }: BlogsMobileProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });
+
+  // Signal readiness on mount
+  useEffect(() => {
+    if (onReady) {
+      onReady();
+    }
+  }, []);
 
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);

@@ -6,7 +6,7 @@ import Rectangle14189 from '../imports/Rectangle14189';
 import Rectangle14188 from '../imports/Rectangle14188';
 import { SplashMobile } from './SplashMobile';
 
-export function Splash({ onComplete }: { onComplete: () => void }) {
+export function Splash({ dataProgress = 0, onComplete }: { dataProgress?: number, onComplete: () => void }) {
   const [isMobile, setIsMobile] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showFinancial, setShowFinancial] = useState(false);
@@ -26,44 +26,51 @@ export function Splash({ onComplete }: { onComplete: () => void }) {
   }, []);
 
   useEffect(() => {
-    // Use high-resolution time for smooth counting even under CPU load
-    const duration = 2200; // 2.2 seconds total animation
+    // Smoothly animate the progress state towards the dataProgress value
+    const duration = 500; // Animation duration for each progress increment
+    const startProgress = progress;
     const startTime = performance.now();
     let animationFrameId: number;
-    let completed = false;
 
-    const updateProgress = (currentTime: number) => {
+    const animateProgress = (currentTime: number) => {
       const elapsed = currentTime - startTime;
-      const currentProgress = Math.min(100, Math.floor((elapsed / duration) * 100));
+      const progressDelta = dataProgress - startProgress;
       
-      setProgress(currentProgress);
+      if (progressDelta === 0) return;
 
-      if (currentProgress < 100) {
-        animationFrameId = requestAnimationFrame(updateProgress);
-      } else if (!completed) {
-        completed = true;
-        // Animation sequence after reaching 100%
-        setTimeout(() => setFadeProgress(true), 200);
-        setTimeout(() => setShowFinancial(true), 400);
-        setTimeout(() => setShowScrollHint(true), 700);
+      const currentStep = Math.min(1, elapsed / duration);
+      const easedProgress = Math.floor(startProgress + progressDelta * currentStep);
+      
+      setProgress(easedProgress);
+
+      if (currentStep < 1) {
+        animationFrameId = requestAnimationFrame(animateProgress);
       }
     };
 
-    animationFrameId = requestAnimationFrame(updateProgress);
+    animationFrameId = requestAnimationFrame(animateProgress);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [dataProgress]);
+
+  useEffect(() => {
+    if (progress >= 99) {
+      setTimeout(() => setFadeProgress(true), 200);
+      setTimeout(() => setShowFinancial(true), 400);
+      setTimeout(() => setShowScrollHint(true), 700);
+    }
+  }, [progress]);
 
   // Render mobile version on mobile devices
   if (isMobile) {
-    return <SplashMobile onComplete={onComplete} />;
+    return <SplashMobile dataProgress={dataProgress} onComplete={onComplete} />;
   }
 
   // Desktop version
   return (
-    <div className="min-h-screen w-full overflow-hidden bg-white m-0 p-0 border-0 transition-opacity duration-300"
+    <div className="min-h-screen w-full bg-white m-0 p-0 border-0 transition-opacity duration-300"
          style={{ opacity: progress > 0 ? 1 : 0 }}>
       <AnimatedLogoScreen
         progress={progress}

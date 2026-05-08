@@ -7,6 +7,7 @@ import svgPathsStep4 from "../imports/svg-r0vybjpidk";
 interface ProcessMobileProps {
   onScrollProgress?: (progress: number) => void;
   teamScrollProgress: number;
+  onReady?: () => void;
 }
 
 // Handshake Icon Component (Step 2)
@@ -234,13 +235,21 @@ function BottomProgressBar({
   );
 }
 
-export default function ProcessMobile({ onScrollProgress, teamScrollProgress }: ProcessMobileProps) {
+export default function ProcessMobile({ onScrollProgress, teamScrollProgress, onReady }: ProcessMobileProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"],
   });
+
+  // Signal readiness on mount
+  useEffect(() => {
+    if (onReady) {
+      const timer = setTimeout(onReady, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [onReady]);
 
   useEffect(() => {
     const unsubscribe = scrollYProgress.on("change", (latest) => {

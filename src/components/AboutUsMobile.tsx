@@ -5,6 +5,7 @@ import imgVector from 'figma:asset/4234f71b7d4a1998f6e3282ba90ea09ce5633514.png'
 import backgroundGradient from 'figma:asset/42d2cf4a66b5216ee41ff6ee702481dc6863d649.png';
 import { ServicesMobile } from './ServicesMobile';
 import type { carouselTexts } from '../utils/aboutApi';
+import type { Service } from '../utils/servicesApi';
 
 // Carousel text items (handled by prop)
 
@@ -162,19 +163,28 @@ function UpArrowButton() {
   );
 }
 
-export function AboutUsMobile({ onScrollProgress, carouselTexts }: {
+export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onReady }: {
   onScrollProgress?: (progress: number) => void;
   carouselTexts: carouselTexts[];
+  services: Service[];
+  onReady?: () => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
 
+  // Signal readiness on mount
+  useEffect(() => {
+    if (onReady) {
+      const timer = setTimeout(onReady, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [onReady]);
+
   const handleLearnMoreMClick = () => {
     if (containerRef.current) {
-      const viewportHeight = window.innerHeight;
       window.scrollTo({
-        top: viewportHeight * 12,
+        top: (viewportHeightRef.current || window.innerHeight) * 12,
         behavior: 'smooth'
       });
     }
@@ -199,7 +209,15 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts }: {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(false); // Control auto-advance
   const onScrollProgressRef = useRef(onScrollProgress);
-  const viewportHeight = window.innerHeight;
+  // viewportHeight — read lazily via ref to avoid forced layout during render
+  // (window.innerHeight in the render body triggers layout recalculation every re-render on iOS)
+  const viewportHeightRef = useRef(0);
+  useEffect(() => {
+    viewportHeightRef.current = window.innerHeight;
+    const onResize = () => { viewportHeightRef.current = window.innerHeight; };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   // Swipe handling for carousel (pointer events)
   const touchStartXRef = useRef<number | null>(null);
@@ -320,11 +338,8 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts }: {
 
   const handleLearnMoreClick = () => {
     if (containerRef.current) {
-      // Get the hero container height
-      const heroHeight = containerRef.current.offsetHeight;
-      // Scroll to the end of the hero section (which is the start of About Us)
       window.scrollTo({
-        top: viewportHeight * 10,
+        top: (viewportHeightRef.current || window.innerHeight) * 10,
         behavior: 'smooth'
       });
     }
@@ -538,7 +553,7 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts }: {
               touchAction: scrollProgress >= 0.51 ? 'auto' : 'none'
             }}
           >
-            <ServicesMobile />
+            <ServicesMobile services={services} />
           </div>
         </motion.div>
 

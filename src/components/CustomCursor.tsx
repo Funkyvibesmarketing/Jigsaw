@@ -7,7 +7,16 @@ import svgPathsAfterZoom from '../imports/svg-wkqtg88nrk';
 import svgPathsReviews from '../imports/svg-bolpleu54r';
 import svgPathsSplash from '../imports/svg-4kj0u9tsz3';
 
-export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, reviewsScrollProgress, teamScrollProgress, processScrollProgress, blogsScrollProgress, contactUsScrollProgress, currentScrollY }: {
+export function CustomCursor({ 
+  aboutUsScrollProgress, 
+  servicesScrollProgress, 
+  reviewsScrollProgress, 
+  teamScrollProgress, 
+  processScrollProgress, 
+  blogsScrollProgress, 
+  contactUsScrollProgress, 
+  isSplashVisible 
+}: {
   aboutUsScrollProgress: number;
   servicesScrollProgress?: number;
   reviewsScrollProgress?: number;
@@ -15,7 +24,7 @@ export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, re
   processScrollProgress?: number;
   blogsScrollProgress?: number;
   contactUsScrollProgress?: number;
-  currentScrollY?: number;
+  isSplashVisible?: boolean;
 }) {
   const [cursorType, setCursorType] = useState<'light' | 'dark' | 'scrolling' | 'afterZoom' | 'reviews' | 'splash'>('splash');
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -50,7 +59,7 @@ export function CustomCursor({ aboutUsScrollProgress, servicesScrollProgress, re
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     // Splash screen - use splash cursor (when very little scroll)
-    if (currentScrollY !== undefined && currentScrollY < window.innerHeight * 0.3) {
+    if (isSplashVisible) {
       setCursorType('splash');
       return;
     }

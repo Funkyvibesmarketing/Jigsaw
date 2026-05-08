@@ -70,13 +70,15 @@ export function Team({
   servicesScrollProgress,
   aboutUsScrollProgress,
   teamMembers,
-  processScrollProgress
+  processScrollProgress,
+  onReady
 }: {
   reviewsScrollProgress?: number;
   servicesScrollProgress?: number;
   aboutUsScrollProgress?: number;
   teamMembers: TeamMember[];
   processScrollProgress?: number;
+  onReady?: () => void;
 }) {
   const [currentMemberIndex, setCurrentMemberIndex] = useState(0);
   const [previousMemberIndex, setPreviousMemberIndex] = useState(0);
@@ -107,6 +109,13 @@ export function Team({
   const teamTranslateY = processScrollProgress && processScrollProgress > 0
     ? `${-100 * Math.min(processScrollProgress / 0.15, 1)}vh`
     : '0vh';
+
+  // Signal readiness on mount
+  useEffect(() => {
+    if (onReady) {
+      onReady();
+    }
+  }, []);
 
   // Debug logging for Process scroll
   useEffect(() => {

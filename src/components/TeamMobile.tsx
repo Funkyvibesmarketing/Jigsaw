@@ -60,14 +60,24 @@ export function TeamMobile({
   reviewsScrollProgress,
   teamMembers,
   processScrollProgress,
-  onScrollProgress
+  onScrollProgress,
+  onReady
 }: {
   reviewsScrollProgress?: number;
   teamMembers: TeamMember[];
   processScrollProgress?: number;
   onScrollProgress?: (progress: number) => void;
+  onReady?: () => void;
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isSectionActive, setIsSectionActive] = useState(false);
+
+  // Signal readiness on mount
+  useEffect(() => {
+    if (onReady) {
+      onReady();
+    }
+  }, []);
   const [direction, setDirection] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);

@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import imgVector from "figma:asset/6d6de80792d2de9d2d28717db9e5bf0e0b17e6c0.png";
 import type { Service } from '../utils/servicesApi';
-import { fetchServices } from '../utils/servicesApi';
 
 // Arrow component for navigation
 function NavArrow() {
@@ -23,11 +22,11 @@ function NavArrow() {
 
 export function ServicesMobile({
   onScrollProgress,
+  services,
 }: {
   onScrollProgress?: (progress: number) => void;
+  services: Service[];
 }) {
-  const [services, setServices] = useState<Service[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [cardDirection, setCardDirection] = useState(0);
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -38,17 +37,8 @@ export function ServicesMobile({
   const [isDragging, setIsDragging] = useState(false);
   const hasSwiped = useRef(false);
 
-  // Fetch services data on component mount
-  useEffect(() => {
-    const loadServices = async () => {
-      setIsLoading(true);
-      const data = await fetchServices();
-      setServices(data);
-      setIsLoading(false);
-    };
-
-    loadServices();
-  }, []);
+  // Show loading state if parent hasn't passed services yet
+  const isLoading = !services || services.length === 0;
 
   const currentService = services[currentCategoryIndex];
 

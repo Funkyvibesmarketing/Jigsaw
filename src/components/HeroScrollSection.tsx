@@ -11,7 +11,7 @@ import { DownArrowButton } from './DownArrowButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import AboutUsScrollEffect from '../imports/AboutUsScrollEffect';
 
-export function HeroScrollSection({ onScrollProgress, splashViewed }: { onScrollProgress?: (progress: number) => void; splashViewed?: boolean }) {
+export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: { onScrollProgress?: (progress: number) => void; splashViewed?: boolean; onReady?: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hideDownArrow, setHideDownArrow] = useState(false);
   const viewportHeight = window.innerHeight;
@@ -25,6 +25,14 @@ export function HeroScrollSection({ onScrollProgress, splashViewed }: { onScroll
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Signal readiness on mount
+  useEffect(() => {
+    if (onReady) {
+      const timer = setTimeout(onReady, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [onReady]);
 
   // Handle down arrow click - scroll to About Us section
   const handleDownArrowClick = () => {

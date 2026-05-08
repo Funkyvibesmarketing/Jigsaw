@@ -10,6 +10,7 @@ import PDFViewer from "./PDFViewer";
 
 interface ContactUsFormProps {
   onScrollProgress?: (progress: number) => void;
+  onReady?: () => void;
 }
 
 // Mobile Components
@@ -232,7 +233,7 @@ function SocialButton({
   );
 }
 
-export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) {
+export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFormProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -293,6 +294,13 @@ export default function ContactUsForm({ onScrollProgress }: ContactUsFormProps) 
 
     return () => unsubscribe();
   }, [scrollYProgress, onScrollProgress]);
+
+  // Signal readiness on mount
+  useEffect(() => {
+    if (onReady) {
+      onReady();
+    }
+  }, []);
 
   // Mouse tracking effect for custom cursor (desktop only)
   useEffect(() => {

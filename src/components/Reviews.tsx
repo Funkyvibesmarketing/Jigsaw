@@ -245,24 +245,17 @@ function ReviewCard({ review, author, date }: { review: string; author: string; 
 }
 
 // Mobile Review Card Component - scaled down from desktop
-function ReviewCardMobile({ review, author, date, duration = 4 }: { review: string; author: string; date: string; duration?: number }) {
+// Uses CSS keyframe animation (GPU compositor) instead of Framer Motion infinite
+// loop (JS thread) to prevent main-thread blocking on iOS.
+function ReviewCardMobile({ review, author, date, animClass = 'float-card-a' }: { review: string; author: string; date: string; animClass?: string }) {
   return (
-    <motion.div
-      className="relative rounded-[16px] w-[305px] overflow-hidden"
+    <div
+      className={`relative rounded-[16px] w-[305px] overflow-hidden ${animClass}`}
       style={{
         backgroundColor: 'rgba(228,236,241,0.4)',
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)'
       } as React.CSSProperties}
-      animate={{
-        y: [-10, 10, -10],
-        x: [-5, 5, -5],
-      }}
-      transition={{
-        duration: duration,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }}
     >
       <div className="box-border content-stretch flex flex-col gap-[24px] items-start p-[16px] relative w-[305px]">
         <p className="font-['Lato:Regular',sans-serif] leading-[28px] min-w-full not-italic relative shrink-0 text-[#2c4657] text-[16px] tracking-[0.032px] w-[min-content]">{review}</p>
@@ -292,7 +285,7 @@ function ReviewCardMobile({ review, author, date, duration = 4 }: { review: stri
         </div>
       </div>
       <div aria-hidden="true" className="absolute border border-[rgba(46,196,182,0.3)] border-solid inset-0 pointer-events-none rounded-[16px] shadow-[0px_4px_28px_-1px_rgba(46,196,182,0.12)]" />
-    </motion.div>
+    </div>
   );
 }
 
@@ -315,16 +308,25 @@ export function Reviews({
   isModal = false,
   onClose,
   aboutUsScrollProgress,
-  processScrollProgress
+  processScrollProgress,
+  onReady
 }: {
   onScrollProgress?: (progress: number) => void;
   isModal?: boolean;
   onClose?: () => void;
   aboutUsScrollProgress?: number;
   processScrollProgress?: number;
+  onReady?: () => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const lastScrollTime = useRef(0);
+
+  // Signal readiness on mount
+  useEffect(() => {
+    if (onReady) {
+      onReady();
+    }
+  }, []);
 
   // Detect mobile view
   const [isMobile, setIsMobile] = useState(false);
@@ -724,7 +726,7 @@ Very thorough and quick to reply! Would highly recommend!"`} author="~Rebecca" d
                   zIndex: 60
                 }}
               >
-                <ReviewCardMobile review='"Gemma and Nick were both so helpful, not only with the mortgage process but also during the house-buying process from start to completion and beyond. HIGHLY recommend!!"' author="~Amber" date="September, 2025" />
+                <ReviewCardMobile animClass="float-card-b" review='"Gemma and Nick were both so helpful, not only with the mortgage process but also during the house-buying process from start to completion and beyond. HIGHLY recommend!!"' author="~Amber" date="September, 2025" />
               </motion.div>
 
               {/* Card 5 - Left Center - STAYS VISIBLE */}
@@ -738,7 +740,7 @@ Very thorough and quick to reply! Would highly recommend!"`} author="~Rebecca" d
                   zIndex: 60
                 }}
               >
-                <ReviewCardMobile review={`"I would strongly recommend Nick if you are looking to secure a mortgage or remortgage. He is exceptionally proactive and genuinely cares. Nick made the process of buying a house much more relaxed."`} author="~Daniel" date="August, 2025" />
+                <ReviewCardMobile animClass="float-card-c" review={`"I would strongly recommend Nick if you are looking to secure a mortgage or remortgage. He is exceptionally proactive and genuinely cares. Nick made the process of buying a house much more relaxed."`} author="~Daniel" date="August, 2025" />
               </motion.div>
 
               {/* Card 6 - Right Center - STAYS VISIBLE */}
@@ -752,7 +754,7 @@ Very thorough and quick to reply! Would highly recommend!"`} author="~Rebecca" d
                   zIndex: 60
                 }}
               >
-                <ReviewCardMobile review='"Nick was the most amazing person through my mortgage application process. I had already had an application denied with another company and Nick reassured me and worked so hard just for me to be living in my dream property now. I would recommend Jigsaw Financial to anyone after the 10/10 experience I have received. Thank you again to both Nick and Gemma for making the most stressful time in my life just that bit easier."' author="~Jess" date="December, 2025" />
+                <ReviewCardMobile animClass="float-card-d" review='"Nick was the most amazing person through my mortgage application process. I had already had an application denied with another company and Nick reassured me and worked so hard just for me to be living in my dream property now. I would recommend Jigsaw Financial to anyone after the 10/10 experience I have received. Thank you again to both Nick and Gemma for making the most stressful time in my life just that bit easier."' author="~Jess" date="December, 2025" />
               </motion.div>
 
               {/* Card 7 - Center - STAYS VISIBLE */}
@@ -766,7 +768,7 @@ Very thorough and quick to reply! Would highly recommend!"`} author="~Rebecca" d
                   zIndex: 60
                 }}
               >
-                <ReviewCardMobile review={`"Absolutely fantastic company! We can't thank Nick and Team enough for all they have done for us, from our first mortgage to our remortgage.
+                <ReviewCardMobile animClass="float-card-e" review={`"Absolutely fantastic company! We can't thank Nick and Team enough for all they have done for us, from our first mortgage to our remortgage.
 Very thorough and quick to reply! Would highly recommend!"`} author="~Rebecca" date="January, 2026" />
               </motion.div>
             </>

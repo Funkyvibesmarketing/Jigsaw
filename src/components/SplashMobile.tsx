@@ -10,7 +10,7 @@ const isIOS = () => {
   return /iPad|iPhone|iPod/.test(navigator.userAgent);
 };
 
-export function SplashMobile({ onComplete }: { onComplete: () => void }) {
+export function SplashMobile({ dataProgress = 0, onComplete }: { dataProgress?: number, onComplete: () => void }) {
   const progressValue = useMotionValue(0);
   const [showFinancial, setShowFinancial] = useState(false);
   const [fadeProgress, setFadeProgress] = useState(false);
@@ -21,27 +21,25 @@ export function SplashMobile({ onComplete }: { onComplete: () => void }) {
   useEffect(() => {
     // Start animation
     setHasStarted(true);
-    // Reduced from 5.0s to 2.0s for faster countdown and better iOS performance
-    // iOS performance optimization: use shorter duration to reduce animation thread blocking
-    const animationDuration = iosDevice ? 2.0 : 2.0;
-    const controls = animate(progressValue, 100, {
-      duration: animationDuration,
+    
+    // Animate progress to the current data loading progress
+    const controls = animate(progressValue, dataProgress, {
+      duration: 0.5,
       ease: "linear",
-      onComplete: () => {
-        // Animation sequence after reaching 100% - scaled proportionally from 5s to 2s timeline
-        // Original: 0ms, 50ms, 100ms (0%, 1%, 2% of 5s)
-        // New: 0ms, 20ms, 40ms (0%, 1%, 2% of 2s)
-        setTimeout(() => setFadeProgress(true), 0);
-        setTimeout(() => setShowFinancial(true), 20);
-        setTimeout(() => setShowScrollHint(true), 40);
-      }
     });
 
+    // If data is loaded, trigger the completion sequence
+    if (dataProgress >= 99) {
+      setTimeout(() => setFadeProgress(true), 0);
+      setTimeout(() => setShowFinancial(true), 20);
+      setTimeout(() => setShowScrollHint(true), 40);
+    }
+
     return () => controls.stop();
-  }, [progressValue, iosDevice]);
+  }, [progressValue, dataProgress]);
 
   return (
-    <div className="min-h-screen w-full overflow-hidden bg-white m-0 p-0 border-0 transition-opacity duration-300"
+    <div className="min-h-screen w-full bg-white m-0 p-0 border-0 transition-opacity duration-300"
       style={{ opacity: hasStarted ? 1 : 0 }}>
       <AnimatedLogoScreen
         progressValue={progressValue}

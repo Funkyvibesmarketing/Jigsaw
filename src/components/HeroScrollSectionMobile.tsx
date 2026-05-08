@@ -33,7 +33,7 @@ function MobileDownArrow({ onClick }: { onClick?: () => void }) {
   );
 }
 
-export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { onScrollProgress?: (progress: number) => void; splashViewed?: boolean }) {
+export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onReady }: { onScrollProgress?: (progress: number) => void; splashViewed?: boolean; onReady?: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hideDownArrow, setHideDownArrow] = useState(false);
 
@@ -60,6 +60,14 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed }: { on
     });
     return () => unsubscribe();
   }, [scrollYProgress]); // Remove onScrollProgress from dependencies
+
+  // Signal readiness on mount
+  useEffect(() => {
+    if (onReady) {
+      const timer = setTimeout(onReady, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [onReady]);
 
   // Step 1: JIGSAW text fades in (0 to 0.08)
   // If splash has been viewed, start at full visibility when at top
