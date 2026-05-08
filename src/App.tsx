@@ -516,7 +516,7 @@ export default function App() {
       {/* Wave 2 Components: About Us / Services */}
       {(mountStage >= 1 || splashHasBeenViewed) && (
         <>
-          <div id="AboutUsSection" style={{ marginTop: isMobile ? '-345px' : '0' }}>
+          <div id="AboutUsSection" style={{ marginTop: isMobile ? '-400px' : '0' }}>
             {isMobile ? (
               <AboutUsMobile 
                 onScrollProgress={setAboutUsScrollProgress} 

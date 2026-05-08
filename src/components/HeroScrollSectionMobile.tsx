@@ -81,34 +81,34 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
   // If splash has been viewed, show house immediately at top
   const bgImageOpacity = useTransform(
     scrollYProgress,
-    [0, 0.04, 0.06, 0.10, 0.60, 0.62, 0.85, 1],
+    [0, 0.04, 0.06, 0.10, 0.45, 0.47, 0.75, 1],
     splashViewed ? [0.08, 0.08, 0.08, 0.08, 0.08, 0, 0, 0] : [0, 0, 0, 0.08, 0.08, 0, 0, 0]
   );
   const bgImageY = useTransform(
     scrollYProgress,
-    [0, 0.04, 0.10, 0.42, 0.90, 1],
+    [0, 0.04, 0.10, 0.28, 0.70, 0.85],
     splashViewed ? [0, 0, 0, 0, -900, -1200] : [100, 100, 0, 0, -900, -1200]
   );
   const mainImageOpacity = useTransform(
     scrollYProgress,
-    [0, 0.04, 0.06, 0.10, 0.60, 0.62, 0.85, 1],
+    [0, 0.04, 0.06, 0.10, 0.45, 0.47, 0.75, 1],
     splashViewed ? [1, 1, 1, 1, 1, 0, 0, 0] : [0, 0, 0.5, 1, 1, 0, 0, 0]
   );
   const mainImageY = useTransform(
     scrollYProgress,
-    [0, 0.04, 0.10, 0.42, 0.90, 1],
+    [0, 0.04, 0.10, 0.28, 0.70, 0.85],
     splashViewed ? [0, 0, 0, 0, -900, -1200] : [100, 100, 0, 0, -900, -1200]
   );
 
   // Hero house image (original) - fades out when compliance appears
   const heroHouseOpacity = useTransform(
     scrollYProgress,
-    [0, 0.04, 0.06, 0.10, 0.60, 0.62],
+    [0, 0.04, 0.06, 0.10, 0.45, 0.47],
     splashViewed ? [1, 1, 1, 1, 1, 0] : [0, 0, 0.5, 1, 1, 0]
   );
 
   // Compliance house image (mobile) - fades in when compliance appears, replaces hero house
-  const complianceHouseOpacity = useTransform(scrollYProgress, [0.60, 0.62, 0.85, 0.95, 1], [0, 0.6, 0.6, 0, 0]);
+  const complianceHouseOpacity = useTransform(scrollYProgress, [0.45, 0.47, 0.75, 0.95, 1], [0, 0.6, 0.6, 0, 0]);
 
   // Step 3: Sentence appears right after house settles (0.10 to 0.14), stays briefly, then slides up with compliance
   // If splash has been viewed, show sentence immediately at top
@@ -122,7 +122,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
   const sentenceY = useTransform(
     scrollYProgress,
     [0, 0.10, 0.14, 0.25, 0.30, 0.42],
-    splashViewed ? [-200, -200, -200, -200, -400, -1000] : [-200, -200, -200, -200, -400, -1000]
+    splashViewed ? [0, 0, 0, 0, -400, -1000] : [0, 0, 0, 0, -400, -1000]
   );
 
   // Step 4: Navigation appears (compressed from 0.375-0.5 to 0.18-0.28)
@@ -147,26 +147,26 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
   const bottomGradientOpacity = useTransform(scrollYProgress, [0.82, 0.85, 0.88], [0, 1, 0]);
 
   // Step 8: Compliance content appears and slides up — starts at 0.42 to close gap after sentence exits
-  const complianceY = useTransform(scrollYProgress, [0.42, 0.65, 0.95], [800, -300, -700]);
-  const complianceOpacity = useTransform(scrollYProgress, [0.28, 0.32, 0.82, 0.85, 0.88], [0, 1, 1, 0.3, 0]);
+  const complianceY = useTransform(scrollYProgress, [0.28, 0.45, 0.85], [500, -250, -1200]);
+  const complianceOpacity = useTransform(scrollYProgress, [0.22, 0.28, 0.80, 0.85], [0, 1, 1, 0]);
 
   // Text color transition for compliance section - white to dark
   const complianceTextColor = useTransform(
     scrollYProgress,
-    [0.85, 0.95],
+    [0.65, 0.75],
     ['rgba(255, 255, 255, 1)', 'rgba(13, 20, 25, 1)']
   );
 
   // Gradient overlay opacity
-  const gradientOverlayOpacity = useTransform(scrollYProgress, [0, 0.5, 0.7, 0.90, 0.96], [0, 0, 0.3, 0.3, 0]);
+  const gradientOverlayOpacity = useTransform(scrollYProgress, [0, 0.35, 0.5, 0.75, 0.85], [0, 0, 0.3, 0.3, 0]);
 
   // White Gradient - Step 9 - Light blue to white gradient at top
-  const whiteGradientOpacity = useTransform(scrollYProgress, [0.60, 0.65, 0.99, 1], [0, 1, 1, 1]);
+  const whiteGradientOpacity = useTransform(scrollYProgress, [0.45, 0.50, 0.99, 1], [0, 1, 1, 1]);
 
   // Listen for scroll progress
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     const AboutUsNavigation = document.getElementById("AboutUsNavigation");
-    if (latest >= 0.90) {
+    if (latest >= 0.85) {
       if (AboutUsNavigation) {
         AboutUsNavigation.style.opacity = '1';
         AboutUsNavigation.style.zIndex = '999';
@@ -178,7 +178,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
       }
     }
 
-    if (latest >= 0.83) {
+    if (latest >= 0.75) {
       setHideDownArrow(true);
     } else {
       setHideDownArrow(false);
@@ -186,7 +186,14 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
   });
 
   return (
-    <div ref={containerRef} className="relative h-[400vh] w-full m-0 p-0 bg-[#2c4657]">
+    <motion.div 
+      ref={containerRef} 
+      className="relative min-h-[250vh] w-full m-0 p-0" 
+      style={{ 
+        height: '250vh',
+        backgroundColor: useTransform(scrollYProgress, [0.8, 0.9], ['#2c4657', '#ffffff'])
+      }}
+    >
       {/* Sticky container that holds the animated content */}
       <div className="sticky top-0 h-screen w-full overflow-hidden m-0 p-0">
         <div className="relative size-full overflow-hidden m-0 p-0">
@@ -196,7 +203,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
             style={{
               background: useTransform(
                 scrollYProgress,
-                [0, 0.04, 0.08, 0.12, 0.25, 0.60, 0.65],
+                [0, 0.04, 0.08, 0.12, 0.25, 0.65, 0.85],
                 splashViewed
                   ? ['#2c4657', '#2c4657', '#2c4657', '#2c4657', '#2c4657', '#2c4657', '#ffffff']
                   : ['#ffffff', '#ffffff', '#b8d4e0', '#8eaab8', '#2c4657', '#2c4657', '#ffffff']
@@ -359,7 +366,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
 
           {/* Sentence - Step 3 */}
           <motion.div
-            className="absolute left-1/2 translate-x-[-50%] text-center top-[calc(50%+225px)] w-[100%] max-w-[382px] px-4 z-[15]"
+            className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 text-center top-1/2 w-[100%] max-w-[382px] px-4 z-[15]"
             style={{ opacity: sentenceOpacity, y: sentenceY }}
           >
             <p className="font-lato-semibold leading-[48px] not-italic text-[30px] tracking-[20px] text-white">ADVICE</p>
@@ -390,7 +397,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
               style={{
                 background: useTransform(
                   scrollYProgress,
-                  [0.85, 0.92, 0.96, 0.98],
+                  [0.65, 0.75, 0.85, 0.90],
                   [
                     'linear-gradient(to bottom, rgba(26, 42, 53, 0) 0%, rgba(26, 42, 53, 0.3) 30%, rgba(26, 42, 53, 0.8) 50%, #1a2a35 70%, #0d1419 100%)',
                     'linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 30%, rgba(255, 255, 255, 0.6) 50%, #ffffff 65%, #ffffff 100%)',
@@ -402,7 +409,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
             />
 
             {/* White gradient at bottom */}
-            <div className="absolute bottom-0 left-0 w-full h-[400px] bg-gradient-to-t from-white/40 to-transparent z-[2]" />
+            <div className="absolute bottom-0 left-0 w-full h-[400px] bg-gradient-to-t from-white to-transparent z-[2]" />
 
             {/* FCA Compliance Section - Mobile Design */}
             <div className="absolute left-1/2 top-[calc(50%+100px)] -translate-x-1/2 w-[90%] max-w-[500px] flex flex-col gap-[20px] items-center justify-center z-[101] pointer-events-auto px-4">
@@ -435,6 +442,6 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
           </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

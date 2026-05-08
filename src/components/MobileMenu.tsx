@@ -17,19 +17,17 @@ function House({ theme = 'dark' }: { theme?: 'light' | 'dark' }) {
 function Frame({ onClick, isActive, theme = 'dark' }: { onClick: () => void; isActive?: boolean; theme?: 'light' | 'dark' }) {
   const isDark = theme === 'dark';
   const iconColor = isActive && !isDark ? '#2EC4B6' : (isActive ? 'white' : (isDark ? 'white' : '#2C4657'));
-  
+
   return (
-    <button 
+    <button
       onClick={onClick}
-      className={`h-[64px] relative rounded-[100px] shrink-0 w-full cursor-pointer transition-all duration-300 ${
-        isActive 
-          ? (isDark ? 'bg-[rgba(46,196,182,0.3)] hover:bg-[rgba(46,196,182,0.4)]' : 'bg-[rgba(190,240,237,1)] hover:bg-[rgba(170,235,230,1)]')
-          : (isDark ? 'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.15)]' : 'bg-[#e4ecf1] hover:bg-[#d9e6ed]')
-      }`}
+      className={`h-[64px] relative rounded-[100px] shrink-0 w-full cursor-pointer transition-all duration-300 ${isActive
+        ? (isDark ? 'bg-[rgba(46,196,182,0.3)] hover:bg-[rgba(46,196,182,0.4)]' : 'bg-[rgba(190,240,237,1)] hover:bg-[rgba(170,235,230,1)]')
+        : (isDark ? 'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.15)]' : 'bg-[#e4ecf1] hover:bg-[#d9e6ed]')
+        }`}
     >
-      <div aria-hidden="true" className={`absolute border border-solid inset-0 pointer-events-none rounded-[100px] ${
-        isActive ? 'border-[rgba(46,196,182,0.4)]' : (isDark ? 'border-[rgba(255,255,255,0.2)]' : 'border-[rgba(44,70,87,0.1)]')
-      }`} />
+      <div aria-hidden="true" className={`absolute border border-solid inset-0 pointer-events-none rounded-[100px] ${isActive ? 'border-[rgba(46,196,182,0.4)]' : (isDark ? 'border-[rgba(255,255,255,0.2)]' : 'border-[rgba(44,70,87,0.1)]')
+        }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] h-[64px] items-center px-[17.5px] py-[12px] relative w-full">
           <div className="relative shrink-0 size-[24px]" data-name="House">
@@ -39,9 +37,8 @@ function Frame({ onClick, isActive, theme = 'dark' }: { onClick: () => void; isA
               </g>
             </svg>
           </div>
-          <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
-          }`}>Home</p>
+          <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
+            }`}>Home</p>
         </div>
       </div>
       {!isDark && (
@@ -78,19 +75,17 @@ function House1({ theme = 'dark' }: { theme?: 'light' | 'dark' }) {
 function Frame1({ onClick, isActive, theme = 'dark' }: { onClick: () => void; isActive?: boolean; theme?: 'light' | 'dark' }) {
   const isDark = theme === 'dark';
   const strokeColor = isActive && !isDark ? '#2EC4B6' : (isActive ? 'white' : (isDark ? 'white' : '#2C4657'));
-  
+
   return (
-    <button 
+    <button
       onClick={onClick}
-      className={`h-[64px] relative rounded-[100px] shrink-0 w-full cursor-pointer transition-all duration-300 ${
-        isActive 
-          ? (isDark ? 'bg-[rgba(46,196,182,0.3)] hover:bg-[rgba(46,196,182,0.4)]' : 'bg-[rgba(190,240,237,1)] hover:bg-[rgba(170,235,230,1)]')
-          : (isDark ? 'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.15)]' : 'bg-[#e4ecf1] hover:bg-[#d9e6ed]')
-      }`}
+      className={`h-[64px] relative rounded-[100px] shrink-0 w-full cursor-pointer transition-all duration-300 ${isActive
+        ? (isDark ? 'bg-[rgba(46,196,182,0.3)] hover:bg-[rgba(46,196,182,0.4)]' : 'bg-[rgba(190,240,237,1)] hover:bg-[rgba(170,235,230,1)]')
+        : (isDark ? 'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.15)]' : 'bg-[#e4ecf1] hover:bg-[#d9e6ed]')
+        }`}
     >
-      <div aria-hidden="true" className={`absolute border border-solid inset-0 pointer-events-none rounded-[100px] ${
-        isActive ? 'border-[rgba(46,196,182,0.4)]' : (isDark ? 'border-[rgba(255,255,255,0.2)]' : 'border-[rgba(44,70,87,0.1)]')
-      }`} />
+      <div aria-hidden="true" className={`absolute border border-solid inset-0 pointer-events-none rounded-[100px] ${isActive ? 'border-[rgba(46,196,182,0.4)]' : (isDark ? 'border-[rgba(255,255,255,0.2)]' : 'border-[rgba(44,70,87,0.1)]')
+        }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
           <div className="overflow-clip relative shrink-0 size-[24px]" data-name="House">
@@ -105,9 +100,8 @@ function Frame1({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
               </div>
             </div>
           </div>
-          <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
-          }`}>About us</p>
+          <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
+            }`}>About us</p>
         </div>
       </div>
       {!isDark && (
@@ -133,19 +127,17 @@ function Stack({ theme = 'dark' }: { theme?: 'light' | 'dark' }) {
 function Frame2({ onClick, isActive, theme = 'dark' }: { onClick: () => void; isActive?: boolean; theme?: 'light' | 'dark' }) {
   const isDark = theme === 'dark';
   const iconColor = isActive && !isDark ? '#2EC4B6' : (isActive ? 'white' : (isDark ? 'white' : '#2C4657'));
-  
+
   return (
-    <button 
+    <button
       onClick={onClick}
-      className={`h-[64px] relative rounded-[100px] shrink-0 w-full cursor-pointer transition-all duration-300 ${
-        isActive 
-          ? (isDark ? 'bg-[rgba(46,196,182,0.3)] hover:bg-[rgba(46,196,182,0.4)]' : 'bg-[rgba(190,240,237,1)] hover:bg-[rgba(170,235,230,1)]')
-          : (isDark ? 'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.15)]' : 'bg-[#e4ecf1] hover:bg-[#d9e6ed]')
-      }`}
+      className={`h-[64px] relative rounded-[100px] shrink-0 w-full cursor-pointer transition-all duration-300 ${isActive
+        ? (isDark ? 'bg-[rgba(46,196,182,0.3)] hover:bg-[rgba(46,196,182,0.4)]' : 'bg-[rgba(190,240,237,1)] hover:bg-[rgba(170,235,230,1)]')
+        : (isDark ? 'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.15)]' : 'bg-[#e4ecf1] hover:bg-[#d9e6ed]')
+        }`}
     >
-      <div aria-hidden="true" className={`absolute border border-solid inset-0 pointer-events-none rounded-[100px] ${
-        isActive ? 'border-[rgba(46,196,182,0.4)]' : (isDark ? 'border-[rgba(255,255,255,0.2)]' : 'border-[rgba(44,70,87,0.1)]')
-      }`} />
+      <div aria-hidden="true" className={`absolute border border-solid inset-0 pointer-events-none rounded-[100px] ${isActive ? 'border-[rgba(46,196,182,0.4)]' : (isDark ? 'border-[rgba(255,255,255,0.2)]' : 'border-[rgba(44,70,87,0.1)]')
+        }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
           <div className="relative shrink-0 size-[24px]" data-name="Stack">
@@ -155,9 +147,8 @@ function Frame2({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
               </g>
             </svg>
           </div>
-          <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
-          }`}>Services</p>
+          <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
+            }`}>Services</p>
         </div>
       </div>
       {!isDark && (
@@ -183,19 +174,17 @@ function ShootingStar({ theme = 'dark' }: { theme?: 'light' | 'dark' }) {
 function Frame3({ onClick, isActive, theme = 'dark' }: { onClick: () => void; isActive?: boolean; theme?: 'light' | 'dark' }) {
   const isDark = theme === 'dark';
   const iconColor = isActive && !isDark ? '#2EC4B6' : (isActive ? 'white' : (isDark ? 'white' : '#2C4657'));
-  
+
   return (
-    <button 
+    <button
       onClick={onClick}
-      className={`h-[64px] relative rounded-[100px] shrink-0 w-full cursor-pointer transition-all duration-300 ${
-        isActive 
-          ? (isDark ? 'bg-[rgba(46,196,182,0.3)] hover:bg-[rgba(46,196,182,0.4)]' : 'bg-[rgba(190,240,237,1)] hover:bg-[rgba(170,235,230,1)]')
-          : (isDark ? 'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.15)]' : 'bg-[#e4ecf1] hover:bg-[#d9e6ed]')
-      }`}
+      className={`h-[64px] relative rounded-[100px] shrink-0 w-full cursor-pointer transition-all duration-300 ${isActive
+        ? (isDark ? 'bg-[rgba(46,196,182,0.3)] hover:bg-[rgba(46,196,182,0.4)]' : 'bg-[rgba(190,240,237,1)] hover:bg-[rgba(170,235,230,1)]')
+        : (isDark ? 'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.15)]' : 'bg-[#e4ecf1] hover:bg-[#d9e6ed]')
+        }`}
     >
-      <div aria-hidden="true" className={`absolute border border-solid inset-0 pointer-events-none rounded-[100px] ${
-        isActive ? 'border-[rgba(46,196,182,0.4)]' : (isDark ? 'border-[rgba(255,255,255,0.2)]' : 'border-[rgba(44,70,87,0.1)]')
-      }`} />
+      <div aria-hidden="true" className={`absolute border border-solid inset-0 pointer-events-none rounded-[100px] ${isActive ? 'border-[rgba(46,196,182,0.4)]' : (isDark ? 'border-[rgba(255,255,255,0.2)]' : 'border-[rgba(44,70,87,0.1)]')
+        }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
           <div className="relative shrink-0 size-[24px]" data-name="ShootingStar">
@@ -205,9 +194,8 @@ function Frame3({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
               </g>
             </svg>
           </div>
-          <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
-          }`}>Reviews</p>
+          <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
+            }`}>Reviews</p>
         </div>
       </div>
       {!isDark && (
@@ -233,19 +221,17 @@ function UsersThree({ theme = 'dark' }: { theme?: 'light' | 'dark' }) {
 function Frame4({ onClick, isActive, theme = 'dark' }: { onClick: () => void; isActive?: boolean; theme?: 'light' | 'dark' }) {
   const isDark = theme === 'dark';
   const iconColor = isActive && !isDark ? '#2EC4B6' : (isActive ? 'white' : (isDark ? 'white' : '#2C4657'));
-  
+
   return (
-    <button 
+    <button
       onClick={onClick}
-      className={`h-[64px] relative rounded-[100px] shrink-0 w-full cursor-pointer transition-all duration-300 ${
-        isActive 
-          ? (isDark ? 'bg-[rgba(46,196,182,0.3)] hover:bg-[rgba(46,196,182,0.4)]' : 'bg-[rgba(190,240,237,1)] hover:bg-[rgba(170,235,230,1)]')
-          : (isDark ? 'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.15)]' : 'bg-[#e4ecf1] hover:bg-[#d9e6ed]')
-      }`}
+      className={`h-[64px] relative rounded-[100px] shrink-0 w-full cursor-pointer transition-all duration-300 ${isActive
+        ? (isDark ? 'bg-[rgba(46,196,182,0.3)] hover:bg-[rgba(46,196,182,0.4)]' : 'bg-[rgba(190,240,237,1)] hover:bg-[rgba(170,235,230,1)]')
+        : (isDark ? 'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.15)]' : 'bg-[#e4ecf1] hover:bg-[#d9e6ed]')
+        }`}
     >
-      <div aria-hidden="true" className={`absolute border border-solid inset-0 pointer-events-none rounded-[100px] ${
-        isActive ? 'border-[rgba(46,196,182,0.4)]' : (isDark ? 'border-[rgba(255,255,255,0.2)]' : 'border-[rgba(44,70,87,0.1)]')
-      }`} />
+      <div aria-hidden="true" className={`absolute border border-solid inset-0 pointer-events-none rounded-[100px] ${isActive ? 'border-[rgba(46,196,182,0.4)]' : (isDark ? 'border-[rgba(255,255,255,0.2)]' : 'border-[rgba(44,70,87,0.1)]')
+        }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
           <div className="relative shrink-0 size-[24px]" data-name="UsersThree">
@@ -255,9 +241,8 @@ function Frame4({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
               </g>
             </svg>
           </div>
-          <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
-          }`}>Our team</p>
+          <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
+            }`}>Our team</p>
         </div>
       </div>
       {!isDark && (
@@ -283,19 +268,17 @@ function GitDiff({ theme = 'dark' }: { theme?: 'light' | 'dark' }) {
 function Frame5({ onClick, isActive, theme = 'dark' }: { onClick: () => void; isActive?: boolean; theme?: 'light' | 'dark' }) {
   const isDark = theme === 'dark';
   const iconColor = isActive && !isDark ? '#2EC4B6' : (isActive ? 'white' : (isDark ? 'white' : '#2C4657'));
-  
+
   return (
-    <button 
+    <button
       onClick={onClick}
-      className={`h-[64px] relative rounded-[100px] shrink-0 w-full cursor-pointer transition-all duration-300 ${
-        isActive 
-          ? (isDark ? 'bg-[rgba(46,196,182,0.3)] hover:bg-[rgba(46,196,182,0.4)]' : 'bg-[rgba(190,240,237,1)] hover:bg-[rgba(170,235,230,1)]')
-          : (isDark ? 'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.15)]' : 'bg-[#e4ecf1] hover:bg-[#d9e6ed]')
-      }`}
+      className={`h-[64px] relative rounded-[100px] shrink-0 w-full cursor-pointer transition-all duration-300 ${isActive
+        ? (isDark ? 'bg-[rgba(46,196,182,0.3)] hover:bg-[rgba(46,196,182,0.4)]' : 'bg-[rgba(190,240,237,1)] hover:bg-[rgba(170,235,230,1)]')
+        : (isDark ? 'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.15)]' : 'bg-[#e4ecf1] hover:bg-[#d9e6ed]')
+        }`}
     >
-      <div aria-hidden="true" className={`absolute border border-solid inset-0 pointer-events-none rounded-[100px] ${
-        isActive ? 'border-[rgba(46,196,182,0.4)]' : (isDark ? 'border-[rgba(255,255,255,0.2)]' : 'border-[rgba(44,70,87,0.1)]')
-      }`} />
+      <div aria-hidden="true" className={`absolute border border-solid inset-0 pointer-events-none rounded-[100px] ${isActive ? 'border-[rgba(46,196,182,0.4)]' : (isDark ? 'border-[rgba(255,255,255,0.2)]' : 'border-[rgba(44,70,87,0.1)]')
+        }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
           <div className="relative shrink-0 size-[24px]" data-name="GitDiff">
@@ -305,9 +288,8 @@ function Frame5({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
               </g>
             </svg>
           </div>
-          <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
-          }`}>Our process</p>
+          <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
+            }`}>Our process</p>
         </div>
       </div>
       {!isDark && (
@@ -333,19 +315,17 @@ function Article({ theme = 'dark' }: { theme?: 'light' | 'dark' }) {
 function Frame6({ onClick, isActive, theme = 'dark' }: { onClick: () => void; isActive?: boolean; theme?: 'light' | 'dark' }) {
   const isDark = theme === 'dark';
   const iconColor = isActive && !isDark ? '#2EC4B6' : (isActive ? 'white' : (isDark ? 'white' : '#2C4657'));
-  
+
   return (
-    <button 
+    <button
       onClick={onClick}
-      className={`h-[64px] relative rounded-[100px] shrink-0 w-full cursor-pointer transition-all duration-300 ${
-        isActive 
-          ? (isDark ? 'bg-[rgba(46,196,182,0.3)] hover:bg-[rgba(46,196,182,0.4)]' : 'bg-[rgba(190,240,237,1)] hover:bg-[rgba(170,235,230,1)]')
-          : (isDark ? 'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.15)]' : 'bg-[#e4ecf1] hover:bg-[#d9e6ed]')
-      }`}
+      className={`h-[64px] relative rounded-[100px] shrink-0 w-full cursor-pointer transition-all duration-300 ${isActive
+        ? (isDark ? 'bg-[rgba(46,196,182,0.3)] hover:bg-[rgba(46,196,182,0.4)]' : 'bg-[rgba(190,240,237,1)] hover:bg-[rgba(170,235,230,1)]')
+        : (isDark ? 'bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.15)]' : 'bg-[#e4ecf1] hover:bg-[#d9e6ed]')
+        }`}
     >
-      <div aria-hidden="true" className={`absolute border border-solid inset-0 pointer-events-none rounded-[100px] ${
-        isActive ? 'border-[rgba(46,196,182,0.4)]' : (isDark ? 'border-[rgba(255,255,255,0.2)]' : 'border-[rgba(44,70,87,0.1)]')
-      }`} />
+      <div aria-hidden="true" className={`absolute border border-solid inset-0 pointer-events-none rounded-[100px] ${isActive ? 'border-[rgba(46,196,182,0.4)]' : (isDark ? 'border-[rgba(255,255,255,0.2)]' : 'border-[rgba(44,70,87,0.1)]')
+        }`} />
       <div className="flex flex-row items-center size-full">
         <div className="box-border content-stretch flex gap-[12px] items-center px-[17.5px] py-[12px] relative w-full">
           <div className="relative shrink-0 size-[24px]" data-name="Article">
@@ -355,9 +335,8 @@ function Frame6({ onClick, isActive, theme = 'dark' }: { onClick: () => void; is
               </g>
             </svg>
           </div>
-          <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${
-            isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
-          }`}>Blogs</p>
+          <p className={`leading-[24px] not-italic relative shrink-0 text-[20px] text-center text-nowrap whitespace-pre ${isActive && !isDark ? "font-['Lato:Medium',sans-serif] text-[#2EC4B6]" : (isActive ? "font-['Lato:Medium',sans-serif] text-white" : (isDark ? "font-['Lato:Light',sans-serif] text-white" : "font-['Lato:Light',sans-serif] text-[#2c4657]"))
+            }`}>Blogs</p>
         </div>
       </div>
       {!isDark && (
@@ -380,22 +359,22 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
   const handleNavigate = (sectionId: string, activeState: string) => {
     // Set the active section based on which button was clicked
     setActiveSection(activeState);
-    
+
     // Special handling for Home - scroll past splash screen to hero content
     if (sectionId === 'HeroSection') {
-      window.scrollTo({ 
-        top: window.innerHeight * 1, // Scroll past splash fade threshold
-        behavior: 'smooth' 
+      window.scrollTo({
+        top: window.innerHeight * 0.5, // Scroll past splash fade threshold
+        behavior: 'smooth'
       });
       setIsMobileMenuOpen(false);
       return;
     }
-    
+
     // Special handling for About Us section
     if (sectionId === 'AboutUsSection') {
-      window.scrollTo({ 
-        top: window.innerHeight * 3.8, // Adjusted position for About Us section
-        behavior: 'smooth' 
+      window.scrollTo({
+        top: window.innerHeight * 1.9, // Adjusted position for About Us section
+        behavior: 'smooth'
       });
       setIsMobileMenuOpen(false);
       return;
@@ -403,9 +382,9 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
 
     // Special handling for Service Us section
     if (sectionId === 'ServiceSection') {
-      window.scrollTo({ 
-        top: window.innerHeight * 6.2, // Same position as Services
-        behavior: 'smooth' 
+      window.scrollTo({
+        top: window.innerHeight * 4.8, // Same position as Services
+        behavior: 'smooth'
       });
       setIsMobileMenuOpen(false);
       return;
@@ -414,9 +393,9 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
 
     // Special handling for Team section
     if (sectionId === 'TeamSection') {
-      window.scrollTo({ 
-        top: window.innerHeight * 12, // Same position as Services
-        behavior: 'smooth' 
+      window.scrollTo({
+        top: window.innerHeight * 10.2, // Same position as Services
+        behavior: 'smooth'
       });
       setIsMobileMenuOpen(false);
       return;
@@ -424,9 +403,9 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
 
     // Special handling for Process Us section
     if (sectionId === 'ProcessSection') {
-      window.scrollTo({ 
-        top: window.innerHeight * 13.8, // Same position as Services
-        behavior: 'smooth' 
+      window.scrollTo({
+        top: window.innerHeight * 12, // Same position as Services
+        behavior: 'smooth'
       });
       setIsMobileMenuOpen(false);
       return;
@@ -434,14 +413,14 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
 
     // Special handling for Blogs Us section
     if (sectionId === 'BlogsSection') {
-      window.scrollTo({ 
-        top: window.innerHeight * 18, // Same position as Services
-        behavior: 'smooth' 
+      window.scrollTo({
+        top: window.innerHeight * 16.4, // Same position as Services
+        behavior: 'smooth'
       });
       setIsMobileMenuOpen(false);
       return;
     }
-    
+
     const section = document.getElementById(sectionId);
     if (section) {
       section.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -465,9 +444,9 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
           className="fixed top-[100px] left-1/2 -translate-x-1/2 z-[200] w-[410px] px-[24px] max-h-[calc(100vh-120px)] overflow-y-auto"
           style={{ willChange: 'opacity, transform' }}
         >
-          <div 
+          <div
             className={`${isDark ? 'bg-[rgba(44,70,87,0.92)] backdrop-blur-[20px]' : 'bg-[rgba(228,236,241,0.88)] backdrop-blur-[20px]'} relative rounded-[32px] w-full`}
-            style={{ 
+            style={{
               WebkitBackdropFilter: 'blur(20px)',
               transform: 'translateZ(0)',
               willChange: 'backdrop-filter'
