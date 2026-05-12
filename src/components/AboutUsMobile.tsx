@@ -219,46 +219,16 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  // Swipe handling for carousel (pointer events)
-  const touchStartXRef = useRef<number | null>(null);
-  const touchDeltaXRef = useRef<number>(0);
-  const isPointerDownRef = useRef<boolean>(false);
-
-  const handlePointerDownCarousel = (e: React.PointerEvent) => {
-    touchStartXRef.current = e.clientX;
-    touchDeltaXRef.current = 0;
-    isPointerDownRef.current = true;
-    try { (e.target as Element).setPointerCapture?.(e.pointerId); } catch (_) {}
-  };
-
-  const handlePointerMoveCarousel = (e: React.PointerEvent) => {
-    if (!isPointerDownRef.current || touchStartXRef.current === null) return;
-    touchDeltaXRef.current = e.clientX - touchStartXRef.current;
-  };
-
-  const handlePointerUpCarousel = (e: React.PointerEvent) => {
-    if (!isPointerDownRef.current) return;
-    isPointerDownRef.current = false;
-    try { (e.target as Element).releasePointerCapture?.(e.pointerId); } catch (_) {}
-    const delta = touchDeltaXRef.current;
-    const threshold = 40; // px
-    if (Math.abs(delta) > threshold) {
-      if (delta > 0) {
-        setSwipeDirection('right');
-        setCarouselIndex((prev) => (prev - 1 + carouselTexts.length) % carouselTexts.length);
-      } else {
-        setSwipeDirection('left');
-        setCarouselIndex((prev) => (prev + 1) % carouselTexts.length);
-      }
+  // Updated drag handling for carousel
+  const handleDragEnd = (event: any, info: any) => {
+    const threshold = 50;
+    if (info.offset.x > threshold) {
+      setSwipeDirection('right');
+      setCarouselIndex((prev) => (prev - 1 + carouselTexts.length) % carouselTexts.length);
+    } else if (info.offset.x < -threshold) {
+      setSwipeDirection('left');
+      setCarouselIndex((prev) => (prev + 1) % carouselTexts.length);
     }
-    touchStartXRef.current = null;
-    touchDeltaXRef.current = 0;
-  };
-
-  const handlePointerCancelCarousel = () => {
-    isPointerDownRef.current = false;
-    touchStartXRef.current = null;
-    touchDeltaXRef.current = 0;
   };
 
   // Update ref when callback changes
@@ -383,11 +353,7 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
           {/* Carousel Text */}
           <div
             className="relative h-[280px] flex flex-col items-center justify-start overflow-visible mb-10 pointer-events-auto select-none"
-            style={{ touchAction: 'pan-x' }}
-            onPointerDown={handlePointerDownCarousel}
-            onPointerMove={handlePointerMoveCarousel}
-            onPointerUp={handlePointerUpCarousel}
-            onPointerCancel={handlePointerCancelCarousel}
+            style={{ touchAction: 'pan-y' }}
           >
             <AnimatePresence mode="wait" custom={swipeDirection}>
               <motion.div
@@ -397,8 +363,12 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
                 initial="enter"
                 animate="center"
                 exit="exit"
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={handleDragEnd}
                 transition={{ duration: 0.5, ease: "easeInOut" }}
-                className="w-full flex flex-col gap-0"
+                className="w-full flex flex-col gap-0 cursor-grab active:cursor-grabbing"
               >
                 {/* Text content below */}
                 <p className="font-lato-semibold">{carouselTexts[carouselIndex].header}</p><br />
