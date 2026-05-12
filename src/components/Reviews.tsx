@@ -458,19 +458,19 @@ export function Reviews({
   // Each card requires MUCH MORE scrolling to complete its animation
   // Cards start 10% apart for sequential appearance but overlap for smooth flow
   // INCREASED starting position to 1200px to keep cards off-screen initially
-  const card1YMobile = useTransform(scrollYProgress, [0.00, 0.40], [1000, -1000]);
-  const card2YMobile = useTransform(scrollYProgress, [0.15, 0.55], [1000, -1000]);
-  const card5YMobile = useTransform(scrollYProgress, [0.30, 0.70], [1000, -1000]);
-  const card6YMobile = useTransform(scrollYProgress, [0.45, 0.85], [1000, -1100]); // Jess's card is long, extra height to clear
-  const card7YMobile = useTransform(scrollYProgress, [0.60, 1.00], [1000, -1000]);
+  const card1YMobile = useTransform(scrollYProgress, [0.00, 0.40], [800, -800]);
+  const card2YMobile = useTransform(scrollYProgress, [0.10, 0.50], [800, -800]);
+  const card5YMobile = useTransform(scrollYProgress, [0.20, 0.60], [800, -900]);
+  const card6YMobile = useTransform(scrollYProgress, [0.30, 0.70], [800, -1200]); // Jess's card is long, extra height to clear
+  const card7YMobile = useTransform(scrollYProgress, [0.40, 0.80], [800, -800]);
 
   // Mobile card opacity - separate from desktop timing - adjusted for extended 55% scroll ranges
   // Cards fade out MUCH EARLIER - from 0.65 to 0.70 - well before TEAM masking starts (0.85)
   const card1OpacityMobile = useTransform(scrollYProgress, [0.00, 0.05, 0.35, 0.40], [0, 1, 1, 0]);
-  const card2OpacityMobile = useTransform(scrollYProgress, [0.15, 0.20, 0.50, 0.55], [0, 1, 1, 0]);
-  const card5OpacityMobile = useTransform(scrollYProgress, [0.30, 0.35, 0.65, 0.70], [0, 1, 1, 0]);
-  const card6OpacityMobile = useTransform(scrollYProgress, [0.45, 0.50, 0.80, 0.85], [0, 1, 1, 0]);
-  const card7OpacityMobile = useTransform(scrollYProgress, [0.60, 0.65, 0.95, 1.00], [0, 1, 1, 0]);  // Fade out early at 0.65-0.70
+  const card2OpacityMobile = useTransform(scrollYProgress, [0.10, 0.15, 0.45, 0.50], [0, 1, 1, 0]);
+  const card5OpacityMobile = useTransform(scrollYProgress, [0.20, 0.25, 0.55, 0.60], [0, 1, 1, 0]);
+  const card6OpacityMobile = useTransform(scrollYProgress, [0.30, 0.35, 0.65, 0.70], [0, 1, 1, 0]);
+  const card7OpacityMobile = useTransform(scrollYProgress, [0.40, 0.45, 0.75, 0.80], [0, 1, 1, 0]);  // Fade out early at 0.65-0.70
 
   // TEAM text animations - zooms in from right side after cards finish scrolling
   // Desktop: Cards finish at 0.80, TEAM starts at 0.88 (gap for cleanup)
