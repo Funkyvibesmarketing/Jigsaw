@@ -29,7 +29,7 @@ function LinkedInButton({ linkedinUrl }: { linkedinUrl: string }) {
       href={linkedinUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="bg-[rgba(255,255,255,0.1)] content-stretch flex gap-[4px] items-center px-[12px] py-[6px] relative rounded-[57.143px] w-fit cursor-pointer hover:bg-[rgba(255,255,255,0.15)] transition-colors mt-[16px]"
+      className="bg-[rgba(255,255,255,0.1)] content-stretch flex gap-[4px] items-center px-[12px] py-[6px] relative rounded-[57.143px] w-fit cursor-pointer hover:bg-[rgba(255,255,255,0.15)] transition-colors mt-[4px]"
     >
       <div aria-hidden="true" className="absolute border-[0.571px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[57.143px]" />
       <AkarIconsLinkedinV1Fill />
@@ -202,11 +202,11 @@ export function TeamMobile({
       {reviewsScrollProgress && reviewsScrollProgress >= 0.76 && (
         <>
           {/* White overlay with TEAM text cutout - reveals team content through the text */}
-          {reviewsScrollProgress >= 0.76 && reviewsScrollProgress < 1.0 && (
+          {reviewsScrollProgress >= 0.76 && reviewsScrollProgress <= 1.0 && (
             <div
               className="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none"
               style={{
-                opacity: reviewsScrollProgress >= 0.995 ? 1 - ((reviewsScrollProgress - 0.995) / 0.005) : 1,
+                opacity: reviewsScrollProgress >= 0.90 ? Math.max(0, 1 - ((reviewsScrollProgress - 0.90) / 0.07)) : 1,
                 touchAction: 'none',
                 willChange: 'opacity',
                 transform: `translateY(${teamSlideY}vh)`,
@@ -237,9 +237,9 @@ export function TeamMobile({
                         if (!reviewsScrollProgress || reviewsScrollProgress < 0.88) return baseSize;
                         if (reviewsScrollProgress >= 1.0) return baseSize * 25;
 
-                        // Zoom starts AFTER slide completes (0.88) - simple linear interpolation like SERVICES
+                        // Zoom starts AFTER slide completes (0.88) - slowed down slightly at the very end
                         const progress = (reviewsScrollProgress - 0.88) / (1.0 - 0.88);
-                        const scale = 1 + (24 * progress); // 1x to 25x scale
+                        const scale = 1 + (49 * progress); // Reduced from 80x to 50x to focus more on the fade
                         return baseSize * scale;
                       })()}
                       fontFamily="Lato, sans-serif"
