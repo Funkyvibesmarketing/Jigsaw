@@ -340,160 +340,160 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
               pointerEvents: scrollProgress < 0.60 ? 'auto' : 'none'
             }}
           >
-          {/* "ABOUT US" Title - Large centered text at top, slides with carousel */}
-          <p
-            className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[50px] text-[rgba(44,70,87,0.2)] text-center uppercase mb-[60px] whitespace-nowrap pointer-events-none select-none"
-            style={{
-              letterSpacing: '0.025em'
-            }}
-          >
-            About Us
-          </p>
-          
-          {/* Carousel Text */}
-          <div
-            className="relative h-[280px] flex flex-col items-center justify-start overflow-visible mb-10 pointer-events-auto select-none"
-            style={{ touchAction: 'pan-y' }}
-          >
-            <AnimatePresence mode="wait" custom={swipeDirection}>
-              <motion.div
-                key={carouselTexts[carouselIndex].id}
-                custom={swipeDirection}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.2}
-                onDragEnd={handleDragEnd}
-                transition={{ duration: 0.5, ease: "easeInOut" }}
-                className="w-full flex flex-col gap-0 cursor-grab active:cursor-grabbing"
-              >
-                {/* Text content below */}
-                <p className="font-lato-semibold">{carouselTexts[carouselIndex].header}</p><br />
-                <p className="leading-[36px] text-[24px]">
-                  {carouselTexts[carouselIndex].text}
-                  {carouselTexts[carouselIndex].hasLearnMore && (
-                    <a className="cursor-pointer pointer-events-auto" onClick={handleLearnMoreMClick}>Learn more</a>
-                  )}
-                  {carouselTexts[carouselIndex].boldText && (
-                    <span className="font-lato-semibold">{carouselTexts[carouselIndex].boldText}</span>
-                  )}
-                </p>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* Navigation: Left Arrow + Pagination Dots + Right Arrow */}
-          <div
-            className="flex items-center justify-center gap-[24px] relative z-[9999] use-default-cursor"
-          >
-            {/* Left Arrow Button */}
-            <button
-              onPointerDown={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                setSwipeDirection('right');
-                setCarouselIndex((prev) => (prev - 1 + carouselTexts.length) % carouselTexts.length);
-              }}
-              className="content-stretch flex items-center justify-center p-[3px] relative rounded-[24px] shrink-0 size-[48px] transition-all duration-200 ease-out active:bg-[rgba(46,196,182,0.1)] group touch-manipulation"
+            {/* "ABOUT US" Title - Large centered text at top, slides with carousel */}
+            <p
+              className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[50px] text-[rgba(44,70,87,0.2)] text-center uppercase mb-[60px] whitespace-nowrap pointer-events-none select-none"
               style={{
-                cursor: 'pointer',
-                pointerEvents: 'auto',
-                zIndex: 99999,
-                position: 'relative',
-                touchAction: 'manipulation',
-                WebkitTapHighlightColor: 'transparent',
-                userSelect: 'none'
+                letterSpacing: '0.025em'
               }}
-              aria-label="Previous slide"
             >
-              <div aria-hidden="true" className="absolute border-[1px] border-[rgba(44,70,87,0.2)] border-solid inset-0 pointer-events-none rounded-[24px] transition-all duration-200 ease-out group-active:border-[#2ec4b6]" />
-              <div className="flex items-center justify-center relative shrink-0">
-                <div className="flex-none rotate-[180deg] scale-y-[-100%]">
-                  <div className="overflow-clip relative size-[30px]">
-                    <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
-                      <div className="flex-none h-[13px] rotate-[359.849deg] w-[21.5px]">
-                        <div className="relative size-full">
-                          <div className="absolute inset-[-3.86%_-2.34%]">
-                            <img alt="" className="block max-w-none size-full" height="14" src={imgVector} width="22.5" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </button>
+              About Us
+            </p>
 
-            {/* Pagination Dots */}
-            <div className="flex items-center justify-center gap-[18px]">
-              {carouselTexts.map((_, index) => (
-                <button
-                  key={index}
-                  onPointerDown={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    setCarouselIndex(index);
-                  }}
-                  style={{
-                    cursor: 'pointer',
-                    pointerEvents: 'auto',
-                    zIndex: 99999,
-                    position: 'relative',
-                    touchAction: 'manipulation',
-                    WebkitTapHighlightColor: 'transparent',
-                    userSelect: 'none'
-                  }}
-                  className={`transition-all duration-300 rounded-full touch-manipulation ${index === carouselIndex
-                    ? 'w-[14px] h-[14px] bg-[#2C4657] active:bg-[#1e3340]'
-                    : 'w-[10px] h-[10px] bg-[#D9D9D9] active:bg-[#B0B0B0]'
-                    }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
+            {/* Carousel Text */}
+            <div
+              className="relative h-[280px] flex flex-col items-center justify-start overflow-visible mb-10 pointer-events-auto select-none"
+              style={{ touchAction: 'pan-y' }}
+            >
+              <AnimatePresence mode="wait" custom={swipeDirection}>
+                <motion.div
+                  key={carouselTexts[carouselIndex].id}
+                  custom={swipeDirection}
+                  variants={variants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={handleDragEnd}
+                  transition={{ duration: 0.15, ease: "easeInOut" }}
+                  className="w-full flex flex-col gap-0 cursor-grab active:cursor-grabbing"
+                >
+                  {/* Text content below */}
+                  <p className="font-lato-semibold">{carouselTexts[carouselIndex].header}</p><br />
+                  <p className="leading-[36px] text-[24px]">
+                    {carouselTexts[carouselIndex].text}
+                    {carouselTexts[carouselIndex].hasLearnMore && (
+                      <a className="cursor-pointer pointer-events-auto" onClick={handleLearnMoreMClick}>Learn more</a>
+                    )}
+                    {carouselTexts[carouselIndex].boldText && (
+                      <span className="font-lato-semibold">{carouselTexts[carouselIndex].boldText}</span>
+                    )}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
             </div>
 
-            {/* Right Arrow Button */}
-            <button
-              onPointerDown={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                setSwipeDirection('left');
-                setCarouselIndex((prev) => (prev + 1) % carouselTexts.length);
-              }}
-              className="content-stretch flex items-center justify-center p-[3px] relative rounded-[24px] shrink-0 size-[48px] transition-all duration-200 ease-out active:bg-[rgba(46,196,182,0.1)] group touch-manipulation"
-              style={{
-                cursor: 'pointer',
-                pointerEvents: 'auto',
-                zIndex: 99999,
-                position: 'relative',
-                touchAction: 'manipulation',
-                WebkitTapHighlightColor: 'transparent',
-                userSelect: 'none'
-              }}
-              aria-label="Next slide"
+            {/* Navigation: Left Arrow + Pagination Dots + Right Arrow */}
+            <div
+              className="flex items-center justify-center gap-[24px] relative z-[9999] use-default-cursor"
             >
-              <div aria-hidden="true" className="absolute border-[1px] border-[rgba(44,70,87,0.2)] border-solid inset-0 pointer-events-none rounded-[24px] transition-all duration-200 ease-out group-active:border-[#2ec4b6]" />
-              <div className="flex items-center justify-center relative shrink-0">
-                <div className="flex-none">
-                  <div className="overflow-clip relative size-[30px]">
-                    <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
-                      <div className="flex-none h-[13px] rotate-[359.849deg] w-[21.5px]">
-                        <div className="relative size-full">
-                          <div className="absolute inset-[-3.86%_-2.34%]">
-                            <img alt="" className="block max-w-none size-full" height="14" src={imgVector} width="22.5" />
+              {/* Left Arrow Button */}
+              <button
+                onPointerDown={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  setSwipeDirection('right');
+                  setCarouselIndex((prev) => (prev - 1 + carouselTexts.length) % carouselTexts.length);
+                }}
+                className="content-stretch flex items-center justify-center p-[3px] relative rounded-[24px] shrink-0 size-[48px] transition-all duration-200 ease-out active:bg-[rgba(46,196,182,0.1)] group touch-manipulation"
+                style={{
+                  cursor: 'pointer',
+                  pointerEvents: 'auto',
+                  zIndex: 99999,
+                  position: 'relative',
+                  touchAction: 'manipulation',
+                  WebkitTapHighlightColor: 'transparent',
+                  userSelect: 'none'
+                }}
+                aria-label="Previous slide"
+              >
+                <div aria-hidden="true" className="absolute border-[1px] border-[rgba(44,70,87,0.2)] border-solid inset-0 pointer-events-none rounded-[24px] transition-all duration-200 ease-out group-active:border-[#2ec4b6]" />
+                <div className="flex items-center justify-center relative shrink-0">
+                  <div className="flex-none rotate-[180deg] scale-y-[-100%]">
+                    <div className="overflow-clip relative size-[30px]">
+                      <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
+                        <div className="flex-none h-[13px] rotate-[359.849deg] w-[21.5px]">
+                          <div className="relative size-full">
+                            <div className="absolute inset-[-3.86%_-2.34%]">
+                              <img alt="" className="block max-w-none size-full" height="14" src={imgVector} width="22.5" />
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
+              </button>
+
+              {/* Pagination Dots */}
+              <div className="flex items-center justify-center gap-[18px]">
+                {carouselTexts.map((_, index) => (
+                  <button
+                    key={index}
+                    onPointerDown={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      setCarouselIndex(index);
+                    }}
+                    style={{
+                      cursor: 'pointer',
+                      pointerEvents: 'auto',
+                      zIndex: 99999,
+                      position: 'relative',
+                      touchAction: 'manipulation',
+                      WebkitTapHighlightColor: 'transparent',
+                      userSelect: 'none'
+                    }}
+                    className={`transition-all duration-300 rounded-full touch-manipulation ${index === carouselIndex
+                      ? 'w-[14px] h-[14px] bg-[#2C4657] active:bg-[#1e3340]'
+                      : 'w-[10px] h-[10px] bg-[#D9D9D9] active:bg-[#B0B0B0]'
+                      }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
               </div>
-            </button>
-          </div>
-        </motion.div>
+
+              {/* Right Arrow Button */}
+              <button
+                onPointerDown={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  setSwipeDirection('left');
+                  setCarouselIndex((prev) => (prev + 1) % carouselTexts.length);
+                }}
+                className="content-stretch flex items-center justify-center p-[3px] relative rounded-[24px] shrink-0 size-[48px] transition-all duration-200 ease-out active:bg-[rgba(46,196,182,0.1)] group touch-manipulation"
+                style={{
+                  cursor: 'pointer',
+                  pointerEvents: 'auto',
+                  zIndex: 99999,
+                  position: 'relative',
+                  touchAction: 'manipulation',
+                  WebkitTapHighlightColor: 'transparent',
+                  userSelect: 'none'
+                }}
+                aria-label="Next slide"
+              >
+                <div aria-hidden="true" className="absolute border-[1px] border-[rgba(44,70,87,0.2)] border-solid inset-0 pointer-events-none rounded-[24px] transition-all duration-200 ease-out group-active:border-[#2ec4b6]" />
+                <div className="flex items-center justify-center relative shrink-0">
+                  <div className="flex-none">
+                    <div className="overflow-clip relative size-[30px]">
+                      <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
+                        <div className="flex-none h-[13px] rotate-[359.849deg] w-[21.5px]">
+                          <div className="relative size-full">
+                            <div className="absolute inset-[-3.86%_-2.34%]">
+                              <img alt="" className="block max-w-none size-full" height="14" src={imgVector} width="22.5" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </motion.div>
         )}
 
         {/* Full blue screen overlay at the end - appears after zoom completes */}

@@ -404,7 +404,7 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
     // Special handling for Process Us section
     if (sectionId === 'ProcessSection') {
       window.scrollTo({
-        top: window.innerHeight * 12, // Same position as Services
+        top: window.innerHeight * 11.5, // Same position as Services
         behavior: 'smooth'
       });
       setIsMobileMenuOpen(false);
