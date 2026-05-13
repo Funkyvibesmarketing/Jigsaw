@@ -206,9 +206,8 @@ export function TeamMobile({
             <div
               className="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none"
               style={{
-                opacity: reviewsScrollProgress >= 0.90 ? Math.max(0, 1 - ((reviewsScrollProgress - 0.90) / 0.07)) : 1,
+                opacity: reviewsScrollProgress >= 0.94 ? Math.max(0, 1 - ((reviewsScrollProgress - 0.93) / 0.01)) : 1,
                 touchAction: 'none',
-                willChange: 'opacity',
                 transform: `translateY(${teamSlideY}vh)`,
                 zIndex: processScrollProgress && processScrollProgress > 0 ? 40 : 100
               } as React.CSSProperties}
@@ -220,13 +219,42 @@ export function TeamMobile({
                     <text
                       x={(() => {
                         if (!reviewsScrollProgress || reviewsScrollProgress < 0.76) return "220%";
+
+                        // Calculate dynamic position to center on 'M'
+                        const baseFontSize = 200;
+                        const baseLetterSpacing = 16;
+
+                        // We need the window width for pixel calculations
+                        const vw = typeof window !== 'undefined' ? window.innerWidth : 375;
+                        const vCenter = vw / 2;
+
+                        // Current font size based on zoom progress
+                        const fontSize = (() => {
+                          if (reviewsScrollProgress < 0.88) return baseFontSize;
+                          if (reviewsScrollProgress >= 1.0) return baseFontSize * 50;
+                          const p = (reviewsScrollProgress - 0.88) / 0.12;
+                          return baseFontSize * (1 + (49 * p));
+                        })();
+
+                        const letterSpacing = (baseLetterSpacing * fontSize) / baseFontSize;
+                        const charWidth = fontSize * 0.55; // Typical width factor for Lato Bold
+                        const totalCharWidth = charWidth + letterSpacing;
+
+                        // Offset to move 'M' (the 4th letter) to the center.
+                        // With text-anchor: middle, the center of the word is at index 1.5.
+                        // Center of 'M' is at index 3.0.
+                        // Difference is 1.5 character widths.
+                        const offset = 1.5 * totalCharWidth;
+                        const centeredX = vCenter - offset;
+
                         if (reviewsScrollProgress < 0.88) {
-                          // Slide from right to center (220% to 50%)
-                          const p = (reviewsScrollProgress - 0.76) / 0.12; // 0.88 - 0.76 = 0.12
-                          return `${220 - (170 * p)}%`;
+                          // Slide from right (220% of viewport) to centeredX
+                          const startX = vw * 2.2;
+                          const p = (reviewsScrollProgress - 0.76) / 0.12;
+                          return startX - ((startX - centeredX) * p);
                         }
-                        // Stay at center during zoom
-                        return "50%";
+
+                        return centeredX;
                       })()}
                       y="50%"
                       textAnchor="middle"
@@ -235,16 +263,26 @@ export function TeamMobile({
                       fontSize={(() => {
                         const baseSize = 200;
                         if (!reviewsScrollProgress || reviewsScrollProgress < 0.88) return baseSize;
-                        if (reviewsScrollProgress >= 1.0) return baseSize * 25;
+                        if (reviewsScrollProgress >= 1.0) return baseSize * 50;
 
-                        // Zoom starts AFTER slide completes (0.88) - slowed down slightly at the very end
-                        const progress = (reviewsScrollProgress - 0.88) / (1.0 - 0.88);
-                        const scale = 1 + (49 * progress); // Reduced from 80x to 50x to focus more on the fade
+                        // Zoom starts AFTER slide completes (0.88)
+                        const progress = (reviewsScrollProgress - 0.88) / 0.12;
+                        const scale = 1 + (49 * progress);
                         return baseSize * scale;
                       })()}
                       fontFamily="Lato, sans-serif"
                       fontWeight="700"
-                      letterSpacing="16"
+                      letterSpacing={(() => {
+                        const baseFontSize = 200;
+                        const baseLetterSpacing = 16;
+                        const fontSize = (() => {
+                          if (reviewsScrollProgress < 0.88) return baseFontSize;
+                          if (reviewsScrollProgress >= 1.0) return baseFontSize * 50;
+                          const p = (reviewsScrollProgress - 0.88) / 0.12;
+                          return baseFontSize * (1 + (49 * p));
+                        })();
+                        return (baseLetterSpacing * fontSize) / baseFontSize;
+                      })()}
                     >
                       TEAM
                     </text>
