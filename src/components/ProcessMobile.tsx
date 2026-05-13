@@ -368,6 +368,8 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress, on
           </p>
         </div>
 
+        {/* Parent progress bar is removed - implemented individually within sliding steps */}
+
         {/* SLIDER CONTAINER - Separate container for sliding content */}
         <div className="absolute inset-0 overflow-hidden">
           {/* Horizontal Slider Container for Steps 2, 3, 4 */}
@@ -391,11 +393,74 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress, on
                 </svg>
               </div>
 
-              {/* Icon - centered within circles */}
+              {/* Icon */}
               <div
                 className="absolute left-1/2 size-[29.4px] top-[337px] translate-x-[-50%] translate-y-[-50%] z-10"
               >
                 <HandshakeIcon />
+              </div>
+
+              {/* Progress Bar Segment for Step 1 */}
+              <div style={{
+                position: 'absolute',
+                left: 0,
+                width: '100vw',
+                top: '230px',
+                height: '24px',
+                pointerEvents: 'none',
+                zIndex: 50
+              }}>
+                {/* Inactive/Dim Bar - from tick to right edge */}
+                <div 
+                  style={{ 
+                    position: 'absolute',
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    height: '2px',
+                    backgroundColor: 'rgba(46, 196, 182, 0.3)',
+                    width: '50%'
+                  }}
+                />
+                {/* Active Bar - grows from center tick to right edge */}
+                <motion.div 
+                  style={{ 
+                    position: 'absolute',
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    height: '2px',
+                    backgroundColor: '#2EC4B6',
+                    width: useTransform(scrollYProgress, [0.20, 0.35], ["0%", "50%"]),
+                    zIndex: 2
+                  }}
+                />
+                {/* Tick 1 - Active immediately with green background - positioned in center */}
+                <div 
+                  style={{ 
+                    position: 'absolute',
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    backgroundColor: '#2EC4B6',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 20
+                  }}
+                >
+                  <svg 
+                    width="12" 
+                    height="9" 
+                    viewBox="0 0 12 9" 
+                    fill="none"
+                  >
+                    <path d="M1 4.5L4.5 8L11 1.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
               </div>
 
               {/* Text content */}
@@ -433,11 +498,90 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress, on
                 </svg>
               </div>
 
-              {/* Icon - with slide animation */}
+              {/* Icon */}
               <div
                 className="absolute left-1/2 size-[29.4px] top-[337px] translate-x-[-50%] translate-y-[-50%] z-10"
               >
                 <ResearchIcon />
+              </div>
+
+              {/* Progress Bar Segment for Step 2 */}
+              <div style={{
+                position: 'absolute',
+                left: 0,
+                width: '100vw',
+                top: '230px',
+                height: '24px',
+                pointerEvents: 'none',
+                zIndex: 50
+              }}>
+                {/* Inactive/Dim Bar - from left edge to right edge - ALWAYS VISIBLE */}
+                <div 
+                  style={{ 
+                    position: 'absolute',
+                    left: 0,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    height: '2px',
+                    backgroundColor: 'rgba(46, 196, 182, 0.3)',
+                    width: '100%',
+                    zIndex: 15
+                  }}
+                />
+                {/* Active track - completed part from left to center - animates in as we enter */}
+                <motion.div 
+                  style={{ 
+                    position: 'absolute',
+                    left: 0,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    height: '2px',
+                    backgroundColor: '#2EC4B6',
+                    width: useTransform(scrollYProgress, [0.35, 0.40], ["0%", "50%"]),
+                    zIndex: 2
+                  }}
+                />
+                {/* Active filling track - grows from center to right edge */}
+                <motion.div 
+                  style={{ 
+                    position: 'absolute',
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    height: '2px',
+                    backgroundColor: '#2EC4B6',
+                    width: useTransform(scrollYProgress, [0.40, 0.60], ["0%", "50%"])
+                  }}
+                />
+                {/* Tick 2 - Always visible, activates when green bar reaches it */}
+                <motion.div 
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 20,
+                    backgroundColor: useTransform(scrollYProgress, [0.39, 0.40], ["#2D8587", "#2EC4B6"])
+                  }}
+                >
+                  <motion.svg 
+                    width="12" 
+                    height="9" 
+                    viewBox="0 0 12 9" 
+                    fill="none"
+                    style={{
+                      opacity: useTransform(scrollYProgress, [0.39, 0.40], [0.3, 1])
+                    }}
+                  >
+                    <path d="M1 4.5L4.5 8L11 1.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </motion.svg>
+                </motion.div>
               </div>
 
               {/* Text content - with slide animation */}
@@ -476,11 +620,77 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress, on
                 </svg>
               </div>
 
-              {/* Icon - with slide animation */}
+              {/* Icon */}
               <div
                 className="absolute left-1/2 size-[29.4px] top-[337px] translate-x-[-50%] translate-y-[-50%] z-10"
               >
                 <BrainIcon />
+              </div>
+
+              {/* Progress Bar Segment for Step 3 */}
+              <div style={{
+                position: 'absolute',
+                left: 0,
+                width: '100vw',
+                top: '230px',
+                height: '24px',
+                pointerEvents: 'none',
+                zIndex: 50
+              }}>
+                {/* Inactive/Dim Bar - from left edge to center (same as step 2) */}
+                <div 
+                  style={{ 
+                    position: 'absolute',
+                    left: 0,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    height: '2px',
+                    backgroundColor: 'rgba(46, 196, 182, 0.3)',
+                    width: '50%'
+                  }}
+                />
+                {/* Active filling track - continues from step 1 to center tick - animates as we enter */}
+                <motion.div 
+                  style={{ 
+                    position: 'absolute',
+                    left: 0,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    height: '2px',
+                    backgroundColor: '#2EC4B6',
+                    width: useTransform(scrollYProgress, [0.60, 0.65], ["0%", "50%"]),
+                    zIndex: 2
+                  }}
+                />
+                {/* Tick 3 - Always visible, activates when green bar reaches it */}
+                <motion.div 
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 20,
+                    backgroundColor: useTransform(scrollYProgress, [0.64, 0.65], ["#2D8587", "#2EC4B6"])
+                  }}
+                >
+                  <motion.svg 
+                    width="12" 
+                    height="9" 
+                    viewBox="0 0 12 9" 
+                    fill="none"
+                    style={{
+                      opacity: useTransform(scrollYProgress, [0.64, 0.65], [0.3, 1])
+                    }}
+                  >
+                    <path d="M1 4.5L4.5 8L11 1.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </motion.svg>
+                </motion.div>
               </div>
 
               {/* Text content - with slide animation */}

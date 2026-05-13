@@ -8,44 +8,88 @@
    Each card gets a slightly different duration/delay for a natural feel.
    ============================================================ */
 @keyframes float-a {
-  0%, 100% { transform: translate(-5px, -10px); }
-  50%      { transform: translate(5px, 10px); }
+
+  0%,
+  100% {
+    transform: translate(-5px, -10px);
+  }
+
+  50% {
+    transform: translate(5px, 10px);
+  }
 }
+
 @keyframes float-b {
-  0%, 100% { transform: translate(4px, -8px); }
-  50%      { transform: translate(-4px, 8px); }
+
+  0%,
+  100% {
+    transform: translate(4px, -8px);
+  }
+
+  50% {
+    transform: translate(-4px, 8px);
+  }
 }
+
 @keyframes float-c {
-  0%, 100% { transform: translate(-3px, 8px); }
-  50%      { transform: translate(3px, -8px); }
+
+  0%,
+  100% {
+    transform: translate(-3px, 8px);
+  }
+
+  50% {
+    transform: translate(3px, -8px);
+  }
 }
+
 @keyframes float-d {
-  0%, 100% { transform: translate(5px, -6px); }
-  50%      { transform: translate(-5px, 6px); }
+
+  0%,
+  100% {
+    transform: translate(5px, -6px);
+  }
+
+  50% {
+    transform: translate(-5px, 6px);
+  }
 }
+
 @keyframes float-e {
-  0%, 100% { transform: translate(-4px, -10px); }
-  50%      { transform: translate(4px, 10px); }
+
+  0%,
+  100% {
+    transform: translate(-4px, -10px);
+  }
+
+  50% {
+    transform: translate(4px, 10px);
+  }
 }
+
 .float-card-a {
   will-change: transform;
   animation: float-a 4s ease-in-out infinite;
 }
+
 .float-card-b {
   will-change: transform;
   animation: float-b 4.6s ease-in-out infinite;
   animation-delay: -1s;
 }
+
 .float-card-c {
   will-change: transform;
   animation: float-c 5.2s ease-in-out infinite;
   animation-delay: -2s;
 }
+
 .float-card-d {
   will-change: transform;
   animation: float-d 3.8s ease-in-out infinite;
   animation-delay: -0.5s;
 }
+
 .float-card-e {
   will-change: transform;
   animation: float-e 4.4s ease-in-out infinite;
@@ -816,6 +860,10 @@
     top: 280px;
   }
 
+  .top-\[285px\] {
+    top: 285px;
+  }
+
   .top-\[337px\] {
     top: 337px;
   }
@@ -1135,6 +1183,10 @@
 
   .left-0 {
     left: calc(var(--spacing) * 0);
+  }
+
+  .left-34 {
+    left: calc(var(--spacing) * 34);
   }
 
   .left-1\/2 {
