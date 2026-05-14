@@ -89,6 +89,8 @@ export default function App() {
   const [mountStage, setMountStage] = useState(0); // 0: Start, 1: Hero, 2: About, 3: Middle, 4: Process, 5: Complete
   const [visualProgress, setVisualProgress] = useState(0);
   const [minSplashTimerDone, setMinSplashTimerDone] = useState(false);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const headerTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Target data progress calculation (50% API, 50% Render)
@@ -175,7 +177,7 @@ export default function App() {
       setMinSplashTimerDone(true);
     }, splashDuration);
 
-  // Safety timeout: If mounting/data takes too long (> 15s), proceed anyway
+    // Safety timeout: If mounting/data takes too long (> 15s), proceed anyway
     const safetyTimer = setTimeout(() => {
       setVisualProgress(100);
       setMountStage(5);
@@ -389,6 +391,43 @@ export default function App() {
     };
   }, []);
 
+  // Mobile Header Visibility Logic: Hide on scroll, show after 5s idle
+  useEffect(() => {
+    // If mobile menu is open, always show the header
+    if (isMobileMenuOpen) {
+      setIsHeaderVisible(true);
+      if (headerTimeoutRef.current) clearTimeout(headerTimeoutRef.current);
+      return;
+    }
+
+    const handleActivity = () => {
+      // Don't hide the header if we are still near the top or just transitioning from splash
+      const splashThreshold = window.innerHeight * 0.3;
+      if (window.scrollY < splashThreshold + 10) {
+        setIsHeaderVisible(true);
+        return;
+      }
+
+      // Hide the header as soon as scrolling starts beyond the threshold
+      setIsHeaderVisible(false);
+
+      // Clear existing timeout
+      if (headerTimeoutRef.current) clearTimeout(headerTimeoutRef.current);
+
+      // Set timeout to show header again after 2 seconds of inactivity
+      headerTimeoutRef.current = setTimeout(() => {
+        setIsHeaderVisible(true);
+      }, 1000);
+    };
+
+    window.addEventListener('scroll', handleActivity, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleActivity);
+      if (headerTimeoutRef.current) clearTimeout(headerTimeoutRef.current);
+    };
+  }, [isMobileMenuOpen]);
+
   return (
     <motion.div
       ref={containerRef}
@@ -428,35 +467,35 @@ export default function App() {
       {/* Mobile Navigation - switches between dark (hero) and light (about us/services/reviews) */}
       {/* Hero section - dark background (before white transition) */}
       {isMobile && splashAnimationComplete && !isSplashVisible && heroScrollProgress < 0.90 && aboutUsScrollProgress < 0.05 && (
-        <MobileNavigation setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} />
+        <MobileNavigation setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible} />
       )}
       {/* Hero section - white background (after white transition at compliance) */}
       {isMobile && splashAnimationComplete && !isSplashVisible && heroScrollProgress >= 0.90 && aboutUsScrollProgress < 0.05 && (
-        <MobileNavigationLight setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} />
+        <MobileNavigationLight setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible} />
       )}
       {/* About Us section - light background */}
       {isMobile && splashAnimationComplete && !isSplashVisible && aboutUsScrollProgress > 0 && (
-        <MobileNavigationLight setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} />
+        <MobileNavigationLight setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible} />
       )}
       {/* Reviews section - light background */}
       {isMobile && splashAnimationComplete && !isSplashVisible && reviewsScrollProgress > 0 && teamScrollProgress === 0 && processScrollProgress === 0 && (
-        <MobileNavigationLight setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} />
+        <MobileNavigationLight setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible} />
       )}
       {/* Team section - dark background (both steps) */}
       {isMobile && splashAnimationComplete && !isSplashVisible && teamScrollProgress > 0 && processScrollProgress === 0 && (
-        <MobileNavigation setIsMobileMenuOpen={setIsMobileMenuOpen} zIndex={100} isMobileMenuOpen={isMobileMenuOpen} />
+        <MobileNavigation setIsMobileMenuOpen={setIsMobileMenuOpen} zIndex={100} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible} />
       )}
       {/* Process section - dark background */}
       {isMobile && splashAnimationComplete && !isSplashVisible && processScrollProgress > 0 && blogsScrollProgress === 0 && (
-        <MobileNavigation setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} />
+        <MobileNavigation setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible} />
       )}
       {/* Blogs section - light background */}
       {isMobile && splashAnimationComplete && !isSplashVisible && blogsScrollProgress > 0 && contactUsScrollProgress === 0 && (
-        <MobileNavigationLight setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} />
+        <MobileNavigationLight setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible} />
       )}
       {/* Contact Us section - dark background */}
       {isMobile && splashAnimationComplete && !isSplashVisible && contactUsScrollProgress > 0 && (
-        <MobileNavigation setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} />
+        <MobileNavigation setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible} />
       )}
 
       {/* Mobile Menu */}
@@ -499,15 +538,15 @@ export default function App() {
       {/* Hero Screen - Conditional rendering based on screen size */}
       <div id="HeroSection">
         {isMobile ? (
-          <HeroScrollSectionMobile 
-            onScrollProgress={setHeroScrollProgress} 
-            splashViewed={splashHasBeenViewed} 
+          <HeroScrollSectionMobile
+            onScrollProgress={setHeroScrollProgress}
+            splashViewed={splashHasBeenViewed}
             onReady={() => setMountStage(prev => Math.max(prev, 1))}
           />
         ) : (
-          <HeroScrollSection 
-            onScrollProgress={setHeroScrollProgress} 
-            splashViewed={splashHasBeenViewed} 
+          <HeroScrollSection
+            onScrollProgress={setHeroScrollProgress}
+            splashViewed={splashHasBeenViewed}
             onReady={() => setMountStage(prev => Math.max(prev, 1))}
           />
         )}
@@ -518,10 +557,10 @@ export default function App() {
         <>
           <div id="AboutUsSection" style={{ marginTop: isMobile ? '-400px' : '0' }}>
             {isMobile ? (
-              <AboutUsMobile 
-                onScrollProgress={setAboutUsScrollProgress} 
-                carouselTexts={carouselTexts} 
-                services={services} 
+              <AboutUsMobile
+                onScrollProgress={setAboutUsScrollProgress}
+                carouselTexts={carouselTexts}
+                services={services}
                 onReady={() => setMountStage(prev => Math.max(prev, 2))}
               />
             ) : (
@@ -548,11 +587,11 @@ export default function App() {
           <div id="ReviewsSection">
             <ErrorBoundary>
               <Suspense fallback={<SectionLoader />}>
-                <Reviews 
-                  onScrollProgress={setReviewsScrollProgress} 
-                  aboutUsScrollProgress={aboutUsScrollProgress} 
-                  processScrollProgress={processScrollProgress} 
-                  onReady={() => {/* Managed by Team/Process for Wave 3 completion */}}
+                <Reviews
+                  onScrollProgress={setReviewsScrollProgress}
+                  aboutUsScrollProgress={aboutUsScrollProgress}
+                  processScrollProgress={processScrollProgress}
+                  onReady={() => {/* Managed by Team/Process for Wave 3 completion */ }}
                 />
               </Suspense>
             </ErrorBoundary>
@@ -562,21 +601,21 @@ export default function App() {
             <ErrorBoundary>
               <Suspense fallback={<SectionLoader />}>
                 {!isMobile && (
-                  <Team 
-                    reviewsScrollProgress={reviewsScrollProgress} 
-                    aboutUsScrollProgress={aboutUsScrollProgress} 
-                    teamMembers={teamMembers} 
-                    processScrollProgress={processScrollProgress} 
-                    onReady={() => {/* Managed by Process */}}
+                  <Team
+                    reviewsScrollProgress={reviewsScrollProgress}
+                    aboutUsScrollProgress={aboutUsScrollProgress}
+                    teamMembers={teamMembers}
+                    processScrollProgress={processScrollProgress}
+                    onReady={() => {/* Managed by Process */ }}
                   />
                 )}
                 {isMobile && (
-                  <TeamMobile 
-                    reviewsScrollProgress={reviewsScrollProgress} 
-                    teamMembers={teamMembers} 
-                    processScrollProgress={processScrollProgress} 
-                    onScrollProgress={setTeamScrollProgress} 
-                    onReady={() => {/* Managed by Process */}}
+                  <TeamMobile
+                    reviewsScrollProgress={reviewsScrollProgress}
+                    teamMembers={teamMembers}
+                    processScrollProgress={processScrollProgress}
+                    onScrollProgress={setTeamScrollProgress}
+                    onReady={() => {/* Managed by Process */ }}
                   />
                 )}
               </Suspense>
@@ -587,15 +626,15 @@ export default function App() {
             <ErrorBoundary>
               <Suspense fallback={<SectionLoader />}>
                 {!isMobile && (
-                  <Process 
-                    onScrollProgress={setProcessScrollProgress} 
+                  <Process
+                    onScrollProgress={setProcessScrollProgress}
                     onReady={() => setMountStage(prev => Math.max(prev, 3))}
                   />
                 )}
                 {isMobile && (
-                  <ProcessMobile 
-                    onScrollProgress={setProcessScrollProgress} 
-                    teamScrollProgress={teamInternalScrollProgress} 
+                  <ProcessMobile
+                    onScrollProgress={setProcessScrollProgress}
+                    teamScrollProgress={teamInternalScrollProgress}
                     onReady={() => setMountStage(prev => Math.max(prev, 3))}
                   />
                 )}
@@ -612,17 +651,17 @@ export default function App() {
             <ErrorBoundary>
               <Suspense fallback={<SectionLoader />}>
                 {!isMobile && (
-                  <Blogs 
-                    onScrollProgress={setBlogsScrollProgress} 
-                    blogs={blogs} 
-                    contactUsScrollProgress={contactUsScrollProgress} 
+                  <Blogs
+                    onScrollProgress={setBlogsScrollProgress}
+                    blogs={blogs}
+                    contactUsScrollProgress={contactUsScrollProgress}
                     onReady={() => setMountStage(prev => Math.max(prev, 4))}
                   />
                 )}
                 {isMobile && (
-                  <BlogsMobile 
-                    onScrollProgress={setBlogsScrollProgress} 
-                    blogs={blogs} 
+                  <BlogsMobile
+                    onScrollProgress={setBlogsScrollProgress}
+                    blogs={blogs}
                     onReady={() => setMountStage(prev => Math.max(prev, 4))}
                   />
                 )}
@@ -634,8 +673,8 @@ export default function App() {
             <ErrorBoundary>
               <Suspense fallback={<SectionLoader />}>
                 <ContactUs onScrollProgress={setContactUsScrollProgress} />
-                <ContactUsForm 
-                  onScrollProgress={setContactUsFormScrollProgress} 
+                <ContactUsForm
+                  onScrollProgress={setContactUsFormScrollProgress}
                   onReady={() => setMountStage(prev => Math.max(prev, 5))}
                 />
               </Suspense>

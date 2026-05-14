@@ -155,9 +155,10 @@ interface MobileNavigationProps {
   zIndex?: number;
   showBorder?: boolean;
   isMobileMenuOpen?: boolean;
+  isVisible?: boolean;
 }
 
-export function MobileNavigation({ setIsMobileMenuOpen, backgroundColor, zIndex = 60, showBorder, isMobileMenuOpen = false }: MobileNavigationProps) {
+export function MobileNavigation({ setIsMobileMenuOpen, backgroundColor, zIndex = 60, showBorder, isMobileMenuOpen = false, isVisible = true }: MobileNavigationProps) {
   const handleMenuToggle = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
@@ -166,8 +167,17 @@ export function MobileNavigation({ setIsMobileMenuOpen, backgroundColor, zIndex 
   const zIndexClass = isMobileMenuOpen ? 'z-[250]' : (zIndex === 100 ? 'z-[100]' : 'z-[60]');
   
   return (
-    <div 
-      className={`fixed top-[24px] left-1/2 -translate-x-1/2 w-[90%] max-w-[382px] px-4 ${zIndexClass}`}
+    <motion.div 
+      initial={false}
+      animate={{ 
+        y: isVisible ? 0 : -100,
+        x: '-50%' 
+      }}
+      transition={{ 
+        duration: 0.5, 
+        ease: [0.16, 1, 0.3, 1] // Custom ease for a premium feel
+      }}
+      className={`fixed top-[24px] left-1/2 w-[90%] max-w-[382px] px-4 ${zIndexClass}`}
     >
       <div className="content-stretch flex items-center justify-between relative w-full">
         <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "48", "--transform-inner-height": "48" } as React.CSSProperties}>
@@ -177,6 +187,6 @@ export function MobileNavigation({ setIsMobileMenuOpen, backgroundColor, zIndex 
         </div>
         <Frame4 isOpen={isMobileMenuOpen} onClick={handleMenuToggle} backgroundColor={backgroundColor} showBorder={showBorder} />
       </div>
-    </div>
+    </motion.div>
   );
 }

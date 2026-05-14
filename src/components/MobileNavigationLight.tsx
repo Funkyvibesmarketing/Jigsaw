@@ -1,3 +1,4 @@
+import { motion } from 'motion/react';
 import { useState } from 'react';
 import logoImage from 'figma:asset/9dfebdcaec6bb839286570622d9e5b46ef1d865c.png';
 import callIcon from '../assets/call.svg';
@@ -82,9 +83,10 @@ function Frame4({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) {
 interface MobileNavigationLightProps {
   setIsMobileMenuOpen: (isOpen: boolean) => void;
   isMobileMenuOpen?: boolean;
+  isVisible?: boolean;
 }
 
-export function MobileNavigationLight({ setIsMobileMenuOpen, isMobileMenuOpen = false }: MobileNavigationLightProps) {
+export function MobileNavigationLight({ setIsMobileMenuOpen, isMobileMenuOpen = false, isVisible = true }: MobileNavigationLightProps) {
   const handleMenuToggle = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
@@ -93,8 +95,17 @@ export function MobileNavigationLight({ setIsMobileMenuOpen, isMobileMenuOpen = 
   const zIndexClass = isMobileMenuOpen ? 'z-[250]' : 'z-[120]';
   
   return (
-    <div 
-      className={`fixed top-[24px] left-1/2 -translate-x-1/2 ${zIndexClass} w-[90%] max-w-[382px] px-4`}
+    <motion.div 
+      initial={false}
+      animate={{ 
+        y: isVisible ? 0 : -100,
+        x: '-50%' 
+      }}
+      transition={{ 
+        duration: 0.5, 
+        ease: [0.16, 1, 0.3, 1]
+      }}
+      className={`fixed top-[24px] left-1/2 ${zIndexClass} w-[90%] max-w-[382px] px-4`}
     >
       <div className="content-stretch flex items-center justify-between relative w-full">
         <div className="flex h-[48px] items-center justify-center relative shrink-0 w-[48px]">
@@ -102,6 +113,6 @@ export function MobileNavigationLight({ setIsMobileMenuOpen, isMobileMenuOpen = 
         </div>
         <Frame4 isOpen={isMobileMenuOpen} onClick={handleMenuToggle} />
       </div>
-    </div>
+    </motion.div>
   );
 }
