@@ -89,16 +89,19 @@ export function TeamMobile({
   // State for the Read More popup
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
+  // Detect small mobile screens (width <= 360px) to prevent vertical/horizontal overlapping
+  const isSmallMobile = typeof window !== 'undefined' && window.innerWidth <= 360;
+
   // Only show first 3 team members
   const displayMembers = teamMembers.slice(0, 3);
   const totalSlides = 3;
 
-  // Team content should be visible when TEAM text masking starts sliding in (0.76)
-  // Fade in from 0.76 to 0.82 for smooth transition
+  // Team content should be visible when TEAM text masking starts sliding in (0.72)
+  // Fade in from 0.72 to 0.82 for smooth transition
   let teamContentOpacity = 0;
-  if (reviewsScrollProgress && reviewsScrollProgress >= 0.76 && reviewsScrollProgress < 0.82) {
-    // Fade in from 0.76 to 0.82
-    teamContentOpacity = (reviewsScrollProgress - 0.76) / 0.06;
+  if (reviewsScrollProgress && reviewsScrollProgress >= 0.72 && reviewsScrollProgress < 0.82) {
+    // Fade in from 0.72 to 0.82
+    teamContentOpacity = (reviewsScrollProgress - 0.72) / 0.10;
   } else if (reviewsScrollProgress && reviewsScrollProgress >= 0.82) {
     teamContentOpacity = 1;
   }
@@ -199,14 +202,23 @@ export function TeamMobile({
   return (
     <>
       {/* Only render when Team should be visible */}
-      {reviewsScrollProgress && reviewsScrollProgress >= 0.76 && (
+      {reviewsScrollProgress && reviewsScrollProgress >= 0.75 && (
         <>
           {/* White overlay with TEAM text cutout - reveals team content through the text */}
-          {reviewsScrollProgress >= 0.76 && reviewsScrollProgress <= 1.0 && (
+          {reviewsScrollProgress >= 0.75 && reviewsScrollProgress <= 1.0 && (
             <div
               className="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none"
               style={{
-                opacity: reviewsScrollProgress >= 0.94 ? Math.max(0, 1 - ((reviewsScrollProgress - 0.93) / 0.01)) : 1,
+                opacity: (() => {
+                  if (reviewsScrollProgress < 0.75) return 0;
+                  if (reviewsScrollProgress < 0.82) {
+                    return (reviewsScrollProgress - 0.75) / 0.07;
+                  }
+                  if (reviewsScrollProgress >= 0.94) {
+                    return Math.max(0, 1 - ((reviewsScrollProgress - 0.93) / 0.01));
+                  }
+                  return 1;
+                })(),
                 touchAction: 'none',
                 transform: `translateY(${teamSlideY}vh)`,
                 zIndex: processScrollProgress && processScrollProgress > 0 ? 40 : 100
@@ -218,11 +230,11 @@ export function TeamMobile({
                     <rect x="0" y="0" width="100%" height="100%" fill="white" />
                     <text
                       x={(() => {
-                        if (!reviewsScrollProgress || reviewsScrollProgress < 0.76) return "220%";
+                        if (!reviewsScrollProgress || reviewsScrollProgress < 0.75) return "350%";
 
                         // Calculate dynamic position to center on 'M'
-                        const baseFontSize = 200;
-                        const baseLetterSpacing = 16;
+                        const baseFontSize = 120;
+                        const baseLetterSpacing = 12;
 
                         // We need the window width for pixel calculations
                         const vw = typeof window !== 'undefined' ? window.innerWidth : 375;
@@ -230,10 +242,10 @@ export function TeamMobile({
 
                         // Current font size based on zoom progress
                         const fontSize = (() => {
-                          if (reviewsScrollProgress < 0.88) return baseFontSize;
-                          if (reviewsScrollProgress >= 1.0) return baseFontSize * 50;
-                          const p = (reviewsScrollProgress - 0.88) / 0.12;
-                          return baseFontSize * (1 + (49 * p));
+                          if (reviewsScrollProgress < 0.90) return baseFontSize;
+                          if (reviewsScrollProgress >= 1.0) return 10000;
+                          const p = (reviewsScrollProgress - 0.90) / 0.10;
+                          return baseFontSize * (1 + (82.33 * p));
                         })();
 
                         const letterSpacing = (baseLetterSpacing * fontSize) / baseFontSize;
@@ -247,10 +259,10 @@ export function TeamMobile({
                         const offset = 1.5 * totalCharWidth;
                         const centeredX = vCenter - offset;
 
-                        if (reviewsScrollProgress < 0.88) {
-                          // Slide from right (220% of viewport) to centeredX
-                          const startX = vw * 2.2;
-                          const p = (reviewsScrollProgress - 0.76) / 0.12;
+                        if (reviewsScrollProgress < 0.90) {
+                          // Slide from right (350% of viewport) to centeredX
+                          const startX = vw * 3.5;
+                          const p = (reviewsScrollProgress - 0.75) / 0.15;
                           return startX - ((startX - centeredX) * p);
                         }
 
@@ -261,25 +273,25 @@ export function TeamMobile({
                       dominantBaseline="middle"
                       fill="black"
                       fontSize={(() => {
-                        const baseSize = 200;
-                        if (!reviewsScrollProgress || reviewsScrollProgress < 0.88) return baseSize;
-                        if (reviewsScrollProgress >= 1.0) return baseSize * 50;
+                        const baseSize = 120;
+                        if (!reviewsScrollProgress || reviewsScrollProgress < 0.90) return baseSize;
+                        if (reviewsScrollProgress >= 1.0) return 10000;
 
-                        // Zoom starts AFTER slide completes (0.88)
-                        const progress = (reviewsScrollProgress - 0.88) / 0.12;
-                        const scale = 1 + (49 * progress);
+                        // Zoom starts AFTER slide completes (0.90)
+                        const progress = (reviewsScrollProgress - 0.90) / 0.10;
+                        const scale = 1 + (82.33 * progress);
                         return baseSize * scale;
                       })()}
                       fontFamily="Lato, sans-serif"
                       fontWeight="700"
                       letterSpacing={(() => {
-                        const baseFontSize = 200;
-                        const baseLetterSpacing = 16;
+                        const baseFontSize = 120;
+                        const baseLetterSpacing = 12;
                         const fontSize = (() => {
-                          if (reviewsScrollProgress < 0.88) return baseFontSize;
-                          if (reviewsScrollProgress >= 1.0) return baseFontSize * 50;
-                          const p = (reviewsScrollProgress - 0.88) / 0.12;
-                          return baseFontSize * (1 + (49 * p));
+                          if (reviewsScrollProgress < 0.90) return baseFontSize;
+                          if (reviewsScrollProgress >= 1.0) return 10000;
+                          const p = (reviewsScrollProgress - 0.90) / 0.10;
+                          return baseFontSize * (1 + (82.33 * p));
                         })();
                         return (baseLetterSpacing * fontSize) / baseFontSize;
                       })()}
@@ -318,11 +330,10 @@ export function TeamMobile({
 
               {/* Card slider container - showing 2 members side by side */}
               <div
-                className="absolute left-0 right-5 top-[145px] bottom-[120px] overflow-visible"
+                className="team-slider-container"
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
-                style={{ touchAction: 'pan-y' }}
               >
                 <div className="relative w-full h-full overflow-visible">{displayMembers.map((member, index) => {
                   // Calculate position for each slide
@@ -340,7 +351,8 @@ export function TeamMobile({
                   // Calculate the x position
                   let xPosition = `${xOffset}%`;
                   if (index === currentIndex + 1) {
-                    xPosition = `calc(100% - 24px)`; // Position next card to show larger peek preview
+                    // Do not peek or peek less on small screens to prevent overlap
+                    xPosition = isSmallMobile ? `calc(100% + 24px)` : `calc(100% - 24px)`;
                   }
 
                   return (
@@ -368,10 +380,10 @@ export function TeamMobile({
                       {/* Member card with proper padding and responsive layout */}
                       <div className="flex flex-col h-full pl-[24px] pr-[24px] min-w-[280px]">
                         {/* Line above name - using RGBA for better mobile compatibility */}
-                        <div className="w-full h-[1px] bg-[rgba(255,255,255,0.3)] mb-[16px]" style={{ minHeight: '1px' }} />
+                        <div className="team-divider-line" />
 
                         {/* Member name with number on same line */}
-                        <div className="flex items-baseline justify-between mb-[24px] min-h-[29px]">
+                        <div className="team-name-row">
                           <p className="font-['Lato:Bold',sans-serif] leading-[normal] not-italic text-[20px] sm:text-[24px] text-white" style={{ fontWeight: 700 }}>
                             {member.name}
                           </p>
@@ -381,34 +393,33 @@ export function TeamMobile({
                         </div>
 
                         {/* Job title - responsive with proper wrapping */}
-                        <p className="font-['Lato:SemiBold',sans-serif] leading-[32px] sm:leading-[38px] not-italic text-[20px] sm:text-[32px] text-[rgba(255,255,255,0.5)] mb-[24px] sm:mb-[32px] max-w-full break-words min-h-[29px] sm:min-h-[76px]" style={{ fontWeight: 600 }}>
+                        <p className="team-job-title">
                           {member.title}
                         </p>
 
                         {/* Member photo - responsive with reduced height */}
-                        <div className="w-full min-h-[180px] max-h-[240px] h-[30vh] mb-[20px] sm:mb-[24px] overflow-hidden flex-shrink-0">
+                        <div className="team-photo-wrapper">
                           <img
                             alt={member.name}
-                            className="w-full h-full object-cover object-top"
                             src={member.image}
                             loading="lazy"
                           />
                         </div>
 
                         {/* Bio text - truncated with Read more button */}
-                        <div className="flex-1 flex flex-col mb-4">
-                          <div className="w-full" style={{ display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                            <p className="font-['Lato:Regular',sans-serif] leading-[20px] sm:leading-[24px] not-italic text-[12px] sm:text-[14px] text-white tracking-[0.12px] sm:tracking-[0.14px]">
+                        <div className="team-bio-wrapper">
+                          <div className="w-full" style={{ display: '-webkit-box', WebkitLineClamp: isSmallMobile ? 3 : 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                            <p className="team-bio-text">
                               {member.bio}
                             </p>
                           </div>
-                          <div className="w-full flex justify-end mt-[12px]">
+                          <div className="team-read-more-container">
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setSelectedMember(member);
                               }}
-                              className="px-[16px] py-[12px] font-['Lato:Regular',sans-serif] text-[14px] sm:text-[14px] text-white cursor-pointer hover:bg-[rgba(255,255,255,0.1)] transition-colors"
+                              className="team-read-more-btn"
                             >
                               Read more
                             </button>

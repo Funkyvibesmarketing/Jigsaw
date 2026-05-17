@@ -412,12 +412,12 @@ export function Reviews({
 
   const textColorMobile = useTransform(
     scrollYProgress,
-    [0, 0.02, 0.65, 0.75],
+    [0, 0.02, 0.75, 0.78],
     [
       'rgba(41, 65, 80, 1)',      // Start: 100% opacity (full)
       'rgba(41, 65, 80, 0.2)',    // When centered: 20% opacity
       'rgba(41, 65, 80, 0.2)',    // Keep at 20% while cards slide
-      'rgba(41, 65, 80, 0)'       // Fade out at 0.75 - BEFORE TEAM starts at 0.85
+      'rgba(41, 65, 80, 0)'       // Fade out quickly after all cards move up
     ]
   );
 
