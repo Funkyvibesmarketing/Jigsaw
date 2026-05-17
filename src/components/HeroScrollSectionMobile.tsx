@@ -36,6 +36,7 @@ function MobileDownArrow({ onClick }: { onClick?: () => void }) {
 export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onReady }: { onScrollProgress?: (progress: number) => void; splashViewed?: boolean; onReady?: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hideDownArrow, setHideDownArrow] = useState(false);
+  const [isComplianceActive, setIsComplianceActive] = useState(false);
 
   // Handle down arrow click - scroll to next section (About Us)
   const handleScrollToNext = () => {
@@ -69,42 +70,42 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
     }
   }, [onReady]);
 
-  // Step 1: JIGSAW text fades in (0 to 0.08)
+  // Step 1: JIGSAW text fades in (0.01 to 0.08) - delayed past splash fade threshold
   // If splash has been viewed, start at full visibility when at top
   const jigsawOpacity = useTransform(
     scrollYProgress,
-    [0, 0.04, 0.08],
-    splashViewed ? [0.7, 0.7, 0.7] : [0, 0.5, 0.7]
+    [0, 0.01, 0.04, 0.08],
+    splashViewed ? [0.7, 0.7, 0.7, 0.7] : [0, 0, 0.5, 0.7]
   );
 
   // Step 2: House image slides up (0.04 to 0.10) - stays visible during compliance with reduced opacity
   // If splash has been viewed, show house immediately at top
   const bgImageOpacity = useTransform(
     scrollYProgress,
-    [0, 0.04, 0.06, 0.10, 0.45, 0.47, 0.75, 1],
-    splashViewed ? [0.08, 0.08, 0.08, 0.08, 0.08, 0, 0, 0] : [0, 0, 0, 0.08, 0.08, 0, 0, 0]
+    [0, 0.01, 0.04, 0.06, 0.10, 0.45, 0.47, 0.75, 1],
+    splashViewed ? [0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0, 0, 0] : [0, 0, 0, 0, 0.08, 0.08, 0, 0, 0]
   );
   const bgImageY = useTransform(
     scrollYProgress,
-    [0, 0.04, 0.10, 0.28, 0.70, 0.85],
-    splashViewed ? [0, 0, 0, 0, -900, -1200] : [100, 100, 0, 0, -900, -1200]
+    [0, 0.01, 0.04, 0.10, 0.28, 0.70, 0.85],
+    splashViewed ? [0, 0, 0, 0, 0, -900, -1200] : [100, 100, 100, 0, 0, -900, -1200]
   );
   const mainImageOpacity = useTransform(
     scrollYProgress,
-    [0, 0.04, 0.06, 0.10, 0.45, 0.47, 0.75, 1],
-    splashViewed ? [1, 1, 1, 1, 1, 0, 0, 0] : [0, 0, 0.5, 1, 1, 0, 0, 0]
+    [0, 0.01, 0.04, 0.06, 0.10, 0.45, 0.47, 0.75, 1],
+    splashViewed ? [1, 1, 1, 1, 1, 1, 0, 0, 0] : [0, 0, 0, 0.5, 1, 1, 0, 0, 0]
   );
   const mainImageY = useTransform(
     scrollYProgress,
-    [0, 0.04, 0.10, 0.28, 0.70, 0.85],
-    splashViewed ? [0, 0, 0, 0, -900, -1200] : [100, 100, 0, 0, -900, -1200]
+    [0, 0.01, 0.04, 0.10, 0.28, 0.70, 0.85],
+    splashViewed ? [0, 0, 0, 0, 0, -900, -1200] : [100, 100, 100, 0, 0, -900, -1200]
   );
 
   // Hero house image (original) - fades out when compliance appears
   const heroHouseOpacity = useTransform(
     scrollYProgress,
-    [0, 0.04, 0.06, 0.10, 0.45, 0.47],
-    splashViewed ? [1, 1, 1, 1, 1, 0] : [0, 0, 0.5, 1, 1, 0]
+    [0, 0.01, 0.04, 0.06, 0.10, 0.45, 0.47],
+    splashViewed ? [1, 1, 1, 1, 1, 1, 0] : [0, 0, 0, 0.5, 1, 1, 0]
   );
 
   // Compliance house image (mobile) - fades in when compliance appears, replaces hero house
@@ -129,9 +130,9 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
   const navY = useTransform(scrollYProgress, [0.18, 0.28], [-50, 0]);
   const navOpacity = useTransform(scrollYProgress, [0.18, 0.28, 0.45, 0.50], [0, 1, 1, 0]);
 
-  // Step 5: Down arrow appears earlier - right after sentence appears (0.20 to 0.25)
-  const arrowY = useTransform(scrollYProgress, [0.20, 0.25], [100, 0]);
-  const arrowOpacity = useTransform(scrollYProgress, [0, 0.20, 0.25, 0.40, 0.42], [0, 0, 1, 1, 0]);
+  // Step 5: Down arrow appears with sentence (0.12 to 0.16) and fades out when compliance section starts (0.22 to 0.25)
+  const arrowY = useTransform(scrollYProgress, [0.12, 0.16], [100, 0]);
+  const arrowOpacity = useTransform(scrollYProgress, [0, 0.12, 0.16, 0.22, 0.25], [0, 0, 1, 1, 0]);
 
   // Step 6: Bottom gradient appears with sentence and stays with arrow
   const step6GradientOpacity = useTransform(scrollYProgress, [0.14, 0.20, 0.75, 0.80], [1, 1, 0, 0]);
@@ -139,15 +140,15 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
   // Step 7: Top JIGSAW text fades out (compressed from 0.77-0.82 to 0.60-0.65)
   const topJigsawOpacity = useTransform(
     scrollYProgress,
-    [0, 0.1, 0.45, 0.50],
-    splashViewed ? [0.7, 0.7, 0.7, 0] : [0, 0.7, 0.7, 0]
+    [0, 0.01, 0.1, 0.45, 0.50],
+    splashViewed ? [0.7, 0.7, 0.7, 0.7, 0] : [0, 0, 0.7, 0.7, 0]
   );
 
   // Step 7.5: Bottom gradient appears (compressed)
   const bottomGradientOpacity = useTransform(scrollYProgress, [0.82, 0.85, 0.88], [0, 1, 0]);
 
   // Step 8: Compliance content appears and slides up — starts at 0.42 to close gap after sentence exits
-  const complianceY = useTransform(scrollYProgress, [0.28, 0.45, 0.85], [500, -250, -1200]);
+  const complianceY = useTransform(scrollYProgress, [0.28, 0.45, 0.85], [350, 0, -600]);
   const complianceOpacity = useTransform(scrollYProgress, [0.22, 0.28, 0.80, 0.85], [0, 1, 1, 0]);
 
   // Text color transition for compliance section - white to dark
@@ -178,10 +179,16 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
       }
     }
 
-    if (latest >= 0.75) {
+    if (latest >= 0.25) {
       setHideDownArrow(true);
     } else {
       setHideDownArrow(false);
+    }
+
+    if (latest >= 0.22 && latest <= 0.85) {
+      setIsComplianceActive(true);
+    } else {
+      setIsComplianceActive(false);
     }
   });
 
@@ -369,8 +376,8 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
             className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 text-center top-1/2 w-[100%] max-w-[382px] px-4 z-[15]"
             style={{ opacity: sentenceOpacity, y: sentenceY }}
           >
-            <p className="font-lato-semibold leading-[48px] not-italic text-[30px] tracking-[20px] text-white">ADVICE</p>
-            <p className="font-lato-semibold pl-[14px] leading-[48px] not-italic text-[30px] tracking-[20px] text-white">THAT FITS</p>
+            <p className="font-lato-semibold leading-[44px] not-italic text-[26px] tracking-[14px] text-white">ADVICE</p>
+            <p className="font-lato-semibold pl-[10px] leading-[44px] not-italic text-[26px] tracking-[14px] text-white">THAT FITS</p>
           </motion.div>
 
           {/* Down Arrow Button - Step 5 */}
@@ -412,9 +419,9 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
             <div className="absolute bottom-0 left-0 w-full h-[400px] bg-gradient-to-t from-white to-transparent z-[2]" />
 
             {/* FCA Compliance Section - Mobile Design */}
-            <div className="absolute left-1/2 top-[calc(50%+100px)] -translate-x-1/2 w-[90%] max-w-[500px] flex flex-col gap-[20px] items-center justify-center z-[101] pointer-events-auto px-4">
+            <div className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[500px] flex flex-col gap-[16px] sm:gap-[20px] items-center justify-center z-[101] px-4 ${isComplianceActive ? 'pointer-events-auto' : 'pointer-events-none'}`}>
               {/* Shield Icon Replacement */}
-              <div className="shrink-0 pointer-events-auto mt-[-5px]">
+              <div className="shrink-0 mt-[-5px]">
                 <img
                   src={complianceShield}
                   alt="Compliance Shield"
@@ -423,7 +430,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
               </div>
 
               {/* FCA Text */}
-              <p className="font-lato-light min-h-px min-w-px not-italic relative text-[14px] text-white text-center pointer-events-auto">
+              <p className="font-lato-light min-h-px min-w-px not-italic relative text-[14px] text-white text-center">
                 <span className="leading-[20px]">Jigsaw Financial operates as an Appointed Representative of a mortgage network authorised and regulated by the Financial Conduct Authority.
 
                   This structure provides additional oversight, with experienced compliance specialists supporting cases and helping ensure advice remains accurate and responsible. We also stay closely informed of regulatory developments so our clients can feel confident they are being properly looked after.</span>
@@ -431,8 +438,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
                   href="https://register.fca.org.uk/s/firm?id=0010X00004QO8QvQAL"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hidden font-lato-semibold leading-[20px] underline decoration-solid hover:text-[#2ec4b6] transition-colors duration-200 cursor-pointer pointer-events-auto relative z-[102]"
-                  style={{ pointerEvents: 'auto' }}
+                  className="hidden font-lato-semibold leading-[20px] underline decoration-solid hover:text-[#2ec4b6] transition-colors duration-200 cursor-pointer relative z-[102]"
                 >
                   here
                 </a>

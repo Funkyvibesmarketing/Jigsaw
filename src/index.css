@@ -3784,6 +3784,10 @@
     padding-left: calc(var(--spacing) * 4);
   }
 
+  .pl-\[10px\] {
+    padding-left: 10px;
+  }
+
   .pl-\[14px\] {
     padding-left: 14px;
   }
@@ -3891,6 +3895,10 @@
 
   .text-\[24px\] {
     font-size: 24px;
+  }
+
+  .text-\[26px\] {
+    font-size: 26px;
   }
 
   .text-\[28px\] {
@@ -4024,6 +4032,11 @@
     line-height: 40px;
   }
 
+  .leading-\[44px\] {
+    --tw-leading: 44px;
+    line-height: 44px;
+  }
+
   .leading-\[48px\] {
     --tw-leading: 48px;
     line-height: 48px;
@@ -4067,6 +4080,11 @@
   .tracking-\[0\.032px\] {
     --tw-tracking: .032px;
     letter-spacing: .032px;
+  }
+
+  .tracking-\[14px\] {
+    --tw-tracking: 14px;
+    letter-spacing: 14px;
   }
 
   .tracking-\[15px\] {

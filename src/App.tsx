@@ -214,7 +214,8 @@ export default function App() {
     const unsubscribe = scrollY.on('change', (value) => {
       // Calculate if splash is still visible (navigation should be hidden)
       // We only update state when the visibility threshold is crossed to prevent re-renders
-      const visibilityThreshold = window.innerHeight * 0.3;
+      // Must match the splash fade threshold (0.8vh) so nav doesn't appear while splash is still fading
+      const visibilityThreshold = window.innerHeight * 0.8;
       const visible = !splashHasBeenViewed && value < visibilityThreshold;
       if (visible !== isSplashVisible) {
         setIsSplashVisible(visible);
@@ -555,7 +556,7 @@ export default function App() {
       {/* Wave 2 Components: About Us / Services */}
       {(mountStage >= 1 || splashHasBeenViewed) && (
         <>
-          <div id="AboutUsSection" style={{ marginTop: isMobile ? '-400px' : '0' }}>
+          <div id="AboutUsSection" style={{ marginTop: isMobile ? '-350px' : '0' }}>
             {isMobile ? (
               <AboutUsMobile
                 onScrollProgress={setAboutUsScrollProgress}
