@@ -112,6 +112,7 @@ export function Services({
 
   // Define currentService and related indices BEFORE using them in useEffect
   const currentService = services[currentServiceIndex];
+  const isMortgageService = currentService.title.toLowerCase().includes('mortgage') || currentService.title.toLowerCase().includes('buyer');
   const prevServiceIndex = (currentServiceIndex - 1 + services.length) % services.length;
   const nextServiceIndex = (currentServiceIndex + 1) % services.length;
 
@@ -421,6 +422,7 @@ export function Services({
       <div
         ref={cardStackRef}
         data-scroll-lock
+        data-lenis-prevent
         className="hidden md:block absolute left-1/2 top-1/2 z-10"
         style={{
           transform: 'translate(-50%, -50%) scale(' + scale + ')'

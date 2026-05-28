@@ -53,6 +53,13 @@ export default defineConfig({
       'figma:asset/84c24fb90c35556f4ed45fa20bbd675e0a457d11.png': path.resolve(__dirname, './src/assets/84c24fb90c35556f4ed45fa20bbd675e0a457d11.webp'),
       'figma:asset/77b24f13b4242da58b9f7acf069a8d06393d7e02.png': path.resolve(__dirname, './src/assets/77b24f13b4242da58b9f7acf069a8d06393d7e02.webp'),
       'figma:asset/6d6de80792d2de9d2d28717db9e5bf0e0b17e6c0.png': path.resolve(__dirname, './src/assets/6d6de80792d2de9d2d28717db9e5bf0e0b17e6c0.png'),
+      // Tutorial gesture SVGs (ServicesMobile.tsx)
+      'figma:asset/afd1672a55f4a23bde9fafacdcef4ae17ef17583.svg': path.resolve(__dirname, './src/assets/afd1672a55f4a23bde9fafacdcef4ae17ef17583.svg'),
+      'figma:asset/04a052e66c89e43d1744c99791d3a7e71c5f4bc4.svg': path.resolve(__dirname, './src/assets/04a052e66c89e43d1744c99791d3a7e71c5f4bc4.svg'),
+      'figma:asset/7b9da65eddff7821c8abb42335243a47a8a55502.svg': path.resolve(__dirname, './src/assets/7b9da65eddff7821c8abb42335243a47a8a55502.svg'),
+      'figma:asset/ff6dd2b4be6368f7b00a933f80d7a0a53258f505.svg': path.resolve(__dirname, './src/assets/ff6dd2b4be6368f7b00a933f80d7a0a53258f505.svg'),
+      'figma:asset/2dbbabf0da323aa7e01edd231d124e8c72ca5f47.svg': path.resolve(__dirname, './src/assets/2dbbabf0da323aa7e01edd231d124e8c72ca5f47.svg'),
+      'figma:asset/4fd17dade7a6d0b84c0dc070c4a744e6610ce2cd.svg': path.resolve(__dirname, './src/assets/4fd17dade7a6d0b84c0dc070c4a744e6610ce2cd.svg'),
       'figma:asset/685ae034862fec8a08b70546bfa8cca049aecf63.png': path.resolve(__dirname, './src/assets/685ae034862fec8a08b70546bfa8cca049aecf63.webp'),
       'figma:asset/5aa702b67fe4226d00799fb3446a7e9a9a904d28.png': path.resolve(__dirname, './src/assets/5aa702b67fe4226d00799fb3446a7e9a9a904d28.webp'),
       'figma:asset/42d2cf4a66b5216ee41ff6ee702481dc6863d649.png': path.resolve(__dirname, './src/assets/42d2cf4a66b5216ee41ff6ee702481dc6863d649.webp'),

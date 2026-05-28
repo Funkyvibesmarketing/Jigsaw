@@ -523,11 +523,12 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
               touchAction: scrollProgress >= 0.51 ? 'auto' : 'none'
             }}
           >
-            <ServicesMobile services={services} />
+            <ServicesMobile services={services} scrollProgress={scrollProgress} />
           </div>
         </motion.div>
 
         {/* SERVICES Text Mask - reveals Services section through text cutout during zoom */}
+        {scrollProgress < 0.70 && (
         <motion.div
           className="absolute top-1/2 left-0 w-full h-full z-[20] pointer-events-none -translate-y-1/2"
           style={{ y: servicesY }}
@@ -643,6 +644,7 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
             )}
           </svg>
         </motion.div>
+        )}
 
       </div>
     </div>
