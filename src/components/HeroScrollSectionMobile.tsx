@@ -193,10 +193,10 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
   });
 
   return (
-    <motion.div 
-      ref={containerRef} 
-      className="relative min-h-[250vh] w-full m-0 p-0" 
-      style={{ 
+    <motion.div
+      ref={containerRef}
+      className="relative min-h-[250vh] w-full m-0 p-0"
+      style={{
         height: '250vh',
         backgroundColor: useTransform(scrollYProgress, [0.8, 0.9], ['#2c4657', '#ffffff'])
       }}
@@ -431,9 +431,8 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
 
               {/* FCA Text */}
               <p className="font-lato-light min-h-px min-w-px not-italic relative text-[14px] text-white text-center">
-                <span className="leading-[20px]">Jigsaw Financial operates as an Appointed Representative of a mortgage network authorised and regulated by the Financial Conduct Authority.
-
-                  This structure provides additional oversight, with experienced compliance specialists supporting cases and helping ensure advice remains accurate and responsible. We also stay closely informed of regulatory developments so our clients can feel confident they are being properly looked after.</span>
+                <span className="leading-[20px]">Jigsaw Financial operates as an Appointed Representative of a mortgage network authorised and regulated by the Financial Conduct Authority. <br />
+                  This structure provides additional oversight, with experienced compliance specialists supporting cases and helping ensure advice remains accurate and responsible. <br /> We also stay closely informed of regulatory developments so our clients can feel confident they are being properly looked after.</span>
                 <a
                   href="https://register.fca.org.uk/s/firm?id=0010X00004QO8QvQAL"
                   target="_blank"
