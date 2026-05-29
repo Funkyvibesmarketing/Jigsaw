@@ -49,8 +49,8 @@ export function ServicesMobile({
       if (!tutorialShownRef.current && !_tutorialSessionShown) {
         tutorialShownRef.current = true;
         _tutorialSessionShown = true;
-        // Delay so the services UI is fully visible first
-        setTimeout(() => setShowTutorial(true), 800);
+        // Trigger right as masking finishes (low delay)
+        setTimeout(() => setShowTutorial(true), 50);
       }
     }
   }, [scrollProgress]);
@@ -125,16 +125,6 @@ export function ServicesMobile({
         handleNextCard();
       }
       return;
-    }
-
-    // Detect Swipe Up / Down (vertical)
-    const minSwipeDistance = 40;
-    if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > minSwipeDistance) {
-      if (diffY > 0) {
-        handleNextCard();
-      } else {
-        handlePrevCard();
-      }
     }
   };
 
