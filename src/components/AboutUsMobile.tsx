@@ -529,121 +529,121 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
 
         {/* SERVICES Text Mask - reveals Services section through text cutout during zoom */}
         {scrollProgress < 0.70 && (
-        <motion.div
-          className="absolute top-1/2 left-0 w-full h-full z-[20] pointer-events-none -translate-y-1/2"
-          style={{ y: servicesY }}
-        >
-          <svg className="absolute top-0 left-0 w-full h-full pointer-events-none" viewBox="0 0 375 812" preserveAspectRatio="xMidYMid slice">
-            <defs>
-              {/* Blur filter for solid text phase */}
-              <filter id="servicesBlurMobile">
-                <feGaussianBlur stdDeviation={(() => {
-                  if (scrollProgress < 0.3) return 4;
-                  if (scrollProgress < 0.40) {
-                    const p = (scrollProgress - 0.3) / 0.1;
-                    return 4 - (4 * p);
-                  }
-                  return 0;
-                })()} />
-              </filter>
+          <motion.div
+            className="absolute top-1/2 left-0 w-full h-full z-[20] pointer-events-none -translate-y-1/2"
+            style={{ y: servicesY }}
+          >
+            <svg className="absolute top-0 left-0 w-full h-full pointer-events-none" viewBox="0 0 375 812" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                {/* Blur filter for solid text phase */}
+                <filter id="servicesBlurMobile">
+                  <feGaussianBlur stdDeviation={(() => {
+                    if (scrollProgress < 0.3) return 4;
+                    if (scrollProgress < 0.40) {
+                      const p = (scrollProgress - 0.3) / 0.1;
+                      return 4 - (4 * p);
+                    }
+                    return 0;
+                  })()} />
+                </filter>
 
-              {/* Mask for Services section - only visible through text during zoom */}
-              <mask id="servicesTextMaskMobile">
-                {/* White background - everything covered */}
-                <rect x="0" y="0" width="100%" height="100%" fill="white" />
+                {/* Mask for Services section - only visible through text during zoom */}
+                <mask id="servicesTextMaskMobile">
+                  {/* White background - everything covered */}
+                  <rect x="0" y="0" width="100%" height="100%" fill="white" />
 
-                {/* Black text - creates the cutout (hole) - reveals Services section through letters */}
-                {/* Position calculated to center the "V" (4th letter) instead of the whole word */}
-                <text
-                  x={(() => {
-                    // Center the "V" instead of the whole word
-                    // SERVICES has 8 letters, V is at position 4 (index 3)
-                    // Normal center is at 4.5, we want it at 4, so shift RIGHT by 0.5 chars
-                    const baseFontSize = 48;
-                    const baseLetterSpacing = 8;
-                    const fontSize = (() => {
+                  {/* Black text - creates the cutout (hole) - reveals Services section through letters */}
+                  {/* Position calculated to center the "V" (4th letter) instead of the whole word */}
+                  <text
+                    x={(() => {
+                      // Center the "V" instead of the whole word
+                      // SERVICES has 8 letters, V is at position 4 (index 3)
+                      // Normal center is at 4.5, we want it at 4, so shift RIGHT by 0.5 chars
+                      const baseFontSize = 48;
+                      const baseLetterSpacing = 8;
+                      const fontSize = (() => {
+                        // Start at same size as solid text (1x) when masking begins, zoom to 25x
+                        if (scrollProgress < 0.58) return baseFontSize; // Same as solid text
+                        if (scrollProgress >= 0.70) return baseFontSize * 25;
+                        const progress = (scrollProgress - 0.58) / (0.70 - 0.58);
+                        const scale = 1 + (24 * progress); // 1x to 25x scale
+                        return baseFontSize * scale;
+                      })();
+                      const letterSpacing = (baseLetterSpacing * fontSize) / baseFontSize;
+                      const charWidth = fontSize * 0.55; // Character width for Lato Bold
+                      const totalCharWidth = charWidth + letterSpacing;
+
+                      // Shift right by 0.5 character widths to center on V
+                      const viewportCenter = 187.5; // 50% of 375px viewport
+                      const offset = 0.5 * totalCharWidth;
+                      return String(viewportCenter + offset);
+                    })()}
+                    y="50%"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fill="black"
+                    fontSize={(() => {
+                      const baseSize = 48;
                       // Start at same size as solid text (1x) when masking begins, zoom to 25x
-                      if (scrollProgress < 0.58) return baseFontSize; // Same as solid text
-                      if (scrollProgress >= 0.70) return baseFontSize * 25;
+                      if (scrollProgress < 0.58) return baseSize; // Same as solid text
+                      if (scrollProgress >= 0.70) return baseSize * 25;
+
                       const progress = (scrollProgress - 0.58) / (0.70 - 0.58);
                       const scale = 1 + (24 * progress); // 1x to 25x scale
-                      return baseFontSize * scale;
-                    })();
-                    const letterSpacing = (baseLetterSpacing * fontSize) / baseFontSize;
-                    const charWidth = fontSize * 0.55; // Character width for Lato Bold
-                    const totalCharWidth = charWidth + letterSpacing;
+                      return baseSize * scale;
+                    })()}
+                    fontFamily="Lato, sans-serif"
+                    fontWeight="700"
+                    letterSpacing={(() => {
+                      const baseFontSize = 48;
+                      const baseLetterSpacing = 8;
+                      const fontSize = (() => {
+                        if (scrollProgress < 0.58) return baseFontSize;
+                        if (scrollProgress >= 0.70) return baseFontSize * 25;
+                        const progress = (scrollProgress - 0.58) / (0.70 - 0.58);
+                        const scale = 1 + (24 * progress);
+                        return baseFontSize * scale;
+                      })();
+                      return String((baseLetterSpacing * fontSize) / baseFontSize);
+                    })()}
+                  >
+                    SERVICES
+                  </text>
+                </mask>
+              </defs>
 
-                    // Shift right by 0.5 character widths to center on V
-                    const viewportCenter = 187.5; // 50% of 375px viewport
-                    const offset = 0.5 * totalCharWidth;
-                    return String(viewportCenter + offset);
-                  })()}
+              {/* White rectangle with mask applied - Safari compatible approach */}
+              {scrollProgress >= 0.58 && scrollProgress < 0.70 && (
+                <rect x="0" y="0" width="100%" height="100%" fill="white" mask="url(#servicesTextMaskMobile)" />
+              )}
+
+              {/* Solid text - visible before mask cutout starts */}
+              {!useMaskCutout && (
+                <text
+                  x="50%"
                   y="50%"
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  fill="black"
-                  fontSize={(() => {
-                    const baseSize = 48;
-                    // Start at same size as solid text (1x) when masking begins, zoom to 25x
-                    if (scrollProgress < 0.58) return baseSize; // Same as solid text
-                    if (scrollProgress >= 0.70) return baseSize * 25;
-
-                    const progress = (scrollProgress - 0.58) / (0.70 - 0.58);
-                    const scale = 1 + (24 * progress); // 1x to 25x scale
-                    return baseSize * scale;
+                  fill={(() => {
+                    if (scrollProgress < 0.35) return 'rgba(41, 65, 80, 0.3)';
+                    if (scrollProgress < 0.50) {
+                      const p = (scrollProgress - 0.35) / 0.15;
+                      return `rgba(41, 65, 80, ${0.3 + (0.7 * p)})`;
+                    }
+                    return 'rgba(41, 65, 80, 1)';
                   })()}
+                  fontSize="48"
                   fontFamily="Lato, sans-serif"
                   fontWeight="700"
-                  letterSpacing={(() => {
-                    const baseFontSize = 48;
-                    const baseLetterSpacing = 8;
-                    const fontSize = (() => {
-                      if (scrollProgress < 0.58) return baseFontSize;
-                      if (scrollProgress >= 0.70) return baseFontSize * 25;
-                      const progress = (scrollProgress - 0.58) / (0.70 - 0.58);
-                      const scale = 1 + (24 * progress);
-                      return baseFontSize * scale;
-                    })();
-                    return String((baseLetterSpacing * fontSize) / baseFontSize);
-                  })()}
+                  letterSpacing="8"
+                  filter="url(#servicesBlurMobile)"
+                  opacity={solidTextOpacity}
                 >
                   SERVICES
                 </text>
-              </mask>
-            </defs>
-
-            {/* White rectangle with mask applied - Safari compatible approach */}
-            {scrollProgress >= 0.58 && scrollProgress < 0.70 && (
-              <rect x="0" y="0" width="100%" height="100%" fill="white" mask="url(#servicesTextMaskMobile)" />
-            )}
-
-            {/* Solid text - visible before mask cutout starts */}
-            {!useMaskCutout && (
-              <text
-                x="50%"
-                y="50%"
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fill={(() => {
-                  if (scrollProgress < 0.35) return 'rgba(41, 65, 80, 0.3)';
-                  if (scrollProgress < 0.50) {
-                    const p = (scrollProgress - 0.35) / 0.15;
-                    return `rgba(41, 65, 80, ${0.3 + (0.7 * p)})`;
-                  }
-                  return 'rgba(41, 65, 80, 1)';
-                })()}
-                fontSize="48"
-                fontFamily="Lato, sans-serif"
-                fontWeight="700"
-                letterSpacing="8"
-                filter="url(#servicesBlurMobile)"
-                opacity={solidTextOpacity}
-              >
-                SERVICES
-              </text>
-            )}
-          </svg>
-        </motion.div>
+              )}
+            </svg>
+          </motion.div>
         )}
 
       </div>
