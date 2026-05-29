@@ -89,6 +89,15 @@ export function TeamMobile({
   // State for the Read More popup
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
+  useEffect(() => {
+    if (!selectedMember) return;
+
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [selectedMember]);
+
   // Detect small mobile screens (width <= 360px) to prevent vertical/horizontal overlapping
   const isSmallMobile = typeof window !== 'undefined' && window.innerWidth <= 360;
 
@@ -415,6 +424,7 @@ export function TeamMobile({
                           </div>
                           <div className="team-read-more-container">
                             <button
+                              type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setSelectedMember(member);
@@ -503,6 +513,7 @@ export function TeamMobile({
                   >
                     {/* Close Button */}
                     <button
+                      type="button"
                       onClick={() => setSelectedMember(null)}
                       className="absolute top-5 right-5 bg-transparent border-none p-2 cursor-pointer text-[#2c4657] hover:opacity-70 transition-opacity z-10"
                       aria-label="Close"
