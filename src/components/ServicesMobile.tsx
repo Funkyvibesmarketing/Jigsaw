@@ -43,12 +43,30 @@ export function ServicesMobile({
 
   const tutorialShownRef = useRef(false);
 
+  const getTargetScrollY = () => {
+    const container = document.getElementById('AboutUsSection');
+    if (!container) return window.scrollY;
+    
+    const rect = container.getBoundingClientRect();
+    const containerTop = window.scrollY + rect.top;
+    const containerHeight = rect.height;
+    const viewportHeight = window.innerHeight;
+    
+    // Calculate the exact scroll Y corresponding to scrollProgress = 0.70
+    return (containerTop - viewportHeight) + 0.705 * (containerHeight + viewportHeight);
+  };
+
   useEffect(() => {
     if (scrollProgress !== undefined && scrollProgress >= 0.70) {
       // Only trigger once per session (module-level flag resets on page load)
       if (!tutorialShownRef.current && !_tutorialSessionShown) {
         tutorialShownRef.current = true;
         _tutorialSessionShown = true;
+        
+        // Immediately halt momentum scroll by locking it to the calculated target
+        const lockY = getTargetScrollY();
+        window.scrollTo(0, lockY);
+        
         // Trigger right as masking finishes (low delay)
         setTimeout(() => setShowTutorial(true), 50);
       }
@@ -57,15 +75,35 @@ export function ServicesMobile({
 
   useEffect(() => {
     if (showTutorial) {
+      const lockY = getTargetScrollY();
+
       document.body.style.overflow = 'hidden';
+      
       const preventDefault = (e: TouchEvent) => {
         // Stop default touch scroll actions on mobile
         e.preventDefault();
       };
+
+      const handleScroll = () => {
+        window.scrollTo(0, lockY);
+      };
+
+      window.scrollTo(0, lockY);
+
       document.body.addEventListener('touchmove', preventDefault, { passive: false });
+      window.addEventListener('scroll', handleScroll, { passive: false });
+
+      const intervalId = setInterval(() => {
+        if (Math.abs(window.scrollY - lockY) > 2) {
+          window.scrollTo(0, lockY);
+        }
+      }, 30);
+
       return () => {
         document.body.style.overflow = '';
         document.body.removeEventListener('touchmove', preventDefault);
+        window.removeEventListener('scroll', handleScroll);
+        clearInterval(intervalId);
       };
     }
   }, [showTutorial]);
