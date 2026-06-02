@@ -152,7 +152,7 @@ function AnimatedLogoScreen({ progressValue, showFinancial, fadeProgress, showSc
           className="absolute w-[62px] h-[60px]"
           style={{ willChange: 'transform, opacity, left, top' }}
           initial={{ opacity: 0, scale: 0.5, left: '50%', x: '-50%', top: '50%', y: '-50%' }}
-          animate={{ opacity: 1, scale: 1, left: 'calc(50% + 20px)', top: '2px', x: 0, y: 0 }}
+          animate={{ opacity: 1, scale: 1, left: 'calc(50% + 25px)', top: '2px', x: 0, y: 0 }}
           transition={{
             opacity: { delay: 0, duration: 0.5 },
             scale: { delay: 0, duration: 0.8, ease: isIOS ? "easeOut" : [0.34, 1.56, 0.64, 1] },
