@@ -21,7 +21,7 @@ export function SplashMobile({ dataProgress = 0, onComplete }: { dataProgress?: 
   useEffect(() => {
     // Start animation
     setHasStarted(true);
-    
+
     // Animate progress to the current data loading progress
     const controls = animate(progressValue, dataProgress, {
       duration: 0.5,
@@ -138,7 +138,7 @@ function AnimatedLogoScreen({ progressValue, showFinancial, fadeProgress, showSc
               stroke="#2C4657"
               strokeWidth="1.5"
               initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 20 }}
+              animate={{ opacity: 1, x: 38 }}
               transition={{
                 delay: 1.0,
                 duration: 0.6,
@@ -149,7 +149,7 @@ function AnimatedLogoScreen({ progressValue, showFinancial, fadeProgress, showSc
         </svg>
 
         <motion.div
-          className="absolute w-[60px] h-[60px]"
+          className="absolute w-[62px] h-[60px]"
           style={{ willChange: 'transform, opacity, left, top' }}
           initial={{ opacity: 0, scale: 0.5, left: '50%', x: '-50%', top: '50%', y: '-50%' }}
           animate={{ opacity: 1, scale: 1, left: 'calc(50% + 20px)', top: '2px', x: 0, y: 0 }}
