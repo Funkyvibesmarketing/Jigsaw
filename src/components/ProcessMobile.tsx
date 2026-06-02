@@ -13,8 +13,8 @@ interface ProcessMobileProps {
 // Handshake Icon Component (Step 2)
 function HandshakeIcon() {
   return (
-    <div className="relative w-[29.4px] h-[29.4px]">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 43 49">
+    <div className="relative w-[29.4px] h-[29.4px] flex items-center justify-center">
+      <svg className="block size-full" fill="none" viewBox="0 0 43 49">
         <path d={svgPaths.p292fdc00} fill="#2C4656" />
       </svg>
     </div>
@@ -24,8 +24,8 @@ function HandshakeIcon() {
 // Research Icon Component (Step 3)
 function ResearchIcon() {
   return (
-    <div className="relative w-[29.4px] h-[29.4px]">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 23 29">
+    <div className="relative w-[29.4px] h-[29.4px] flex items-center justify-center">
+      <svg className="block size-full" fill="none" viewBox="0 0 23 29">
         <path d={svgPathsStep3.p2c0957c0} fill="#2C4657" />
         <path d={svgPathsStep3.p3130cc00} fill="#2C4657" />
         <path d={svgPathsStep3.p3b3daf80} fill="#2C4657" />
@@ -37,8 +37,8 @@ function ResearchIcon() {
 // Brain Icon Component (Step 4)
 function BrainIcon() {
   return (
-    <div className="relative w-[29.4px] h-[29.4px]">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 30">
+    <div className="relative w-[29.4px] h-[29.4px] flex items-center justify-center">
+      <svg className="block size-full" fill="none" viewBox="0 0 24 30">
         <path d={svgPathsStep4.p26f7ba00} fill="#2C4657" />
         <path d={svgPathsStep4.p3a59bab0} fill="#2C4657" />
       </svg>
