@@ -332,7 +332,7 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
         {/* Text Carousel with Pagination - Mobile Version */}
         {carouselTexts && carouselTexts.length > 0 && (
           <motion.div
-            className="absolute font-lato-light not-italic text-[#222526] text-center top-[80px] w-full px-6 z-[10000]"
+            className="absolute font-lato-light not-italic text-[#222526] text-center top-[140px] w-full px-6 z-[10000]"
             style={{
               y: middleTextY,
               opacity: middleTextOpacity,

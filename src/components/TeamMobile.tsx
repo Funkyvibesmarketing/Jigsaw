@@ -92,9 +92,28 @@ export function TeamMobile({
   useEffect(() => {
     if (!selectedMember) return;
 
+    // Disabling Lenis scroll if it's initialized
+    window.dispatchEvent(new CustomEvent('lenisStop'));
+
+    // Lock page scroll (without setting height: 100% to prevent jumping to top)
+    const originalBodyOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+
+    // Touch-move prevention on body/html (except for our popup content)
+    const preventDefault = (e: TouchEvent) => {
+      const target = e.target as HTMLElement;
+      if (target && target.closest('.overflow-y-auto')) {
+        return; // Don't prevent scroll inside the scrollable bio element
+      }
+      e.preventDefault();
+    };
+
+    document.addEventListener('touchmove', preventDefault, { passive: false });
+
     return () => {
-      document.body.style.overflow = '';
+      window.dispatchEvent(new CustomEvent('lenisStart'));
+      document.body.style.overflow = originalBodyOverflow;
+      document.removeEventListener('touchmove', preventDefault);
     };
   }, [selectedMember]);
 
@@ -319,7 +338,7 @@ export function TeamMobile({
             className="fixed top-0 left-0 w-full h-screen overflow-hidden"
             style={{
               opacity: teamContentOpacity,
-              pointerEvents: (reviewsScrollProgress && reviewsScrollProgress >= 1.0) ? 'auto' : 'none',
+              pointerEvents: (reviewsScrollProgress && reviewsScrollProgress >= 0.95) ? 'auto' : 'none',
               zIndex: processScrollProgress && processScrollProgress > 0 ? 50 : 95,
               transform: `translateY(${teamSlideY}vh)`
             }}
