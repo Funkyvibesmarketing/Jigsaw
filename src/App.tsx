@@ -177,12 +177,12 @@ export default function App() {
       setMinSplashTimerDone(true);
     }, splashDuration);
 
-    // Safety timeout: If mounting/data takes too long (> 15s), proceed anyway
+    // Safety timeout: If mounting/data takes too long (> 6s), proceed anyway
     const safetyTimer = setTimeout(() => {
       setVisualProgress(100);
       setMountStage(5);
       setSplashAnimationComplete(true);
-    }, 15000);
+    }, 6000);
 
     // Signal the inlined preloader to remove itself (once React is stable)
     const cleanupTimer = setTimeout(() => {
@@ -242,9 +242,6 @@ export default function App() {
 
   // Fetch team members from API - Defer until Stage 2 (Mid-page) for core performance
   useEffect(() => {
-    // Start fetching immediately, but only if splash is active (prevent refetching on mountStage changes)
-    if (splashHasBeenViewed) return;
-
     const fetchMembers = async () => {
       // Small staggered delay to prevent main thread lockup on iOS
       await new Promise(resolve => setTimeout(resolve, 0));
@@ -263,8 +260,6 @@ export default function App() {
 
   // Fetch services from API - Defer until Stage 1 (Top-page) for core performance
   useEffect(() => {
-    if (splashHasBeenViewed) return;
-
     const fetchServiceList = async () => {
       // Small staggered delay to prevent main thread lockup on iOS
       await new Promise(resolve => setTimeout(resolve, 80));
@@ -283,8 +278,6 @@ export default function App() {
 
   // Fetch blogs from API - Defer until Stage 3 (Page bottom) for core performance
   useEffect(() => {
-    if (splashHasBeenViewed) return;
-
     const fetchBlogList = async () => {
       // Small staggered delay to prevent main thread lockup on iOS
       await new Promise(resolve => setTimeout(resolve, 160));
@@ -303,8 +296,6 @@ export default function App() {
 
   // Fetch about us carousel data from API - Defer until Stage 1 (Top-page) for core performance
   useEffect(() => {
-    if (splashHasBeenViewed) return;
-
     const fetchCarousel = async () => {
       // Small staggered delay to prevent main thread lockup on iOS
       await new Promise(resolve => setTimeout(resolve, 240));
