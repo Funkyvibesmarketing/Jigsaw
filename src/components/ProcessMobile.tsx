@@ -243,13 +243,18 @@ export default function ProcessMobile({ onScrollProgress, teamScrollProgress, on
     offset: ["start end", "end start"],
   });
 
+  const onReadyRef = useRef(onReady);
+  useEffect(() => {
+    onReadyRef.current = onReady;
+  }, [onReady]);
+
   // Signal readiness on mount
   useEffect(() => {
-    if (onReady) {
-      const timer = setTimeout(onReady, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [onReady]);
+    const timer = setTimeout(() => {
+      onReadyRef.current?.();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const unsubscribe = scrollYProgress.on("change", (latest) => {

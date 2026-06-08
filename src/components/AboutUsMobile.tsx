@@ -173,13 +173,18 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
   const [scrollProgress, setScrollProgress] = useState(0);
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
 
+  const onReadyRef = useRef(onReady);
+  useEffect(() => {
+    onReadyRef.current = onReady;
+  }, [onReady]);
+
   // Signal readiness on mount
   useEffect(() => {
-    if (onReady) {
-      const timer = setTimeout(onReady, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [onReady]);
+    const timer = setTimeout(() => {
+      onReadyRef.current?.();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleLearnMoreMClick = () => {
     if (containerRef.current) {

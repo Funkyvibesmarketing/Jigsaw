@@ -217,13 +217,18 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
     return () => unsubscribe();
   }, [scrollYProgress, onScrollProgress]);
 
+  const onReadyRef = useRef(onReady);
+  useEffect(() => {
+    onReadyRef.current = onReady;
+  }, [onReady]);
+
   // Signal readiness on mount
   useEffect(() => {
-    if (onReady) {
-      const timer = setTimeout(onReady, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [onReady]);
+    const timer = setTimeout(() => {
+      onReadyRef.current?.();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Mouse tracking effect for custom cursor (desktop only)
   useEffect(() => {

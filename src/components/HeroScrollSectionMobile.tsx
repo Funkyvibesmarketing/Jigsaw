@@ -62,13 +62,18 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
     return () => unsubscribe();
   }, [scrollYProgress]); // Remove onScrollProgress from dependencies
 
+  const onReadyRef = useRef(onReady);
+  useEffect(() => {
+    onReadyRef.current = onReady;
+  }, [onReady]);
+
   // Signal readiness on mount
   useEffect(() => {
-    if (onReady) {
-      const timer = setTimeout(onReady, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [onReady]);
+    const timer = setTimeout(() => {
+      onReadyRef.current?.();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Step 1: JIGSAW text fades in (0.01 to 0.08) - delayed past splash fade threshold
   // If splash has been viewed, start at full visibility when at top

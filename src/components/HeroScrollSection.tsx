@@ -26,13 +26,18 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const onReadyRef = useRef(onReady);
+  useEffect(() => {
+    onReadyRef.current = onReady;
+  }, [onReady]);
+
   // Signal readiness on mount
   useEffect(() => {
-    if (onReady) {
-      const timer = setTimeout(onReady, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [onReady]);
+    const timer = setTimeout(() => {
+      onReadyRef.current?.();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Handle down arrow click - scroll to About Us section
   const handleDownArrowClick = () => {
