@@ -109,6 +109,18 @@ export function ServicesMobile({
   }, [showTutorial]);
 
   useEffect(() => {
+    const handleClose = () => {
+      _tutorialSessionShown = true;
+      tutorialShownRef.current = true;
+      setShowTutorial(false);
+    };
+    window.addEventListener('close-mobile-tutorial', handleClose);
+    return () => {
+      window.removeEventListener('close-mobile-tutorial', handleClose);
+    };
+  }, []);
+
+  useEffect(() => {
     setIsMounted(true);
   }, []);
 

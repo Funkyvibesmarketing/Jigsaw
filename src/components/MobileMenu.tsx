@@ -357,6 +357,9 @@ interface MobileMenuProps {
 export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSection, setActiveSection, theme = 'dark' }: MobileMenuProps) {
   // Navigation handler - scrolls to section and closes menu
   const handleNavigate = (sectionId: string, activeState: string) => {
+    // Dismiss any active mobile service tutorial overlay
+    window.dispatchEvent(new CustomEvent('close-mobile-tutorial'));
+
     // Set the active section based on which button was clicked
     setActiveSection(activeState);
 

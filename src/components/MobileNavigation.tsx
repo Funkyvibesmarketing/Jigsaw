@@ -119,6 +119,7 @@ function Frame3({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) {
       {/* Phone icon - clickable with tel: link */}
       <div 
         onClick={() => {
+          window.dispatchEvent(new CustomEvent('close-mobile-tutorial'));
           document.getElementById('ContactUsSection')?.scrollIntoView({ behavior: 'smooth' });
         }}
         className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))] cursor-pointer"
