@@ -421,30 +421,18 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
             <div className="absolute bottom-0 left-0 w-full h-[400px] bg-gradient-to-t from-white to-transparent z-[2]" />
 
             {/* FCA Compliance Section - Mobile Design */}
-            <div className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[500px] flex flex-col gap-[16px] sm:gap-[20px] items-center justify-center z-[101] px-4 ${isComplianceActive ? 'pointer-events-auto' : 'pointer-events-none'}`}>
-              {/* Shield Icon Replacement */}
-              <div className="shrink-0 mt-[-5px]">
-                <img
-                  src={complianceShield}
-                  alt="Compliance Shield"
-                  className="w-[50px] h-auto object-contain"
-                />
-              </div>
+            <div className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[500px] flex flex-col items-center justify-center z-[101] px-4 ${isComplianceActive ? 'pointer-events-auto' : 'pointer-events-none'}`}>
+              {/* Title */}
+              <h2 className="compliance-title-mobile">
+                Trusted Mortgage Compliance
+              </h2>
 
               {/* FCA Text */}
-              <p className="font-lato-light min-h-px min-w-px not-italic relative text-[14px] text-white text-center">
-                <span className="leading-[20px]">Jigsaw Financial operates as an Appointed Representative of a mortgage network authorised and regulated by the Financial Conduct Authority. <br />
-                  This structure provides additional oversight, with experienced compliance specialists supporting cases and helping ensure advice remains accurate and responsible. <br /> We also stay closely informed of regulatory developments so our clients can feel confident they are being properly looked after.</span>
-                <a
-                  href="https://register.fca.org.uk/s/firm?id=0010X00004QO8QvQAL"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hidden font-lato-semibold leading-[20px] underline decoration-solid hover:text-[#2ec4b6] transition-colors duration-200 cursor-pointer relative z-[102]"
-                >
-                  here
-                </a>
-                <span className="leading-[20px]"></span>
-              </p>
+              <div className="compliance-text-mobile">
+                <p>Jigsaw Financial operates as an Appointed Representative of a mortgage network authorised and regulated by the Financial Conduct Authority.</p>
+                <p>This structure provides additional oversight, with experienced compliance specialists supporting cases and helping ensure advice remains accurate and responsible.</p>
+                <p>We also stay closely informed of regulatory developments so our clients can feel confident they are being properly looked after.</p>
+              </div>
             </div>
           </motion.div>
         </div>
