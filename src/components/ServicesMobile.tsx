@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import imgVector from "figma:asset/6d6de80792d2de9d2d28717db9e5bf0e0b17e6c0.png";
 import imgHandPointing from "figma:asset/afd1672a55f4a23bde9fafacdcef4ae17ef17583.svg";
 import imgSwipeLeftLine from "figma:asset/04a052e66c89e43d1744c99791d3a7e71c5f4bc4.svg";
 import imgSwipeRightLine from "figma:asset/7b9da65eddff7821c8abb42335243a47a8a55502.svg";
@@ -9,7 +8,6 @@ import imgArrowLeftBack from "figma:asset/ff6dd2b4be6368f7b00a933f80d7a0a53258f5
 import imgArrowRightNext from "figma:asset/2dbbabf0da323aa7e01edd231d124e8c72ca5f47.svg";
 import imgXClose from "figma:asset/4fd17dade7a6d0b84c0dc070c4a744e6610ce2cd.svg";
 import type { Service } from '../utils/servicesApi';
-import { ChevronLeft, ChevronRight, ArrowDown } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
@@ -215,7 +213,7 @@ export function ServicesMobile({
 
   return (
     <div className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-[#2c4657]">
-      <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-between bg-[#2c4657] pt-[80px] pb-0">
+      <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center bg-[#2c4657] gap-[20px]">
         {/* Background gradient */}
         <div className="absolute h-[307px] left-1/2 top-[86px] -translate-x-1/2 w-[506px] pointer-events-none">
           <div className="absolute inset-[-19.54%_-11.86%]">
@@ -239,7 +237,7 @@ export function ServicesMobile({
         </div>
 
         {/* Category names slider */}
-        <div className="flex-shrink-0 w-full" style={{ marginTop: '20px', height: '60px' }}>
+        <div className="flex-shrink-0 w-full" style={{ height: '60px' }}>
           <div className="relative w-full h-full overflow-hidden flex items-center justify-center px-6">
             {/* Active category with slide-in animation */}
             <div className="flex-1 flex justify-center items-center overflow-hidden mx-4">
@@ -266,8 +264,8 @@ export function ServicesMobile({
 
         {/* Card stack area — swipeable horizontally to change category */}
         <div
-          className="flex-1 w-full relative z-10 flex items-center justify-center"
-          style={{ minHeight: 0, marginTop: '8px', marginBottom: '8px' }}
+          className="w-full relative z-10 flex items-center justify-center"
+          style={{ minHeight: 0 }}
         >
           {isMounted && (
             <Swiper
@@ -313,7 +311,7 @@ export function ServicesMobile({
                             cardConfig = { top: 0, scale: 1, opacity: 1, zIndex: 30, blur: 0 };
                             shouldShow = true;
                           } else if (position === 1) {
-                            cardConfig = { top: 12, scale: 0.93, opacity: 0.5, zIndex: 20, blur: 0 };
+                            cardConfig = { top: 20, scale: 0.95, opacity: 0.5, zIndex: 20, blur: 0 };
                             shouldShow = true;
                           } else if (position === 2) {
                             cardConfig = { top: 40, scale: 0.87, opacity: 0.3, zIndex: 10, blur: 1 };
@@ -375,6 +373,10 @@ export function ServicesMobile({
                                   <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 580.44 656">
                                     <ellipse cx="290.22" cy="328" fill="white" rx="290.22" ry="328" />
                                   </svg>
+                                </div>
+                                {/* Teal numbering circle */}
+                                <div className="services-numbering-circle">
+                                  {index + 1}
                                 </div>
                                 {/* Info Bar - rendered on top of image for the first card only */}
                                 {card.image && index === 0 && (
@@ -517,103 +519,13 @@ export function ServicesMobile({
         </div>
 
         {/* Bottom navigation - changes cards within category */}
-        <div className="flex-shrink-0 w-full flex flex-col items-center gap-[16px] pb-0">
+        <div className="flex-shrink-0 w-full flex flex-col items-center gap-[16px] pb-0" style={{ marginTop: '12px' }}>
           <div className="content-stretch flex gap-[24px] items-center z-50">
-            {/* Left arrow - pointing UP - advances forward */}
-            <button
-              onPointerDown={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                handleNextCard();
-              }}
-              disabled={currentCardIndex === currentService.detailCards.length - 1}
-              className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] shrink-0 size-[48px] relative transition-opacity duration-200 touch-manipulation ${currentCardIndex === currentService.detailCards.length - 1 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
-                }`}
-              style={{
-                cursor: 'pointer',
-                pointerEvents: 'auto',
-                zIndex: 99999,
-                position: 'relative',
-                touchAction: 'manipulation',
-                WebkitTapHighlightColor: 'transparent',
-                userSelect: 'none'
-              }}
-              aria-label="Next card"
-            >
-              <div aria-hidden="true" className="absolute border-[0.75px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[24px]" />
-              <div className="flex items-center justify-center relative shrink-0">
-                <div className="flex-none rotate-[-90deg]">
-                  <div className="overflow-clip relative size-[30px]">
-                    <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
-                      <div className="flex-none h-[12.964px] rotate-[0deg] w-[21.406px]">
-                        <div className="relative size-full">
-                          <div className="absolute inset-[-2.07%_-1.25%]">
-                            <img alt="" className="block max-w-none size-full" height="13.5" src={imgVector} width="21.942" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </button>
-
             {/* Counter - shows current card / total cards in current category */}
             <p className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[24px] text-[rgba(255,255,255,0.2)] text-center text-nowrap">
               {currentCardIndex + 1}/{currentService.detailCards.length}
             </p>
-
-            {/* Right arrow - pointing DOWN - goes backward */}
-            <button
-              onPointerDown={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                handlePrevCard();
-              }}
-              disabled={currentCardIndex === 0}
-              className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] size-[48px] relative transition-opacity duration-200 touch-manipulation ${currentCardIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
-                }`}
-              style={{
-                cursor: 'pointer',
-                pointerEvents: 'auto',
-                zIndex: 99999,
-                position: 'relative',
-                touchAction: 'manipulation',
-                WebkitTapHighlightColor: 'transparent',
-                userSelect: 'none'
-              }}
-              aria-label="Previous card"
-            >
-              <div aria-hidden="true" className="absolute border-[0.75px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[24px]" />
-              <div className="flex items-center justify-center relative shrink-0">
-                <div className="flex-none rotate-[90deg]">
-                  <div className="overflow-clip relative size-[30px]">
-                    <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
-                      <div className="flex-none h-[12.964px] rotate-[0deg] w-[21.406px]">
-                        <div className="relative size-full">
-                          <div className="absolute inset-[-2.07%_-1.25%]">
-                            <img alt="" className="block max-w-none size-full" height="13.5" src={imgVector} width="21.942" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </button>
           </div>
-
-          {/* Reviews Navigation Button from Figma Design */}
-          <button
-            onClick={() => {
-              document.getElementById('ReviewsSection')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="services-reviews-btn"
-            aria-label="Scroll to Reviews"
-          >
-            <ArrowDown className="size-[16px] text-[#2ec4b6]" strokeWidth={2.5} />
-            <span className="font-['Lato',sans-serif] text-[14px] font-semibold tracking-[0.2px] text-white">Reviews</span>
-          </button>
         </div>
 
       </div>
@@ -691,47 +603,8 @@ export function ServicesMobile({
                       </motion.div>
                     </div>
                   )}
-
-                  {/* Step 2: Up/Down swipe */}
+                  {/* Step 2: Tap */}
                   {tutorialStep === 2 && (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                      {/* Up arrow */}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="23" height="92" viewBox="0 0 23 92" fill="none">
-                        <path d="M9.54596 90.5L9.54596 92L12.546 92L12.546 90.5L11.046 90.5L9.54596 90.5ZM12.1066 0.43934C11.5208 -0.146447 10.5711 -0.146447 9.9853 0.43934L0.439357 9.98528C-0.146429 10.5711 -0.146429 11.5208 0.439357 12.1066C1.02514 12.6924 1.97489 12.6924 2.56068 12.1066L11.046 3.62132L19.5312 12.1066C20.117 12.6924 21.0668 12.6924 21.6526 12.1066C22.2383 11.5208 22.2383 10.5711 21.6526 9.98528L12.1066 0.43934ZM11.046 90.5L12.546 90.5L12.546 1.5L11.046 1.5L9.54596 1.5L9.54596 90.5L11.046 90.5Z" fill="url(#paint0_linear_3075_1621)" />
-                        <defs>
-                          <linearGradient id="paint0_linear_3075_1621" x1="10.546" y1="1.5" x2="10.546" y2="90.5" gradientUnits="userSpaceOnUse">
-                            <stop stopColor="white" />
-                            <stop offset="1" stopColor="white" stopOpacity="0" />
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                      {/* Animated hand wrapper to prevent Framer Motion transform overrides */}
-                      <div style={{ transform: 'translateX(34px)' }}>
-                        <motion.div
-                          animate={{ y: [30, -30, 30] }}
-                          transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 80 80" fill="none">
-                            <path d="M28.75 18.75C28.7478 20.6063 29.4374 22.3968 30.6844 23.7719C29.2893 23.8785 27.9518 24.3733 26.8232 25.2002C25.6945 26.0272 24.8197 27.1533 24.2976 28.4514C23.7755 29.7496 23.6269 31.1678 23.8687 32.546C24.1104 33.9241 24.7329 35.2071 25.6656 36.25L13.75 36.25C11.7609 36.25 9.85322 37.0402 8.4467 38.4467C7.04018 39.8532 6.25 41.7609 6.25 43.75C6.25 45.7391 7.04018 47.6468 8.4467 49.0533C9.85322 50.4599 11.7609 51.25 13.75 51.25L43.125 51.25L37.4813 54.7657C35.7594 55.7627 34.5042 57.4029 33.9917 59.3254C33.4792 61.248 33.7514 63.2954 34.7484 65.0172C35.7455 66.739 37.3857 67.9943 39.3082 68.5068C41.2308 69.0193 43.2782 68.7471 45 67.75L47.5781 66.2875C57.125 60.8719 63.4375 57.2938 67.6031 53.2313C71.9688 48.975 73.75 44.4188 73.75 37.5C73.7426 30.5404 70.9745 23.8679 66.0533 18.9467C61.1321 14.0255 54.4596 11.2575 47.5 11.25L36.25 11.25C34.2609 11.25 32.3532 12.0402 30.9467 13.4467C29.5402 14.8532 28.75 16.7609 28.75 18.75ZM47.5 13.75C53.7966 13.7575 59.8332 16.2621 64.2856 20.7145C68.7379 25.1668 71.2426 31.2034 71.25 37.5C71.25 50 64.975 53.5469 46.3406 64.1125L43.75 65.5781C42.6028 66.2218 41.2482 66.3875 39.9798 66.0392C38.7113 65.691 37.6312 64.8569 36.9734 63.7178C36.3157 62.5787 36.1333 61.2262 36.4659 59.9536C36.7984 58.6809 37.6191 57.5905 38.75 56.9188C38.7618 56.9103 38.7744 56.8969 38.7875 56.8969L48.1625 51.0594C48.3924 50.9154 48.5692 50.7006 48.6662 50.4473C48.7633 50.194 48.7753 49.9161 48.7005 49.6553C48.6258 49.3946 48.4682 49.1653 48.2516 49.002C48.0351 48.8387 47.7712 48.7502 47.5 48.75L13.75 48.75C12.4239 48.75 11.1522 48.2232 10.2145 47.2856C9.27679 46.3479 8.75 45.0761 8.75 43.75C8.75 42.4239 9.27679 41.1522 10.2145 40.2145C11.1521 39.2768 12.4239 38.75 13.75 38.75L35 38.75C35.3315 38.75 35.6495 38.6183 35.8839 38.3839C36.1183 38.1495 36.25 37.8315 36.25 37.5C36.25 37.1685 36.1183 36.8506 35.8839 36.6161C35.6495 36.3817 35.3315 36.25 35 36.25L31.25 36.25C29.9239 36.25 28.6522 35.7232 27.7145 34.7856C26.7768 33.8479 26.25 32.5761 26.25 31.25C26.25 29.9239 26.7768 28.6522 27.7145 27.7145C28.6522 26.7768 29.9239 26.25 31.25 26.25L37.5 26.25C37.8315 26.25 38.1495 26.1183 38.3839 25.8839C38.6183 25.6495 38.75 25.3315 38.75 25C38.75 24.6685 38.6183 24.3506 38.3839 24.1161C38.1495 23.8817 37.8315 23.75 37.5 23.75L36.25 23.75C34.9239 23.75 33.6522 23.2232 32.7145 22.2856C31.7768 21.3479 31.25 20.0761 31.25 18.75C31.25 17.4239 31.7768 16.1522 32.7145 15.2145C33.6522 14.2768 34.9239 13.75 36.25 13.75L47.5 13.75Z" fill="white" />
-                          </svg>
-                        </motion.div>
-                      </div>
-                      {/* Down arrow */}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="23" height="92" viewBox="0 0 23 92" fill="none">
-                        <path d="M9.54596 1.5L9.54596 -6.55671e-08L12.546 6.55671e-08L12.546 1.5L11.046 1.5L9.54596 1.5ZM12.1066 91.5607C11.5208 92.1464 10.5711 92.1464 9.9853 91.5607L0.439358 82.0147C-0.146429 81.4289 -0.146429 80.4792 0.439358 79.8934C1.02515 79.3076 1.97489 79.3076 2.56068 79.8934L11.046 88.3787L19.5312 79.8934C20.117 79.3076 21.0668 79.3076 21.6526 79.8934C22.2383 80.4792 22.2383 81.4289 21.6526 82.0147L12.1066 91.5607ZM11.046 1.5L12.546 1.5L12.546 90.5L11.046 90.5L9.54596 90.5L9.54596 1.5L11.046 1.5Z" fill="url(#paint0_linear_3075_1622)" />
-                        <defs>
-                          <linearGradient id="paint0_linear_3075_1622" x1="10.546" y1="90.5" x2="10.546" y2="1.5" gradientUnits="userSpaceOnUse">
-                            <stop stopColor="white" />
-                            <stop offset="1" stopColor="white" stopOpacity="0" />
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                    </div>
-                  )}
-
-                  {/* Step 3: Tap */}
-                  {tutorialStep === 3 && (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
                       <div style={{ position: 'relative', width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {/* Pulse ring */}
@@ -776,12 +649,6 @@ export function ServicesMobile({
                     )}
                     {tutorialStep === 2 && (
                       <p style={{ color: 'white', fontSize: '18px', lineHeight: '26px', fontFamily: 'Lato, sans-serif', fontWeight: 400, textShadow: '0 1px 6px rgba(0,0,0,0.5)' }}>
-                        Swipe <span style={{ fontWeight: 700 }}>Up/Down</span> to change the<br />
-                        <span style={{ fontWeight: 700 }}>content cards</span>
-                      </p>
-                    )}
-                    {tutorialStep === 3 && (
-                      <p style={{ color: 'white', fontSize: '18px', lineHeight: '26px', fontFamily: 'Lato, sans-serif', fontWeight: 400, textShadow: '0 1px 6px rgba(0,0,0,0.5)' }}>
                         Tap <span style={{ fontWeight: 700 }}>anywhere on the card</span> to view<br />
                         <span style={{ fontWeight: 700 }}>next content card</span>
                       </p>
@@ -805,13 +672,13 @@ export function ServicesMobile({
 
                     {/* Dots */}
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      {[1, 2, 3].map(step => (
+                      {[1, 2].map(step => (
                         <div key={step} style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: tutorialStep === step ? '#2ec4b6' : 'rgba(255,255,255,0.25)', transition: 'background-color 0.3s' }} />
                       ))}
                     </div>
 
                     {/* Next / Okay */}
-                    {tutorialStep < 3 ? (
+                    {tutorialStep < 2 ? (
                       <button
                         onClick={() => setTutorialStep(prev => prev + 1)}
                         style={{ backgroundColor: 'white', color: '#222526', borderRadius: '8px', padding: '8px 16px', fontSize: '15px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', border: 'none', cursor: 'pointer', fontFamily: 'Lato, sans-serif' }}
