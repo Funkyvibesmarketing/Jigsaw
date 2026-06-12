@@ -130,7 +130,7 @@ function BlogCard({
                   <ArrowCircleRight fill={isActive ? "white" : "#2C4657"} />
                 </div>
                 {blog.date && (
-                  <p className={`font-['Lato:Light',sans-serif] leading-[20px] not-italic relative shrink-0 text-[10px] ${isActive ? 'text-[rgba(255,255,255,0.6)]' : 'text-[rgba(44,70,87,0.6)]'}`}>
+                  <p className={`blog-card-date ${isActive ? 'active' : ''}`}>
                     {blog.date}
                   </p>
                 )}
@@ -403,7 +403,7 @@ export function BlogsMobile({ onScrollProgress, blogs = [], onReady }: BlogsMobi
           style={{ y: titleY, opacity: titleOpacity }}
         >
           <motion.p
-            className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[40px] text-center tracking-[20px]"
+            className="blogs-title-mobile"
             style={{ color: titleColor }}
           >
             BLOGS
@@ -458,26 +458,6 @@ export function BlogsMobile({ onScrollProgress, blogs = [], onReady }: BlogsMobi
               ))}
             </Swiper>
             )}
-          </motion.div>
-
-          {/* Navigation Arrows */}
-          <motion.div
-            className="flex justify-center gap-[16px] mt-[10px]"
-            style={{ y: cardsY, opacity: cardsOpacity }}
-          >
-            <button
-              onClick={() => swiperInstance?.slidePrev()}
-              className="w-[48px] h-[48px] cursor-pointer hover:opacity-70 transition-opacity"
-            >
-              <Frame1000002973 />
-            </button>
-
-            <button
-              onClick={() => swiperInstance?.slideNext()}
-              className="w-[48px] h-[48px] cursor-pointer hover:opacity-70 transition-opacity"
-            >
-              <Frame1000002974 />
-            </button>
           </motion.div>
         </div>
 
