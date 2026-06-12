@@ -1,60 +1,7 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect, useRef } from 'react';
 import type { TeamMember } from '../utils/teamApi';
-import imgVector from "figma:asset/6d6de80792d2de9d2d28717db9e5bf0e0b17e6c0.png";
 import svgPaths from "../imports/svg-rqrvikz6z1";
-
-// LinkedIn Icon Component
-function AkarIconsLinkedinV1Fill() {
-  return (
-    <div className="relative shrink-0 size-[14px]" data-name="akar-icons:linkedin-v1-fill">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 14 14">
-        <g clipPath="url(#clip0_2221_245)" id="akar-icons:linkedin-v1-fill">
-          <path clipRule="evenodd" d={svgPaths.p18701100} fill="var(--fill-0, white)" fillRule="evenodd" id="Vector" />
-        </g>
-        <defs>
-          <clipPath id="clip0_2221_245">
-            <rect fill="white" height="14" width="14" />
-          </clipPath>
-        </defs>
-      </svg>
-    </div>
-  );
-}
-
-// LinkedIn Button Component
-function LinkedInButton({ linkedinUrl }: { linkedinUrl: string }) {
-  return (
-    <a
-      href={linkedinUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="bg-[rgba(255,255,255,0.1)] content-stretch flex gap-[4px] items-center px-[12px] py-[6px] relative rounded-[57.143px] w-fit cursor-pointer hover:bg-[rgba(255,255,255,0.15)] transition-colors mt-[4px]"
-    >
-      <div aria-hidden="true" className="absolute border-[0.571px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[57.143px]" />
-      <AkarIconsLinkedinV1Fill />
-      <p className="font-['Lato:Light',sans-serif] leading-[20px] not-italic relative shrink-0 text-[14px] text-center text-white tracking-[0.2px]">View my Linkedin</p>
-      <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_2.286px_2.286px_0px_rgba(255,255,255,0.12),inset_0px_-2.857px_2.286px_0px_rgba(255,255,255,0.08)]" />
-    </a>
-  );
-}
-
-// Arrow component for navigation
-function NavArrow() {
-  return (
-    <div className="overflow-clip relative size-[30px]">
-      <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
-        <div className="flex-none h-[12.964px] rotate-[359.849deg] w-[21.406px]">
-          <div className="relative size-full">
-            <div className="absolute inset-[-2.07%_-1.25%]">
-              <img alt="" className="block max-w-none size-full" height="13.5" src={imgVector} width="21.942" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export function TeamMobile({
   reviewsScrollProgress,
@@ -407,25 +354,17 @@ export function TeamMobile({
                     >
                       {/* Member card with proper padding and responsive layout */}
                       <div className="flex flex-col h-full pl-[24px] pr-[24px] min-w-[280px]">
-                        {/* Line above name - using RGBA for better mobile compatibility */}
-                        <div className="team-divider-line" />
-
-                        {/* Member name with number on same line */}
-                        <div className="team-name-row">
-                          <p className="font-['Lato:Bold',sans-serif] leading-[normal] not-italic text-[20px] sm:text-[24px] text-white" style={{ fontWeight: 700 }}>
+                        {/* Member name and subtitle */}
+                        <div className="flex flex-col gap-[8px] items-start justify-center leading-normal not-italic w-full mb-[16px]">
+                          <p className="font-['Lato',sans-serif] font-bold text-[28px] text-white whitespace-nowrap">
                             {member.name}
                           </p>
-                          <p className="font-['Lato:Bold',sans-serif] leading-[normal] not-italic text-[14px] sm:text-[16px] text-[rgba(255,255,255,0.5)] ml-2">
-                            {String(index + 1).padStart(2, '0')}
+                          <p className="font-['Lato',sans-serif] font-normal text-[18px] text-[rgba(255,255,255,0.5)] w-full">
+                            {member.title}
                           </p>
                         </div>
 
-                        {/* Job title - responsive with proper wrapping */}
-                        <p className="team-job-title">
-                          {member.title}
-                        </p>
-
-                        {/* Member photo - responsive with reduced height */}
+                        {/* Member photo */}
                         <div className="team-photo-wrapper">
                           <img
                             alt={member.name}
@@ -434,31 +373,42 @@ export function TeamMobile({
                           />
                         </div>
 
-                        {/* Bio text - truncated with Read more button */}
-                        <div className="team-bio-wrapper">
-                          <div className="w-full" style={{ display: '-webkit-box', WebkitLineClamp: isSmallMobile ? 3 : 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                            <p className="team-bio-text">
-                              {member.bio}
-                            </p>
-                          </div>
-                          <div className="team-read-more-container">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedMember(member);
-                              }}
-                              className="team-read-more-btn"
+                        {/* About and LinkedIn Button Row */}
+                        <div className="team-buttons-row">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedMember(member);
+                            }}
+                            className="team-about-btn"
+                          >
+                            About {member.name.split(' ')[0]}
+                          </button>
+                          
+                          {member.linkedinUrl && (
+                            <a
+                              href={member.linkedinUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="team-linkedin-btn"
+                              aria-label="LinkedIn profile"
                             >
-                              Read more
-                            </button>
-                          </div>
+                              <div className="relative shrink-0 size-[20px]" data-name="akar-icons:linkedin-v1-fill">
+                                <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 14 14">
+                                  <g clipPath="url(#clip0_2221_245_new)" id="akar-icons:linkedin-v1-fill_new">
+                                    <path clipRule="evenodd" d={svgPaths.p18701100} fill="white" fillRule="evenodd" id="Vector_new" />
+                                  </g>
+                                  <defs>
+                                    <clipPath id="clip0_2221_245_new">
+                                      <rect fill="white" height="14" width="14" />
+                                    </clipPath>
+                                  </defs>
+                                </svg>
+                              </div>
+                            </a>
+                          )}
                         </div>
-
-                        {/* LinkedIn Button */}
-                        {member.linkedinUrl && (
-                          <LinkedInButton linkedinUrl={member.linkedinUrl} />
-                        )}
                       </div>
                     </motion.div>
                   );
@@ -466,46 +416,21 @@ export function TeamMobile({
                 </div>
               </div>
 
-              {/* Bottom navigation */}
-              <div className="absolute left-1/2 -translate-x-1/2 bottom-[40px] flex gap-[24px] items-center z-50">
-                {/* Left arrow */}
-                <button
-                  onClick={handlePrev}
-                  disabled={currentIndex === 0}
-                  className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] shrink-0 size-[48px] relative transition-opacity duration-200 ${currentIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
+              {/* Bottom dot indicators */}
+              <div className="absolute left-1/2 -translate-x-1/2 bottom-[40px] flex gap-[8px] items-center z-50">
+                {Array.from({ length: totalSlides }).map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setDirection(idx > currentIndex ? 1 : -1);
+                      setCurrentIndex(idx);
+                    }}
+                    className={`w-[8px] h-[8px] rounded-full transition-all duration-300 ${
+                      idx === currentIndex ? 'bg-white scale-125' : 'bg-[rgba(255,255,255,0.3)]'
                     }`}
-                >
-                  <div aria-hidden="true" className="absolute border-[0.75px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[24px]" />
-                  <div className="flex items-center justify-center relative shrink-0">
-                    <div className="flex-none rotate-[180deg] scale-y-[-100%]">
-                      <NavArrow />
-                    </div>
-                  </div>
-                </button>
-
-                {/* Counter - shows current page / total pages */}
-                <p className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[24px] text-[rgba(255,255,255,0.2)] text-center text-nowrap">
-                  {currentIndex + 1}/{totalSlides}
-                </p>
-
-                {/* Right arrow */}
-                <div className="flex items-center justify-center relative shrink-0">
-                  <div className="flex-none rotate-[180deg] scale-y-[-100%]">
-                    <button
-                      onClick={handleNext}
-                      disabled={currentIndex === totalSlides - 1}
-                      className={`content-stretch flex items-center justify-center p-[3px] rounded-[24px] size-[48px] relative transition-opacity duration-200 ${currentIndex === totalSlides - 1 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
-                        }`}
-                    >
-                      <div aria-hidden="true" className="absolute border-[0.75px] border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[24px]" />
-                      <div className="flex items-center justify-center relative shrink-0">
-                        <div className="flex-none rotate-[180deg] scale-y-[-100%]">
-                          <NavArrow />
-                        </div>
-                      </div>
-                    </button>
-                  </div>
-                </div>
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
               </div>
             </div>
 
