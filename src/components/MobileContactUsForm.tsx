@@ -1,5 +1,5 @@
-import { motion, MotionValue } from "motion/react";
-import React from "react";
+import { motion, MotionValue, useScroll, useTransform } from "motion/react";
+import React, { useRef } from "react";
 import mobileSvgPaths from "../imports/svg-496nz61rw6";
 import successSvgPaths from "../imports/svg-o2ors8ir2r";
 import svgPaths from "../imports/svg-cxhurimysf";
@@ -141,13 +141,21 @@ export default function MobileContactUsForm({
   openPDF,
   setHideCursorForLinks
 }: MobileContactUsFormProps) {
+  const mobileRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: mobileScroll } = useScroll({
+    target: mobileRef,
+    offset: ["start end", "end start"],
+  });
+
+  const mobileContentY = useTransform(mobileScroll, [0.15, 0.75], [50, -220]);
+
   return (
-    <motion.div
-      className="md:hidden bg-[#2c4657] relative size-full"
-      style={{ y: slideY, opacity }}
+    <div
+      ref={mobileRef}
+      className="mobile-form-wrapper"
     >
       {/* Background Gradient */}
-      <div className="absolute h-[622px] left-1/2 top-[calc(50%+466px)] translate-x-[-50%] translate-y-[-50%] w-[1150px]">
+      <div className="absolute h-[622px] left-1/2 top-[calc(50%-300px)] translate-x-[-50%] translate-y-[-50%] w-[1150px] pointer-events-none">
         <div className="absolute inset-[-26.37%_-14.26%]">
           <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 1478 950">
             <g filter="url(#filter0_f_mobile)" id="Ellipse 14">
@@ -168,304 +176,277 @@ export default function MobileContactUsForm({
         </div>
       </div>
 
-      {/* Success Message */}
-      {isSubmitted && (
-        <motion.div
-          className="absolute left-1/2 top-[calc(50%-350px)] translate-x-[-50%] translate-y-[-50%] flex flex-col gap-[24px] items-center w-[90%] max-w-[382px] px-4"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="relative shrink-0 size-[80px]">
-            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 120 120">
-              <g id="SealCheck">
-                <path d={successSvgPaths.p110ffc00} fill="var(--fill-0, white)" fillOpacity="0.6" id="Vector" />
-              </g>
-            </svg>
-          </div>
-          <p className="font-['Lato:Light',sans-serif] leading-[normal] not-italic text-[32px] text-center text-white whitespace-pre-wrap">Your message has been sent</p>
-        </motion.div>
-      )}
 
-      {/* Title */}
-      {!isSubmitted && (
-        <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 not-italic text-[28px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-600px)] translate-x-[-50%] whitespace-pre px-4 tracking-[24px]">CONTACT US</p>
-      )}
-
-      {!isSubmitted && (
-        <>
-          {/* Step Indicator - Mobile - Above the title */}
-          <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 translate-x-[-50%] not-italic text-[32px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-650px)] whitespace-pre">{currentStep}/5</p>
-
-          {/* Form Field */}
-          {currentStep === 1 && (
-            <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-478px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Enter your name"
-                className="font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[28px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] caret-white"
-              />
-              <div className="h-0 relative shrink-0 w-full">
-                <div className="absolute bottom-0 left-0 right-0 top-[-1px]">
-                  <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 382 1">
-                    <line stroke="white" strokeOpacity="0.5" x2="382" y1="0.5" y2="0.5" />
-                  </svg>
-                </div>
-              </div>
+      {/* Main Container */}
+      <div 
+        className="mobile-form-container"
+      >
+        
+        {/* Form and Navigation */}
+        <div className="mobile-form-inner-container">
+          
+          {/* Step & Title */}
+          {!isSubmitted && (
+            <div className="w-full flex flex-col gap-[24px] items-center text-center">
+              <p className="mobile-form-step">
+                {currentStep}/4
+              </p>
+              <p className="mobile-form-title">
+                contact us
+              </p>
             </div>
           )}
 
-          {currentStep === 2 && (
-            <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-478px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="Enter your email"
-                className="font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[28px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] caret-white"
-              />
-              <div className="h-0 relative shrink-0 w-full">
-                <div className="absolute bottom-0 left-0 right-0 top-[-1px]">
-                  <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 382 1">
-                    <line stroke="white" strokeOpacity="0.5" x2="382" y1="0.5" y2="0.5" />
-                  </svg>
-                </div>
+          {/* Form Fields/Input & Next Button */}
+          {isSubmitted ? (
+            <motion.div
+              className="flex flex-col gap-[24px] items-center w-full mt-[50px]"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="relative shrink-0 size-[80px]">
+                <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 120 120">
+                  <g id="SealCheck">
+                    <path d={successSvgPaths.p110ffc00} fill="var(--fill-0, white)" fillOpacity="0.6" id="Vector" />
+                  </g>
+                </svg>
               </div>
+              <p className="font-['Lato:Light',sans-serif] leading-[normal] not-italic text-[32px] text-center text-white whitespace-pre-wrap">Your message has been sent</p>
+            </motion.div>
+          ) : (
+            <div className="w-full flex flex-col gap-[32px] items-center">
+              
+              {/* Input Fields */}
+              <div className="w-full flex flex-col gap-[16px] items-center relative">
+                {currentStep === 1 && (
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Your name"
+                    className="mobile-form-input pb-2"
+                  />
+                )}
+                {currentStep === 2 && (
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="Your email"
+                    className="mobile-form-input pb-2"
+                  />
+                )}
+                {currentStep === 3 && (
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="Your phone"
+                    className="mobile-form-input pb-2"
+                  />
+                )}
+                {currentStep === 4 && (
+                  <textarea
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    placeholder="Your message"
+                    className="mobile-form-input resize-none h-[80px] pb-2"
+                  />
+                )}
+                
+                {/* Underline separator */}
+                <div className="mobile-form-underline" />
+              </div>
+
+              {/* Next/Submit Button */}
+              <button
+                onClick={handleNext}
+                disabled={
+                  isSubmitting ||
+                  (currentStep === 1 && !formData.name) ||
+                  (currentStep === 2 && !formData.email) ||
+                  (currentStep === 3 && !formData.phone) ||
+                  (currentStep === 4 && !formData.message)
+                }
+                className="mobile-form-btn-next"
+              >
+                <span className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[16px] text-white whitespace-nowrap">
+                  {isSubmitting ? 'Sending...' : currentStep === 4 ? 'Submit' : 'Next'}
+                </span>
+              </button>
+
+              {/* Error Message */}
+              {submitError && (
+                <motion.p
+                  className="font-['Lato:Regular',sans-serif] text-[14px] text-red-400 text-center max-w-[95%] px-4"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  {submitError}
+                </motion.p>
+              )}
+
+              {/* Back Button */}
+              {currentStep > 1 && (
+                <button
+                  onClick={handleBack}
+                  disabled={isSubmitting}
+                  className="cursor-pointer bg-transparent border-none hover:opacity-75 transition-opacity disabled:opacity-50"
+                >
+                  <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[20px] text-white whitespace-pre">Back</p>
+                </button>
+              )}
             </div>
           )}
+        </div>
 
-          {currentStep === 3 && (
-            <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-478px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
-              <input
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="Enter your phone"
-                className="font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[28px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] caret-white"
-              />
-              <div className="h-0 relative shrink-0 w-full">
-                <div className="absolute bottom-0 left-0 right-0 top-[-1px]">
-                  <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 382 1">
-                    <line stroke="white" strokeOpacity="0.5" x2="382" y1="0.5" y2="0.5" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {currentStep === 4 && (
-            <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-478px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
-              <textarea
-                value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                placeholder="Your message"
-                className="font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[28px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] resize-none h-[60px] caret-white"
-              />
-              <div className="h-0 relative shrink-0 w-full">
-                <div className="absolute bottom-0 left-0 right-0 top-[-1px]">
-                  <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 382 1">
-                    <line stroke="white" strokeOpacity="0.5" x2="382" y1="0.5" y2="0.5" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Submit Button */}
-          <button
-            onClick={handleNext}
-            disabled={
-              isSubmitting ||
-              (currentStep === 1 && !formData.name) ||
-              (currentStep === 2 && !formData.email) ||
-              (currentStep === 3 && !formData.phone) ||
-              (currentStep === 4 && !formData.message)
-            }
-            className={`absolute bg-[#222526] box-border content-stretch flex gap-[8px] items-center justify-center left-1/2 px-[24px] py-[12px] rounded-[56px] top-[calc(50%-400px)] translate-x-[-50%] transition-opacity border-none ${isSubmitting ||
-              (currentStep === 1 && !formData.name) ||
-              (currentStep === 2 && !formData.email) ||
-              (currentStep === 3 && !formData.phone) ||
-              (currentStep === 4 && !formData.message)
-              ? 'opacity-50 cursor-not-allowed'
-              : 'opacity-100 cursor-pointer'
-              }`}
-          >
-            <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic relative shrink-0 text-[16px] text-nowrap text-white whitespace-pre">
-              {isSubmitting ? 'Sending...' : currentStep === 4 ? 'Submit' : 'Next'}
+        {/* Legal, Social, and Footer Content */}
+        <div className="mobile-form-footer-container">
+          
+          {/* Legal Compliance */}
+          <div className="w-full flex flex-col gap-[24px] items-center not-italic text-white">
+            <p className="font-['Lato:Light',sans-serif] leading-[20px] text-[14px] text-[rgba(255,255,255,0.6)] whitespace-pre-wrap">{`Your home  may be repossessed if you do not keep up repayments on your mortgage. Jigsaw Financial Limited are registered in England and Wales, and an Appointed Representative of PRIMIS Mortgage Network, a trading name of First Complete Ltd. First Complete Ltd is authorised and regulated by the Financial Conduct Authority.`}</p>
+            <p className="font-['Lato:Light',sans-serif] leading-[0] text-[14px] text-[rgba(255,255,255,0.6)] whitespace-pre-wrap">
+              <span className="leading-[20px]">
+                The guidance contained within this website is subject to the UK regulatory regime and is therefore primarily targeted at consumers based in the UK
+                <br aria-hidden="true" />
+                {`Registered office address - `}
+              </span>
+              <span className="[text-decoration-skip-ink:none] decoration-solid font-['Lato:Regular',sans-serif] leading-[20px] text-white underline">Suite 2f2 Sovereign House, Stockport Road, Cheadle, England, SK8 2EA. Company No: 11821948</span>
             </p>
-          </button>
+            <p className="font-['Lato:Light',sans-serif] leading-[20px] text-[14px] text-[rgba(255,255,255,0.6)] whitespace-pre-wrap">{`Jigsaw Financial usually charges a fee for mortgage advice. The amount of the fee will depend on your circumstances and will be discussed and agreed with you at the earliest opportunity. This should be payable for the customer on application, offer or completion.`}</p>
 
-          {/* Error Message */}
-          {submitError && (
-            <motion.p
-              className="absolute left-1/2 translate-x-[-50%] top-[calc(50%-280px)] font-['Lato:Regular',sans-serif] text-[14px] text-red-400 text-center max-w-[95%] px-4"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-            >
-              {submitError}
-            </motion.p>
-          )}
-
-          {/* Back Button */}
-          {currentStep > 1 && (
-            <button
-              onClick={handleBack}
-              disabled={isSubmitting}
-              className="absolute left-1/2 translate-x-[-50%] top-[calc(50%-320px)] cursor-pointer md:cursor-none bg-transparent border-none hover:opacity-70 transition-opacity disabled:opacity-50"
-            >
-              <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[20px] text-white whitespace-pre">Back</p>
-            </button>
-          )}
-        </>
-      )}
-
-      {/* Legal/Compliance Text */}
-      <div className="absolute left-1/2 -translate-x-1/2 bottom-[480px] content-stretch flex flex-col gap-[24px] items-center not-italic w-[90%] max-w-[382px] px-4">
-        <p className="font-['Lato:Light',sans-serif] leading-[20px] min-w-full relative shrink-0 text-[14px] text-[rgba(255,255,255,0.6)] w-[min-content] whitespace-pre-wrap">{`Your home  may be repossessed if you do not keep up repayments on your mortgage. Jigsaw Financial Limited are registered in England and Wales, and an Appointed Representative of PRIMIS Mortgage Network, a trading name of First Complete Ltd. First Complete Ltd is authorised and regulated by the Financial Conduct Authority.`}</p>
-        <p className="font-['Lato:Light',sans-serif] leading-[0] min-w-full relative shrink-0 text-[14px] text-[rgba(255,255,255,0.6)] w-[min-content] whitespace-pre-wrap">
-          <span className="leading-[20px]">
-            The guidance contained within this website is subject to the UK regulatory regime and is therefore primarily targeted at consumers based in the UK
-            <br aria-hidden="true" />
-            {`Registered office address - `}
-          </span>
-          <span className="[text-decoration-skip-ink:none] decoration-solid font-['Lato:Regular',sans-serif] leading-[20px] text-white underline">Suite 2f2 Sovereign House, Stockport Road, Cheadle, England, SK8 2EA. Company No: 11821948</span>
-        </p>
-        <p className="font-['Lato:Light',sans-serif] leading-[20px] min-w-full relative shrink-0 text-[14px] text-[rgba(255,255,255,0.6)] w-[min-content] whitespace-pre-wrap">{`Jigsaw Financial usually charges a fee for mortgage advice. The amount of the fee will depend on your circumstances and will be discussed and agreed with you at the earliest opportunity. This should be payable for the customer on application, offer or completion.`}</p>
-
-        {/* Complaints Process and Privacy Policy Links */}
-        <div className="content-stretch flex font-['Lato:Regular',sans-serif] items-center justify-between leading-[18px] relative shrink-0 text-[16px] text-white underline w-full">
-          <button
-            onClick={() => openPDF('/pdfs/complaints-process.pdf', 'Complaints Process')}
-            onMouseEnter={() => setHideCursorForLinks(true)}
-            onMouseLeave={() => setHideCursorForLinks(false)}
-            className="decoration-solid relative shrink-0 hover:opacity-70 transition-opacity bg-transparent border-none text-white underline cursor-pointer font-['Lato:Regular',sans-serif] text-[16px] leading-[18px]"
-          >
-            Complaints Process
-          </button>
-          <button
-            onClick={() => openPDF('/pdfs/privacy-policy.pdf', 'Privacy Policy')}
-            onMouseEnter={() => setHideCursorForLinks(true)}
-            onMouseLeave={() => setHideCursorForLinks(false)}
-            className="decoration-solid relative shrink-0 hover:opacity-70 transition-opacity bg-transparent border-none text-white underline cursor-pointer font-['Lato:Regular',sans-serif] text-[16px] leading-[18px]"
-          >
-            Privacy Policy
-          </button>
-        </div>
-      </div>
-
-      {/* Social Media Section */}
-      <div className="absolute left-1/2 -translate-x-1/2 bottom-[240px] content-stretch flex flex-col gap-[32px] items-center justify-center w-[90%] max-w-[382px]">
-        <p className="font-['Lato:Regular',sans-serif] leading-[26px] not-italic text-[24px] text-white">Follow us on:</p>
-
-        <div className="content-stretch flex items-center justify-between w-full">
-          {/* Facebook */}
-          <a
-            href="https://www.facebook.com/JigsawFinancialLtd/#"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="content-stretch flex flex-col gap-[8px] items-center shrink-0"
-          >
-            <div className="bg-[rgba(255,255,255,0.1)] box-border content-stretch flex gap-[8px] items-center p-[16px] rounded-[100px] size-[56px] relative">
-              <div aria-hidden="true" className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" />
-              <div className="relative shrink-0 size-[24px]">
-                <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
-                  <g clipPath="url(#clip0_mobile_facebook)">
-                    <path d={svgPaths.pa2aea00} fill="white" />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_mobile_facebook">
-                      <rect fill="white" height="24" width="24" />
-                    </clipPath>
-                  </defs>
-                </svg>
-              </div>
-              <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_4px_4px_0px_rgba(255,255,255,0.12),inset_0px_-5px_4px_0px_rgba(255,255,255,0.08)]" />
+            {/* Complaints and Privacy */}
+            <div className="flex font-['Lato:Regular',sans-serif] items-center justify-between leading-[18px] text-[16px] text-white underline w-full whitespace-nowrap">
+              <button
+                onClick={() => openPDF('/pdfs/complaints-process.pdf', 'Complaints Process')}
+                onMouseEnter={() => setHideCursorForLinks(true)}
+                onMouseLeave={() => setHideCursorForLinks(false)}
+                className="decoration-solid hover:opacity-70 transition-opacity bg-transparent border-none text-white underline cursor-pointer font-['Lato:Regular',sans-serif] text-[16px] leading-[18px]"
+              >
+                Complaints Process
+              </button>
+              <button
+                onClick={() => openPDF('/pdfs/privacy-policy.pdf', 'Privacy Policy')}
+                onMouseEnter={() => setHideCursorForLinks(true)}
+                onMouseLeave={() => setHideCursorForLinks(false)}
+                className="decoration-solid hover:opacity-70 transition-opacity bg-transparent border-none text-white underline cursor-pointer font-['Lato:Regular',sans-serif] text-[16px] leading-[18px]"
+              >
+                Privacy Policy
+              </button>
             </div>
-            <p className="font-['Lato:Light',sans-serif] leading-[28px] not-italic text-[20px] text-white tracking-[0.2px]">Facebook</p>
-          </a>
+          </div>
 
-          {/* Instagram */}
-          <a
-            href="https://www.instagram.com/jigsaw_financial?igsh=N2luMzM1dHU1dWNs"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="content-stretch flex flex-col gap-[8px] items-center shrink-0"
-          >
-            <div className="bg-[rgba(255,255,255,0.1)] box-border content-stretch flex gap-[8px] items-center p-[16px] rounded-[100px] size-[56px] relative">
-              <div aria-hidden="true" className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" />
-              <div className="relative shrink-0 size-[24px]">
-                <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
-                  <g clipPath="url(#clip0_mobile_instagram)">
-                    <path d={svgPaths.p2f6d7600} fill="white" />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_mobile_instagram">
-                      <rect fill="white" height="24" width="24" />
-                    </clipPath>
-                  </defs>
-                </svg>
-              </div>
-              <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_4px_4px_0px_rgba(255,255,255,0.12),inset_0px_-5px_4px_0px_rgba(255,255,255,0.08)]" />
+          {/* Social Links */}
+          <div className="w-full flex flex-col gap-[32px] items-center justify-center">
+            <p className="font-['Lato:Regular',sans-serif] leading-[26px] not-italic text-[24px] text-white whitespace-nowrap">Follow us on:</p>
+            <div className="flex items-center justify-between w-full">
+              {/* Facebook */}
+              <a
+                href="https://www.facebook.com/JigsawFinancialLtd/#"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col gap-[8px] items-center shrink-0 w-[84px]"
+              >
+                <div className="bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.2)] border-solid flex items-center p-[16px] rounded-[100px] size-[56px] relative">
+                  <div className="relative shrink-0 size-[24px]">
+                    <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
+                      <g clipPath="url(#clip0_mobile_facebook)">
+                        <path d={svgPaths.pa2aea00} fill="white" />
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_mobile_facebook">
+                          <rect fill="white" height="24" width="24" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                  </div>
+                  <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_4px_4px_0px_rgba(255,255,255,0.12),inset_0px_-5px_4px_0px_rgba(255,255,255,0.08)]" />
+                </div>
+                <p className="font-['Lato:Light',sans-serif] leading-[28px] not-italic text-[20px] text-white tracking-[0.2px] text-center w-full">Facebook</p>
+              </a>
+
+              {/* Instagram */}
+              <a
+                href="https://www.instagram.com/jigsaw_financial?igsh=N2luMzM1dHU1dWNs"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col gap-[8px] items-center shrink-0 w-[86px]"
+              >
+                <div className="bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.2)] border-solid flex items-center p-[16px] rounded-[100px] size-[56px] relative">
+                  <div className="relative shrink-0 size-[24px]">
+                    <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
+                      <g clipPath="url(#clip0_mobile_instagram)">
+                        <path d={svgPaths.p2f6d7600} fill="white" />
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_mobile_instagram">
+                          <rect fill="white" height="24" width="24" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                  </div>
+                  <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_4px_4px_0px_rgba(255,255,255,0.12),inset_0px_-5px_4px_0px_rgba(255,255,255,0.08)]" />
+                </div>
+                <p className="font-['Lato:Light',sans-serif] leading-[28px] not-italic text-[20px] text-center text-white tracking-[0.2px] w-full">Instagram</p>
+              </a>
+
+              {/* LinkedIn */}
+              <a
+                href="https://www.linkedin.com/company/jigsaw-financial-ltd/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col gap-[8px] items-center shrink-0 w-[74px]"
+              >
+                <div className="bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.2)] border-solid flex items-center p-[16px] rounded-[100px] size-[56px] relative">
+                  <div className="relative shrink-0 size-[24px]">
+                    <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
+                      <g clipPath="url(#clip0_mobile_linkedin)">
+                        <path clipRule="evenodd" d={svgPaths.p106ed680} fill="white" fillRule="evenodd" />
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_mobile_linkedin">
+                          <rect fill="white" height="24" width="24" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                  </div>
+                  <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_4px_4px_0px_rgba(255,255,255,0.12),inset_0px_-5px_4px_0px_rgba(255,255,255,0.08)]" />
+                </div>
+                <p className="font-['Lato:Light',sans-serif] leading-[28px] not-italic text-[20px] text-center text-white tracking-[0.2px] w-full">LinkedIn</p>
+              </a>
             </div>
-            <p className="font-['Lato:Light',sans-serif] leading-[28px] not-italic text-center text-[20px] text-white tracking-[0.2px]">Instagram</p>
-          </a>
+          </div>
 
-          {/* LinkedIn */}
-          <a
-            href="https://www.linkedin.com/company/jigsaw-financial-ltd/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="content-stretch flex flex-col gap-[8px] items-center shrink-0"
-          >
-            <div className="bg-[rgba(255,255,255,0.1)] box-border content-stretch flex gap-[8px] items-center p-[16px] rounded-[100px] size-[56px] relative">
-              <div aria-hidden="true" className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" />
-              <div className="relative shrink-0 size-[24px]">
-                <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
-                  <g clipPath="url(#clip0_mobile_linkedin)">
-                    <path clipRule="evenodd" d={svgPaths.p106ed680} fill="white" fillRule="evenodd" />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_mobile_linkedin">
-                      <rect fill="white" height="24" width="24" />
-                    </clipPath>
-                  </defs>
-                </svg>
-              </div>
-              <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_4px_4px_0px_rgba(255,255,255,0.12),inset_0px_-5px_4px_0px_rgba(255,255,255,0.08)]" />
+          {/* Footer Separator and Copyright */}
+          <div className="w-full flex flex-col gap-[32px] items-center">
+            <div className="w-full h-[1px] bg-white/50" />
+            <div className="w-full flex flex-col gap-[24px] items-center justify-center text-white text-center whitespace-nowrap">
+              <p className="font-['Lato:Regular',sans-serif] leading-[18px] text-[14px]">
+                © Copyright Jigsaw Financial. 2026. All Rights Reserved.
+              </p>
+              <p className="font-['Poppins:Regular',sans-serif] leading-[0] text-[0px] text-right">
+                <span className="font-['Lato:Light',sans-serif] leading-[18px] text-[14px]">Website by</span>
+                <span className="font-['Lato:Regular',sans-serif] leading-[18px] text-[14px]">{` `}</span>
+                <a
+                  href="https://funkyvibes.co.uk/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-['Lato:SemiBold',sans-serif] leading-[18px] text-[14px] text-white hover:underline transition-all"
+                >
+                  Funky Vibes Marketing
+                </a>
+              </p>
             </div>
-            <p className="font-['Lato:Light',sans-serif] leading-[28px] not-italic text-center text-[20px] text-white tracking-[0.2px]">LinkedIn</p>
-          </a>
+          </div>
+
         </div>
+
       </div>
 
-      {/* Separator Line */}
-      <div className="absolute bottom-[180px] h-0 left-1/2 -translate-x-1/2 w-[90%] max-w-[378px]">
-        <div className="absolute bottom-0 left-0 right-0 top-[-1px]">
-          <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 378 1">
-            <line stroke="white" strokeOpacity="0.5" x2="378" y1="0.5" y2="0.5" />
-          </svg>
-        </div>
-      </div>
 
-      {/* Footer */}
-      <div className="absolute content-stretch flex flex-col gap-[20px] items-center justify-center left-1/2 not-italic text-white bottom-[60px] -translate-x-1/2 w-[90%] max-w-[382px] px-4">
-        <p className="font-['Lato:Regular',sans-serif] leading-[16px] relative shrink-0 text-[12px] text-center">© Copyright Jigsaw Financial. 2026. All Rights Reserved.</p>
-        <p className="font-['Poppins:Regular',sans-serif] leading-[16px] relative shrink-0 text-[12px] text-center">
-          <span className="font-['Lato:Light',sans-serif]">Website by</span>
-          <span className="font-['Lato:Regular',sans-serif]"> </span>
-          <a
-            href="https://funkyvibes.co.uk/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-['Lato:SemiBold',sans-serif] hover:underline transition-all"
-          >
-            Funky Vibes Marketing
-          </a>
-        </p>
-      </div>
-    </motion.div>
+    </div>
   );
 }

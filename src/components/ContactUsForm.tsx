@@ -268,9 +268,9 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
     }
 
     // Validate form data (sending 'skipped' if bypassed to satisfy API utility)
-    const validation = validateFormData({ 
-      ...formData, 
-      captcha: bypassCaptcha ? 'skipped' : userAnswer 
+    const validation = validateFormData({
+      ...formData,
+      captcha: bypassCaptcha ? 'skipped' : userAnswer
     });
 
     if (!validation.isValid) {
@@ -286,9 +286,9 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
     setSubmitError(null);
 
     try {
-      const response = await submitContactForm({ 
-        ...formData, 
-        captcha: bypassCaptcha ? 'skipped' : userAnswer 
+      const response = await submitContactForm({
+        ...formData,
+        captcha: bypassCaptcha ? 'skipped' : userAnswer
       } as ContactFormData);
 
       if (response.success) {
@@ -758,10 +758,10 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
                 <div className="mb-4 bg-white/5 p-3 rounded-xl border border-white/10">
                   <Menu className="size-5 text-[#2ec4b6]" />
                 </div>
-                
+
                 <h3 className="font-['Lato:Bold',sans-serif] text-xl text-white mb-1 tracking-wide uppercase">Security Check</h3>
                 <p className="font-['Lato:Light',sans-serif] text-sm text-white/50 text-center mb-6">Verify you're human to send.</p>
-                
+
                 <div className="w-full bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col items-center gap-3 mb-6">
                   <span className="font-['Lato:Regular',sans-serif] text-2xl text-white tracking-[6px]">{captchaQuestion.q}</span>
                   <input
