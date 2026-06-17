@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { motion, useScroll, useTransform, useMotionValue } from 'motion/react';
+import { motion, useScroll, useTransform, useMotionValue, animate } from 'motion/react';
 import { Splash } from './components/Splash';
 import { SplashMobile } from './components/SplashMobile';
 import { HeroScrollSection } from './components/HeroScrollSection';
@@ -205,6 +205,13 @@ export default function App() {
       // Use requestIdleCallback to ensure the final splash release doesn't hitch the opening animation
       runWhenIdle(() => {
         setSplashAnimationComplete(true);
+        // On mobile: immediately animate the splash opacity to 0 so the logo
+        // doesn't linger over the hero section while the user hasn't scrolled yet.
+        // The scroll-based fade still works for desktop where the splash fades on scroll.
+        if (isMobileDevice()) {
+          animate(splashOpacityValue, 0, { duration: 0.5, ease: 'easeOut' });
+          setSplashHasBeenViewed(true);
+        }
       });
     }
   }, [minSplashTimerDone, mountStage, dataProgress]);
@@ -212,19 +219,19 @@ export default function App() {
   // Track scroll position to hide navigation during splash and manage viewed state
   useEffect(() => {
     const unsubscribe = scrollY.on('change', (value) => {
-      // Calculate if splash is still visible (navigation should be hidden)
-      // We only update state when the visibility threshold is crossed to prevent re-renders
-      // Must match the splash fade threshold (0.8vh) so nav doesn't appear while splash is still fading
-      const visibilityThreshold = window.innerHeight * 0.8;
+      // On mobile: fade the splash out over just 15% of viewport height so it
+      // disappears quickly on the first scroll gesture and doesn't overlap hero content.
+      // On desktop: keep the original 80% parallax fade.
+      const fadeThreshold = window.innerHeight * (isMobile ? 0.25 : 0.8);
+
+      const visibilityThreshold = fadeThreshold;
       const visible = !splashHasBeenViewed && value < visibilityThreshold;
       if (visible !== isSplashVisible) {
         setIsSplashVisible(visible);
       }
 
-      // Mark splash as viewed once user scrolls past the splash fade threshold
-      // Splash fades out at 0.8vh, so mark it as viewed after that
-      const splashFadeThreshold = window.innerHeight * 0.8;
-      if (value > splashFadeThreshold && !splashHasBeenViewed) {
+      // Mark splash as viewed once user scrolls past the fade threshold
+      if (value > fadeThreshold && !splashHasBeenViewed) {
         setSplashHasBeenViewed(true);
       }
 
@@ -232,13 +239,12 @@ export default function App() {
       if (splashHasBeenViewed) {
         splashOpacityValue.set(0);
       } else {
-        const fadeThreshold = window.innerHeight * 0.8;
         const opacity = Math.max(0, Math.min(1, 1 - (value / fadeThreshold)));
         splashOpacityValue.set(opacity);
       }
     });
     return () => unsubscribe();
-  }, [scrollY, splashHasBeenViewed, splashOpacityValue, isSplashVisible]);
+  }, [scrollY, splashHasBeenViewed, splashOpacityValue, isSplashVisible, isMobile]);
 
   // Fetch team members from API - Defer until Stage 2 (Mid-page) for core performance
   useEffect(() => {
@@ -589,7 +595,7 @@ export default function App() {
             </ErrorBoundary>
           </div>
 
-          <div id="TeamSection" className={isMobile ? "min-h-[50vh] bg-[#2c4657]" : ""}>
+          <div id="TeamSection" className={isMobile ? "min-h-[50vh] bg-[#2c4657] overflow-hidden" : ""}>
             <ErrorBoundary>
               <Suspense fallback={<SectionLoader />}>
                 {!isMobile && (

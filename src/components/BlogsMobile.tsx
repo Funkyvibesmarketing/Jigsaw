@@ -100,8 +100,8 @@ function BlogCard({
                   className="pr-[12px] py-[10px]"
                 >
                   {isInfoActive && (
-                    <p className="text-white text-[10px] leading-[normal] font-['Lato',sans-serif] font-light tracking-[0.2px]">
-                      ‘This blog has information contained within that was correct at the time of publication, but is subject to change.”
+                    <p className="text-white text-[10px] leading-[normal] font-['Lato',sans-serif] font-normal tracking-[0.2px]">
+                      'This blog has information contained within that was correct at the time of publication, but is subject to change."
                     </p>
                   )}
                 </motion.div>
@@ -118,7 +118,7 @@ function BlogCard({
                 <p className={`font-['Lato:SemiBold',sans-serif] leading-[normal] relative shrink-0 text-[16px] w-full ${isActive ? 'text-white' : 'text-[#2c4657]'}`}>
                   {blog.title}
                 </p>
-                <p className={`-webkit-box font-['Lato:Light',sans-serif] leading-[20px] overflow-ellipsis overflow-hidden relative shrink-0 text-[12px] tracking-[0.2px] w-full ${isActive ? 'text-[rgba(255,255,255,0.8)]' : 'text-[rgba(44,70,87,0.8)]'}`}>
+                <p className={`-webkit-box font-['Lato:Normal',sans-serif] leading-[20px] overflow-ellipsis overflow-hidden relative shrink-0 text-[14px] tracking-[0.2px] w-full ${isActive ? 'text-[rgba(255,255,255,0.8)]' : 'text-[rgba(44,70,87,0.8)]'}`}>
                   {blog.description}
                 </p>
               </div>
@@ -174,7 +174,6 @@ function BlogPopupMobile({
   // Handle content scroll
   const handleContentScroll = () => {
     if (!contentRef.current) return;
-
     const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
     const maxScroll = scrollHeight - clientHeight;
     const percentage = maxScroll > 0 ? scrollTop / maxScroll : 0;
@@ -184,14 +183,10 @@ function BlogPopupMobile({
   // Prevent scroll propagation to main page
   const handleWheel = (e: React.WheelEvent) => {
     e.stopPropagation();
-
     if (!contentRef.current) return;
-
     const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
     const isAtTop = scrollTop === 0;
     const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
-
-    // Prevent scroll if we're at the edge and trying to scroll further in that direction
     if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
       e.preventDefault();
     }
@@ -204,71 +199,48 @@ function BlogPopupMobile({
 
   const handleTouchMove = (e: React.TouchEvent) => {
     e.stopPropagation();
-
     if (!contentRef.current) return;
-
     const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
     const isAtTop = scrollTop === 0;
     const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
-
-    // Allow touch scroll within content bounds
     if (!isAtTop && !isAtBottom) {
       return;
     }
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-[16px]">
+    /*
+      Outer wrapper is a flex column so the popup card and nav arrows stack
+      vertically and the whole group is centred in the true viewport.
+
+      paddingTop: 96px — clears the mobile nav bar (80px) plus a small gap
+      paddingBottom: 24px — breathing room above the iOS home indicator
+      paddingLeft/Right: 16px — standard side gutter
+
+      The popup is rendered OUTSIDE the sticky/overflow container in BlogsMobile,
+      so this `fixed` div really does anchor to the viewport on iOS Chrome/Safari.
+    */
+    <div
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
+      style={{ paddingTop: '96px', paddingBottom: '24px', paddingLeft: '16px', paddingRight: '16px' }}
+    >
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-white/20 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      {/* Popup Card */}
+      {/* Popup Card — fixed height, single scroll container for all content */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
         transition={{ duration: 0.3 }}
-        className="relative z-10 bg-gradient-to-b from-[rgba(255,255,255,0.95)] to-[rgba(228,236,241,0.95)] to-[80.385%] box-border flex flex-col gap-[24px] max-h-[70vh] h-[70vh] items-start overflow-hidden p-[24px] rounded-[12px] shrink-0 w-full max-w-[500px] shadow-xl"
+        className="relative z-10 bg-gradient-to-b from-[rgba(255,255,255,0.95)] to-[rgba(228,236,241,0.95)] to-[80.385%] rounded-[12px] w-full max-w-[500px] shadow-xl overflow-hidden"
+        style={{ flex: '1 1 auto', minHeight: 0 }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Blog Image */}
-        <div className="h-[160px] relative shrink-0 w-full rounded-[8px] overflow-hidden">
-          <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[8px] size-full" src={blog.image} loading="lazy" />
-        </div>
-
-        {/* Blog Content */}
-        <div className="flex-1 flex flex-col gap-[16px] items-start min-h-0 w-full overflow-hidden">
-          {blog.date && (
-            <p className="font-['Lato:Light',sans-serif] leading-[normal] not-italic shrink-0 text-[12px] text-[#2c4657]">
-              {blog.date}
-            </p>
-          )}
-          <p className="font-['Lato:SemiBold',sans-serif] leading-[normal] not-italic shrink-0 text-[#2c4657] text-[24px] w-full">
-            {blog.title}
-          </p>
-          <p className="font-['Lato:Light',sans-serif] leading-[normal] not-italic text-[10px] text-[#2c4657] font-light tracking-[0.2px] opacity-80 mt-[-8px]">
-            ‘This blog has information contained within that was correct at the time of publication, but is subject to change.”
-          </p>
-
-          {/* Scrollable Content */}
-          <div
-            ref={contentRef}
-            onScroll={handleContentScroll}
-            onWheel={handleWheel}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            className="flex-1 overflow-y-auto w-full pr-[8px] custom-scrollbar min-h-0"
-          >
-            <div className="font-['Lato:Regular',sans-serif] leading-[20px] not-italic text-[14px] text-[rgba(44,70,87,0.8)] tracking-[0.2px] whitespace-pre-line pb-[20px]">
-              {blog.fullContent || blog.description}
-            </div>
-          </div>
-        </div>
-
-        {/* Close Button */}
+        {/* Close Button — sticky so it stays visible as user scrolls */}
         <button
           onClick={onClose}
           className="absolute right-[16px] top-[16px] size-[40px] cursor-pointer hover:opacity-70 transition-opacity flex items-center justify-center bg-white rounded-full shadow-md z-10"
@@ -276,10 +248,47 @@ function BlogPopupMobile({
         >
           <X className="size-[20px] text-[#2c4657] stroke-[2.5]" />
         </button>
+
+        {/* Single scrollable area — image + all text content scrolls together */}
+        <div
+          ref={contentRef}
+          onScroll={handleContentScroll}
+          onWheel={handleWheel}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          className="h-full overflow-y-auto blog-popup-scrollbar"
+        >
+          {/* Blog Image */}
+          <div className="blog-popup-image" style={{ borderRadius: '12px 12px 0 0' }}>
+            <img
+              alt={blog.title}
+              src={blog.image}
+              loading="eager"
+            />
+          </div>
+
+          {/* Blog metadata + body — padded content below the image */}
+          <div className="flex flex-col gap-[12px] items-start p-[24px] pb-[16px]">
+            {blog.date && (
+              <p className="font-['Lato:Light',sans-serif] leading-[normal] not-italic text-[12px] text-[#2c4657]">
+                {blog.date}
+              </p>
+            )}
+            <p className="font-['Lato:SemiBold',sans-serif] leading-[normal] not-italic text-[#2c4657] text-[22px] w-full">
+              {blog.title}
+            </p>
+            <p className="font-['Lato:Normal',sans-serif] leading-[700] not-italic text-[10px] text-[#2c4657] font-light tracking-[0.2px] opacity-80">
+              'This blog has information contained within that was correct at the time of publication, but is subject to change."
+            </p>
+            <div className="font-['Lato:Normal',sans-serif] leading-[20px] not-italic text-[16px] text-[rgba(44,70,87,0.8)] tracking-[0.2px] whitespace-pre-line pb-[8px] w-full">
+              {blog.fullContent || blog.description}
+            </div>
+          </div>
+        </div>
       </motion.div>
 
-      {/* Navigation Arrows - Below Popup */}
-      <div className="absolute left-1/2 -translate-x-1/2 bottom-[60px] flex gap-[16px] z-20">
+      {/* Navigation Arrows — part of the flex column, always visible below the card */}
+      <div className="relative z-20 flex gap-[16px] pt-[16px] shrink-0">
         <button
           onClick={onPrevious}
           className="w-[48px] h-[48px] cursor-pointer hover:opacity-70 transition-opacity"
@@ -294,24 +303,6 @@ function BlogPopupMobile({
           <Frame1000002974 />
         </button>
       </div>
-
-      <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255,255,255,0.3);
-          border-radius: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #2ec4b6;
-          border-radius: 16px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #26a89c;
-          border-radius: 16px;
-        }
-      `}</style>
     </div>
   );
 }
@@ -414,78 +405,72 @@ export function BlogsMobile({ onScrollProgress, blogs = [], onReady }: BlogsMobi
         <div className="flex-1 flex flex-col justify-center pb-[40px] z-10">
           <motion.div style={{ y: cardsY, opacity: cardsOpacity }}>
             {isMounted && (
-            <Swiper
-              key={`${isMounted}-${blogs.length}`}
-              modules={[EffectCoverflow, Navigation]}
-              effect="coverflow"
-              grabCursor={true}
-              centeredSlides={true}
-              slidesPerView="auto"
-              loop={true}
-              speed={500}
-              // @ts-ignore
-              loopAddBlankSlides={true}
-              updateOnWindowResize={true}
-              observer={true}
-              observeParents={true}
-              touchRatio={1}
-              resistance={true}
-              resistanceRatio={0.85}
-              coverflowEffect={{
-                rotate: 0,
-                stretch: -30,
-                depth: 150,
-                modifier: 1,
-                slideShadows: false,
-              }}
-              onSwiper={(swiper) => {
-                setSwiperInstance(swiper);
-                setActiveIndex(swiper.activeIndex);
-              }}
-              onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
-              className="blogs-swiper-mobile"
-            >
-              {blogData.map((blog, index) => (
-                <SwiperSlide key={`${blog.id}-${index}`}>
-                  {({ isActive }) => (
-                    <BlogCard
-                      blog={blog}
-                      isActive={isActive}
-                      onClick={() => handleBlogClick(index)}
-                    />
-                  )}
-                </SwiperSlide>
-              ))}
-            </Swiper>
+              <Swiper
+                key={`${isMounted}-${blogs.length}`}
+                modules={[EffectCoverflow, Navigation]}
+                effect="coverflow"
+                grabCursor={true}
+                centeredSlides={true}
+                slidesPerView="auto"
+                loop={true}
+                speed={500}
+                // @ts-ignore
+                loopAddBlankSlides={true}
+                updateOnWindowResize={true}
+                observer={true}
+                observeParents={true}
+                touchRatio={1}
+                resistance={true}
+                resistanceRatio={0.85}
+                coverflowEffect={{
+                  rotate: 0,
+                  stretch: -30,
+                  depth: 150,
+                  modifier: 1,
+                  slideShadows: false,
+                }}
+                onSwiper={(swiper) => {
+                  setSwiperInstance(swiper);
+                  setActiveIndex(swiper.activeIndex);
+                }}
+                onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+                className="blogs-swiper-mobile"
+              >
+                {blogData.map((blog, index) => (
+                  <SwiperSlide key={`${blog.id}-${index}`}>
+                    {({ isActive }) => (
+                      <BlogCard
+                        blog={blog}
+                        isActive={isActive}
+                        onClick={() => handleBlogClick(index)}
+                      />
+                    )}
+                  </SwiperSlide>
+                ))}
+              </Swiper>
             )}
           </motion.div>
         </div>
 
-        {/* Blog Popup */}
-        <AnimatePresence>
-          {selectedBlog && (
-            <BlogPopupMobile
-              blog={selectedBlog}
-              onClose={handleClosePopup}
-              onPrevious={handlePrevious}
-              onNext={handleNext}
-            />
-          )}
-        </AnimatePresence>
-
-        <style>{`
-          .blogs-swiper-mobile {
-            width: 100%;
-            padding: 20px 0;
-          }
-          .blogs-swiper-mobile .swiper-slide {
-            width: 292px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          }
-        `}</style>
+        {/* Swiper styles are in index.css under .blogs-swiper-mobile */}
       </div>
+
+      {/*
+        Blog Popup rendered OUTSIDE the sticky container so that `fixed` positioning
+        is anchored to the true viewport — not recontained by the sticky/overflow parent.
+        On iOS Safari/Chrome, fixed children of overflow:hidden or sticky elements get
+        recontained, which caused the popup to be offset and clipped.
+      */}
+      <AnimatePresence>
+        {selectedBlog && (
+          <BlogPopupMobile
+            blog={selectedBlog}
+            onClose={handleClosePopup}
+            onPrevious={handlePrevious}
+            onNext={handleNext}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

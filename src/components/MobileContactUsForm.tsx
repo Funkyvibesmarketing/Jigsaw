@@ -319,7 +319,7 @@ export default function MobileContactUsForm({
             <p className="font-['Lato:Light',sans-serif] leading-[20px] text-[14px] text-[rgba(255,255,255,0.6)] whitespace-pre-wrap">{`Jigsaw Financial usually charges a fee for mortgage advice. The amount of the fee will depend on your circumstances and will be discussed and agreed with you at the earliest opportunity. This should be payable for the customer on application, offer or completion.`}</p>
 
             {/* Complaints and Privacy */}
-            <div className="flex font-['Lato:Regular',sans-serif] items-center justify-between leading-[18px] text-[16px] text-white underline w-full whitespace-nowrap">
+            <div className="mobile-form-links-row flex font-['Lato:Regular',sans-serif] items-center justify-between leading-[18px] text-[16px] text-white underline w-full whitespace-nowrap">
               <button
                 onClick={() => openPDF('/pdfs/complaints-process.pdf', 'Complaints Process')}
                 onMouseEnter={() => setHideCursorForLinks(true)}

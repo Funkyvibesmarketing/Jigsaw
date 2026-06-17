@@ -71,24 +71,27 @@ export function TeamMobile({
   const displayMembers = teamMembers.slice(0, 3);
   const totalSlides = 3;
 
-  // Team content should be visible when TEAM text masking starts sliding in (0.72)
-  // Fade in from 0.72 to 0.82 for smooth transition
+  // Team content should be visible only after the TEAM mask has started (0.75)
+  // Fade in from 0.78 to 0.88 — starts after mask is partially opaque, never bleeds through early
   let teamContentOpacity = 0;
-  if (reviewsScrollProgress && reviewsScrollProgress >= 0.72 && reviewsScrollProgress < 0.82) {
-    // Fade in from 0.72 to 0.82
-    teamContentOpacity = (reviewsScrollProgress - 0.72) / 0.10;
-  } else if (reviewsScrollProgress && reviewsScrollProgress >= 0.82) {
+  if (reviewsScrollProgress && reviewsScrollProgress >= 0.78 && reviewsScrollProgress < 0.88) {
+    teamContentOpacity = (reviewsScrollProgress - 0.78) / 0.10;
+  } else if (reviewsScrollProgress && reviewsScrollProgress >= 0.88) {
     teamContentOpacity = 1;
   }
 
   // Team slides up when Process section appears
   let teamSlideY = 0;
   if (processScrollProgress && processScrollProgress > 0) {
-    // Start sliding earlier - use a faster/earlier timing
-    // When processScrollProgress is 0.10 (halfway through Process slide-up), Team should start moving
-    const slideProgress = Math.min(processScrollProgress / 0.15, 1); // Slide completes by 0.15 instead of 0.20
+    const slideProgress = Math.min(processScrollProgress / 0.15, 1); // Slide completes by 0.15
     teamSlideY = slideProgress * -100;
   }
+
+  // Keep team z-index ABOVE the Process section (zIndex 96/100) for the entire
+  // duration of the slide-out. Only after the team is fully off-screen (-100vh)
+  // do we let it drop below Process so touches pass through correctly.
+  const teamIsFullyGone = processScrollProgress && processScrollProgress >= 0.15;
+  const teamZIndex = teamIsFullyGone ? 50 : 105;
 
   // Report scroll progress to parent
   useEffect(() => {
@@ -176,7 +179,7 @@ export function TeamMobile({
 
   return (
     <>
-      {/* Only render when Team should be visible */}
+      {/* Only render when TEAM mask has started appearing */}
       {reviewsScrollProgress && reviewsScrollProgress >= 0.75 && (
         <>
           {/* White overlay with TEAM text cutout - reveals team content through the text */}
@@ -196,7 +199,7 @@ export function TeamMobile({
                 })(),
                 touchAction: 'none',
                 transform: `translateY(${teamSlideY}vh)`,
-                zIndex: processScrollProgress && processScrollProgress > 0 ? 40 : 100
+                zIndex: teamIsFullyGone ? 40 : 106
               } as React.CSSProperties}
             >
               <svg className="absolute inset-0 w-full h-full" style={{ willChange: 'transform' } as React.CSSProperties}>
@@ -286,7 +289,7 @@ export function TeamMobile({
             style={{
               opacity: teamContentOpacity,
               pointerEvents: (reviewsScrollProgress && reviewsScrollProgress >= 0.95) ? 'auto' : 'none',
-              zIndex: processScrollProgress && processScrollProgress > 0 ? 50 : 95,
+              zIndex: teamZIndex,
               transform: `translateY(${teamSlideY}vh)`
             }}
           >
@@ -385,7 +388,7 @@ export function TeamMobile({
                           >
                             About {member.name.split(' ')[0]}
                           </button>
-                          
+
                           {member.linkedinUrl && (
                             <a
                               href={member.linkedinUrl}
@@ -414,71 +417,70 @@ export function TeamMobile({
                   );
                 })}
                 </div>
-              </div>
 
-              {/* Bottom dot indicators */}
-              <div className="absolute left-1/2 -translate-x-1/2 bottom-[40px] flex gap-[8px] items-center z-50">
-                {Array.from({ length: totalSlides }).map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      setDirection(idx > currentIndex ? 1 : -1);
-                      setCurrentIndex(idx);
-                    }}
-                    className={`w-[8px] h-[8px] rounded-full transition-all duration-300 ${
-                      idx === currentIndex ? 'bg-white scale-125' : 'bg-[rgba(255,255,255,0.3)]'
-                    }`}
-                    aria-label={`Go to slide ${idx + 1}`}
-                  />
-                ))}
+                {/* Bottom dot indicators - sibling of slider container so gap is always consistent */}
+                <div className="team-dots">
+                  {Array.from({ length: totalSlides }).map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        setDirection(idx > currentIndex ? 1 : -1);
+                        setCurrentIndex(idx);
+                      }}
+                      className={`w-[8px] h-[8px] rounded-full transition-all duration-300 ${idx === currentIndex ? 'bg-white scale-125' : 'bg-[rgba(255,255,255,0.3)]'
+                        }`}
+                      aria-label={`Go to slide ${idx + 1}`}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-
-            {/* Read More Popup Overlay */}
-            <AnimatePresence>
-              {selectedMember && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="fixed inset-0 z-[100] flex items-center justify-center p-[24px]"
-                  style={{ backdropFilter: 'blur(10px)', backgroundColor: 'rgba(23, 40, 52, 0.4)' }}
-                  onClick={() => setSelectedMember(null)}
-                >
-                  <motion.div
-                    initial={{ scale: 0.95, y: 20 }}
-                    animate={{ scale: 1, y: 0 }}
-                    exit={{ scale: 0.95, y: 20 }}
-                    transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 25 }}
-                    className="rounded-[12px] p-[16px] w-full max-w-[400px] max-h-[85vh] flex flex-col relative shadow-[0px_8px_32px_rgba(0,0,0,0.4)] overflow-hidden pointer-events-auto"
-                    style={{ backgroundColor: '#EDF2F4' }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {/* Close Button */}
-                    <button
-                      type="button"
-                      onClick={() => setSelectedMember(null)}
-                      className="absolute top-5 right-5 bg-transparent border-none p-2 cursor-pointer text-[#2c4657] hover:opacity-70 transition-opacity z-10"
-                      aria-label="Close"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </button>
-
-                    <h3 className="font-['Lato:Bold',sans-serif] text-[20px] text-[#2c4657] mb-5 pr-8">{selectedMember.name}</h3>
-
-                    <div className="overflow-y-auto pr-2 bio-scrollbar flex-1 pb-[10px] pt-[10px]">
-                      <p className="font-['Lato:Regular',sans-serif] leading-[28px] text-[15px] text-[#2c4657] whitespace-pre-wrap tracking-[0.14px]">
-                        {selectedMember.bio}
-                      </p>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </motion.div>
+
+          {/* Read More Popup Overlay - Placed outside the transformed parent to ensure correct center alignment */}
+          <AnimatePresence>
+            {selectedMember && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="fixed inset-0 z-[250] flex items-center justify-center p-[24px]"
+                style={{ backdropFilter: 'blur(10px)', backgroundColor: 'rgba(23, 40, 52, 0.4)' }}
+                onClick={() => setSelectedMember(null)}
+              >
+                <motion.div
+                  initial={{ scale: 0.95, y: 20 }}
+                  animate={{ scale: 1, y: 0 }}
+                  exit={{ scale: 0.95, y: 20 }}
+                  transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 25 }}
+                  className="rounded-[12px] p-[16px] w-full max-w-[400px] max-h-[85vh] flex flex-col relative shadow-[0px_8px_32px_rgba(0,0,0,0.4)] overflow-hidden pointer-events-auto"
+                  style={{ backgroundColor: '#EDF2F4' }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Close Button */}
+                  <button
+                    type="button"
+                    onClick={() => setSelectedMember(null)}
+                    className="absolute top-5 right-5 bg-transparent border-none p-2 cursor-pointer text-[#2c4657] hover:opacity-70 transition-opacity z-10"
+                    aria-label="Close"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+
+                  <h3 className="font-['Lato:Bold',sans-serif] text-[20px] text-[#2c4657] mb-5 pr-8">{selectedMember.name}</h3>
+
+                  <div className="overflow-y-auto pr-2 bio-scrollbar flex-1 pb-[10px] pt-[10px]">
+                    <p className="font-['Lato:Regular',sans-serif] leading-[28px] text-[15px] text-[#2c4657] whitespace-pre-wrap tracking-[0.14px]">
+                      {selectedMember.bio}
+                    </p>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </>
       )}
     </>

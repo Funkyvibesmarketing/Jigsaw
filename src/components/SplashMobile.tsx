@@ -4,39 +4,39 @@ import svgPaths from '../imports/svg-jnardqphfi';
 import svgPathsALogo from '../imports/svg-srebhhv8fw';
 import imgFinancialBanner from 'figma:asset/9d0fdbe2203505eb3ad7a3a5c6f2a92dd6f76e7a.png';
 
-// Detect iOS device for performance optimizations
-const isIOS = () => {
-  if (typeof navigator === 'undefined') return false;
-  return /iPad|iPhone|iPod/.test(navigator.userAgent);
-};
-
 export function SplashMobile({ dataProgress = 0, onComplete }: { dataProgress?: number, onComplete: () => void }) {
   const progressValue = useMotionValue(0);
   const [showFinancial, setShowFinancial] = useState(false);
   const [fadeProgress, setFadeProgress] = useState(false);
   const [showScrollHint, setShowScrollHint] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
-  const iosDevice = isIOS();
 
   useEffect(() => {
-    // Start animation
-    setHasStarted(true);
+    // Small delay lets iOS Safari fully activate rAF scheduling before we start
+    const startDelay = setTimeout(() => {
+      setHasStarted(true);
 
-    // Animate progress to the current data loading progress
-    const controls = animate(progressValue, dataProgress, {
-      duration: 0.5,
-      ease: "linear",
-    });
+      // Use Framer Motion's animate() instead of manual rAF — it uses its own
+      // clock that is more reliable on iOS Safari (handles tab visibility changes,
+      // power management throttling, and initial scheduling delays gracefully).
+      const controls = animate(progressValue, 100, {
+        duration: 2.2,
+        ease: [0.16, 1, 0.3, 1], // ease-out expo — feels fast early, smooth at end
+        onUpdate: (latest) => {
+          // onUpdate fires on the same frame as the value change
+          if (latest >= 99.9) {
+            setFadeProgress(true);
+            setTimeout(() => setShowFinancial(true), 200);
+            setTimeout(() => setShowScrollHint(true), 400);
+          }
+        },
+      });
 
-    // If data is loaded, trigger the completion sequence
-    if (dataProgress >= 99) {
-      setTimeout(() => setFadeProgress(true), 0);
-      setTimeout(() => setShowFinancial(true), 20);
-      setTimeout(() => setShowScrollHint(true), 40);
-    }
+      return () => controls.stop();
+    }, 50); // 50 ms startup grace period for iOS
 
-    return () => controls.stop();
-  }, [progressValue, dataProgress]);
+    return () => clearTimeout(startDelay);
+  }, [progressValue]);
 
   return (
     <div className="min-h-screen w-full bg-white m-0 p-0 border-0 transition-opacity duration-300"
@@ -46,13 +46,12 @@ export function SplashMobile({ dataProgress = 0, onComplete }: { dataProgress?: 
         showFinancial={showFinancial}
         fadeProgress={fadeProgress}
         showScrollHint={showScrollHint}
-        isIOS={iosDevice}
       />
     </div>
   );
 }
 
-function AnimatedLogoScreen({ progressValue, showFinancial, fadeProgress, showScrollHint, isIOS }: { progressValue: any, showFinancial: boolean, fadeProgress: boolean, showScrollHint: boolean, isIOS: boolean }) {
+function AnimatedLogoScreen({ progressValue, showFinancial, fadeProgress, showScrollHint }: { progressValue: any, showFinancial: boolean, fadeProgress: boolean, showScrollHint: boolean }) {
   const percentRef = useRef<HTMLParagraphElement>(null);
 
   // Direct DOM update for percentage text to avoid React re-renders
@@ -75,22 +74,23 @@ function AnimatedLogoScreen({ progressValue, showFinancial, fadeProgress, showSc
       transition={{ duration: 0.5 }}
       style={{ margin: 0, padding: 0 }}
     >
-      {/* JIGSAW Letters - Mobile optimized with will-change */}
+      {/* JIGSAW Letters — each path gets its own compositing layer via willChange + translateZ */}
       <div className="absolute h-[60px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[392px] px-4" style={{ marginTop: '-40px' }} data-name="JIGSAW">
         <svg className="block size-full overflow-visible" fill="none" preserveAspectRatio="none" viewBox="0 0 402 69">
-          <g id="JIGSAW" style={{ willChange: 'transform, opacity' }}>
-            {/* iOS optimization: disable complex easing (use ease, not custom bezier) during splash to reduce main thread load */}
+          {/* No willChange on the <g> — it belongs on each animated child instead */}
+          <g id="JIGSAW">
             <motion.path
               d={svgPaths.p3630e540}
               fill="#2C4657"
               stroke="#2C4657"
               strokeWidth="1.5"
+              style={{ willChange: 'transform, opacity' }}
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: -20 }}
               transition={{
-                delay: 0.2,
-                duration: 0.6,
-                ease: isIOS ? "easeOut" : [0.34, 1.56, 0.64, 1]
+                delay: 0.25,
+                duration: 0.65,
+                ease: [0.34, 1.56, 0.64, 1]
               }}
             />
             <motion.path
@@ -98,12 +98,13 @@ function AnimatedLogoScreen({ progressValue, showFinancial, fadeProgress, showSc
               fill="#2C4657"
               stroke="#2C4657"
               strokeWidth="1.5"
+              style={{ willChange: 'transform, opacity' }}
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: -15 }}
               transition={{
                 delay: 0.4,
-                duration: 0.6,
-                ease: isIOS ? "easeOut" : [0.34, 1.56, 0.64, 1]
+                duration: 0.65,
+                ease: [0.34, 1.56, 0.64, 1]
               }}
             />
             <motion.path
@@ -111,12 +112,13 @@ function AnimatedLogoScreen({ progressValue, showFinancial, fadeProgress, showSc
               fill="#2C4657"
               stroke="#2C4657"
               strokeWidth="1.5"
+              style={{ willChange: 'transform, opacity' }}
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: -10 }}
               transition={{
-                delay: 0.6,
-                duration: 0.6,
-                ease: isIOS ? "easeOut" : [0.34, 1.56, 0.64, 1]
+                delay: 0.55,
+                duration: 0.65,
+                ease: [0.34, 1.56, 0.64, 1]
               }}
             />
             <motion.path
@@ -124,12 +126,13 @@ function AnimatedLogoScreen({ progressValue, showFinancial, fadeProgress, showSc
               fill="#2C4657"
               stroke="#2C4657"
               strokeWidth="1.5"
+              style={{ willChange: 'transform, opacity' }}
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{
-                delay: 0.8,
-                duration: 0.6,
-                ease: isIOS ? "easeOut" : [0.34, 1.56, 0.64, 1]
+                delay: 0.7,
+                duration: 0.65,
+                ease: [0.34, 1.56, 0.64, 1]
               }}
             />
             <motion.path
@@ -137,29 +140,37 @@ function AnimatedLogoScreen({ progressValue, showFinancial, fadeProgress, showSc
               fill="#2C4657"
               stroke="#2C4657"
               strokeWidth="1.5"
+              style={{ willChange: 'transform, opacity' }}
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 38 }}
               transition={{
-                delay: 1.0,
-                duration: 0.6,
-                ease: isIOS ? "easeOut" : [0.34, 1.56, 0.64, 1]
+                delay: 0.85,
+                duration: 0.65,
+                ease: [0.34, 1.56, 0.64, 1]
               }}
             />
           </g>
         </svg>
 
+        {/*
+          A-logo: replace left/top animation (triggers layout) with translateX/Y only.
+          We position it at its final resting place via inline style, then animate
+          the entrance purely with translate + scale — no layout thrash on iOS.
+        */}
         <motion.div
           className="absolute w-[62px] h-[60px]"
-          style={{ willChange: 'transform, opacity, left, top' }}
-          initial={{ opacity: 0, scale: 0.5, left: '50%', x: '-50%', top: '50%', y: '-50%' }}
-          animate={{ opacity: 1, scale: 1, left: 'calc(50% + 25px)', top: '2px', x: 0, y: 0 }}
+          style={{
+            willChange: 'transform, opacity',
+            left: 'calc(50% + 25px)',
+            top: '2px',
+          }}
+          initial={{ opacity: 0, scale: 0.5, x: '-50%', y: '-50%' }}
+          animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
           transition={{
-            opacity: { delay: 0, duration: 0.5 },
-            scale: { delay: 0, duration: 0.8, ease: isIOS ? "easeOut" : [0.34, 1.56, 0.64, 1] },
-            left: { delay: 0.2, duration: 0.6, ease: isIOS ? "easeOut" : [0.34, 1.56, 0.64, 1] },
-            top: { delay: 0.2, duration: 0.6, ease: isIOS ? "easeOut" : [0.34, 1.56, 0.64, 1] },
-            x: { delay: 0.2, duration: 0.6, ease: isIOS ? "easeOut" : [0.34, 1.56, 0.64, 1] },
-            y: { delay: 0.2, duration: 0.6, ease: isIOS ? "easeOut" : [0.34, 1.56, 0.64, 1] }
+            opacity: { delay: 0.1, duration: 0.5 },
+            scale: { delay: 0.1, duration: 0.75, ease: [0.34, 1.56, 0.64, 1] },
+            x: { delay: 0.25, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] },
+            y: { delay: 0.25, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] },
           }}
         >
           <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 62.4487 68.11">

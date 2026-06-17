@@ -120,15 +120,16 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
   // If splash has been viewed, show sentence immediately at top
   const sentenceOpacity = useTransform(
     scrollYProgress,
-    [0, 0.10, 0.14, 0.30, 0.42],
+    [0, 0.10, 0.14, 0.32, 0.42],
     splashViewed ? [1, 1, 1, 1, 0] : [0, 0, 1, 1, 0]
   );
-  // Mobile: start from marking position (centered on house as shown in image)
-  // Sentence stays in position until 0.25, then starts sliding up and is gone by 0.42
+  // Slowed exit: spread the upward travel over a wider range so it doesn't rush off screen.
+  // Was: 0.25→0.30 = -400px (80px per 1%), 0.30→0.42 = -600px (50px per 1%)
+  // Now: 0.25→0.42 = -600px total (~35px per 1%) — smooth, proportional exit
   const sentenceY = useTransform(
     scrollYProgress,
-    [0, 0.10, 0.14, 0.25, 0.30, 0.42],
-    splashViewed ? [0, 0, 0, 0, -400, -1000] : [0, 0, 0, 0, -400, -1000]
+    [0, 0.10, 0.14, 0.25, 0.42],
+    [0, 0, 0, 0, -600]
   );
 
   // Step 4: Navigation appears (compressed from 0.375-0.5 to 0.18-0.28)
@@ -378,12 +379,12 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
 
           {/* Sentence - Step 3 */}
           <motion.div
-            className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 text-center top-1/2 w-[346px] pt-[24px] z-[15]"
-            style={{ opacity: sentenceOpacity, y: sentenceY, borderTop: '1px solid #ffffff' }}
+            className="hero-sentence-mobile absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[15]"
+            style={{ opacity: sentenceOpacity, y: sentenceY }}
           >
-            <div className="font-lato-bold text-[64px] leading-[72px] tracking-[1px] text-white uppercase">
-              <p className="m-0">Advice</p>
-              <p className="m-0">that fits</p>
+            <div className="hero-sentence-text">
+              <p>Advice</p>
+              <p>that fits</p>
             </div>
           </motion.div>
 
@@ -426,7 +427,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
             <div className="absolute bottom-0 left-0 w-full h-[400px] bg-gradient-to-t from-white to-transparent z-[2]" />
 
             {/* FCA Compliance Section - Mobile Design */}
-            <div className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[500px] flex flex-col items-center justify-center z-[101] px-4 ${isComplianceActive ? 'pointer-events-auto' : 'pointer-events-none'}`}>
+            <div className={`compliance-block-mobile ${isComplianceActive ? 'pointer-events-auto' : 'pointer-events-none'}`}>
               {/* Title */}
               <h2 className="compliance-title-mobile">
                 Trusted Mortgage Compliance
