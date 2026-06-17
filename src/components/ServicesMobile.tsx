@@ -505,7 +505,27 @@ export function ServicesMobile({
                                     </div>
                                   </div>
                                 )}
+
                               </div>
+
+                              {/* "Tap to view next card" — absolutely pinned to card bottom, always visible regardless of content length */}
+                              {position === 0 && (
+                                <p
+                                  className="font-lato-regular italic text-center text-[rgba(34,37,38,0.4)]"
+                                  style={{
+                                    position: 'absolute',
+                                    bottom: 14,
+                                    left: 0,
+                                    right: 0,
+                                    fontSize: 12,
+                                    lineHeight: '16px',
+                                    zIndex: 20,
+                                    pointerEvents: 'none',
+                                  }}
+                                >
+                                  Tap to view next card
+                                </p>
+                              )}
                             </motion.div>
                           );
                         })}
