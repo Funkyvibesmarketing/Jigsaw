@@ -449,35 +449,52 @@ export function TeamMobile({
                 style={{ backdropFilter: 'blur(10px)', backgroundColor: 'rgba(23, 40, 52, 0.4)' }}
                 onClick={() => setSelectedMember(null)}
               >
-                <motion.div
-                  initial={{ scale: 0.95, y: 20 }}
-                  animate={{ scale: 1, y: 0 }}
-                  exit={{ scale: 0.95, y: 20 }}
-                  transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 25 }}
-                  className="rounded-[12px] p-[16px] w-full max-w-[400px] max-h-[85vh] flex flex-col relative shadow-[0px_8px_32px_rgba(0,0,0,0.4)] overflow-hidden pointer-events-auto"
-                  style={{ backgroundColor: '#EDF2F4' }}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {/* Close Button */}
+                {/* Wrapper: relative so the close button can escape overflow-hidden */}
+                <div className="team-popup-wrapper">
+                  {/* Close Button — outside the card so drop shadow is not clipped */}
                   <button
                     type="button"
                     onClick={() => setSelectedMember(null)}
-                    className="absolute top-5 right-5 bg-transparent border-none p-2 cursor-pointer text-[#2c4657] hover:opacity-70 transition-opacity z-10"
+                    className="team-popup-close"
                     aria-label="Close"
                   >
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                      <g filter="url(#filter0_d_3416_3079)">
+                        <rect x="4" width="24" height="24" rx="4" fill="#2EC4B6"/>
+                        <path d="M20.8776 16.334C20.9154 16.3692 20.9457 16.4117 20.9667 16.4588C20.9877 16.506 20.999 16.557 20.9999 16.6086C21.0009 16.6602 20.9914 16.7115 20.972 16.7594C20.9527 16.8073 20.9239 16.8508 20.8874 16.8874C20.8508 16.9239 20.8073 16.9527 20.7594 16.972C20.7115 16.9914 20.6602 17.0009 20.6086 16.9999C20.557 16.999 20.506 16.9877 20.4588 16.9667C20.4117 16.9457 20.3692 16.9154 20.334 16.8776L15.9904 12.5346L11.6468 16.8776C11.5739 16.9455 11.4775 16.9825 11.3778 16.9808C11.2782 16.979 11.1831 16.9386 11.1127 16.8682C11.0422 16.7977 11.0018 16.7026 11.0001 16.603C10.9983 16.5033 11.0353 16.4069 11.1032 16.334L15.4462 11.9904L11.1032 7.64682C11.0353 7.57391 10.9983 7.47747 11.0001 7.37783C11.0018 7.27819 11.0422 7.18312 11.1127 7.11265C11.1831 7.04218 11.2782 7.00182 11.3778 7.00006C11.4775 6.9983 11.5739 7.03529 11.6468 7.10323L15.9904 11.4462L20.334 7.10323C20.4069 7.03529 20.5033 6.9983 20.603 7.00006C20.7026 7.00182 20.7977 7.04218 20.8682 7.11265C20.9386 7.18312 20.979 7.27819 20.9808 7.37783C20.9825 7.47747 20.9455 7.57391 20.8776 7.64682L16.5346 11.9904L20.8776 16.334Z" fill="white"/>
+                      </g>
+                      <defs>
+                        <filter id="filter0_d_3416_3079" x="0" y="0" width="32" height="32" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+                          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                          <feOffset dy="4"/>
+                          <feGaussianBlur stdDeviation="2"/>
+                          <feComposite in2="hardAlpha" operator="out"/>
+                          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+                          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3416_3079"/>
+                          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3416_3079" result="shape"/>
+                        </filter>
+                      </defs>
                     </svg>
                   </button>
 
-                  <h3 className="font-['Lato:Bold',sans-serif] text-[20px] text-[#2c4657] mb-5 pr-8">{selectedMember.name}</h3>
+                  <motion.div
+                    initial={{ scale: 0.95, y: 20 }}
+                    animate={{ scale: 1, y: 0 }}
+                    exit={{ scale: 0.95, y: 20 }}
+                    transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 25 }}
+                    className="team-popup-card"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <h3 className="team-popup-name">{selectedMember.name}</h3>
 
-                  <div className="overflow-y-auto pr-2 bio-scrollbar flex-1 pb-[10px] pt-[10px]">
-                    <p className="font-['Lato:Regular',sans-serif] leading-[28px] text-[15px] text-[#2c4657] whitespace-pre-wrap tracking-[0.14px]">
-                      {selectedMember.bio}
-                    </p>
-                  </div>
-                </motion.div>
+                    <div className="overflow-y-auto pr-2 bio-scrollbar flex-1 pb-[10px] pt-[10px]">
+                      <p className="team-popup-bio">
+                        {selectedMember.bio}
+                      </p>
+                    </div>
+                  </motion.div>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
