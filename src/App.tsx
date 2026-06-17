@@ -205,13 +205,6 @@ export default function App() {
       // Use requestIdleCallback to ensure the final splash release doesn't hitch the opening animation
       runWhenIdle(() => {
         setSplashAnimationComplete(true);
-        // On mobile: immediately animate the splash opacity to 0 so the logo
-        // doesn't linger over the hero section while the user hasn't scrolled yet.
-        // The scroll-based fade still works for desktop where the splash fades on scroll.
-        if (isMobileDevice()) {
-          animate(splashOpacityValue, 0, { duration: 0.5, ease: 'easeOut' });
-          setSplashHasBeenViewed(true);
-        }
       });
     }
   }, [minSplashTimerDone, mountStage, dataProgress]);

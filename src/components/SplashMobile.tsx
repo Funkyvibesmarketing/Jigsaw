@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useTransform, useMotionValueEvent, animate } from 'motion/react';
-import svgPaths from '../imports/svg-jnardqphfi';
 import svgPathsALogo from '../imports/svg-srebhhv8fw';
-import imgFinancialBanner from 'figma:asset/9d0fdbe2203505eb3ad7a3a5c6f2a92dd6f76e7a.png';
 
 export function SplashMobile({ dataProgress = 0, onComplete }: { dataProgress?: number, onComplete: () => void }) {
   const progressValue = useMotionValue(0);
@@ -74,113 +72,109 @@ function AnimatedLogoScreen({ progressValue, showFinancial, fadeProgress, showSc
       transition={{ duration: 0.5 }}
       style={{ margin: 0, padding: 0 }}
     >
-      {/* JIGSAW Letters — each path gets its own compositing layer via willChange + translateZ */}
-      <div className="absolute h-[60px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[392px] px-4" style={{ marginTop: '-40px' }} data-name="JIGSAW">
-        <svg className="block size-full overflow-visible" fill="none" preserveAspectRatio="none" viewBox="0 0 402 69">
-          {/* No willChange on the <g> — it belongs on each animated child instead */}
-          <g id="JIGSAW">
-            <motion.path
-              d={svgPaths.p3630e540}
-              fill="#2C4657"
-              stroke="#2C4657"
-              strokeWidth="1.5"
-              style={{ willChange: 'transform, opacity' }}
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: -20 }}
-              transition={{
-                delay: 0.25,
-                duration: 0.65,
-                ease: [0.34, 1.56, 0.64, 1]
-              }}
-            />
-            <motion.path
-              d={svgPaths.pb43e380}
-              fill="#2C4657"
-              stroke="#2C4657"
-              strokeWidth="1.5"
-              style={{ willChange: 'transform, opacity' }}
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: -15 }}
-              transition={{
-                delay: 0.4,
-                duration: 0.65,
-                ease: [0.34, 1.56, 0.64, 1]
-              }}
-            />
-            <motion.path
-              d={svgPaths.p2fd354f0}
-              fill="#2C4657"
-              stroke="#2C4657"
-              strokeWidth="1.5"
-              style={{ willChange: 'transform, opacity' }}
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: -10 }}
-              transition={{
-                delay: 0.55,
-                duration: 0.65,
-                ease: [0.34, 1.56, 0.64, 1]
-              }}
-            />
-            <motion.path
-              d={svgPaths.p27c9a80}
-              fill="#2C4657"
-              stroke="#2C4657"
-              strokeWidth="1.5"
-              style={{ willChange: 'transform, opacity' }}
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{
-                delay: 0.7,
-                duration: 0.65,
-                ease: [0.34, 1.56, 0.64, 1]
-              }}
-            />
-            <motion.path
-              d={svgPaths.p1094ff00}
-              fill="#2C4657"
-              stroke="#2C4657"
-              strokeWidth="1.5"
-              style={{ willChange: 'transform, opacity' }}
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 38 }}
-              transition={{
-                delay: 0.85,
-                duration: 0.65,
-                ease: [0.34, 1.56, 0.64, 1]
-              }}
-            />
-          </g>
+      {/* JIGSAW Letters — motion.g handles both position AND entrance animation via a single CSS transform */}
+      <div className="absolute h-[69px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[392px] px-0" style={{ marginTop: '-40px' }} data-name="JIGSAW">
+        {/*
+          ViewBox 346×69 matches FINANCIAL banner width.
+          Letter base x positions (9px gap):
+            J=0   I=40   G=59   S=127   A=180   W=252
+          Using motion.g with x as the FINAL SVG position avoids the
+          SVG-attribute-transform + CSS-transform conflict that caused stacking.
+          Plain <path> inside each motion.g — no nested animation conflict.
+        */}
+        <svg className="splash-logo-svg block size-full overflow-visible" fill="none" preserveAspectRatio="none" viewBox="0 0 346 69">
+          {/* J — final x=0, enters from x=-20 */}
+          <motion.g
+            style={{ willChange: 'transform, opacity' }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.25, duration: 0.65, ease: [0.34, 1.56, 0.64, 1] }}
+          >
+            <path fill="#2C4657" d="M30.358 43.602C30.358 47.343 29.885 50.654 28.982 53.578C28.079 56.502 26.703 58.996 24.94 61.06C23.177 63.081 20.984 64.629 18.361 65.747C15.738 66.822 12.771 67.381 9.374 67.381C6.321 67.381 3.182 66.951 0 66.091C0.043 65.188 0.129 64.285 0.215 63.425C0.301 62.522 0.387 61.662 0.43 60.802C0.473 60.286 0.688001 59.856 1.032 59.512C1.376 59.168 1.849 59.039 2.537 59.039C3.096 59.039 3.827 59.168 4.73 59.469C5.633 59.77 6.88 59.899 8.428 59.899C10.492 59.899 12.298 59.598 13.932 58.953C15.523 58.351 16.899 57.362 17.974 56.072C19.049 54.782 19.909 53.105 20.468 51.084C21.027 49.063 21.328 46.655 21.328 43.86V0H30.358V43.602Z" />
+          </motion.g>
+          {/* I — final x=40, enters from x=20 */}
+          <motion.g
+            style={{ willChange: 'transform, opacity' }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 43 }}
+            transition={{ delay: 0.4, duration: 0.65, ease: [0.34, 1.56, 0.64, 1] }}
+          >
+            <path fill="#2C4657" d="M9.03 66.65H0V0H9.03V66.65Z" />
+          </motion.g>
+          {/* G — final x=59, enters from x=39 */}
+          <motion.g
+            style={{ willChange: 'transform, opacity' }}
+            initial={{ opacity: 0, x: 39 }}
+            animate={{ opacity: 1, x: 64 }}
+            transition={{ delay: 0.55, duration: 0.65, ease: [0.34, 1.56, 0.64, 1] }}
+          >
+            <path fill="#2C4657" d="M58.222 35.26V60.845C54.868 63.253 51.299 65.059 47.515 66.263C43.731 67.467 39.56 68.069 35.045 68.069C29.67 68.069 24.854 67.252 20.554 65.575C16.254 63.898 12.556 61.576 9.50299 58.609C6.44999 55.642 4.08499 52.03 2.45099 47.859C0.816992 43.688 0 39.087 0 34.056C0 28.982 0.816989 24.338 2.40799 20.167C3.99899 15.996 6.278 12.384 9.202 9.417C12.126 6.407 15.738 4.128 19.952 2.451C24.166 0.816999 28.896 0 34.099 0C36.722 0 39.173 0.215001 41.452 0.602001C43.731 0.989001 45.795 1.548 47.73 2.279C49.665 3.01 51.428 3.913 53.062 4.945C54.696 5.977 56.244 7.138 57.663 8.471L55.126 12.556C54.739 13.158 54.223 13.588 53.578 13.76C52.933 13.932 52.245 13.803 51.471 13.33C50.74 12.9 49.88 12.384 48.934 11.739C47.988 11.137 46.784 10.535 45.408 9.933C44.032 9.374 42.398 8.858 40.506 8.471C38.614 8.084 36.421 7.869 33.841 7.869C30.1 7.869 26.703 8.471 23.65 9.718C20.597 10.922 18.017 12.685 15.867 14.964C13.717 17.243 12.083 19.995 10.922 23.22C9.761 26.445 9.202 30.1 9.202 34.142C9.202 38.313 9.80399 42.054 11.008 45.365C12.212 48.676 13.889 51.471 16.125 53.793C18.361 56.115 21.027 57.878 24.209 59.082C27.391 60.286 30.917 60.888 34.873 60.888C37.969 60.888 40.721 60.544 43.129 59.856C45.537 59.168 47.859 58.179 50.181 56.932V42.14H39.689C39.087 42.14 38.614 41.968 38.27 41.624C37.926 41.28 37.754 40.85 37.754 40.377V35.26H58.222Z" />
+          </motion.g>
+          {/* S — final x=127, enters from x=112 */}
+          <motion.g
+            style={{ willChange: 'transform, opacity' }}
+            initial={{ opacity: 0, x: 112 }}
+            animate={{ opacity: 1, x: 138 }}
+            transition={{ delay: 0.7, duration: 0.65, ease: [0.34, 1.56, 0.64, 1] }}
+          >
+            <path fill="#2C4657" d="M39.603 11.137C39.345 11.61 39.001 11.954 38.7 12.169C38.356 12.384 37.969 12.513 37.496 12.513C36.98 12.513 36.335 12.255 35.647 11.739C34.916 11.223 34.056 10.621 32.981 9.976C31.906 9.331 30.616 8.772 29.111 8.213C27.606 7.697 25.8 7.439 23.65 7.439C21.629 7.439 19.866 7.697 18.318 8.256C16.77 8.815 15.48 9.546 14.448 10.449C13.416 11.395 12.642 12.47 12.083 13.717C11.567 14.964 11.309 16.34 11.309 17.802C11.309 19.651 11.782 21.199 12.685 22.446C13.588 23.65 14.792 24.725 16.297 25.585C17.802 26.445 19.522 27.219 21.414 27.821C23.306 28.466 25.284 29.111 27.262 29.799C29.24 30.487 31.218 31.261 33.11 32.121C35.002 32.981 36.722 34.056 38.227 35.346C39.732 36.636 40.936 38.227 41.839 40.119C42.742 42.011 43.215 44.333 43.215 47.085C43.215 50.009 42.699 52.718 41.71 55.298C40.721 57.835 39.259 60.071 37.367 61.963C35.475 63.855 33.11 65.36 30.358 66.435C27.563 67.51 24.424 68.069 20.898 68.069C16.555 68.069 12.642 67.295 9.07299 65.704C5.50399 64.113 2.537 62.006 0 59.34L2.62299 55.083C2.88099 54.739 3.18199 54.438 3.52599 54.223C3.86999 54.008 4.257 53.879 4.73 53.879C5.117 53.879 5.58999 54.051 6.10599 54.352C6.62199 54.696 7.18099 55.083 7.86899 55.599C8.514 56.115 9.245 56.631 10.105 57.233C10.922 57.835 11.911 58.351 12.943 58.867C14.018 59.383 15.222 59.77 16.598 60.114C17.974 60.458 19.479 60.587 21.199 60.587C23.349 60.587 25.241 60.286 26.918 59.684C28.595 59.082 30.014 58.265 31.175 57.19C32.336 56.115 33.239 54.825 33.841 53.363C34.443 51.858 34.787 50.224 34.787 48.375C34.787 46.354 34.314 44.72 33.411 43.43C32.508 42.14 31.304 41.065 29.799 40.205C28.294 39.345 26.617 38.614 24.682 38.012C22.747 37.41 20.812 36.808 18.834 36.163C16.856 35.518 14.878 34.787 12.986 33.97C11.051 33.153 9.37399 32.035 7.86899 30.702C6.364 29.369 5.16 27.692 4.257 25.714C3.354 23.736 2.88099 21.242 2.88099 18.318C2.88099 15.953 3.354 13.674 4.257 11.481C5.16 9.288 6.49299 7.31 8.25599 5.633C10.019 3.913 12.169 2.58 14.706 1.548C17.243 0.515999 20.21 0 23.521 0C27.262 0 30.616 0.601999 33.669 1.763C36.722 2.924 39.431 4.644 41.753 6.88L39.603 11.137Z" />
+          </motion.g>
+          {/* A — final x=180, enters from x=195 (from right) */}
+          <motion.g
+            style={{ willChange: 'transform, opacity' }}
+            initial={{ opacity: 0, x: 195 }}
+            animate={{ opacity: 1, x: 190 }}
+            transition={{ delay: 0.85, duration: 0.65, ease: [0.34, 1.56, 0.64, 1] }}
+          >
+            <path fill="#2C4657" d="M35.776 0H26.66L0 66.607H6.966C7.74001 66.607 8.385 66.392 8.901 65.962C9.417 65.532 9.804 65.016 9.976 64.457L15.609 49.923H15.566L19.264 40.549L29.197 14.835C29.885 13.158 30.53 11.051 31.175 8.557C31.476 9.761 31.82 10.922 32.164 11.954C32.508 13.029 32.809 13.975 33.153 14.749L42.871 39.861L46.741 49.837L52.374 64.414C52.632 65.016 52.976 65.532 53.492 65.962C54.008 66.349 54.653 66.564 55.427 66.564H62.393L35.776 0Z" />
+          </motion.g>
+          {/* W — final x=252, enters from x=267 (from right) */}
+          <motion.g
+            style={{ willChange: 'transform, opacity' }}
+            initial={{ opacity: 0, x: 267 }}
+            animate={{ opacity: 1, x: 252 }}
+            transition={{ delay: 1.0, duration: 0.65, ease: [0.34, 1.56, 0.64, 1] }}
+          >
+            <path fill="#2C4657" d="M93.396 0L72.627 66.607H64.543L47.644 15.781C47.472 15.265 47.343 14.749 47.214 14.19C47.085 13.631 46.913 13.029 46.784 12.427C46.612 13.029 46.483 13.631 46.311 14.19C46.139 14.749 46.01 15.265 45.838 15.781L28.853 66.607H20.769L0 0H7.48198C8.29898 0 8.94399 0.215001 9.50299 0.602001C10.062 0.989001 10.406 1.505 10.535 2.15L24.295 48.461C24.51 49.278 24.725 50.181 24.94 51.17C25.155 52.116 25.327 53.148 25.542 54.223C25.757 53.148 25.972 52.116 26.23 51.127C26.445 50.138 26.703 49.278 27.004 48.461L42.656 2.15C42.828 1.634 43.215 1.118 43.731 0.687999C44.29 0.257999 44.935 0 45.709 0H48.332C49.149 0 49.794 0.215001 50.267 0.602001C50.783 0.989001 51.127 1.505 51.385 2.15L66.994 48.461C67.252 49.278 67.51 50.138 67.768 51.084C67.983 52.03 68.241 52.976 68.456 54.008C68.628 52.976 68.8 52.03 68.972 51.084C69.144 50.138 69.359 49.278 69.574 48.461L83.377 2.15C83.549 1.591 83.893 1.118 84.409 0.645C84.968 0.215 85.613 0 86.387 0H93.396Z" />
+          </motion.g>
         </svg>
 
         {/*
-          A-logo: replace left/top animation (triggers layout) with translateX/Y only.
-          We position it at its final resting place via inline style, then animate
-          the entrance purely with translate + scale — no layout thrash on iOS.
+          A-logo: centered over the "A" letter.
+          A center in viewBox = 180 + 31.5 = 211.5 / 346 ≈ 61% of SVG.
+          With px-4 (16px padding each side) the A center sits at ~60% of the
+          outer container div — consistent across all viewport widths.
+          Static wrapper div handles the centering (translateX(-50%) stays fixed);
+          motion.div inside handles the entrance animation only.
         */}
-        <motion.div
-          className="absolute w-[62px] h-[60px]"
+        <div
           style={{
-            willChange: 'transform, opacity',
-            left: 'calc(50% + 25px)',
-            top: '2px',
-          }}
-          initial={{ opacity: 0, scale: 0.5, x: '-50%', y: '-50%' }}
-          animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
-          transition={{
-            opacity: { delay: 0.1, duration: 0.5 },
-            scale: { delay: 0.1, duration: 0.75, ease: [0.34, 1.56, 0.64, 1] },
-            x: { delay: 0.25, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] },
-            y: { delay: 0.25, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] },
+            position: 'absolute',
+            left: '64%',
+            top: '0px',
+            transform: 'translateX(-50%)',
           }}
         >
-          <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 62.4487 68.11">
-            <g clipPath="url(#clip0_2119_89)">
-              <path d={svgPathsALogo.p2bf2a00} fill="#2EC4B6" stroke="#2EC4B6" strokeWidth="1.5" />
-              <path d={svgPathsALogo.p27abc200} fill="#2C4657" stroke="#2C4657" strokeWidth="1.5" />
-            </g>
-            <defs><clipPath id="clip0_2119_89"><rect fill="white" height="68.11" width="62.4487" /></clipPath></defs>
-          </svg>
-        </motion.div>
+          <motion.div
+            className="w-[62px] h-[69px]"
+            style={{ willChange: 'transform, opacity' }}
+            initial={{ opacity: 0, scale: 0.5, y: '-30%' }}
+            animate={{ opacity: 1, scale: 1, y: '0%' }}
+            transition={{
+              opacity: { delay: 0.1, duration: 0.5 },
+              scale: { delay: 0.85, duration: 0.75, ease: [0.34, 1.56, 0.64, 1] },
+              y: { delay: 0.85, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] },
+            }}
+          >
+            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 62.4487 68.11">
+              <g clipPath="url(#clip0_2119_89)">
+                <path d={svgPathsALogo.p2bf2a00} fill="#2EC4B6" />
+                <path d={svgPathsALogo.p27abc200} fill="#2C4657" />
+              </g>
+              <defs><clipPath id="clip0_2119_89"><rect fill="white" height="68.11" width="62.4487" /></clipPath></defs>
+            </svg>
+          </motion.div>
+        </div>
       </div>
 
       {!showFinancial && (
@@ -214,7 +208,9 @@ function AnimatedLogoScreen({ progressValue, showFinancial, fadeProgress, showSc
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
         >
-          <img src={imgFinancialBanner} alt="Financial Banner" className="block w-full h-auto" />
+          <svg xmlns="http://www.w3.org/2000/svg" className="block w-full h-auto" viewBox="0 0 345 45" fill="none">
+            <path d="M224.804 14.1908H215.774C217.107 13.8898 218.483 12.9008 217.064 10.9658C216.72 10.4928 216.29 9.97677 215.946 9.46077C214.871 8.38577 214.269 6.79476 214.398 5.20376C214.785 1.72076 217.58 -0.042232 220.332 0.000768007H220.375C223.17 0.000768007 225.922 1.76376 226.309 5.20376C226.438 6.79476 225.836 8.38577 224.761 9.46077C224.374 9.97677 223.987 10.4928 223.643 10.9658C222.138 12.9008 223.471 13.9328 224.804 14.1908ZM344.516 14.1908H0V44.1188H344.473V14.1908H344.516Z" fill="#2EC4B6" />
+          </svg>
         </motion.div>
       )}
 
