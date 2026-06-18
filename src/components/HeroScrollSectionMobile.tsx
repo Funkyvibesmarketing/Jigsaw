@@ -136,9 +136,9 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
   const navY = useTransform(scrollYProgress, [0.18, 0.28], [-50, 0]);
   const navOpacity = useTransform(scrollYProgress, [0.18, 0.28, 0.45, 0.50], [0, 1, 1, 0]);
 
-  // Step 5: Down arrow appears with sentence (0.12 to 0.16) and fades out when compliance section starts (0.22 to 0.25)
-  const arrowY = useTransform(scrollYProgress, [0.12, 0.16], [100, 0]);
-  const arrowOpacity = useTransform(scrollYProgress, [0, 0.12, 0.16, 0.22, 0.25], [0, 0, 1, 1, 0]);
+  // Step 5: Down arrow appears with sentence (0.12 to 0.16) and moves up and fades out with sentence (0.25 to 0.42)
+  const arrowY = useTransform(scrollYProgress, [0, 0.12, 0.16, 0.25, 0.42], [100, 100, 0, 0, -600]);
+  const arrowOpacity = useTransform(scrollYProgress, [0, 0.12, 0.16, 0.32, 0.42], [0, 0, 1, 1, 0]);
 
   // Step 6: Bottom gradient appears with sentence and stays with arrow
   const step6GradientOpacity = useTransform(scrollYProgress, [0.14, 0.20, 0.75, 0.80], [1, 1, 0, 0]);
@@ -185,7 +185,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
       }
     }
 
-    if (latest >= 0.25) {
+    if (latest >= 0.42) {
       setHideDownArrow(true);
     } else {
       setHideDownArrow(false);
@@ -390,7 +390,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
 
           {/* Down Arrow Button - Step 5 */}
           <motion.div
-            className="absolute left-1/2 top-[calc(50%+310px)] translate-x-[-50%] translate-y-[-50%] z-[50]"
+            className="absolute left-1/2 top-[calc(50%+250px)] translate-x-[-50%] translate-y-[-50%] z-[50]"
             style={{
               y: arrowY,
               opacity: arrowOpacity,

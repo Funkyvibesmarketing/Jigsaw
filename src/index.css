@@ -976,6 +976,10 @@
     top: calc(50% + 310px);
   }
 
+  .top-\[calc\(50\%\+250px\)\] {
+    top: calc(50% + 250px);
+  }
+
   .top-\[calc\(50\%\+381px\)\] {
     top: calc(50% + 381px);
   }

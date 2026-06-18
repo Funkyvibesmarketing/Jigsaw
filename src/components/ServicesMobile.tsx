@@ -36,6 +36,10 @@ export function ServicesMobile({
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(1);
 
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('mobile-tutorial-state-change', { detail: { active: showTutorial } }));
+  }, [showTutorial]);
+
   const touchStart = useRef({ x: 0, y: 0 });
   const touchTime = useRef(0);
 

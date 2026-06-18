@@ -90,8 +90,28 @@ export default function App() {
   const [visualProgress, setVisualProgress] = useState(0);
   const [minSplashTimerDone, setMinSplashTimerDone] = useState(false);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
-  const headerTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isTutorialActive, setIsTutorialActive] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleTutorialChange = (e: Event) => {
+      const customEvent = e as CustomEvent<{ active: boolean }>;
+      const active = !!customEvent.detail?.active;
+      setIsTutorialActive(active);
+
+      if (!active) {
+        const currentScrollY = window.scrollY;
+        const heroThreshold = window.innerHeight * 0.9;
+        if (currentScrollY >= heroThreshold) {
+          setIsHeaderVisible(false);
+        }
+      }
+    };
+    window.addEventListener('mobile-tutorial-state-change', handleTutorialChange);
+    return () => {
+      window.removeEventListener('mobile-tutorial-state-change', handleTutorialChange);
+    };
+  }, []);
 
   // Target data progress calculation (50% API, 50% Render)
   const targetDataProgress = (() => {
@@ -382,42 +402,48 @@ export default function App() {
     };
   }, []);
 
-  // Mobile Header Visibility Logic: Hide on scroll, show after 5s idle
-  useEffect(() => {
-    // If mobile menu is open, always show the header
-    if (isMobileMenuOpen) {
-      setIsHeaderVisible(true);
-      if (headerTimeoutRef.current) clearTimeout(headerTimeoutRef.current);
-      return;
-    }
+  const lastScrollY = useRef(0);
 
-    const handleActivity = () => {
-      // Don't hide the header if we are still near the top or just transitioning from splash
-      const splashThreshold = window.innerHeight * 0.3;
-      if (window.scrollY < splashThreshold + 10) {
+  // Mobile Header Visibility Logic: Hide on scroll down, show on scroll up after hero section
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // If mobile menu is open, always show the header
+      if (isMobileMenuOpen) {
         setIsHeaderVisible(true);
+        lastScrollY.current = currentScrollY;
         return;
       }
 
-      // Hide the header as soon as scrolling starts beyond the threshold
-      setIsHeaderVisible(false);
+      // Hero threshold (e.g. 90% of viewport height)
+      const heroThreshold = window.innerHeight * 0.9;
 
-      // Clear existing timeout
-      if (headerTimeoutRef.current) clearTimeout(headerTimeoutRef.current);
-
-      // Set timeout to show header again after 2 seconds of inactivity
-      headerTimeoutRef.current = setTimeout(() => {
+      if (currentScrollY < heroThreshold) {
+        // Keep header visible in the hero section
         setIsHeaderVisible(true);
-      }, 1000);
+      } else {
+        // Past the hero section: hide on scroll down, show on scroll up
+        if (currentScrollY > lastScrollY.current) {
+          // Scrolling down
+          setIsHeaderVisible(false);
+        } else {
+          // Scrolling up
+          setIsHeaderVisible(true);
+        }
+      }
+
+      lastScrollY.current = currentScrollY;
     };
 
-    window.addEventListener('scroll', handleActivity, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
-      window.removeEventListener('scroll', handleActivity);
-      if (headerTimeoutRef.current) clearTimeout(headerTimeoutRef.current);
+      window.removeEventListener('scroll', handleScroll);
     };
-  }, [isMobileMenuOpen]);
+  }, [isMobile, isMobileMenuOpen]);
 
   return (
     <motion.div
@@ -458,35 +484,35 @@ export default function App() {
       {/* Mobile Navigation - switches between dark (hero) and light (about us/services/reviews) */}
       {/* Hero section - dark background (before white transition) */}
       {isMobile && splashAnimationComplete && !isSplashVisible && heroScrollProgress < 0.90 && aboutUsScrollProgress < 0.05 && (
-        <MobileNavigation setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible} />
+        <MobileNavigation setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible && !isTutorialActive} />
       )}
       {/* Hero section - white background (after white transition at compliance) */}
       {isMobile && splashAnimationComplete && !isSplashVisible && heroScrollProgress >= 0.90 && aboutUsScrollProgress < 0.05 && (
-        <MobileNavigationLight setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible} />
+        <MobileNavigationLight setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible && !isTutorialActive} />
       )}
       {/* About Us section - light background */}
       {isMobile && splashAnimationComplete && !isSplashVisible && aboutUsScrollProgress > 0 && (
-        <MobileNavigationLight setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible} />
+        <MobileNavigationLight setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible && !isTutorialActive} />
       )}
       {/* Reviews section - light background */}
       {isMobile && splashAnimationComplete && !isSplashVisible && reviewsScrollProgress > 0 && teamScrollProgress === 0 && processScrollProgress === 0 && (
-        <MobileNavigationLight setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible} />
+        <MobileNavigationLight setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible && !isTutorialActive} />
       )}
       {/* Team section - dark background (both steps) */}
       {isMobile && splashAnimationComplete && !isSplashVisible && teamScrollProgress > 0 && processScrollProgress === 0 && (
-        <MobileNavigation setIsMobileMenuOpen={setIsMobileMenuOpen} zIndex={100} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible} />
+        <MobileNavigation setIsMobileMenuOpen={setIsMobileMenuOpen} zIndex={100} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible && !isTutorialActive} />
       )}
       {/* Process section - dark background */}
       {isMobile && splashAnimationComplete && !isSplashVisible && processScrollProgress > 0 && blogsScrollProgress === 0 && (
-        <MobileNavigation setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible} />
+        <MobileNavigation setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible && !isTutorialActive} />
       )}
       {/* Blogs section - light background */}
       {isMobile && splashAnimationComplete && !isSplashVisible && blogsScrollProgress > 0 && contactUsScrollProgress === 0 && (
-        <MobileNavigationLight setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible} />
+        <MobileNavigationLight setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible && !isTutorialActive} />
       )}
       {/* Contact Us section - dark background */}
       {isMobile && splashAnimationComplete && !isSplashVisible && contactUsScrollProgress > 0 && (
-        <MobileNavigation setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible} />
+        <MobileNavigation setIsMobileMenuOpen={setIsMobileMenuOpen} isMobileMenuOpen={isMobileMenuOpen} isVisible={isHeaderVisible && !isTutorialActive} />
       )}
 
       {/* Mobile Menu */}
