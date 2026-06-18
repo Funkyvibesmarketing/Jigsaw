@@ -280,7 +280,7 @@ function BlogPopupMobile({
             <p className="font-['Lato:Normal',sans-serif] leading-[700] not-italic text-[10px] text-[#2c4657] font-light tracking-[0.2px] opacity-80">
               'This blog has information contained within that was correct at the time of publication, but is subject to change."
             </p>
-            <div className="font-['Lato:Normal',sans-serif] leading-[20px] not-italic text-[16px] text-[rgba(44,70,87,0.8)] tracking-[0.2px] whitespace-pre-line pb-[8px] w-full">
+            <div className="font-['Lato:Normal',sans-serif] leading-[20px] not-italic text-[16px] text-[rgba(44,70,87,0.8)] tracking-[0.2px] whitespace-pre-line pb-[8px] w-full break-words [word-break:break-word]">
               {blog.fullContent || blog.description}
             </div>
           </div>
