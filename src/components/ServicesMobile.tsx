@@ -48,12 +48,12 @@ export function ServicesMobile({
   const getTargetScrollY = () => {
     const container = document.getElementById('AboutUsSection');
     if (!container) return window.scrollY;
-    
+
     const rect = container.getBoundingClientRect();
     const containerTop = window.scrollY + rect.top;
     const containerHeight = rect.height;
     const viewportHeight = window.innerHeight;
-    
+
     // Calculate the exact scroll Y corresponding to scrollProgress = 0.70
     return (containerTop - viewportHeight) + 0.705 * (containerHeight + viewportHeight);
   };
@@ -64,11 +64,11 @@ export function ServicesMobile({
       if (!tutorialShownRef.current && !_tutorialSessionShown) {
         tutorialShownRef.current = true;
         _tutorialSessionShown = true;
-        
+
         // Immediately halt momentum scroll by locking it to the calculated target
         const lockY = getTargetScrollY();
         window.scrollTo(0, lockY);
-        
+
         // Trigger right as masking finishes (low delay)
         setTimeout(() => setShowTutorial(true), 50);
       }
@@ -80,7 +80,7 @@ export function ServicesMobile({
       const lockY = getTargetScrollY();
 
       document.body.style.overflow = 'hidden';
-      
+
       const preventDefault = (e: TouchEvent) => {
         // Stop default touch scroll actions on mobile
         e.preventDefault();
@@ -217,7 +217,7 @@ export function ServicesMobile({
 
   return (
     <div className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-[#2c4657]">
-      <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center bg-[#2c4657] gap-[20px]">
+      <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center bg-[#2c4657] gap-[20px] pt-[35px]">
         {/* Background gradient */}
         <div className="absolute h-[307px] left-1/2 top-[86px] -translate-x-1/2 w-[506px] pointer-events-none">
           <div className="absolute inset-[-19.54%_-11.86%]">
@@ -241,7 +241,7 @@ export function ServicesMobile({
         </div>
 
         {/* Category names slider */}
-        <div className="flex-shrink-0 w-full" style={{ height: '60px' }}>
+        <div className="flex-shrink-0 w-full" style={{ height: '30px', marginTop: '30px' }}>
           <div className="relative w-full h-full overflow-hidden flex items-center justify-center px-6">
             {/* Active category with slide-in animation */}
             <div className="flex-1 flex justify-center items-center overflow-hidden mx-4">
@@ -365,7 +365,7 @@ export function ServicesMobile({
                                     className="absolute object-cover"
                                     src={card.imagem}
                                     style={{
-                                      height: '361px',
+                                      height: '230px',
                                       left: '0%',
                                       top: '0%',
                                       width: '100%'

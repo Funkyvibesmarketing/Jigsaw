@@ -376,7 +376,7 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
                   className="w-full flex flex-col gap-0 cursor-grab active:cursor-grabbing"
                 >
                   {/* Text content below */}
-                  <p className="font-lato-bold not-italic text-[26px]">{carouselTexts[carouselIndex].header}</p><br />
+                  <p className="font-lato-bold not-italic text-[26px]" dangerouslySetInnerHTML={{ __html: carouselTexts[carouselIndex].header }}></p><br />
                   <p className="leading-[36px] text-[20px] font-lato-regular tracking-[0.6px]">
                     {carouselTexts[carouselIndex].text}
                     {carouselTexts[carouselIndex].hasLearnMore && (
