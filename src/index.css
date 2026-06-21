@@ -6440,3 +6440,66 @@ html {
      intersection issues inside fixed/overflow-hidden containers */
   content-visibility: visible;
 }
+
+/* ============================================================
+   iOS Splash Screen Loading Count & Banner Animations
+   ============================================================ */
+@keyframes mobile-financial-fade-in {
+  from {
+    opacity: 0;
+    transform: translate3d(-50%, calc(-50% + 50px), 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(-50%, calc(-50% + 30px), 0);
+  }
+}
+
+@keyframes letter-enter-j {
+  from { opacity: 0; transform: translate3d(-20px, 0, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes letter-enter-i {
+  from { opacity: 0; transform: translate3d(20px, 0, 0); }
+  to { opacity: 1; transform: translate3d(43px, 0, 0); }
+}
+
+@keyframes letter-enter-g {
+  from { opacity: 0; transform: translate3d(39px, 0, 0); }
+  to { opacity: 1; transform: translate3d(64px, 0, 0); }
+}
+
+@keyframes letter-enter-s {
+  from { opacity: 0; transform: translate3d(112px, 0, 0); }
+  to { opacity: 1; transform: translate3d(138px, 0, 0); }
+}
+
+@keyframes letter-enter-a {
+  from { opacity: 0; transform: translate3d(195px, 0, 0); }
+  to { opacity: 1; transform: translate3d(190px, 0, 0); }
+}
+
+@keyframes letter-enter-w {
+  from { opacity: 0; transform: translate3d(267px, 0, 0); }
+  to { opacity: 1; transform: translate3d(252px, 0, 0); }
+}
+
+@keyframes logo-a-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes logo-a-scale-y {
+  from { transform: scale(0.5) translate3d(0, -30%, 0); }
+  to { transform: scale(1) translate3d(0, 0%, 0); }
+}
+
+@keyframes hint-bounce {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, 6px, 0);
+  }
+}
