@@ -172,6 +172,30 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
+  const [isTutorialActive, setIsTutorialActive] = useState(false);
+
+  const [hasSeenTutorial, setHasSeenTutorial] = useState(false);
+
+  useEffect(() => {
+    const handleTutorialChange = (e: Event) => {
+      const customEvent = e as CustomEvent<{ active: boolean }>;
+      const active = !!customEvent.detail?.active;
+      setIsTutorialActive(active);
+      if (active) {
+        setHasSeenTutorial(true);
+      }
+    };
+    window.addEventListener('mobile-tutorial-state-change', handleTutorialChange);
+    return () => {
+      window.removeEventListener('mobile-tutorial-state-change', handleTutorialChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (scrollProgress < 0.5) {
+      setHasSeenTutorial(false);
+    }
+  }, [scrollProgress]);
 
   const onReadyRef = useRef(onReady);
   useEffect(() => {
@@ -505,7 +529,7 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
         <motion.div
           className="absolute top-0 left-0 w-full h-full z-[5]"
           style={{
-            opacity: blueScreenOpacity,
+            opacity: isTutorialActive ? 1 : blueScreenOpacity,
             pointerEvents: scrollProgress >= 0.80 ? 'none' : 'auto'
           }}
         >
@@ -516,16 +540,16 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
         <motion.div
           className="absolute top-0 left-0 w-full h-screen z-[15]"
           style={{
-            opacity: servicesSectionOpacity,
-            pointerEvents: scrollProgress >= 0.51 ? 'auto' : 'none',
-            touchAction: scrollProgress >= 0.51 ? 'auto' : 'none'
+            opacity: isTutorialActive ? 1 : servicesSectionOpacity,
+            pointerEvents: (scrollProgress >= 0.51 || isTutorialActive) ? 'auto' : 'none',
+            touchAction: (scrollProgress >= 0.51 || isTutorialActive) ? 'auto' : 'none'
           }}
         >
           <div
             className="w-full h-full"
             style={{
-              pointerEvents: scrollProgress >= 0.51 ? 'auto' : 'none',
-              touchAction: scrollProgress >= 0.51 ? 'auto' : 'none'
+              pointerEvents: (scrollProgress >= 0.51 || isTutorialActive) ? 'auto' : 'none',
+              touchAction: (scrollProgress >= 0.51 || isTutorialActive) ? 'auto' : 'none'
             }}
           >
             <ServicesMobile services={services} scrollProgress={scrollProgress} />
@@ -533,7 +557,7 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
         </motion.div>
 
         {/* SERVICES Text Mask - reveals Services section through text cutout during zoom */}
-        {scrollProgress < 0.70 && (
+        {scrollProgress < 0.70 && !isTutorialActive && !hasSeenTutorial && (
           <motion.div
             className="absolute top-1/2 left-0 w-full h-full z-[20] pointer-events-none -translate-y-1/2"
             style={{ y: servicesY }}

@@ -54,8 +54,8 @@ export function ServicesMobile({
     const containerHeight = rect.height;
     const viewportHeight = window.innerHeight;
 
-    // Calculate the exact scroll Y corresponding to scrollProgress = 0.70
-    return (containerTop - viewportHeight) + 0.705 * (containerHeight + viewportHeight);
+    // Calculate the exact scroll Y corresponding to scrollProgress = 0.72
+    return (containerTop - viewportHeight) + 0.725 * (containerHeight + viewportHeight);
   };
 
   useEffect(() => {
@@ -81,9 +81,29 @@ export function ServicesMobile({
 
       document.body.style.overflow = 'hidden';
 
+      let touchStartY = 0;
+      let touchStartX = 0;
+
+      const handleTouchStart = (e: TouchEvent) => {
+        if (e.touches && e.touches[0]) {
+          touchStartY = e.touches[0].clientY;
+          touchStartX = e.touches[0].clientX;
+        }
+      };
+
       const preventDefault = (e: TouchEvent) => {
-        // Stop default touch scroll actions on mobile
-        e.preventDefault();
+        if (!e.touches || !e.touches[0]) return;
+        const touchY = e.touches[0].clientY;
+        const touchX = e.touches[0].clientX;
+        const diffY = touchY - touchStartY;
+        const diffX = touchX - touchStartX;
+
+        // If scrolling vertically, prevent it to avoid iOS bouncy scroll
+        if (Math.abs(diffY) > Math.abs(diffX)) {
+          if (e.cancelable) {
+            e.preventDefault();
+          }
+        }
       };
 
       const handleScroll = () => {
@@ -92,7 +112,9 @@ export function ServicesMobile({
 
       window.scrollTo(0, lockY);
 
-      document.body.addEventListener('touchmove', preventDefault, { passive: false });
+      window.addEventListener('touchstart', handleTouchStart, { passive: true });
+      window.addEventListener('touchmove', preventDefault, { passive: false });
+      document.addEventListener('touchmove', preventDefault, { passive: false });
       window.addEventListener('scroll', handleScroll, { passive: false });
 
       const intervalId = setInterval(() => {
@@ -103,7 +125,9 @@ export function ServicesMobile({
 
       return () => {
         document.body.style.overflow = '';
-        document.body.removeEventListener('touchmove', preventDefault);
+        window.removeEventListener('touchstart', handleTouchStart);
+        window.removeEventListener('touchmove', preventDefault);
+        document.removeEventListener('touchmove', preventDefault);
         window.removeEventListener('scroll', handleScroll);
         clearInterval(intervalId);
       };
