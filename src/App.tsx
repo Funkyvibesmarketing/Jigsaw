@@ -88,6 +88,7 @@ export default function App() {
   const [isLoadingCarousel, setIsLoadingCarousel] = useState(true);
   const [mountStage, setMountStage] = useState(0); // 0: Start, 1: Hero, 2: About, 3: Middle, 4: Process, 5: Complete
   const [visualProgress, setVisualProgress] = useState(0);
+  const [timeProgress, setTimeProgress] = useState(0);
   const [minSplashTimerDone, setMinSplashTimerDone] = useState(false);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [isTutorialActive, setIsTutorialActive] = useState(false);
@@ -113,6 +114,20 @@ export default function App() {
     };
   }, []);
 
+  // Background simulated loader to prevent getting stuck if network/assets are slow
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeProgress(prev => {
+        if (prev < 97) {
+          const increment = prev < 50 ? 3 : (prev < 80 ? 1.5 : 0.3);
+          return Math.min(97, prev + increment);
+        }
+        return prev;
+      });
+    }, 45);
+    return () => clearInterval(interval);
+  }, []);
+
   // Target data progress calculation (50% API, 50% Render)
   const targetDataProgress = (() => {
     // API Progress: 50% total
@@ -129,7 +144,9 @@ export default function App() {
     // Stage 5: Contact/Complete (rendered) -> 50%
     const renderProgress = (mountStage / 5) * 50;
 
-    return Math.min(100, Math.floor(apiProgress + renderProgress));
+    const realProgress = Math.min(100, Math.floor(apiProgress + renderProgress));
+    if (realProgress >= 100) return 100;
+    return Math.max(realProgress, Math.floor(timeProgress));
   })();
 
   // Smoothly increment visualProgress to targetDataProgress
@@ -197,12 +214,12 @@ export default function App() {
       setMinSplashTimerDone(true);
     }, splashDuration);
 
-    // Safety timeout: If mounting/data takes too long (> 6s), proceed anyway
+    // Safety timeout: If mounting/data takes too long (> 3.5s on mobile, > 6s on desktop), proceed anyway
     const safetyTimer = setTimeout(() => {
       setVisualProgress(100);
       setMountStage(5);
       setSplashAnimationComplete(true);
-    }, 6000);
+    }, isMobileDevice() ? 3500 : 6000);
 
     // Signal the inlined preloader to remove itself (once React is stable)
     const cleanupTimer = setTimeout(() => {

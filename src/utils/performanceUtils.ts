@@ -3,9 +3,10 @@
  * Falls back to setTimeout if requestIdleCallback is not available.
  */
 export const runWhenIdle = (callback: () => void, timeout = 2000) => {
-  if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+  const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
+  if (typeof window !== 'undefined' && 'requestIdleCallback' in window && !isIOS) {
     (window as any).requestIdleCallback(callback, { timeout });
   } else {
-    setTimeout(callback, 1);
+    setTimeout(callback, 16);
   }
 };
