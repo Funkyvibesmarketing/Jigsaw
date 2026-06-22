@@ -7,91 +7,52 @@ export function SplashMobile({ dataProgress = 0, onComplete }: { dataProgress?: 
   const [fadeProgress, setFadeProgress] = useState(false);
   const [showScrollHint, setShowScrollHint] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
+
+  // Directly use dataProgress since App.tsx already smoothly increments it
+  const progress = dataProgress;
+
+  useEffect(() => {
+    const startDelay = setTimeout(() => {
+      setHasStarted(true);
+    }, 50);
+    return () => clearTimeout(startDelay);
+  }, []);
+
+  useEffect(() => {
+    if (progress >= 99) {
+      setTimeout(() => setFadeProgress(true), 150);
+      setTimeout(() => setShowFinancial(true), 300);
+      setTimeout(() => setShowScrollHint(true), 500);
+      if (onComplete) {
+        setTimeout(onComplete, 600);
+      }
+    }
+  }, [progress, onComplete]);
 
   return (
     <div className="min-h-screen w-full bg-white m-0 p-0 border-0 transition-opacity duration-300"
       style={{ opacity: hasStarted ? 1 : 0 }}>
       <AnimatedLogoScreen
+        progress={progress}
         showFinancial={showFinancial}
-        setShowFinancial={setShowFinancial}
         fadeProgress={fadeProgress}
-        setFadeProgress={setFadeProgress}
         showScrollHint={showScrollHint}
-        setShowScrollHint={setShowScrollHint}
-        hasStarted={hasStarted}
-        setHasStarted={setHasStarted}
-        isAnimating={isAnimating}
-        setIsAnimating={setIsAnimating}
       />
     </div>
   );
 }
 
 function AnimatedLogoScreen({
+  progress,
   showFinancial,
-  setShowFinancial,
   fadeProgress,
-  setFadeProgress,
-  showScrollHint,
-  setShowScrollHint,
-  hasStarted,
-  setHasStarted,
-  isAnimating,
-  setIsAnimating
+  showScrollHint
 }: {
+  progress: number,
   showFinancial: boolean,
-  setShowFinancial: (v: boolean) => void,
   fadeProgress: boolean,
-  setFadeProgress: (v: boolean) => void,
-  showScrollHint: boolean,
-  setShowScrollHint: (v: boolean) => void,
-  hasStarted: boolean,
-  setHasStarted: (v: boolean) => void,
-  isAnimating: boolean,
-  setIsAnimating: (v: boolean) => void
+  showScrollHint: boolean
 }) {
-  const percentRef = useRef<HTMLParagraphElement>(null);
-
-  useEffect(() => {
-    let start: number | null = null;
-    const duration = 2200; // 2.2 seconds animation
-    let frameId: number;
-
-    const updateCounter = (timestamp: number) => {
-      if (!start) start = timestamp;
-      const elapsed = timestamp - start;
-      const progress = Math.min(elapsed / duration, 1);
-
-      // Easing: cubic-bezier(0.16, 1, 0.3, 1) approximation: 1 - (1 - progress)^4
-      const easeProgress = 1 - Math.pow(1 - progress, 4);
-      const percent = Math.floor(easeProgress * 100);
-
-      if (percentRef.current) {
-        percentRef.current.textContent = `${percent}%`;
-      }
-
-      if (progress < 1) {
-        frameId = requestAnimationFrame(updateCounter);
-      } else {
-        setFadeProgress(true);
-        setTimeout(() => setShowFinancial(true), 200);
-        setTimeout(() => setShowScrollHint(true), 400);
-      }
-    };
-
-    const startDelay = setTimeout(() => {
-      setHasStarted(true);
-      setIsAnimating(true);
-      frameId = requestAnimationFrame(updateCounter);
-    }, 50);
-
-    return () => {
-      clearTimeout(startDelay);
-      cancelAnimationFrame(frameId);
-    };
-  }, [setHasStarted, setIsAnimating, setFadeProgress, setShowFinancial, setShowScrollHint]);
-
   return (
     <motion.div
       className="relative size-full min-h-screen bg-white border-0"
@@ -211,9 +172,9 @@ function AnimatedLogoScreen({
               <div
                 className="absolute inset-0 bg-white/40"
                 style={{
-                  transform: isAnimating ? 'scaleX(0)' : 'scaleX(1)',
+                  transform: `scaleX(${(100 - progress) / 100})`,
                   transformOrigin: 'left',
-                  transition: 'transform 2.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                  transition: 'transform 0.1s ease-out',
                   willChange: 'transform'
                 }}
               />
@@ -221,13 +182,12 @@ function AnimatedLogoScreen({
           </div>
         </div>
 
-        {/* Counter text updating directly via Ref to avoid React component render lag */}
+        {/* Counter text updating directly via animated state to avoid React component render lag */}
         <p
-          ref={percentRef}
           className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2ec4b6] text-[32px] text-center text-nowrap whitespace-pre"
           style={{ willChange: 'transform' }}
         >
-          0%
+          {progress}%
         </p>
 
         <div className="relative h-[6px] rounded-[12px] shrink-0 w-[122px] bg-gradient-to-r from-[rgba(255,255,255,0.4)] to-[rgba(46,196,182,0.4)] overflow-hidden">
@@ -235,9 +195,9 @@ function AnimatedLogoScreen({
           <div
             className="absolute inset-0 bg-white/40"
             style={{
-              transform: isAnimating ? 'scaleX(0)' : 'scaleX(1)',
+              transform: `scaleX(${(100 - progress) / 100})`,
               transformOrigin: 'right',
-              transition: 'transform 2.2s cubic-bezier(0.16, 1, 0.3, 1)',
+              transition: 'transform 0.1s ease-out',
               willChange: 'transform'
             }}
           />

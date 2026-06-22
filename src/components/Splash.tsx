@@ -8,7 +8,8 @@ import { SplashMobile } from './SplashMobile';
 
 export function Splash({ dataProgress = 0, onComplete }: { dataProgress?: number, onComplete: () => void }) {
   const [isMobile, setIsMobile] = useState(false);
-  const [progress, setProgress] = useState(0);
+  // Directly use dataProgress since App.tsx already smoothly increments it
+  const progress = dataProgress;
   const [showFinancial, setShowFinancial] = useState(false);
   const [fadeProgress, setFadeProgress] = useState(false);
   const [showScrollHint, setShowScrollHint] = useState(false);
@@ -24,36 +25,6 @@ export function Splash({ dataProgress = 0, onComplete }: { dataProgress?: number
     
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-
-  useEffect(() => {
-    // Smoothly animate the progress state towards the dataProgress value
-    const duration = 500; // Animation duration for each progress increment
-    const startProgress = progress;
-    const startTime = performance.now();
-    let animationFrameId: number;
-
-    const animateProgress = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progressDelta = dataProgress - startProgress;
-      
-      if (progressDelta === 0) return;
-
-      const currentStep = Math.min(1, elapsed / duration);
-      const easedProgress = Math.floor(startProgress + progressDelta * currentStep);
-      
-      setProgress(easedProgress);
-
-      if (currentStep < 1) {
-        animationFrameId = requestAnimationFrame(animateProgress);
-      }
-    };
-
-    animationFrameId = requestAnimationFrame(animateProgress);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [dataProgress]);
 
   useEffect(() => {
     if (progress >= 99) {

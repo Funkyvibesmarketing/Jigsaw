@@ -51,12 +51,12 @@ const isMobileDevice = (): boolean => {
 };
 
 // Calculate splash animation duration based on device type
-// Mobile (iOS & Android): 2.0s animation + 0.5s buffer = 2.5s total
+// Mobile (iOS & Android): 1.5s animation + 0.3s buffer = 1.8s total
 // Desktop: 2.2s animation + 0.5s buffer = 2.7s total
 const getSplashDuration = (): number => {
-  const MOBILE_ANIMATION_DURATION = 2000; // ms (from SplashMobile.tsx for both iOS and Android)
+  const MOBILE_ANIMATION_DURATION = 1500; // ms (aligned with dynamic progress on mobile)
   const DESKTOP_ANIMATION_DURATION = 2200; // ms (from Splash.tsx)
-  const UI_TRANSITION_BUFFER = 500; // ms (for post-animation UI transitions)
+  const UI_TRANSITION_BUFFER = isMobileDevice() ? 300 : 500; // ms (for post-animation UI transitions)
 
   return (isMobileDevice() ? MOBILE_ANIMATION_DURATION : DESKTOP_ANIMATION_DURATION) + UI_TRANSITION_BUFFER;
 };
@@ -137,10 +137,10 @@ export default function App() {
     if (visualProgress < targetDataProgress) {
       const timer = setTimeout(() => {
         setVisualProgress(prev => Math.min(prev + 1, targetDataProgress));
-      }, 40); // 40ms per 1% = ~4s for 0-100% if loaded instantly
+      }, isMobile ? 15 : 30); // Snappier progression on mobile (1.5s total max) vs desktop (3s total max)
       return () => clearTimeout(timer);
     }
-  }, [visualProgress, targetDataProgress]);
+  }, [visualProgress, targetDataProgress, isMobile]);
 
   // Use visualProgress for the splash screens
   const dataProgress = visualProgress;
@@ -192,7 +192,7 @@ export default function App() {
     runWhenIdle(() => setMountStage(1));
 
     // This timer controls when the splash overlay releases scroll and shows the site.
-    const splashDuration = isMobileDevice() ? 2800 : 3500;
+    const splashDuration = isMobileDevice() ? 1500 : 3500;
     const timer = setTimeout(() => {
       setMinSplashTimerDone(true);
     }, splashDuration);
