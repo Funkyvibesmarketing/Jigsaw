@@ -221,6 +221,16 @@ export function ServicesMobile({
     }
   };
 
+  const handleTapNextCardButton = () => {
+    if (!currentService) return;
+    if (currentCardIndex === currentService.detailCards.length - 1) {
+      setCardDirection(-1);
+      setCurrentCardIndex(0);
+    } else {
+      handleNextCard();
+    }
+  };
+
   // Helper to format textItalic to highlight "ask away" in teal and underline
   const renderItalicText = (text: string) => {
     if (!text) return null;
@@ -536,24 +546,7 @@ export function ServicesMobile({
 
                               </div>
 
-                              {/* "Tap to view next card" — absolutely pinned to card bottom, always visible regardless of content length */}
-                              {position === 0 && (
-                                <p
-                                  className="font-lato-regular italic text-center text-[rgba(34,37,38,0.4)]"
-                                  style={{
-                                    position: 'absolute',
-                                    bottom: 14,
-                                    left: 0,
-                                    right: 0,
-                                    fontSize: 12,
-                                    lineHeight: '16px',
-                                    zIndex: 20,
-                                    pointerEvents: 'none',
-                                  }}
-                                >
-                                  Tap to view next card
-                                </p>
-                              )}
+
                             </motion.div>
                           );
                         })}
@@ -567,13 +560,24 @@ export function ServicesMobile({
         </div>
 
         {/* Bottom navigation - changes cards within category */}
-        <div className="flex-shrink-0 w-full flex flex-col items-center gap-[16px] pb-0" style={{ marginTop: '12px' }}>
+        <div className="flex-shrink-0 w-full flex flex-col items-center gap-[16px] pb-0" style={{ marginTop: '-4px' }}>
           <div className="content-stretch flex gap-[24px] items-center z-50">
             {/* Counter - shows current card / total cards in current category */}
             <p className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[24px] text-[rgba(255,255,255,0.2)] text-center text-nowrap">
               {currentCardIndex + 1}/{currentService.detailCards.length}
             </p>
           </div>
+          <button
+            onClick={handleTapNextCardButton}
+            className="flex items-center justify-center gap-[8px] bg-[#2ec4b6] border border-[rgba(255,255,255,0.1)] border-solid drop-shadow-[0px_10px_12px_rgba(0,0,0,0.15)] px-[18px] py-[12px] rounded-[999px] active:scale-95 transition-transform z-50 cursor-pointer"
+          >
+            <span className="font-lato-bold text-[14px] text-white leading-[18px] whitespace-nowrap">
+              Tap to view next card
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none" className="w-[18px] h-[18px] shrink-0">
+              <path d="M3.74951 9.00011H14.2507M9.00011 14.2507L14.2507 9.00011L9.00011 3.74951" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </button>
         </div>
 
       </div>

@@ -71,11 +71,11 @@ export function TeamMobile({
   const displayMembers = teamMembers.slice(0, 3);
   const totalSlides = 3;
 
-  // Team content should be visible only after the TEAM mask has started (0.75)
-  // Fade in from 0.78 to 0.88 — starts after mask is partially opaque, never bleeds through early
+  // Team content should be visible only after the TEAM mask is fully opaque (0.82)
+  // Fade in from 0.82 to 0.88 — starts after mask is fully opaque, never bleeds through early
   let teamContentOpacity = 0;
-  if (reviewsScrollProgress && reviewsScrollProgress >= 0.78 && reviewsScrollProgress < 0.88) {
-    teamContentOpacity = (reviewsScrollProgress - 0.78) / 0.10;
+  if (reviewsScrollProgress && reviewsScrollProgress >= 0.82 && reviewsScrollProgress < 0.88) {
+    teamContentOpacity = (reviewsScrollProgress - 0.82) / 0.06;
   } else if (reviewsScrollProgress && reviewsScrollProgress >= 0.88) {
     teamContentOpacity = 1;
   }

@@ -363,70 +363,38 @@ export function MobileMenu({ isMobileMenuOpen, setIsMobileMenuOpen, activeSectio
     // Set the active section based on which button was clicked
     setActiveSection(activeState);
 
-    // Special handling for Home - scroll past splash screen to hero content
+    // Special handling for Home - scroll to top
     if (sectionId === 'HeroSection') {
       window.scrollTo({
-        top: window.innerHeight * 0.5, // Scroll past splash fade threshold
+        top: 0,
         behavior: 'smooth'
       });
       setIsMobileMenuOpen(false);
       return;
     }
 
-    // Special handling for About Us section
-    if (sectionId === 'AboutUsSection') {
-      window.scrollTo({
-        top: window.innerHeight * 2.2, // Adjusted position for About Us section
-        behavior: 'smooth'
-      });
-      setIsMobileMenuOpen(false);
-      return;
-    }
-
-    // Special handling for Service Us section
+    // Special handling for ServiceSection (which is in the middle of AboutUsMobile scroll)
     if (sectionId === 'ServiceSection') {
-      window.scrollTo({
-        top: window.innerHeight * 5.1, // Same position as Services
-        behavior: 'smooth'
-      });
-      setIsMobileMenuOpen(false);
-      return;
-    }
-
-
-    // Special handling for Team section
-    if (sectionId === 'TeamSection') {
-      window.scrollTo({
-        top: window.innerHeight * 10.7, // Same position as Services
-        behavior: 'smooth'
-      });
-      setIsMobileMenuOpen(false);
-      return;
-    }
-
-    // Special handling for Process Us section
-    if (sectionId === 'ProcessSection') {
-      window.scrollTo({
-        top: window.innerHeight * 12.8, // Same position as Services
-        behavior: 'smooth'
-      });
-      setIsMobileMenuOpen(false);
-      return;
-    }
-
-    // Special handling for Blogs Us section
-    if (sectionId === 'BlogsSection') {
-      window.scrollTo({
-        top: window.innerHeight * 18, // Same position as Services
-        behavior: 'smooth'
-      });
+      const aboutUs = document.getElementById('AboutUsSection');
+      if (aboutUs) {
+        // Services cards are active around 72.5% of the AboutUsMobile height
+        const targetY = aboutUs.offsetTop + aboutUs.offsetHeight * 0.725;
+        window.scrollTo({
+          top: targetY,
+          behavior: 'smooth'
+        });
+      }
       setIsMobileMenuOpen(false);
       return;
     }
 
     const section = document.getElementById(sectionId);
     if (section) {
-      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const offset = 0;
+      window.scrollTo({
+        top: section.offsetTop + offset,
+        behavior: 'smooth'
+      });
     } else {
       // Fallback: scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' });

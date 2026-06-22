@@ -614,7 +614,7 @@ export default function App() {
             </ErrorBoundary>
           </div>
 
-          <div id="TeamSection" className={isMobile ? "min-h-[50vh] bg-[#2c4657] overflow-hidden" : ""}>
+          <div id="TeamSection" className={isMobile ? "min-h-[150vh] bg-[#2c4657] overflow-hidden" : ""}>
             <ErrorBoundary>
               <Suspense fallback={<SectionLoader />}>
                 {!isMobile && (

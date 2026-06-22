@@ -333,18 +333,18 @@ export function BlogsMobile({ onScrollProgress, blogs = [], onReady }: BlogsMobi
   // Duplicate blogs to create enough slides for smooth looping with coverflow effect
   const blogData = blogs.length > 0 ? Array(20).fill(blogs).flat() : [];
 
-  // Scroll-based animations for title
-  const titleY = useTransform(scrollYProgress, [0, 0.3], [100, 0]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.2, 0.3], [0, 1, 0.3]);
+  // Scroll-based animations for title (quicker for better mobile navigation landing)
+  const titleY = useTransform(scrollYProgress, [0, 0.15], [40, 0]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.15, 0.75, 0.90], [0, 1, 1, 0]);
   const titleColor = useTransform(
     scrollYProgress,
-    [0, 0.3],
+    [0, 0.15],
     ['rgba(34, 37, 38, 1)', 'rgba(34, 37, 38, 1)']
   );
 
-  // Scroll-based animations for cards (delayed)
-  const cardsY = useTransform(scrollYProgress, [0.2, 0.5], [100, 0]);
-  const cardsOpacity = useTransform(scrollYProgress, [0.2, 0.5], [0, 1]);
+  // Scroll-based animations for cards (quicker so they appear immediately on navigation)
+  const cardsY = useTransform(scrollYProgress, [0, 0.20], [50, 0]);
+  const cardsOpacity = useTransform(scrollYProgress, [0, 0.20, 0.75, 0.90], [0, 1, 1, 0]);
 
   // Update scroll progress
   useEffect(() => {
