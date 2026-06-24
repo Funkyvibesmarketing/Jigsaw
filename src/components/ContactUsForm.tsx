@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
+import { motion, useScroll, useTransform, AnimatePresence, useMotionValue } from "motion/react";
 import { useRef, useEffect, useState } from "react";
 import svgPaths from "../imports/svg-cxhurimysf";
 import successSvgPaths from "../imports/svg-o2ors8ir2r";
@@ -141,12 +141,14 @@ function SocialButton({
 export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFormProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
+  const formDataState = useState({
     name: '',
     email: '',
     phone: '',
     message: ''
   });
+  const formData = formDataState[0];
+  const setFormData = formDataState[1];
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -187,18 +189,30 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
   const [pdfViewerOpen, setPdfViewerOpen] = useState(false);
   const [currentPdf, setCurrentPdf] = useState<{ url: string; title: string } | null>(null);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"],
-  });
+  const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
+  const viewportHeight = window.innerHeight / zoomFactor;
+
+  const scrollYProgress = useMotionValue(0);
 
   useEffect(() => {
-    const unsubscribe = scrollYProgress.on("change", (latest) => {
-      onScrollProgress?.(latest);
-    });
-
-    return () => unsubscribe();
-  }, [scrollYProgress, onScrollProgress]);
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const total = rect.height + viewportHeight;
+      const current = viewportHeight - rect.top;
+      const progress = total <= 0 ? 0 : Math.min(1, Math.max(0, current / total));
+      
+      scrollYProgress.set(progress);
+      onScrollProgress?.(progress);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+    handleScroll();
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [onScrollProgress, viewportHeight]);
 
   // Signal readiness on mount
   useEffect(() => {
@@ -214,7 +228,8 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
         const rect = containerRef.current.getBoundingClientRect();
         // Check if mouse is within the ContactUsForm section
         if (e.clientY >= rect.top && e.clientY <= rect.bottom) {
-          setCursorPosition({ x: e.clientX, y: e.clientY });
+          const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
+          setCursorPosition({ x: e.clientX / zoomFactor, y: e.clientY / zoomFactor });
           setShowCursor(true);
         } else {
           setShowCursor(false);
@@ -343,7 +358,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
     switch (currentStep) {
       case 1:
         return (
-          <div className="absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] top-[calc(50%-350px)] translate-x-[-50%] translate-y-[-50%] w-[800px]">
+          <div className="absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] translate-x-[-50%] translate-y-[-50%] w-[800px]" style={{ top: 'calc(50% - 210px)' }}>
             <input
               type="text"
               value={formData.name}
@@ -362,7 +377,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
         );
       case 2:
         return (
-          <div className="absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] top-[calc(50%-350px)] translate-x-[-50%] translate-y-[-50%] w-[800px]">
+          <div className="absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] translate-x-[-50%] translate-y-[-50%] w-[800px]" style={{ top: 'calc(50% - 210px)' }}>
             <input
               type="email"
               value={formData.email}
@@ -381,7 +396,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
         );
       case 3:
         return (
-          <div className="absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] top-[calc(50%-350px)] translate-x-[-50%] translate-y-[-50%] w-[800px]">
+          <div className="absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] translate-x-[-50%] translate-y-[-50%] w-[800px]" style={{ top: 'calc(50% - 210px)' }}>
             <input
               type="tel"
               value={formData.phone}
@@ -400,7 +415,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
         );
       case 4:
         return (
-          <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 top-[calc(50%-350px)] translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4">
+          <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4" style={{ top: 'calc(50% - 210px)' }}>
             <textarea
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
@@ -447,7 +462,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
       )}
 
       {/* Sticky Form Section */}
-      <div className="sticky top-0 h-[180vh] md:h-[100vh] w-full overflow-hidden pb-[60px]">
+      <div className="sticky top-0 w-full overflow-hidden pb-[60px]" style={{ height: window.innerWidth >= 768 ? `${Math.max(980, viewportHeight)}px` : `${viewportHeight * 1.8}px` } as React.CSSProperties}>
         {/* Mobile View */}
         <MobileContactUsForm
           slideY={slideY}
@@ -519,7 +534,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
           {!isSubmitted && (
             <>
               {/* Step Indicator */}
-              <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+440px)] not-italic text-[72px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[calc(50%-350px)] translate-x-[-50%] whitespace-pre">{currentStep}/4</p>
+              <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+440px)] not-italic text-[72px] text-[rgba(255,255,255,0.2)] text-center text-nowrap translate-x-[-50%] whitespace-pre" style={{ top: 'calc(50% - 210px)' }}>{currentStep}/4</p>
 
               {/* Form Field */}
               {renderFormField()}
@@ -534,7 +549,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
                   (currentStep === 3 && !formData.phone) ||
                   (currentStep === 4 && !formData.message)
                 }
-                className={`absolute bg-[#222526] box-border content-stretch flex gap-[8px] items-center justify-center left-[50%] translate-x-[-50%] px-[40px] py-[24px] rounded-[56px] top-[calc(50%-275px)] transition-opacity border-none ${isSubmitting ||
+                className={`absolute bg-[#222526] box-border content-stretch flex gap-[8px] items-center justify-center left-[50%] translate-x-[-50%] px-[40px] py-[24px] rounded-[56px] transition-opacity border-none ${isSubmitting ||
                   (currentStep === 1 && !formData.name) ||
                   (currentStep === 2 && !formData.email) ||
                   (currentStep === 3 && !formData.phone) ||
@@ -542,6 +557,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
                   ? 'opacity-50 cursor-not-allowed md:cursor-none'
                   : 'opacity-100 cursor-pointer md:cursor-none hover:opacity-90'
                   }`}
+                style={{ top: 'calc(50% - 135px)' }}
               >
                 <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic relative shrink-0 text-[24px] text-nowrap text-white whitespace-pre">
                   {isSubmitting ? 'Sending...' : currentStep === 4 ? 'Submit' : 'Next'}
@@ -552,7 +568,8 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
               {/* Error Message */}
               {submitError && (
                 <motion.p
-                  className="absolute left-1/2 translate-x-[-50%] top-[calc(50%-50px)] font-['Lato:Regular',sans-serif] text-[18px] text-red-400 text-center max-w-[600px]"
+                  className="absolute left-1/2 translate-x-[-50%] font-['Lato:Regular',sans-serif] text-[18px] text-red-400 text-center max-w-[600px]"
+                  style={{ top: 'calc(50% + 25px)' }}
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
@@ -566,7 +583,8 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
                 <button
                   onClick={handleBack}
                   disabled={isSubmitting}
-                  className="absolute left-1/2 translate-x-[-50%] top-[calc(50%-180px)] cursor-pointer md:cursor-none bg-transparent border-none hover:opacity-70 transition-opacity disabled:opacity-50"
+                  className="absolute left-1/2 translate-x-[-50%] cursor-pointer md:cursor-none bg-transparent border-none hover:opacity-70 transition-opacity disabled:opacity-50"
+                  style={{ top: 'calc(50% - 40px)' }}
                 >
                   <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[24px] text-white whitespace-pre">Back</p>
                 </button>

@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
+import { motion, useScroll, useTransform, useMotionValueEvent, useMotionValue } from 'motion/react';
 import svgPaths from '../imports/svg-oksog5kqro';
 import svgPathsCompliance from '../imports/svg-a12xqqb4fo';
 import imgModernHouseAtTwilight4 from 'figma:asset/77b24f13b4242da58b9f7acf069a8d06393d7e02.png';
@@ -14,7 +14,8 @@ import AboutUsScrollEffect from '../imports/AboutUsScrollEffect';
 export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: { onScrollProgress?: (progress: number) => void; splashViewed?: boolean; onReady?: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hideDownArrow, setHideDownArrow] = useState(false);
-  const viewportHeight = window.innerHeight;
+  const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
+  const viewportHeight = window.innerHeight / zoomFactor;
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
 
   useEffect(() => {
@@ -52,18 +53,28 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
     }
   };
 
-  // Track scroll progress through this section
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"]
-  });
+  // Track scroll progress through this section using zoom-safe layout metrics
+  const scrollYProgress = useMotionValue(0);
 
-  // Report scroll progress to parent
-  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
-    if (onScrollProgress) {
-      onScrollProgress(latest);
-    }
-  });
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      // start start (rect.top = 0) to end start (rect.top = -rect.height)
+      const progress = Math.min(1, Math.max(0, -rect.top / rect.height));
+      scrollYProgress.set(progress);
+      if (onScrollProgress) {
+        onScrollProgress(progress);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+    handleScroll();
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [onScrollProgress]);
 
   // Adjust for splash transition - hero starts appearing during splash fade
   // Step 1: JIGSAW text fades in (0 to 0.08)
@@ -219,9 +230,19 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
   });
 
   return (
-    <div ref={containerRef} className="relative h-[400vh] w-full m-0 p-0 bg-[#2c4657]">
-      {/* Sticky container that holds the animated content */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden m-0 p-0">
+    <div 
+      ref={containerRef} 
+      className="relative w-full m-0 p-0 bg-[#2c4657]"
+      style={{
+        height: `${viewportHeight * 4}px`
+      }}
+    >
+      <div
+        className="sticky top-0 w-full overflow-hidden m-0 p-0"
+        style={{
+          height: window.innerWidth > 1920 ? `${window.innerHeight / (window.innerWidth / 1920)}px` : '100vh'
+        }}
+      >
         <div className="relative size-full overflow-hidden m-0 p-0">
           {/* Base background that transitions from light to dark blue - stays dark during compliance */}
           <motion.div
@@ -256,8 +277,12 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
 
           {/* Background House Image - Fades in during Step 2 */}
           <motion.div
-            className="absolute flex h-[1086px] items-center justify-center left-1/2 top-[-100px] -translate-x-1/2 w-[1318px] z-[1] pointer-events-none"
-            style={{ opacity: bgImageOpacity, y: bgImageY }}
+            className="absolute flex h-[1086px] items-center justify-center left-1/2 -translate-x-1/2 w-[1318px] z-[1] pointer-events-none"
+            style={{
+              opacity: bgImageOpacity,
+              y: bgImageY,
+              top: window.innerWidth > 1920 ? '0px' : '-100px'
+            }}
           >
             <div className="flex-none rotate-[180deg] scale-y-[-100%] pointer-events-none">
               <div className="h-[1086px] relative w-[1318px] pointer-events-none">
@@ -274,15 +299,16 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
 
           {/* Main House Image - Slides up during Step 2 */}
           <motion.div
-            className="absolute h-[982px] left-0 top-[calc(50%-310px)] w-full left-1/2 -translate-x-1/2 z-[2] pointer-events-none"
+            className="absolute h-[982px] left-0 w-full left-1/2 -translate-x-1/2 z-[2] pointer-events-none"
             style={{
               opacity: mainImageOpacity,
-              y: mainImageY
+              y: mainImageY,
+              top: window.innerWidth > 1920 ? 'calc(50% - 300px)' : 'calc(50% - 310px)'
             }}
           >
             <div className="absolute flex h-[982px] items-center justify-center left-0 top-0 w-full pointer-events-none">
-              <div className="flex-none rotate-[180deg] scale-y-[-100%] pointer-events-none">
-                <div className="h-[982px] relative w-full min-w-[100vw] pointer-events-none">
+              <div className="flex-none rotate-[180deg] scale-y-[-100%] pointer-events-none w-full">
+                <div className="h-[982px] relative w-full pointer-events-none">
                   <img
                     alt=""
                     className="absolute inset-0 max-w-none object-center object-cover pointer-events-none size-full"
@@ -376,9 +402,9 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
             <div className="absolute left-1/2 top-[calc(50%-40px)] -translate-x-1/2 w-[min(90vw,1200px)] flex gap-[40px] items-center justify-center z-[101] pointer-events-auto">
               {/* Shield Icon Replacement */}
               <div className="shrink-0 pointer-events-auto">
-                <img 
-                  src={complianceShield} 
-                  alt="Compliance Shield" 
+                <img
+                  src={complianceShield}
+                  alt="Compliance Shield"
                   className="w-[70px] h-auto object-contain"
                 />
               </div>

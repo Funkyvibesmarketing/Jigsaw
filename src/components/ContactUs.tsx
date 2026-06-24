@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform, useMotionValue } from "motion/react";
 import { useRef, useEffect } from "react";
 
 interface ContactUsProps {
@@ -42,18 +42,30 @@ function InfoCard({ title, children, className, cardOpacity, cardY, onClick }: {
 export default function ContactUs({ onScrollProgress }: ContactUsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"],
-  });
+  const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
+  const viewportHeight = window.innerHeight / zoomFactor;
+
+  const scrollYProgress = useMotionValue(0);
 
   useEffect(() => {
-    const unsubscribe = scrollYProgress.on("change", (latest) => {
-      onScrollProgress?.(latest);
-    });
-
-    return () => unsubscribe();
-  }, [scrollYProgress, onScrollProgress]);
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const total = rect.height + viewportHeight;
+      const current = viewportHeight - rect.top;
+      const progress = total <= 0 ? 0 : Math.min(1, Math.max(0, current / total));
+      
+      scrollYProgress.set(progress);
+      onScrollProgress?.(progress);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+    handleScroll();
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [onScrollProgress, viewportHeight]);
 
   // Slide up animation for the entire ContactUs section
   const slideY = useTransform(scrollYProgress, [0, 0.3], [100, 0]);
@@ -87,10 +99,13 @@ export default function ContactUs({ onScrollProgress }: ContactUsProps) {
   return (
     <div
       ref={containerRef}
-      className="relative w-full bg-white z-[80] min-h-[150vh]"
+      className="relative w-full bg-white z-[80]"
+      style={{
+        minHeight: `${viewportHeight * 1.5}px`
+      } as React.CSSProperties}
     >
       {/* Sticky container */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+      <div className="sticky top-0 w-full overflow-hidden" style={{ height: `${viewportHeight}px` } as React.CSSProperties}>
         {/* Mobile View */}
         <div className="md:hidden bg-white relative w-full h-full">
           <div className="relative w-full h-full flex flex-col items-center justify-center py-[24px] px-[16px]">

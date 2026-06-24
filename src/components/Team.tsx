@@ -80,6 +80,9 @@ export function Team({
   processScrollProgress?: number;
   onReady?: () => void;
 }) {
+  const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
+  const viewportHeight = window.innerHeight / zoomFactor;
+
   const [currentMemberIndex, setCurrentMemberIndex] = useState(0);
   const [previousMemberIndex, setPreviousMemberIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -107,8 +110,8 @@ export function Team({
 
   // Slide up transform when Process section starts - calculate immediately, no spring
   const teamTranslateY = processScrollProgress && processScrollProgress > 0
-    ? `${-100 * Math.min(processScrollProgress / 0.15, 1)}vh`
-    : '0vh';
+    ? `${-viewportHeight * Math.min(processScrollProgress / 0.15, 1)}px`
+    : '0px';
 
   // Signal readiness on mount
   useEffect(() => {
@@ -198,8 +201,9 @@ export function Team({
       {/* Team content - fixed position, overlays on top of Reviews */}
       <div
         ref={containerRef}
-        className="fixed top-0 left-0 w-full h-screen overflow-hidden z-[95]"
+        className="fixed top-0 left-0 w-full overflow-hidden z-[95]"
         style={{
+          height: `${viewportHeight}px`,
           opacity: teamContentOpacity,
           transform: `translateY(${teamTranslateY})`,
           pointerEvents: (teamContentOpacity > 0 && !isServicesStep1Active && !isServicesStep2Active) ? 'auto' : 'none',
@@ -429,8 +433,9 @@ export function Team({
       {/* Mask starts sliding in at 0.82, then zooms from 0.90+, stays visible longer */}
       {reviewsScrollProgress && reviewsScrollProgress >= 0.82 && reviewsScrollProgress < 1.0 && (
         <div
-          className="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none z-[96]"
+          className="fixed top-0 left-0 w-full overflow-hidden pointer-events-none z-[96]"
           style={{
+            height: `${viewportHeight}px`,
             opacity: 1 // Full opacity immediately - no fade
           }}
         >

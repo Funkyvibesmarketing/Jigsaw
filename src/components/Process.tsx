@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, MotionValue } from "motion/react";
+import { motion, useScroll, useTransform, MotionValue, useMotionValue } from "motion/react";
 import { useRef, useEffect, useState } from "react";
 import Process1stStep from "../imports/Process1stStep";
 import Process2ndStep from "../imports/Process2ndStep";
@@ -203,19 +203,30 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [showCursor, setShowCursor] = useState(false);
   
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"],
-  });
+  const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
+  const viewportHeight = window.innerHeight / zoomFactor;
+
+  const scrollYProgress = useMotionValue(0);
 
   useEffect(() => {
-    const unsubscribe = scrollYProgress.on("change", (latest) => {
-      //console.log('Process scrollYProgress:', latest); // Debug log
-      onScrollProgress?.(latest);
-    });
-
-    return () => unsubscribe();
-  }, [scrollYProgress, onScrollProgress]);
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const total = rect.height + viewportHeight;
+      const current = viewportHeight - rect.top;
+      const progress = total <= 0 ? 0 : Math.min(1, Math.max(0, current / total));
+      
+      scrollYProgress.set(progress);
+      onScrollProgress?.(progress);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+    handleScroll();
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [onScrollProgress, viewportHeight]);
 
   const onReadyRef = useRef(onReady);
   useEffect(() => {
@@ -376,8 +387,12 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
   return (
     <div
       ref={containerRef}
-      className="relative w-full bg-[#2c4657] mt-[50vh] md:cursor-none"
-      style={{ height: "300vh", zIndex }}
+      className="relative w-full bg-[#2c4657] md:cursor-none"
+      style={{
+        marginTop: `${viewportHeight * 0.5}px`,
+        height: `${viewportHeight * 3}px`,
+        zIndex
+      } as React.CSSProperties}
     >
       {/* Custom Cursor - Desktop Only */}
       {showCursor && (
@@ -403,18 +418,19 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
 
       {/* Sticky container for all content AND progress bar */}
       <div 
-        className="sticky top-0 h-screen w-full" 
+        className="sticky top-0 w-full" 
         style={{ 
+          height: `${viewportHeight}px`,
           opacity: containerOpacity,
           visibility: isVisible ? 'visible' : 'hidden',
           pointerEvents: isVisible ? 'auto' : 'none'
-        }}
+        } as React.CSSProperties}
       >
         {/* Background cover extending above viewport to cover gap when Team slides up */}
-        <div className="absolute left-0 right-0 bottom-0 top-[-100vh] bg-[#2c4657]" />
+        <div className="absolute left-0 right-0 bottom-0 bg-[#2c4657]" style={{ top: `-${viewportHeight}px` }} />
         
         {/* Scaled content wrapper - Desktop only */}
-        <div className="absolute inset-0 md:scale-[0.85] md:origin-center md:translate-y-[5vh]">
+        <div className="absolute inset-0 md:scale-[0.85] md:origin-center" style={{ transform: `translateY(${viewportHeight * 0.05}px)` }}>
           {/* "OUR PROCESS" Title - Desktop Only */}
           <div className="hidden md:block absolute top-[-50px] left-1/2 -translate-x-1/2 pointer-events-none z-[5]">
             <p 

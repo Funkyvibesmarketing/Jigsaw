@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
+import { motion, useScroll, useTransform, AnimatePresence, useMotionValue } from 'motion/react';
 import { useRef, useEffect, useState } from 'react';
 import svgPathsOld from '../imports/svg-i4lcoo4sqc';
 import svgPaths from '../imports/svg-z5mgt22h4a';
@@ -79,7 +79,8 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const viewportHeight = window.innerHeight
+  const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
+  const viewportHeight = window.innerHeight / zoomFactor;
   const [isAutoPlay, setIsAutoPlay] = useState(false); // Control auto-advance
 
   // Auto-advance carousel every 5 seconds - only when isAutoPlay is true
@@ -134,25 +135,37 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
   // Generate Step 1 data from full services
   const servicesStep1 = getServicesStep1(services);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
+  // Track scroll progress through this section using zoom-safe layout metrics
+  const scrollYProgress = useMotionValue(0);
 
   useEffect(() => {
-    const unsubscribe = scrollYProgress.on('change', (value) => {
-      setScrollProgress(value);
-      onScrollProgress?.(value);
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      // start end (rect.top = viewportHeight) to end start (rect.top = -rect.height)
+      const total = rect.height + viewportHeight;
+      const current = viewportHeight - rect.top;
+      const progress = Math.min(1, Math.max(0, current / total));
+      
+      scrollYProgress.set(progress);
+      setScrollProgress(progress);
+      onScrollProgress?.(progress);
 
       // Report services scroll progress when in Services Step 2 range (0.78 to 1.0)
-      if (value >= 0.78 && value < 1.0) {
+      if (progress >= 0.78 && progress < 1.0) {
         onServicesScrollProgress?.(1);
       } else {
         onServicesScrollProgress?.(0);
       }
-    });
-    return () => unsubscribe();
-  }, [scrollYProgress]); // Remove onScrollProgress and onServicesScrollProgress from dependencies
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+    handleScroll();
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [onScrollProgress, onServicesScrollProgress, viewportHeight]);
 
   // Middle text stays centered initially, then moves up and fades out
   const middleTextY = useTransform(scrollYProgress, [0, 0.25, 0.35, 0.45], [0, 0, -150, -500]);
@@ -219,17 +232,18 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
       ref={containerRef}
       className="relative w-full bg-white z-[90]"
       style={{
-        marginTop: '-120vh',
-        minHeight: '400vh',
+        marginTop: `-${viewportHeight * 1.2}px`,
+        minHeight: `${viewportHeight * 4}px`,
         touchAction: 'pan-y', // Allow vertical scrolling on touch devices
         WebkitOverflowScrolling: 'touch' // Enable momentum scrolling on iOS
       } as React.CSSProperties}
     >
       {/* About Us Content */}
       <div
-        className="relative flex items-center justify-center min-h-screen sticky top-0 overflow-hidden"
+        className="relative flex items-center justify-center sticky top-0 overflow-hidden"
         style={{
-          touchAction: 'pan-y', // Allow vertical scrolling
+          height: window.innerWidth > 1920 ? `${window.innerHeight / (window.innerWidth / 1920)}px` : '100vh',
+          touchAction: 'pan-y',
           WebkitOverflowScrolling: 'touch'
         } as React.CSSProperties}
       >
@@ -563,9 +577,10 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
         {/* Services Text Mask Overlay - Safari compatible approach */}
         {scrollProgress >= 0.55 && scrollProgress < 0.68 && (
           <div
-            className="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none z-[25]"
+            className="fixed top-0 left-0 w-full overflow-hidden pointer-events-none z-[25]"
             style={{
-              opacity: 1
+              opacity: 1,
+              height: window.innerWidth > 1920 ? `${window.innerHeight / (window.innerWidth / 1920)}px` : '100vh'
             }}
           >
             {/* SVG with mask to create cutout effect - SAME APPROACH AS TEAM */}

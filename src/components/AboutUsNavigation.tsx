@@ -20,7 +20,8 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
   const scrollToSection = (sectionName: string) => {
     // Get the current scroll position
     const currentScrollY = window.scrollY;
-    const viewportHeight = window.innerHeight;
+    const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
+    const viewportHeight = window.innerHeight / zoomFactor;
 
     // Calculate target scroll positions based on actual section layout
     // These are more accurate multipliers based on the actual structure
@@ -199,18 +200,21 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
               onMouseLeave={() => setHoveredMenuItem(null)}
               onClick={() => scrollToSection('Home')}
             >
-              <div className={isHomeActive ? "bg-[rgba(46,196,182,0.4)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#e4ecf1] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}>
-                <div aria-hidden="true" className={isHomeActive ? "absolute border border-[#2ec4b6] border-solid inset-0 pointer-events-none rounded-[100px]" : (isDarkBackground ? "absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" : "absolute border border-[rgba(44,70,87,0.1)] border-solid inset-0 pointer-events-none rounded-[100px]")} />
+              <div 
+                className={isHomeActive ? "bg-[rgba(46,196,182,0.4)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#ffffff] shadow-[0px_4px_12px_rgba(0,0,0,0.08)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}
+                style={{ height: isHomeActive ? '91px' : '50px' }}
+              >
+                <div aria-hidden="true" className={isHomeActive ? "absolute border border-[#2ec4b6] border-solid inset-0 pointer-events-none rounded-[100px]" : (isDarkBackground ? "absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" : "absolute border border-[rgba(44,70,87,0.22)] border-solid inset-0 pointer-events-none rounded-[100px]")} />
                 <div className="flex flex-col items-center justify-center size-full">
                   <div className="box-border content-stretch flex flex-col gap-[8px] items-center justify-center px-[17.5px] py-[12px] relative w-full">
                     {isHomeActive ? (
                       <>
-                        <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "42.6875", "--transform-inner-height": "16" } as React.CSSProperties}>
+                        <div className="flex items-center justify-center relative shrink-0" style={{ width: '16px', height: '43px' }}>
                           <div className="flex-none rotate-[270deg]">
                             <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-[16px] text-center text-nowrap whitespace-pre" style={{ color: isDarkBackground ? 'white' : '#2EC4B6' }}>Home</p>
                           </div>
                         </div>
-                        <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "16", "--transform-inner-height": "16" } as React.CSSProperties}>
+                        <div className="flex items-center justify-center relative shrink-0" style={{ width: '16px', height: '16px' }}>
                           <div className="flex-none">
                             <div className="relative shrink-0 size-[16px]">
                               <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
@@ -259,18 +263,21 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
               onMouseLeave={() => setHoveredMenuItem(null)}
               onClick={() => scrollToSection('About us')}
             >
-              <div className={isAboutUsActive ? "bg-[rgba(46,196,182,0.2)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#e4ecf1] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}>
-                <div aria-hidden="true" className={isAboutUsActive ? "absolute border border-[rgba(46,196,182,0.3)] border-solid inset-0 pointer-events-none rounded-[100px]" : (isDarkBackground ? "absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" : "absolute border border-[rgba(44,70,87,0.1)] border-solid inset-0 pointer-events-none rounded-[100px]")} />
+              <div 
+                className={isAboutUsActive ? "bg-[rgba(46,196,182,0.2)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#ffffff] shadow-[0px_4px_12px_rgba(0,0,0,0.08)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}
+                style={{ height: isAboutUsActive ? '111px' : '50px' }}
+              >
+                <div aria-hidden="true" className={isAboutUsActive ? "absolute border border-[rgba(46,196,182,0.3)] border-solid inset-0 pointer-events-none rounded-[100px]" : (isDarkBackground ? "absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" : "absolute border border-[rgba(44,70,87,0.22)] border-solid inset-0 pointer-events-none rounded-[100px]")} />
                 <div className="flex flex-col items-center justify-center size-full">
                   <div className="box-border content-stretch flex flex-col gap-[8px] items-center justify-center px-[17.5px] py-[12px] relative w-full">
                     {isAboutUsActive ? (
                       <>
-                        <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "63.15625", "--transform-inner-height": "16" } as React.CSSProperties}>
+                        <div className="flex items-center justify-center relative shrink-0" style={{ width: '16px', height: '63px' }}>
                           <div className="flex-none rotate-[270deg]">
                             <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-[16px] text-center text-nowrap whitespace-pre" style={{ color: isDarkBackground ? 'white' : '#2EC4B6' }}>About us</p>
                           </div>
                         </div>
-                        <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "16", "--transform-inner-height": "16" } as React.CSSProperties}>
+                        <div className="flex items-center justify-center relative shrink-0" style={{ width: '16px', height: '16px' }}>
                           <div className="flex-none rotate-[270deg]">
                             <div className="overflow-clip relative size-[16px]">
                               <div className="absolute inset-[8.4%_12.5%_11.52%_12.5%]">
@@ -330,18 +337,21 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
               onMouseLeave={() => setHoveredMenuItem(null)}
               onClick={() => scrollToSection('Services')}
             >
-              <div className={isServicesActive ? "bg-[rgba(46,196,182,0.2)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#e4ecf1] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}>
-                <div aria-hidden="true" className={isServicesActive ? "absolute border border-[rgba(46,196,182,0.3)] border-solid inset-0 pointer-events-none rounded-[100px]" : (isDarkBackground ? "absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" : "absolute border border-[rgba(44,70,87,0.1)] border-solid inset-0 pointer-events-none rounded-[100px]")} />
+              <div 
+                className={isServicesActive ? "bg-[rgba(46,196,182,0.2)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#ffffff] shadow-[0px_4px_12px_rgba(0,0,0,0.08)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}
+                style={{ height: isServicesActive ? '109px' : '50px' }}
+              >
+                <div aria-hidden="true" className={isServicesActive ? "absolute border border-[rgba(46,196,182,0.3)] border-solid inset-0 pointer-events-none rounded-[100px]" : (isDarkBackground ? "absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" : "absolute border border-[rgba(44,70,87,0.22)] border-solid inset-0 pointer-events-none rounded-[100px]")} />
                 <div className="flex flex-col items-center justify-center size-full">
                   <div className="box-border content-stretch flex flex-col gap-[8px] items-center justify-center px-[17.5px] py-[12px] relative w-full">
                     {isServicesActive ? (
                       <>
-                        <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "61.359375", "--transform-inner-height": "16" } as React.CSSProperties}>
+                        <div className="flex items-center justify-center relative shrink-0" style={{ width: '16px', height: '61px' }}>
                           <div className="flex-none rotate-[270deg]">
                             <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-[16px] text-center text-nowrap whitespace-pre" style={{ color: isDarkBackground ? 'white' : '#2EC4B6' }}>Services</p>
                           </div>
                         </div>
-                        <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "16", "--transform-inner-height": "16" } as React.CSSProperties}>
+                        <div className="flex items-center justify-center relative shrink-0" style={{ width: '16px', height: '16px' }}>
                           <div className="flex-none rotate-[270deg]">
                             <div className="relative size-[16px]">
                               <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
@@ -395,18 +405,21 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
               onMouseLeave={() => setHoveredMenuItem(null)}
               onClick={() => scrollToSection('Reviews')}
             >
-              <div className={isReviewsActiveOrInView ? "bg-[rgba(46,196,182,0.2)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#e4ecf1] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}>
-                <div aria-hidden="true" className={isReviewsActiveOrInView ? "absolute border border-[rgba(46,196,182,0.3)] border-solid inset-0 pointer-events-none rounded-[100px]" : (isDarkBackground ? "absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" : "absolute border border-[rgba(44,70,87,0.1)] border-solid inset-0 pointer-events-none rounded-[100px]")} />
+              <div 
+                className={isReviewsActiveOrInView ? "bg-[rgba(46,196,182,0.2)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#ffffff] shadow-[0px_4px_12px_rgba(0,0,0,0.08)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}
+                style={{ height: isReviewsActiveOrInView ? '108.5px' : '50px' }}
+              >
+                <div aria-hidden="true" className={isReviewsActiveOrInView ? "absolute border border-[rgba(46,196,182,0.3)] border-solid inset-0 pointer-events-none rounded-[100px]" : (isDarkBackground ? "absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" : "absolute border border-[rgba(44,70,87,0.22)] border-solid inset-0 pointer-events-none rounded-[100px]")} />
                 <div className="flex flex-col items-center justify-center size-full">
                   <div className="box-border content-stretch flex flex-col gap-[8px] items-center justify-center px-[17.5px] py-[12px] relative w-full">
                     {isReviewsActiveOrInView ? (
                       <>
-                        <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "60.453125", "--transform-inner-height": "16" } as React.CSSProperties}>
+                        <div className="flex items-center justify-center relative shrink-0" style={{ width: '16px', height: '60.5px' }}>
                           <div className="flex-none rotate-[270deg]">
                             <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-[16px] text-center text-nowrap whitespace-pre" style={{ color: isDarkBackground ? 'white' : '#2EC4B6' }}>Reviews</p>
                           </div>
                         </div>
-                        <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "16", "--transform-inner-height": "16" } as React.CSSProperties}>
+                        <div className="flex items-center justify-center relative shrink-0" style={{ width: '16px', height: '16px' }}>
                           <div className="flex-none">
                             <div className="relative size-[16px]">
                               <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 14 14">
@@ -458,18 +471,21 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
               onMouseLeave={() => setHoveredMenuItem(null)}
               onClick={() => scrollToSection('Our team')}
             >
-              <div className={isTeamActive ? "bg-[rgba(46,196,182,0.2)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#e4ecf1] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}>
-                <div aria-hidden="true" className={isTeamActive ? "absolute border border-[rgba(46,196,182,0.3)] border-solid inset-0 pointer-events-none rounded-[100px]" : (isDarkBackground ? "absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" : "absolute border border-[rgba(44,70,87,0.1)] border-solid inset-0 pointer-events-none rounded-[100px]")} />
+              <div 
+                className={isTeamActive ? "bg-[rgba(46,196,182,0.2)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#ffffff] shadow-[0px_4px_12px_rgba(0,0,0,0.08)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}
+                style={{ height: isTeamActive ? '115px' : '50px' }}
+              >
+                <div aria-hidden="true" className={isTeamActive ? "absolute border border-[rgba(46,196,182,0.3)] border-solid inset-0 pointer-events-none rounded-[100px]" : (isDarkBackground ? "absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" : "absolute border border-[rgba(44,70,87,0.22)] border-solid inset-0 pointer-events-none rounded-[100px]")} />
                 <div className="flex flex-col items-center justify-center size-full">
                   <div className="box-border content-stretch flex flex-col gap-[8px] items-center justify-center px-[17.5px] py-[12px] relative w-full">
                     {isTeamActive ? (
                       <>
-                        <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "66.6875", "--transform-inner-height": "16" } as React.CSSProperties}>
+                        <div className="flex items-center justify-center relative shrink-0" style={{ width: '16px', height: '67px' }}>
                           <div className="flex-none rotate-[270deg]">
                             <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-[16px] text-center text-nowrap whitespace-pre" style={{ color: isDarkBackground ? 'white' : '#2EC4B6' }}>Our team</p>
                           </div>
                         </div>
-                        <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "16", "--transform-inner-height": "16" } as React.CSSProperties}>
+                        <div className="flex items-center justify-center relative shrink-0" style={{ width: '16px', height: '16px' }}>
                           <div className="flex-none rotate-[270deg]">
                             <div className="relative size-[16px]" style={{ "--fill-0": isDarkBackground ? "white" : "#2EC4B6" } as React.CSSProperties}>
                               <UsersThree />
@@ -513,18 +529,21 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
               onMouseLeave={() => setHoveredMenuItem(null)}
               onClick={() => scrollToSection('Our process')}
             >
-              <div className={isProcessActive ? "bg-[rgba(46,196,182,0.4)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#e4ecf1] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}>
-                <div aria-hidden="true" className={isProcessActive ? "absolute border border-[#2ec4b6] border-solid inset-0 pointer-events-none rounded-[100px]" : (isDarkBackground ? "absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" : "absolute border border-[rgba(44,70,87,0.1)] border-solid inset-0 pointer-events-none rounded-[100px]")} />
+              <div 
+                className={isProcessActive ? "bg-[rgba(46,196,182,0.4)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#ffffff] shadow-[0px_4px_12px_rgba(0,0,0,0.08)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}
+                style={{ height: isProcessActive ? '135px' : '50px' }}
+              >
+                <div aria-hidden="true" className={isProcessActive ? "absolute border border-[#2ec4b6] border-solid inset-0 pointer-events-none rounded-[100px]" : (isDarkBackground ? "absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" : "absolute border border-[rgba(44,70,87,0.22)] border-solid inset-0 pointer-events-none rounded-[100px]")} />
                 <div className="flex flex-col items-center justify-center size-full">
                   <div className="box-border content-stretch flex flex-col gap-[8px] items-center justify-center px-[17.5px] py-[12px] relative w-full">
                     {isProcessActive ? (
                       <>
-                        <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "87.140625", "--transform-inner-height": "16" } as React.CSSProperties}>
+                        <div className="flex items-center justify-center relative shrink-0" style={{ width: '16px', height: '87px' }}>
                           <div className="flex-none rotate-[270deg]">
                             <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-white text-[16px] text-center text-nowrap whitespace-pre">Our process</p>
                           </div>
                         </div>
-                        <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "16", "--transform-inner-height": "16" } as React.CSSProperties}>
+                        <div className="flex items-center justify-center relative shrink-0" style={{ width: '16px', height: '16px' }}>
                           <div className="flex-none rotate-[180deg]">
                             <div className="relative shrink-0 size-[16px]">
                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="block size-full">
@@ -572,18 +591,21 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
               onMouseLeave={() => setHoveredMenuItem(null)}
               onClick={() => scrollToSection('Blogs')}
             >
-              <div className={isBlogsActive ? "bg-[rgba(46,196,182,0.2)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#e4ecf1] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}>
-                <div aria-hidden="true" className={isBlogsActive ? "absolute border border-[rgba(46,196,182,0.3)] border-solid inset-0 pointer-events-none rounded-[100px]" : (isDarkBackground ? "absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" : "absolute border border-[rgba(44,70,87,0.1)] border-solid inset-0 pointer-events-none rounded-[100px]")} />
+              <div 
+                className={isBlogsActive ? "bg-[rgba(46,196,182,0.2)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#ffffff] shadow-[0px_4px_12px_rgba(0,0,0,0.08)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}
+                style={{ height: isBlogsActive ? '108.5px' : '50px' }}
+              >
+                <div aria-hidden="true" className={isBlogsActive ? "absolute border border-[rgba(46,196,182,0.3)] border-solid inset-0 pointer-events-none rounded-[100px]" : (isDarkBackground ? "absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" : "absolute border border-[rgba(44,70,87,0.22)] border-solid inset-0 pointer-events-none rounded-[100px]")} />
                 <div className="flex flex-col items-center justify-center size-full">
                   <div className="box-border content-stretch flex flex-col gap-[8px] items-center justify-center px-[17.5px] py-[12px] relative w-full">
                     {isBlogsActive ? (
                       <>
-                        <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "60.453125", "--transform-inner-height": "16" } as React.CSSProperties}>
+                        <div className="flex items-center justify-center relative shrink-0" style={{ width: '16px', height: '60.5px' }}>
                           <div className="flex-none rotate-[270deg]">
                             <p className="font-['Lato:Medium',sans-serif] leading-[16px] not-italic relative text-[16px] text-center text-nowrap whitespace-pre" style={{ color: isDarkBackground ? 'white' : '#2EC4B6' }}>Blogs</p>
                           </div>
                         </div>
-                        <div className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-[calc(1px*((var(--transform-inner-height)*1)+(var(--transform-inner-width)*0)))]" style={{ "--transform-inner-width": "16", "--transform-inner-height": "16" } as React.CSSProperties}>
+                        <div className="flex items-center justify-center relative shrink-0" style={{ width: '16px', height: '16px' }}>
                           <div className="flex-none rotate-[180deg]">
                             <div className="relative size-[16px]">
                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="block size-full">

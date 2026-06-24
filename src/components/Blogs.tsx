@@ -1,4 +1,4 @@
-import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValue } from "motion/react";
 import { useRef, useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow, Navigation } from 'swiper/modules';
@@ -405,18 +405,30 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
   // Duplicate the blogs for smooth infinite loop
   const blogData = blogs.length > 0 ? Array(10).fill(blogs).flat() : [];
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"],
-  });
+  const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
+  const viewportHeight = window.innerHeight / zoomFactor;
+
+  const scrollYProgress = useMotionValue(0);
 
   useEffect(() => {
-    const unsubscribe = scrollYProgress.on("change", (latest) => {
-      onScrollProgress?.(latest);
-    });
-
-    return () => unsubscribe();
-  }, [scrollYProgress, onScrollProgress]);
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const total = rect.height + viewportHeight;
+      const current = viewportHeight - rect.top;
+      const progress = total <= 0 ? 0 : Math.min(1, Math.max(0, current / total));
+      
+      scrollYProgress.set(progress);
+      onScrollProgress?.(progress);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+    handleScroll();
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [onScrollProgress, viewportHeight]);
 
   // Force swiper update after initialization and data loading
   useEffect(() => {
@@ -430,15 +442,15 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
 
   // Desktop animations
   // Step 1: White screen slides up from bottom (0 - 0.30)
-  const whiteScreenY = useTransform(scrollYProgress, [0, 0.30], ["100vh", "0vh"]);
+  const whiteScreenY = useTransform(scrollYProgress, [0, 0.30], [viewportHeight, 0]);
 
   // Step 2: BLOGS text slides up from bottom (0.21 - 0.45)
   // Start when white screen covers 70% height (at scroll progress 0.21)
-  const titleY = useTransform(scrollYProgress, [0.21, 0.45], ["0vh", "-85vh"]);
+  const titleY = useTransform(scrollYProgress, [0.21, 0.45], [0, -viewportHeight * 0.85]);
   const titleOpacity = useTransform(scrollYProgress, [0.21, 0.26], [0, 1]);
 
   // Step 3: Cards slide up from bottom (0.40 - 0.50)
-  const cardsY = useTransform(scrollYProgress, [0.40, 0.50], ["100vh", `${scrl}vh`]);
+  const cardsY = useTransform(scrollYProgress, [0.40, 0.50], [viewportHeight, viewportHeight * (scrl / 100)]);
   const cardsOpacity = useTransform(scrollYProgress, [0.40, 0.45, 0.50], [0, 0.3, 1]);
 
   // Fade out entire blogs section when Contact Us slides up
@@ -478,10 +490,10 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
     <div
       ref={containerRef}
       className="relative w-full bg-white"
-      style={{ minHeight: "350vh", opacity: blogsOpacity, position: "relative" }}
+      style={{ minHeight: `${viewportHeight * 3.5}px`, opacity: blogsOpacity, position: "relative" }}
     >
       {/* Sticky container */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+      <div className="sticky top-0 w-full overflow-hidden" style={{ height: `${viewportHeight}px` }}>
 
         {/* Scaled wrapper for desktop */}
         <div className="absolute inset-0 flex items-center justify-center">

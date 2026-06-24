@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
+import { motion, useScroll, useTransform, AnimatePresence, useMotionValue } from 'motion/react';
 import { useRef, useEffect, useState } from 'react';
 import imgVector from "figma:asset/d9d043aba62229fe40aba8743fc6dbfe62b9cdd3.png";
 import imgVectorMobile from "figma:asset/add4cb2fc6a41d59b6193f6298e99d6b25b9b0e5.png";
@@ -330,6 +330,8 @@ export function Reviews({
 
   // Detect mobile view
   const [isMobile, setIsMobile] = useState(false);
+  const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
+  const viewportHeight = window.innerHeight / zoomFactor;
 
   useEffect(() => {
     const checkMobile = () => {
@@ -341,22 +343,39 @@ export function Reviews({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
-
+  // Track scroll progress through this section using zoom-safe layout metrics
+  const scrollYProgress = useMotionValue(0);
   const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
-    const unsubscribe = scrollYProgress.on('change', (latest) => {
-      setScrollProgress(latest);
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
+      
+      const rectTop = rect.top / zoomFactor;
+      const rectHeight = rect.height / zoomFactor;
+      const viewportHeight = window.innerHeight / zoomFactor;
+      
+      // start start (rectTop = 0) to end end (rectTop = viewportHeight - rectHeight)
+      const total = rectHeight - viewportHeight;
+      const current = -rectTop;
+      const progress = total <= 0 ? 0 : Math.min(1, Math.max(0, current / total));
+      
+      scrollYProgress.set(progress);
+      setScrollProgress(progress);
       if (onScrollProgress) {
-        onScrollProgress(latest);
+        onScrollProgress(progress);
       }
-    });
-    return () => unsubscribe();
-  }, [scrollYProgress]);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+    handleScroll();
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [onScrollProgress]);
 
   // Fade Reviews section based on AboutUs progress - don't show until Services mask is complete
   // Reviews section opacity - fades in when Services Step 1 ends
@@ -822,7 +841,7 @@ Very thorough and quick to reply! Would highly recommend!"`} author="~Rebecca" d
       ref={containerRef}
       className="relative w-full bg-white"
       style={{
-        minHeight: isMobile ? '500vh' : '400vh',  // INCREASED mobile height from 250vh to 500vh for much longer scroll
+        minHeight: isMobile ? '500vh' : `${viewportHeight * 4}px`,
         marginTop: '0vh',
         pointerEvents: (aboutUsScrollProgress && aboutUsScrollProgress >= 0.72 && aboutUsScrollProgress < 0.98) || (processScrollProgress && processScrollProgress >= 0.05) ? 'none' : 'auto',
         opacity: reviewsSectionOpacity,
@@ -833,8 +852,9 @@ Very thorough and quick to reply! Would highly recommend!"`} author="~Rebecca" d
       } as React.CSSProperties}
     >
       <div
-        className="sticky top-0 h-screen overflow-hidden bg-white"
+        className="sticky top-0 overflow-hidden bg-white"
         style={{
+          height: window.innerWidth > 1920 ? `${window.innerHeight / (window.innerWidth / 1920)}px` : '100vh',
           pointerEvents: (aboutUsScrollProgress && aboutUsScrollProgress >= 0.72 && aboutUsScrollProgress < 0.98) || (processScrollProgress && processScrollProgress >= 0.05) ? 'none' : 'auto',
           zIndex: 20,
           opacity: reviewsSectionOpacity,

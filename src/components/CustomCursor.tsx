@@ -109,18 +109,25 @@ export function CustomCursor({
     } else if (aboutUsScrollProgress >= 0.55) {
       // After zoom trigger - show dark cursor (light background)
       setCursorType('dark');
-    } else if (latest > window.innerHeight * 0.3) {
-      // Hero compliance section - white background, use dark cursor
-      setCursorType('dark');
     } else {
-      // Hero section - dark background, use light cursor
-      setCursorType('light');
+      const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
+      if (latest > (window.innerHeight / zoomFactor) * 0.3) {
+        // Hero compliance section - white background, use dark cursor
+        setCursorType('dark');
+      } else {
+        // Hero section - dark background, use light cursor
+        setCursorType('light');
+      }
     }
   });
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setPosition({ x: e.clientX, y: e.clientY });
+      const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
+      setPosition({ 
+        x: e.clientX / zoomFactor, 
+        y: e.clientY / zoomFactor 
+      });
     };
 
     window.addEventListener('mousemove', handleMouseMove);
