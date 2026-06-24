@@ -16,60 +16,74 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
   const [isContactHovered, setIsContactHovered] = useState(false);
   const [hoveredMenuItem, setHoveredMenuItem] = useState<string | null>(null);
 
-  // Scroll to section handler
+  // Scroll to section handler — uses actual DOM positions instead of hardcoded multipliers
+  // so it works correctly regardless of CSS zoom on 5K/4K/2K displays.
   const scrollToSection = (sectionName: string) => {
-    // Get the current scroll position
-    const currentScrollY = window.scrollY;
     const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
+    // Use the same viewportHeight calculation as AboutUs.tsx for consistency
     const viewportHeight = window.innerHeight / zoomFactor;
 
-    // Calculate target scroll positions based on actual section layout
-    // These are more accurate multipliers based on the actual structure
-    let targetScrollY = 0;
+    // Map menu items to their section element IDs (as defined in App.tsx)
+    let sectionId = '';
+    // For items embedded within a parent section (e.g., Services within About Us),
+    // scrollProgressTarget is the desired scroll progress through that parent section.
+    // -1 means "just scroll to the section's top".
+    let scrollProgressTarget = -1;
 
     switch (sectionName) {
       case 'Home':
-        // Scroll to top (Hero section)
-        targetScrollY = viewportHeight * 1;
+        sectionId = 'HeroSection';
         break;
       case 'About us':
-        // About Us section starts after Hero (100vh splash + hero height)
-        // Hero is typically 800vh tall, so About Us starts around 800vh
-        targetScrollY = viewportHeight * 3.2; // Start of About Us
+        sectionId = 'AboutUsSection';
         break;
       case 'Services':
-        // Services appears within About Us section around 50% through
-        // About Us is 600vh tall, Services appears around 300vh into it
-        targetScrollY = viewportHeight * 5.5; // Approximately middle of About Us where Services appears
+        // Services is rendered inside AboutUs — the SERVICES text is centered
+        // and fully visible at aboutUsScrollProgress ≈ 0.55
+        sectionId = 'AboutUsSection';
+        scrollProgressTarget = 0.54;
         break;
       case 'Reviews':
-        // Reviews section starts after About Us completes
-        // About Us starts at 8vh and is 600vh tall = ends at 608vh
-        // Reviews has marginTop: 100vh and starts there
-        targetScrollY = viewportHeight * 7.8; // Start of Reviews section
+        sectionId = 'ReviewsSection';
         break;
       case 'Our team':
-        // Team section starts after Reviews completes
-        // Reviews is 400vh tall, so Team starts at 608vh + 100vh + 400vh
-        targetScrollY = viewportHeight * 10; // Start of Team section
+        sectionId = 'TeamSection';
+        scrollProgressTarget = 0.48;
         break;
       case 'Our process':
-        // Process section starts after Team completes
-        // Team section length varies, but Process typically starts here
-        targetScrollY = viewportHeight * 11.3; // Start of Process section
+        sectionId = 'ProcessSection';
         break;
       case 'Blogs':
-        // Blogs section starts after Process completes
-        // Process is typically around 300vh, so Blogs follows
-        targetScrollY = viewportHeight * 16.6; // Start of Blogs section (increased from 26)
+        sectionId = 'BlogsSection';
+        scrollProgressTarget = 0.50;
         break;
       case 'Contact':
-        // Contact Us section starts after Blogs completes
-        // Blogs is about 350vh tall
-        targetScrollY = viewportHeight * 18.1; // Start of Contact Us section
+        sectionId = 'ContactUsSection';
         break;
       default:
-        targetScrollY = 0;
+        break;
+    }
+
+    if (!sectionId) return;
+
+    const element = document.getElementById(sectionId);
+    if (!element) return;
+
+    const rect = element.getBoundingClientRect();
+    const absoluteTop = rect.top + window.scrollY;
+    const sectionHeight = rect.height;
+
+    let targetScrollY: number;
+
+    if (scrollProgressTarget >= 0) {
+      // For sub-sections: calculate the scroll position that produces the desired
+      // scroll progress within the parent section.
+      // This matches AboutUs.tsx formula: progress = (viewportHeight - rect.top) / (sectionHeight + viewportHeight)
+      // Solving for scrollY: scrollY = absoluteTop + progress * (sectionHeight + viewportHeight) - viewportHeight
+      targetScrollY = absoluteTop + scrollProgressTarget * (sectionHeight + viewportHeight) - viewportHeight;
+    } else {
+      // For normal sections: scroll to the section's top
+      targetScrollY = absoluteTop;
     }
 
     // Smooth scroll to the target position
@@ -200,7 +214,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
               onMouseLeave={() => setHoveredMenuItem(null)}
               onClick={() => scrollToSection('Home')}
             >
-              <div 
+              <div
                 className={isHomeActive ? "bg-[rgba(46,196,182,0.4)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#ffffff] shadow-[0px_4px_12px_rgba(0,0,0,0.08)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}
                 style={{ height: isHomeActive ? '91px' : '50px' }}
               >
@@ -263,7 +277,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
               onMouseLeave={() => setHoveredMenuItem(null)}
               onClick={() => scrollToSection('About us')}
             >
-              <div 
+              <div
                 className={isAboutUsActive ? "bg-[rgba(46,196,182,0.2)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#ffffff] shadow-[0px_4px_12px_rgba(0,0,0,0.08)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}
                 style={{ height: isAboutUsActive ? '111px' : '50px' }}
               >
@@ -337,7 +351,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
               onMouseLeave={() => setHoveredMenuItem(null)}
               onClick={() => scrollToSection('Services')}
             >
-              <div 
+              <div
                 className={isServicesActive ? "bg-[rgba(46,196,182,0.2)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#ffffff] shadow-[0px_4px_12px_rgba(0,0,0,0.08)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}
                 style={{ height: isServicesActive ? '109px' : '50px' }}
               >
@@ -405,7 +419,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
               onMouseLeave={() => setHoveredMenuItem(null)}
               onClick={() => scrollToSection('Reviews')}
             >
-              <div 
+              <div
                 className={isReviewsActiveOrInView ? "bg-[rgba(46,196,182,0.2)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#ffffff] shadow-[0px_4px_12px_rgba(0,0,0,0.08)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}
                 style={{ height: isReviewsActiveOrInView ? '108.5px' : '50px' }}
               >
@@ -471,7 +485,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
               onMouseLeave={() => setHoveredMenuItem(null)}
               onClick={() => scrollToSection('Our team')}
             >
-              <div 
+              <div
                 className={isTeamActive ? "bg-[rgba(46,196,182,0.2)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#ffffff] shadow-[0px_4px_12px_rgba(0,0,0,0.08)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}
                 style={{ height: isTeamActive ? '115px' : '50px' }}
               >
@@ -529,7 +543,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
               onMouseLeave={() => setHoveredMenuItem(null)}
               onClick={() => scrollToSection('Our process')}
             >
-              <div 
+              <div
                 className={isProcessActive ? "bg-[rgba(46,196,182,0.4)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#ffffff] shadow-[0px_4px_12px_rgba(0,0,0,0.08)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}
                 style={{ height: isProcessActive ? '135px' : '50px' }}
               >
@@ -591,7 +605,7 @@ export function AboutUsNavigation({ aboutUsScrollProgress, reviewsScrollProgress
               onMouseLeave={() => setHoveredMenuItem(null)}
               onClick={() => scrollToSection('Blogs')}
             >
-              <div 
+              <div
                 className={isBlogsActive ? "bg-[rgba(46,196,182,0.2)] relative rounded-[100px] shrink-0 w-full cursor-pointer" : (isDarkBackground ? "bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer" : "bg-[#ffffff] shadow-[0px_4px_12px_rgba(0,0,0,0.08)] relative rounded-[100px] shrink-0 w-full h-[50px] cursor-pointer")}
                 style={{ height: isBlogsActive ? '108.5px' : '50px' }}
               >
