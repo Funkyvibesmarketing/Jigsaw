@@ -114,6 +114,25 @@ export default function App() {
     };
   }, []);
 
+  // Dynamic scale/zoom for desktop screens wider than 1920px (e.g., 2K, 4K, 5K)
+  useEffect(() => {
+    const handleZoom = () => {
+      const width = window.innerWidth;
+      if (width > 1920) {
+        const zoomFactor = width / 1920;
+        document.documentElement.style.zoom = zoomFactor.toString();
+      } else {
+        document.documentElement.style.zoom = '1';
+      }
+    };
+    handleZoom();
+    window.addEventListener('resize', handleZoom);
+    return () => {
+      window.removeEventListener('resize', handleZoom);
+      document.documentElement.style.zoom = '1';
+    };
+  }, []);
+
   // Background simulated loader to prevent getting stuck if network/assets are slow
   useEffect(() => {
     const interval = setInterval(() => {

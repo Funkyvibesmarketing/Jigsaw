@@ -41,8 +41,11 @@ export function Splash({ dataProgress = 0, onComplete }: { dataProgress?: number
 
   // Desktop version
   return (
-    <div className="min-h-screen w-full bg-white m-0 p-0 border-0 transition-opacity duration-300"
-         style={{ opacity: progress > 0 ? 1 : 0 }}>
+    <div className="w-full bg-white m-0 p-0 border-0 transition-opacity duration-300"
+         style={{ 
+           opacity: progress > 0 ? 1 : 0,
+           height: window.innerWidth > 1920 ? `${window.innerHeight / (window.innerWidth / 1920)}px` : '100vh'
+         }}>
       <AnimatedLogoScreen
         progress={progress}
         showFinancial={showFinancial}
@@ -89,12 +92,16 @@ function ScrollDownHint({ visible }: { visible: boolean }) {
 function AnimatedLogoScreen({ progress, showFinancial, fadeProgress, showScrollHint }: { progress: number, showFinancial: boolean, fadeProgress: boolean, showScrollHint: boolean }) {
   return (
     <motion.div 
-      className="relative size-full min-h-screen bg-white border-0" 
+      className="relative w-full bg-white border-0" 
       data-name="Loading (Letter)"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      style={{ margin: 0, padding: 0 }}
+      style={{ 
+        margin: 0, 
+        padding: 0,
+        height: window.innerWidth > 1920 ? `${window.innerHeight / (window.innerWidth / 1920)}px` : '100vh'
+      }}
     >
       {/* JIGSAW Letters - J, I, G, S, W (without A) */}
       <div className="absolute h-[143px] left-1/2 top-[calc(50%-64.5px)] translate-x-[-50%] translate-y-[-50%] w-[802px] pointer-events-none" data-name="JIGSAW">
@@ -151,17 +158,15 @@ function AnimatedLogoScreen({ progress, showFinancial, fadeProgress, showScrollH
         <motion.div 
           className="absolute h-[143px] w-[135px]" 
           data-name="Main"
-          initial={{ opacity: 0, scale: 0.5, left: '50%', x: '-50%', top: 0 }}
+          initial={{ opacity: 0, scale: 0.5, left: '460px', x: -126.5, top: 0 }}
           animate={{ 
             opacity: 1, 
             scale: 1, 
-            left: '460px',
             x: 0
           }}
           transition={{ 
             opacity: { delay: 0, duration: 0.5 },
             scale: { delay: 0, duration: 0.8, ease: [0.34, 1.56, 0.64, 1] },
-            left: { delay: 0.2, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] },
             x: { delay: 0.2, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }
           }}
         >
