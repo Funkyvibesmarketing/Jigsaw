@@ -267,7 +267,19 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
                   transition={{ duration: 0.5, ease: "easeInOut" }}
                   className="absolute w-full leading-[50px] text-[40px]"
                 >
-                  <p className="font-lato-semibold">{carouselTexts[carouselIndex].header}</p><br />
+                  <p className="font-lato-semibold">
+                    {(() => {
+                      const header = carouselTexts[carouselIndex].header;
+                      if (!isMobile) {
+                        return header.replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ');
+                      }
+                      return header.split(/<br\s*\/?>/i).reduce((acc: (string | React.ReactNode)[], part, index) => {
+                        if (index > 0) acc.push(<br key={index} />);
+                        acc.push(part);
+                        return acc;
+                      }, []);
+                    })()}
+                  </p><br />
                   <p className="font-lato-regular text-[40px] leading-[56px] text-[#222526]">
                     <span>{carouselTexts[carouselIndex].text}</span>
                     {carouselTexts[carouselIndex].hasLearnMore && (
