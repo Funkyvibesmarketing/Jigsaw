@@ -256,12 +256,12 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
         {/* Text Carousel with Pagination and Title */}
         {scrollProgress < 0.55 && (
           <motion.div
-            className="absolute font-lato-light left-1/2 not-italic text-[#222526] text-center top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(1282px,90vw)] max-w-[1282px] px-4 z-[10000]"
+            className="about-us-desktop-carousel absolute font-lato-light left-1/2 not-italic text-[#222526] text-center top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(1282px,90vw)] max-w-[1282px] px-4 z-[10000]"
             style={{ y: middleTextY, opacity: middleTextOpacity }}
           >
             {/* "ABOUT US" Title - Large centered text at top, slides with carousel */}
             <p
-              className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[160px] text-[rgba(44,70,87,0.2)] text-center uppercase mb-[100px] whitespace-nowrap"
+              className="about-us-desktop-eyebrow font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[160px] text-[rgba(44,70,87,0.2)] text-center uppercase mb-[100px] whitespace-nowrap"
               style={{
                 letterSpacing: '0.025em'
               }}
@@ -271,7 +271,7 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
 
             {/* Carousel text - slides up/down */}
             {carouselTexts && carouselTexts.length > 0 && (
-              <div className="relative w-full max-w-[1113px] h-[200px] mb-[100px] overflow-visible mx-auto">
+              <div className="about-us-desktop-copy-wrap relative w-full max-w-[1113px] h-[200px] mb-[100px] overflow-visible mx-auto">
               <AnimatePresence mode='wait'>
                 <motion.div
                   key={carouselIndex}
@@ -279,13 +279,13 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.5, ease: "easeInOut" }}
-                  className="absolute w-full leading-[50px] text-[40px]"
+                  className="about-us-desktop-slide absolute w-full leading-[50px] text-[40px]"
                 >
-                  <p className="font-lato-semibold">
+                  <p className="about-us-desktop-heading font-lato-semibold">
                     {(() => {
                       const header = carouselTexts[carouselIndex].header;
                       if (!isMobile) {
-                        return header.replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ');
+                        return header.replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ').replace(/\.$/, '');
                       }
                       return header.split(/<br\s*\/?>/i).reduce((acc: (string | React.ReactNode)[], part, index) => {
                         if (index > 0) acc.push(<br key={index} />);
@@ -293,8 +293,8 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
                         return acc;
                       }, []);
                     })()}
-                  </p><br />
-                  <p className="font-lato-regular text-[40px] leading-[56px] text-[#222526]">
+                  </p><br className="about-us-desktop-heading-break" />
+                  <p className="about-us-desktop-copy font-lato-regular text-[40px] leading-[56px] text-[#222526]">
                     <span>{carouselTexts[carouselIndex].text}</span>
                     {carouselTexts[carouselIndex].hasLearnMore && (
                       <a

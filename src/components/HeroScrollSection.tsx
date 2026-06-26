@@ -6,7 +6,6 @@ import imgModernHouseAtTwilight4 from 'figma:asset/77b24f13b4242da58b9f7acf069a8
 import imgVector from 'figma:asset/29d00c96d16b578c0374f784d6e51ab7656ee486.png';
 import imgJigsawLogo from 'figma:asset/a4641c1a776e3a061386003b194f52b5d42a8c11.png';
 import imgRectangle14200 from "figma:asset/2b522be0adda68686cd941d2da701840d5a124a6.png";
-import complianceShield from '../assets/compliance_shield.webp';
 import { DownArrowButton } from './DownArrowButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import AboutUsScrollEffect from '../imports/AboutUsScrollEffect';
@@ -17,10 +16,32 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
   const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
   const viewportHeight = window.innerHeight / zoomFactor;
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+  const isPhysicalLargeDisplay = () => {
+    const pixelRatio = window.devicePixelRatio || 1;
+    const screenWidth = Math.max(window.screen.width, window.screen.availWidth);
+    return screenWidth > 1920 || screenWidth * pixelRatio > 3000;
+  };
+  const isExtremeZoomOut = () => {
+    const screenWidth = Math.max(window.screen.width, window.screen.availWidth);
+    return window.innerWidth >= 3000 || (screenWidth > 0 && window.innerWidth / screenWidth >= 1.7);
+  };
+  const isModerateZoomOut = () => {
+    const screenWidth = Math.max(window.screen.width, window.screen.availWidth);
+    const zoomRatio = screenWidth > 0 ? window.innerWidth / screenWidth : 1;
+    return window.innerWidth >= 1921 && window.innerWidth < 3000 && zoomRatio < 1.7;
+  };
+  const [isLargeDisplay, setIsLargeDisplay] = useState(
+    isPhysicalLargeDisplay()
+  );
+  const [isExtremeZoomedOut, setIsExtremeZoomedOut] = useState(isExtremeZoomOut());
+  const [isModerateZoomedOut, setIsModerateZoomedOut] = useState(isModerateZoomOut());
 
   useEffect(() => {
     const handleResize = () => {
       setIsDesktop(window.innerWidth >= 768);
+      setIsLargeDisplay(isPhysicalLargeDisplay());
+      setIsExtremeZoomedOut(isExtremeZoomOut());
+      setIsModerateZoomedOut(isModerateZoomOut());
     };
 
     window.addEventListener('resize', handleResize);
@@ -232,7 +253,7 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
   return (
     <div 
       ref={containerRef} 
-      className="relative w-full m-0 p-0 bg-[#2c4657]"
+      className={`relative w-full m-0 p-0 bg-[#2c4657] ${isLargeDisplay ? 'hero-large-display' : ''} ${isModerateZoomedOut ? 'hero-moderate-zoom-out' : ''} ${isExtremeZoomedOut ? 'hero-extreme-zoom-out' : ''}`}
       style={{
         height: `${viewportHeight * 4}px`
       }}
@@ -240,7 +261,7 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
       <div
         className="sticky top-0 w-full overflow-hidden m-0 p-0"
         style={{
-          height: window.innerWidth > 1920 ? `${window.innerHeight / (window.innerWidth / 1920)}px` : '100vh'
+          height: '100vh'
         }}
       >
         <div className="relative size-full overflow-hidden m-0 p-0">
@@ -368,15 +389,20 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
           {/* White Background - REMOVED to keep compliance section on dark background */}
 
           {/* Sentence - Appears during Step 3 at lower position, slides up starting from Step 6 */}
-          <motion.p
-            className="absolute font-lato-semibold leading-[normal] text-center not-italic text-[56px] tracking-[20px] text-white top-[calc(50%+420px)] w-[100%] z-[15]"
+          <motion.div
+            className="hero-sentence-desktop absolute z-[15]"
             style={{
               opacity: sentenceOpacity,
               y: sentenceY
             }}
+            aria-label="ADVICE THAT FITS"
           >
-            ADVICE THAT FITS
-          </motion.p>
+            <span className="hero-sentence-desktop-single">ADVICE THAT FITS</span>
+            <div className="hero-sentence-desktop-stack" aria-hidden="true">
+              <p>Advice</p>
+              <p>that fits</p>
+            </div>
+          </motion.div>
 
           {/* Down Arrow Button - Appears during Step 6 */}
           <motion.div
@@ -398,32 +424,14 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
             style={{ y: complianceY, opacity: complianceOpacity }}
           >
 
-            {/* FCA Compliance Section - New Design */}
-            <div className="absolute left-1/2 top-[calc(50%-40px)] -translate-x-1/2 w-[min(90vw,1200px)] flex gap-[40px] items-center justify-center z-[101] pointer-events-auto">
-              {/* Shield Icon Replacement */}
-              <div className="shrink-0 pointer-events-auto">
-                <img
-                  src={complianceShield}
-                  alt="Compliance Shield"
-                  className="w-[70px] h-auto object-contain"
-                />
+            {/* FCA Compliance Section */}
+            <div className="hero-compliance-desktop pointer-events-auto">
+              <h2>Trusted Mortgage Compliance</h2>
+              <div className="hero-compliance-desktop-copy">
+                <p>Jigsaw Financial operates as an Appointed Representative of a mortgage network authorised and regulated by the Financial Conduct Authority.</p>
+                <p>This structure provides additional oversight, with experienced compliance specialists supporting cases and helping ensure advice remains accurate and responsible.</p>
+                <p>We also stay closely informed of regulatory developments so our clients can feel confident they are being properly looked after.</p>
               </div>
-
-              {/* FCA Text */}
-              <p className="flex-[1_0_0] font-lato-light min-h-px min-w-px not-italic relative text-[18px] text-white pointer-events-auto">
-                <span className="leading-[26px]">Jigsaw Financial operates as an Appointed Representative of a mortgage network authorised and regulated by the Financial Conduct Authority.
-                  This structure provides additional oversight, with experienced compliance specialists supporting cases and helping ensure advice remains accurate and responsible. We also stay closely informed of regulatory developments so our clients can feel confident they are being properly looked after.</span>
-                <a
-                  href="https://register.fca.org.uk/s/firm?id=0010X00004QO8QvQAL"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hidden font-lato-semibold leading-[26px] underline decoration-solid hover:text-[#2ec4b6] transition-colors duration-200 cursor-pointer pointer-events-auto relative z-[102]"
-                  style={{ pointerEvents: 'auto' }}
-                >
-                  here
-                </a>
-                <span className="leading-[26px]"></span>
-              </p>
             </div>
           </motion.div>
 

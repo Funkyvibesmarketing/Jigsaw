@@ -6147,6 +6147,199 @@ html {
 }
 
 /* ============================================================
+   HeroScrollSection - desktop ADVICE THAT FITS sentence
+   ============================================================ */
+.hero-sentence-desktop {
+  top: calc(50% + 420px);
+  left: 0;
+  width: 100%;
+  font-family: Lato, sans-serif;
+  font-weight: 600;
+  font-size: 56px;
+  line-height: normal;
+  letter-spacing: 20px;
+  color: #ffffff;
+  text-align: center;
+}
+
+.hero-sentence-desktop-stack {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hero-sentence-desktop {
+    left: 50%;
+    top: calc(50% + 488px);
+    width: min(50.5vw, 960px);
+    padding-top: clamp(14px, 1vw, 20px);
+    border-top: 2px solid rgba(255, 255, 255, 0.92);
+    translate: -50% 0;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .hero-sentence-desktop-single {
+    display: none;
+  }
+
+  .hero-sentence-desktop-stack {
+    display: block;
+    font-size: clamp(72px, 9.4vw, 180px);
+    line-height: 1.13;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .hero-sentence-desktop-stack p {
+    margin: 0;
+  }
+}
+
+@media (min-width: 1921px) {
+  .hero-sentence-desktop {
+    top: calc(50% + 180px);
+    width: min(58vw, 1240px);
+  }
+
+  .hero-sentence-desktop-stack {
+    font-size: clamp(180px, 7.2vw, 280px);
+  }
+}
+
+.hero-large-display .hero-sentence-desktop {
+  top: calc(50% + 180px);
+  width: min(58vw, 1480px);
+}
+
+.hero-large-display .hero-sentence-desktop-stack {
+  font-size: clamp(180px, 7.2vw, 280px);
+}
+
+.hero-moderate-zoom-out .hero-sentence-desktop {
+  top: calc(50% + 320px);
+}
+
+.hero-extreme-zoom-out .hero-sentence-desktop {
+  top: calc(50% + 80px);
+}
+
+.hero-extreme-zoom-out .hero-sentence-desktop-stack {
+  font-size: clamp(140px, 5.6vw, 220px);
+}
+
+/* ============================================================
+   HeroScrollSection - desktop compliance section
+   ============================================================ */
+.hero-compliance-desktop {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 110px);
+  z-index: 101;
+  width: min(86vw, 1120px);
+  translate: -50% -50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  text-align: center;
+}
+
+.hero-compliance-desktop h2 {
+  margin: 0 0 24px;
+  font-family: Lato, sans-serif;
+  font-size: clamp(34px, 3.8vw, 52px);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.hero-compliance-desktop-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: Lato, sans-serif;
+  font-size: clamp(16px, 1.65vw, 21px);
+  font-weight: 400;
+  line-height: 1.65;
+}
+
+.hero-compliance-desktop-copy p {
+  max-width: 1140px;
+  margin: 0;
+}
+
+@media (min-width: 1921px) {
+  .hero-compliance-desktop {
+    top: 50%;
+  }
+}
+
+.hero-large-display .hero-compliance-desktop {
+  top: 50%;
+}
+
+.hero-extreme-zoom-out .hero-compliance-desktop {
+  top: calc(40% + 0px);
+}
+
+/* ============================================================
+   AboutUs - desktop carousel text
+   ============================================================ */
+@media (min-width: 768px) {
+  .about-us-desktop-carousel {
+    width: min(78vw, 1180px);
+    max-width: 1180px;
+  }
+
+  .about-us-desktop-eyebrow {
+    margin-bottom: 96px;
+    font-family: Lato, sans-serif;
+    font-size: clamp(92px, 10.6vw, 112px);
+    font-weight: 400;
+    line-height: 1;
+    color: rgba(44, 70, 87, 0.16);
+    letter-spacing: 0.025em;
+  }
+
+  .about-us-desktop-copy-wrap {
+    height: 156px;
+    max-width: 960px;
+    margin-bottom: 52px;
+  }
+
+  .about-us-desktop-slide {
+    line-height: normal;
+    font-size: inherit;
+  }
+
+  .about-us-desktop-heading {
+    margin: 0 0 30px;
+    font-family: Lato, sans-serif;
+    font-size: clamp(30px, 3.3vw, 36px);
+    font-weight: 700;
+    line-height: 1.2;
+    color: #222526;
+  }
+
+  .about-us-desktop-heading-break {
+    display: none;
+  }
+
+  .about-us-desktop-copy {
+    margin: 0;
+    font-family: Lato, sans-serif;
+    font-size: clamp(22px, 2.25vw, 25px);
+    font-weight: 400;
+    line-height: 1.42;
+    color: #222526;
+  }
+}
+
+/* ============================================================
    HeroScrollSectionMobile — Compliance block positioning
    top-[55%] pushes the block just below centre so it clears
    the nav bar and sits in the readable zone of the viewport.
@@ -6529,4 +6722,4 @@ html {
     transform: translate3d(0, 6px, 0);
   }
 }
-
+
