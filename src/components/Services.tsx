@@ -101,14 +101,20 @@ export function Services({
   const width = window.innerWidth;
   const height = window.innerHeight;
   let scale = 0.72;
-  if (width > 1536) {
-    scale = 1;
+  if (width >= 768) {
+    scale = 0.82;
   }
 
   //console.log('Viewport size:', width, 'x', height);
 
   // Check if mobile for conditional slide-up behavior
   const [isMobileView, setIsMobileView] = useState(false);
+  const [isModerateZoomedOut, setIsModerateZoomedOut] = useState(window.innerWidth >= 1921 && window.innerWidth < 3000);
+  const [isExtremeZoomedOut, setIsExtremeZoomedOut] = useState(window.innerWidth >= 3000);
+
+  if ((isModerateZoomedOut || isExtremeZoomedOut) && width >= 768) {
+    scale = 0.96;
+  }
 
   // Define currentService and related indices BEFORE using them in useEffect
   const currentService = services[currentServiceIndex];
@@ -123,6 +129,8 @@ export function Services({
   useEffect(() => {
     const checkMobile = () => {
       setIsMobileView(window.innerWidth < 768);
+      setIsModerateZoomedOut(window.innerWidth >= 1921 && window.innerWidth < 3000);
+      setIsExtremeZoomedOut(window.innerWidth >= 3000);
     };
 
     checkMobile();
@@ -179,11 +187,9 @@ export function Services({
 
   const handleCardNext = () => {
     // Left button (UP arrow) - advances forward, card slides UP
-    if (detailCardIndex < currentService.detailCards.length - 1) {
-      setDirection('left'); // Cards slide UP
-      setDetailCardIndex(prev => prev + 1);
-      setNavigationSource('card');
-    }
+    setDirection('left'); // Cards slide UP
+    setDetailCardIndex(prev => (prev + 1) % currentService.detailCards.length);
+    setNavigationSource('card');
   };
 
 
@@ -338,7 +344,7 @@ export function Services({
   return (
     <motion.div
       ref={containerRef}
-      className="absolute inset-0 z-20 bg-[#2c4657] pointer-events-auto overflow-hidden"
+      className={`absolute inset-0 z-20 bg-[#2c4657] pointer-events-auto overflow-hidden ${isModerateZoomedOut ? 'services-moderate-zoom-out' : ''} ${isExtremeZoomedOut ? 'services-extreme-zoom-out' : ''}`}
       style={{
         opacity: servicesSectionOpacity,
         pointerEvents: servicesSectionPointerEvents,
@@ -378,12 +384,12 @@ export function Services({
       </div>
 
       {/* Category Carousel - Desktop Only */}
-      <div className="hidden md:block absolute left-0 top-[50px] z-50 w-full px-8">
+      <div className="services-desktop-category-bar hidden md:block absolute left-0 top-[50px] z-50 w-full px-8">
         <div className="relative flex items-center justify-center w-full max-w-[1600px] mx-auto h-[60px] gap-[64px]">
           {/* Left - Previous Category Name */}
           <div className="flex-1 flex justify-end items-center h-full">
             <p
-              className="font-lato-regular text-[32px] text-[rgba(255,255,255,0.4)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden text-ellipsis max-w-[350px] text-right"
+              className="services-side-category services-side-category-left font-lato-regular text-[32px] text-[rgba(255,255,255,0.4)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden text-ellipsis max-w-[350px] text-right"
               onClick={handleCategoryPrev}
             >
               {services[prevServiceIndex].title}
@@ -391,25 +397,19 @@ export function Services({
           </div>
 
           {/* Center - Active Category Navigation */}
-          <div className="flex items-center justify-center gap-6 shrink-0">
-            {/* Left Arrow */}
-            <CategoryArrowButton direction="left" onClick={handleCategoryPrev} />
-
+          <div className="services-active-category-wrap flex items-center justify-center gap-6 shrink-0">
             {/* Active Category Name */}
             <div ref={activeCategoryRef} className="px-4">
-              <p className="font-lato-regular text-[60px] text-white text-center whitespace-nowrap">
+              <p className="services-active-category-title font-lato-regular text-[60px] text-white text-center whitespace-nowrap">
                 {currentService.title}
               </p>
             </div>
-
-            {/* Right Arrow */}
-            <CategoryArrowButton direction="right" onClick={handleCategoryNext} />
           </div>
 
           {/* Right - Next Category Name */}
           <div className="flex-1 flex justify-start items-center h-full">
             <p
-              className="font-lato-regular text-[32px] text-[rgba(255,255,255,0.4)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden text-ellipsis max-w-[350px] text-left"
+              className="services-side-category services-side-category-right font-lato-regular text-[32px] text-[rgba(255,255,255,0.4)] cursor-pointer transition-all hover:text-[rgba(255,255,255,0.8)] whitespace-nowrap overflow-hidden text-ellipsis max-w-[350px] text-left"
               onClick={handleCategoryNext}
             >
               {services[nextServiceIndex].title}
@@ -423,7 +423,7 @@ export function Services({
         ref={cardStackRef}
         data-scroll-lock
         data-lenis-prevent
-        className="hidden md:block absolute left-1/2 top-1/2 z-10"
+        className="services-desktop-card-stack hidden md:block absolute left-1/2 top-1/2 z-10"
         style={{
           transform: 'translate(-50%, -50%) scale(' + scale + ')'
         }}
@@ -453,7 +453,7 @@ export function Services({
         {/* Back Card (furthest back, center-bottom) */}
         <motion.div
           key={`back-card-static-${currentService.id}`}
-          className="absolute bg-white h-[473px] left-[calc(50%-0.27px)] overflow-hidden rounded-[33.846px] top-[calc(50%+92.5px)] translate-x-[-50%] translate-y-[-50%] w-[811.462px] pointer-events-none opacity-30"
+          className="services-back-card absolute bg-white h-[473px] left-[calc(50%-0.27px)] overflow-hidden rounded-[33.846px] top-[calc(50%+92.5px)] translate-x-[-50%] translate-y-[-50%] w-[811.462px] pointer-events-none opacity-30"
         >
           {/* Decorative background circle */}
           <div className="absolute inset-[-40.07%_36.39%_-31.48%_-36.39%]">
@@ -485,7 +485,7 @@ export function Services({
               animate={{ opacity: 0.5, x: 0, scale: 1 }}
               exit={navigationSource === 'category' ? { opacity: 0, x: direction === 'right' ? 0 : -100, scale: 0.95 } : false}
               transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="absolute bg-white h-[318px] left-[calc(50%-830px)] overflow-hidden rounded-[22.755px] top-[calc(50%+25.5px)] translate-x-[-50%] translate-y-[-50%] w-[545.549px] cursor-pointer"
+              className="services-preview-card services-preview-card-left absolute bg-white h-[318px] left-[calc(50%-830px)] overflow-hidden rounded-[22.755px] top-[calc(50%+25.5px)] translate-x-[-50%] translate-y-[-50%] w-[545.549px] cursor-pointer"
               whileHover={{ scale: 1.02, opacity: 0.7 }}
               onClick={handleCategoryPrev}
             >
@@ -600,7 +600,7 @@ export function Services({
             exit="exit"
             variants={mainVariants}
             transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-            className="absolute bg-white h-[559px] left-[calc(50%+0.5px)] overflow-hidden rounded-[40px] top-[calc(50%+25.5px)] translate-x-[-50%] translate-y-[-50%] w-[959px]"
+            className="services-main-card absolute bg-white h-[559px] left-[calc(50%+0.5px)] overflow-hidden rounded-[40px] top-[calc(50%+25.5px)] translate-x-[-50%] translate-y-[-50%] w-[959px]"
             style={navigationSource === 'card' ? {
               transformOrigin: 'center center'
             } : undefined}
@@ -759,12 +759,15 @@ export function Services({
               </div>
 
             </div>
+            <div className="services-card-number-badge">
+              {detailCardIndex + 1}
+            </div>
           </motion.div>
         </AnimatePresence>
 
         {/* Dot Indicators */}
         <div
-          className="absolute flex flex-col gap-[20px] z-50"
+          className="services-card-dots absolute flex flex-col gap-[20px] z-50"
           style={{
             left: 'calc(50% + 500px)',
             top: 'calc(50% + 25.5px)',
@@ -799,7 +802,7 @@ export function Services({
               animate={{ opacity: 0.5, x: 0, scale: 1 }}
               exit={navigationSource === 'category' ? { opacity: 0, x: direction === 'right' ? 100 : 0, scale: 0.95 } : false}
               transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="absolute bg-white h-[318px] left-[calc(50%+830px)] overflow-hidden rounded-[22.755px] top-[calc(50%+25.5px)] translate-x-[-50%] translate-y-[-50%] w-[545.549px] cursor-pointer"
+              className="services-preview-card services-preview-card-right absolute bg-white h-[318px] left-[calc(50%+830px)] overflow-hidden rounded-[22.755px] top-[calc(50%+25.5px)] translate-x-[-50%] translate-y-[-50%] w-[545.549px] cursor-pointer"
               whileHover={{ scale: 1.02, opacity: 0.7 }}
               onClick={handleCategoryNext}
             >
@@ -902,6 +905,26 @@ export function Services({
             </motion.div>
           </AnimatePresence>
         )}
+      </div>
+
+      {/* Desktop category/card controls */}
+      <div className="services-desktop-side-controls hidden md:block">
+        <div className="services-category-arrow services-category-arrow-left">
+          <CategoryArrowButton direction="left" onClick={handleCategoryPrev} />
+        </div>
+        <div className="services-category-arrow services-category-arrow-right">
+          <CategoryArrowButton direction="right" onClick={handleCategoryNext} />
+        </div>
+        <button
+          type="button"
+          className="services-next-card-pill"
+          onClick={handleCardNext}
+        >
+          <span>Click to view next card</span>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M3 9H14M14 9L9.5 4.5M14 9L9.5 13.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
       </div>
 
       {/* Bottom Navigation - Card Counter and Arrows - Desktop Only */}
