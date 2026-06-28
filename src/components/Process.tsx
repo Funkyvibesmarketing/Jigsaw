@@ -248,7 +248,8 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
         const rect = containerRef.current.getBoundingClientRect();
         // Check if mouse is within the Process section
         if (e.clientY >= rect.top && e.clientY <= rect.bottom) {
-          setCursorPosition({ x: e.clientX, y: e.clientY });
+          const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
+          setCursorPosition({ x: e.clientX / zoomFactor, y: e.clientY / zoomFactor });
           setShowCursor(true);
         } else {
           setShowCursor(false);
