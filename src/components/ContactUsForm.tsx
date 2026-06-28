@@ -152,6 +152,8 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isModerateZoomedOut, setIsModerateZoomedOut] = useState(window.innerWidth >= 1921 && window.innerWidth < 3000);
+  const [isExtremeZoomedOut, setIsExtremeZoomedOut] = useState(window.innerWidth >= 3000);
 
   // Track hover state for each social button
   const [facebookHovered, setFacebookHovered] = useState(false);
@@ -177,6 +179,17 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
   };
 
   useEffect(() => {
+    const updateZoomState = () => {
+      setIsModerateZoomedOut(window.innerWidth >= 1921 && window.innerWidth < 3000);
+      setIsExtremeZoomedOut(window.innerWidth >= 3000);
+    };
+
+    updateZoomState();
+    window.addEventListener('resize', updateZoomState);
+    return () => window.removeEventListener('resize', updateZoomState);
+  }, []);
+
+  useEffect(() => {
     generateCaptcha();
   }, []);
 
@@ -191,6 +204,11 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
 
   const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
   const viewportHeight = window.innerHeight / zoomFactor;
+  const desktopSectionHeight = isExtremeZoomedOut
+    ? Math.max(1180, viewportHeight)
+    : isModerateZoomedOut
+      ? Math.max(1120, viewportHeight)
+    : Math.max(980, viewportHeight);
 
   const scrollYProgress = useMotionValue(0);
 
@@ -358,15 +376,15 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
     switch (currentStep) {
       case 1:
         return (
-          <div className="absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] translate-x-[-50%] translate-y-[-50%] w-[800px]" style={{ top: 'calc(50% - 210px)' }}>
+          <div className="contact-desktop-field absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] translate-x-[-50%] translate-y-[-50%] w-[800px]" style={{ top: 'calc(50% - 210px)' }}>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Enter your name"
-              className="font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[48px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] caret-white"
+              placeholder="Your name"
+              className="contact-desktop-input font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[48px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] caret-white"
             />
-            <div className="h-0 relative shrink-0 w-full flex justify-center">
+            <div className="contact-desktop-line h-0 relative shrink-0 w-full flex justify-center">
               <div className="absolute bottom-0 top-[-1px] w-[600px]">
                 <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 600 1">
                   <line id="Line 32" stroke="var(--stroke-0, white)" strokeOpacity="0.5" x2="600" y1="0.5" y2="0.5" />
@@ -377,15 +395,15 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
         );
       case 2:
         return (
-          <div className="absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] translate-x-[-50%] translate-y-[-50%] w-[800px]" style={{ top: 'calc(50% - 210px)' }}>
+          <div className="contact-desktop-field absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] translate-x-[-50%] translate-y-[-50%] w-[800px]" style={{ top: 'calc(50% - 210px)' }}>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="Enter your email"
-              className="font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[48px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] caret-white"
+              placeholder="Your email"
+              className="contact-desktop-input font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[48px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] caret-white"
             />
-            <div className="h-0 relative shrink-0 w-full flex justify-center">
+            <div className="contact-desktop-line h-0 relative shrink-0 w-full flex justify-center">
               <div className="absolute bottom-0 top-[-1px] w-[600px]">
                 <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 600 1">
                   <line stroke="var(--stroke-0, white)" strokeOpacity="0.5" x2="600" y1="0.5" y2="0.5" />
@@ -396,15 +414,15 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
         );
       case 3:
         return (
-          <div className="absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] translate-x-[-50%] translate-y-[-50%] w-[800px]" style={{ top: 'calc(50% - 210px)' }}>
+          <div className="contact-desktop-field absolute content-stretch flex flex-col gap-[24px] items-center left-[50%] translate-x-[-50%] translate-y-[-50%] w-[800px]" style={{ top: 'calc(50% - 210px)' }}>
             <input
               type="tel"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              placeholder="Enter your phone"
-              className="font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[48px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] caret-white"
+              placeholder="Your phone"
+              className="contact-desktop-input font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[48px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] caret-white"
             />
-            <div className="h-0 relative shrink-0 w-full flex justify-center">
+            <div className="contact-desktop-line h-0 relative shrink-0 w-full flex justify-center">
               <div className="absolute bottom-0 top-[-1px] w-[600px]">
                 <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 600 1">
                   <line stroke="var(--stroke-0, white)" strokeOpacity="0.5" x2="600" y1="0.5" y2="0.5" />
@@ -415,14 +433,14 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
         );
       case 4:
         return (
-          <div className="absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4" style={{ top: 'calc(50% - 210px)' }}>
+          <div className="contact-desktop-field absolute content-stretch flex flex-col gap-[16px] items-center left-1/2 translate-x-[-50%] translate-y-[-50%] w-[90%] max-w-[382px] px-4" style={{ top: 'calc(50% - 210px)' }}>
             <textarea
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               placeholder="Your message"
-              className="font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[28px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] resize-none h-[60px] caret-white"
+              className="contact-desktop-input contact-desktop-textarea font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[28px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] resize-none h-[60px] caret-white"
             />
-            <div className="h-0 relative shrink-0 w-full">
+            <div className="contact-desktop-line h-0 relative shrink-0 w-full">
               <div className="absolute bottom-0 left-0 right-0 top-[-1px]">
                 <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 382 1">
                   <line stroke="white" strokeOpacity="0.5" x2="382" y1="0.5" y2="0.5" />
@@ -462,7 +480,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
       )}
 
       {/* Sticky Form Section */}
-      <div className="sticky top-0 w-full overflow-hidden pb-[60px]" style={{ height: window.innerWidth >= 768 ? `${Math.max(980, viewportHeight)}px` : `${viewportHeight * 1.8}px` } as React.CSSProperties}>
+      <div className={`contact-sticky-section sticky top-0 w-full overflow-hidden pb-[60px] ${isModerateZoomedOut ? 'contact-sticky-moderate-zoom-out' : ''} ${isExtremeZoomedOut ? 'contact-sticky-extreme-zoom-out' : ''}`} style={{ height: window.innerWidth >= 768 ? `${desktopSectionHeight}px` : `${viewportHeight * 1.8}px` } as React.CSSProperties}>
         {/* Mobile View */}
         <MobileContactUsForm
           slideY={slideY}
@@ -481,12 +499,12 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
 
         {/* Desktop View */}
         <motion.div
-          className="hidden md:block bg-[#2c4657] relative size-full"
+          className={`contact-desktop-form hidden md:block bg-[#2c4657] relative size-full ${isModerateZoomedOut ? 'contact-desktop-moderate-zoom-out' : ''} ${isExtremeZoomedOut ? 'contact-desktop-extreme-zoom-out' : ''}`}
           data-name="Contact us Form"
           style={{ y: slideY, opacity }}
         >
           {/* Background Gradient */}
-          <div className="absolute h-[622px] left-[calc(50%+27.5px)] top-[calc(50%+381px)] translate-x-[-50%] translate-y-[-50%] w-[1959px]">
+          <div className="contact-desktop-bg-glow absolute h-[622px] left-[calc(50%+27.5px)] top-[calc(50%+381px)] translate-x-[-50%] translate-y-[-50%] w-[1959px]">
             <div className="absolute inset-[-26.37%_-8.37%]">
               <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 2287 950">
                 <g filter="url(#filter0_f_823_185)" id="Ellipse 14">
@@ -528,13 +546,13 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
 
           {/* Main Title */}
           {!isSubmitted && (
-            <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 not-italic text-[100px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[100px] translate-x-[-50%] whitespace-pre tracking-[48px]">REACH US</p>
+            <p className="contact-desktop-title absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 not-italic text-[100px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[100px] translate-x-[-50%] whitespace-pre tracking-[48px]">CONTACT US</p>
           )}
 
           {!isSubmitted && (
             <>
               {/* Step Indicator */}
-              <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+440px)] not-italic text-[72px] text-[rgba(255,255,255,0.2)] text-center text-nowrap translate-x-[-50%] whitespace-pre" style={{ top: 'calc(50% - 210px)' }}>{currentStep}/4</p>
+              <p className="contact-desktop-step absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+440px)] not-italic text-[72px] text-[rgba(255,255,255,0.2)] text-center text-nowrap translate-x-[-50%] whitespace-pre" style={{ top: 'calc(50% - 210px)' }}>{currentStep}/4</p>
 
               {/* Form Field */}
               {renderFormField()}
@@ -549,7 +567,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
                   (currentStep === 3 && !formData.phone) ||
                   (currentStep === 4 && !formData.message)
                 }
-                className={`absolute bg-[#222526] box-border content-stretch flex gap-[8px] items-center justify-center left-[50%] translate-x-[-50%] px-[40px] py-[24px] rounded-[56px] transition-opacity border-none ${isSubmitting ||
+                className={`contact-desktop-submit absolute bg-[#222526] box-border content-stretch flex gap-[8px] items-center justify-center left-[50%] translate-x-[-50%] px-[40px] py-[24px] rounded-[56px] transition-opacity border-none ${isSubmitting ||
                   (currentStep === 1 && !formData.name) ||
                   (currentStep === 2 && !formData.email) ||
                   (currentStep === 3 && !formData.phone) ||
@@ -559,8 +577,8 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
                   }`}
                 style={{ top: 'calc(50% - 135px)' }}
               >
-                <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic relative shrink-0 text-[24px] text-nowrap text-white whitespace-pre">
-                  {isSubmitting ? 'Sending...' : currentStep === 4 ? 'Submit' : 'Next'}
+                <p className="contact-desktop-submit-label font-['Lato:Regular',sans-serif] leading-[24px] not-italic relative shrink-0 text-[24px] text-nowrap text-white whitespace-pre">
+                  {isSubmitting ? 'Sending...' : currentStep === 4 ? 'Submit' : 'Submit & next'}
                 </p>
                 <div className="absolute inset-0 pointer-events-none shadow-[0px_-9px_4px_0px_inset_rgba(0,0,0,0.25),0px_4px_4px_0px_inset_rgba(255,255,255,0.16)] rounded-[56px]" />
               </button>
@@ -568,7 +586,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
               {/* Error Message */}
               {submitError && (
                 <motion.p
-                  className="absolute left-1/2 translate-x-[-50%] font-['Lato:Regular',sans-serif] text-[18px] text-red-400 text-center max-w-[600px]"
+                  className="contact-desktop-error absolute left-1/2 translate-x-[-50%] font-['Lato:Regular',sans-serif] text-[18px] text-red-400 text-center max-w-[600px]"
                   style={{ top: 'calc(50% + 25px)' }}
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -583,7 +601,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
                 <button
                   onClick={handleBack}
                   disabled={isSubmitting}
-                  className="absolute left-1/2 translate-x-[-50%] cursor-pointer md:cursor-none bg-transparent border-none hover:opacity-70 transition-opacity disabled:opacity-50"
+                  className="contact-desktop-back absolute left-1/2 translate-x-[-50%] cursor-pointer md:cursor-none bg-transparent border-none hover:opacity-70 transition-opacity disabled:opacity-50"
                   style={{ top: 'calc(50% - 40px)' }}
                 >
                   <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[24px] text-white whitespace-pre">Back</p>
@@ -592,12 +610,12 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
             </>
           )}
 
-          <div className="absolute flex flex-col gap-[16px] items-center pb-[10px] bottom-[380px] left-1/2 -translate-x-1/2 w-[90%] max-w-[1190px] z-[90]">
+          <div className="contact-desktop-social absolute flex flex-col gap-[16px] items-center pb-[10px] bottom-[380px] left-1/2 -translate-x-1/2 w-[90%] max-w-[1190px] z-[90]">
             {/* Social Media Section (moved up for desktop) */}
-            <div className="flex flex-col gap-[16px] items-center w-full">
-              <p className="font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[20px] text-center text-nowrap text-white tracking-[0.2px]">Follow us on:</p>
+            <div className="contact-desktop-social-inner flex flex-col gap-[16px] items-center w-full">
+              <p className="contact-desktop-social-title font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[20px] text-center text-nowrap text-white tracking-[0.2px]">Follow us on:</p>
 
-              <div className="flex items-center justify-center gap-[64px] w-full h-[100px]">
+              <div className="contact-desktop-social-links flex items-center justify-center gap-[64px] w-full h-[100px]">
                 <a
                   href="https://www.facebook.com/JigsawFinancialLtd/#"
                   target="_blank"
@@ -654,14 +672,14 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
               </div>
             </div>
           </div>
-          <div className="absolute flex flex-col gap-[16px] items-center pb-[10px] pt-[80px] bottom-[0px] left-1/2 -translate-x-1/2 w-[90%] max-w-[1190px]">
+          <div className="contact-desktop-footer absolute flex flex-col gap-[16px] items-center pb-[10px] pt-[80px] bottom-[0px] left-1/2 -translate-x-1/2 w-[90%] max-w-[1190px]">
             {/* Text Content Section */}
             <div className="content-stretch flex flex-col gap-[24px] items-center w-full">
               {/* Social buttons moved above for desktop; legal text follows */}
             </div>
 
             {/* Legal/Compliance Text - Desktop */}
-            <div className="content-stretch flex flex-col gap-[24px] items-start not-italic w-full mt-[40px]">
+            <div className="contact-desktop-legal content-stretch flex flex-col gap-[24px] items-start not-italic w-full mt-[40px]">
               <p className="font-['Lato:Light',sans-serif] leading-[20px] relative text-[14px] text-[rgba(255,255,255,0.6)] text-left whitespace-pre-wrap">{`Your home  may be repossessed if you do not keep up repayments on your mortgage. Jigsaw Financial Limited are registered in England and Wales, and an Appointed Representative of PRIMIS Mortgage Network, a trading name of First Complete Ltd. First Complete Ltd is authorised and regulated by the Financial Conduct Authority.`}</p>
               <p className="font-['Lato:Light',sans-serif] leading-[20px] relative text-[14px] text-[rgba(255,255,255,0.6)] text-left whitespace-pre-wrap">
                 <span className="leading-[20px]">

@@ -112,7 +112,7 @@ export default function ContactUs({ onScrollProgress }: ContactUsProps) {
             {/* Main Content Container */}
             <div className="flex flex-col items-center justify-center w-full max-w-[382px]">
               {/* Title */}
-              <p className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[28px] text-[rgba(44,70,87,0.4)] text-nowrap mb-[40px] tracking-[15px] w-full text-center ">CONTACT US</p>
+              <p className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[28px] text-[rgba(44,70,87,0.4)] text-nowrap mb-[40px] tracking-[15px] w-full text-center ">REACH US</p>
 
               {/* Contact Cards */}
               <div className="content-stretch flex flex-col gap-[32px] items-start w-full">
@@ -222,7 +222,7 @@ export default function ContactUs({ onScrollProgress }: ContactUsProps) {
 
 
           {/* Main Title */}
-          <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+0.5px)] not-italic text-[100px] text-[rgba(44,70,87,0.4)] text-center text-nowrap top-[calc(50%-218px)] translate-x-[-50%] whitespace-pre tracking-[48px]" style={{ fontWeight: 400 }}>CONTACT US</p>
+          <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+0.5px)] not-italic text-[100px] text-[rgba(44,70,87,0.4)] text-center text-nowrap top-[calc(50%-218px)] translate-x-[-50%] whitespace-pre tracking-[48px]" style={{ fontWeight: 400 }}>REACH US</p>
 
           {/* Info Cards Container */}
           <div className="absolute content-stretch flex gap-[32px] items-start left-[calc(50%+34.5px)] top-[calc(50%+96px)] translate-x-[-50%] translate-y-[-50%] w-[1293px]">

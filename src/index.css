@@ -6655,6 +6655,251 @@ html {
   }
 }
 
+/* ============================================================
+   Contact Us desktop Figma redesign
+   ============================================================ */
+@media (min-width: 768px) {
+  .contact-sticky-section {
+    min-height: 1080px;
+    padding-bottom: 0 !important;
+  }
+
+  .contact-sticky-moderate-zoom-out {
+    min-height: 1120px;
+  }
+
+  .contact-sticky-extreme-zoom-out {
+    min-height: 1180px;
+  }
+
+  .contact-desktop-form {
+    overflow: hidden;
+  }
+
+  .contact-desktop-bg-glow {
+    top: calc(50% + 300px) !important;
+    width: min(150vw, 1959px) !important;
+    opacity: 1;
+  }
+
+  .contact-desktop-title {
+    top: clamp(70px, 9.5vh, 108px) !important;
+    color: #ffffff !important;
+    font-family: Lato, sans-serif !important;
+    font-size: clamp(72px, 5.2vw, 100px) !important;
+    font-weight: 400 !important;
+    line-height: 1.12 !important;
+    letter-spacing: clamp(32px, 2.5vw, 48px) !important;
+    text-transform: uppercase;
+  }
+
+  .contact-desktop-field {
+    top: calc(50% - 220px) !important;
+    width: min(54vw, 820px) !important;
+    gap: 26px !important;
+  }
+
+  .contact-desktop-input {
+    font-family: Lato, sans-serif !important;
+    font-size: clamp(56px, 4.5vw, 80px) !important;
+    font-weight: 300 !important;
+    color: #ffffff !important;
+    line-height: 1.08 !important;
+    text-align: center !important;
+  }
+
+  .contact-desktop-input::placeholder {
+    color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .contact-desktop-textarea {
+    height: 96px !important;
+  }
+
+  .contact-desktop-line {
+    width: min(50vw, 760px) !important;
+  }
+
+  .contact-desktop-line > div {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+  }
+
+  .contact-desktop-line svg {
+    width: 100% !important;
+  }
+
+  .contact-desktop-step {
+    left: calc(50% + min(39vw, 520px)) !important;
+    top: calc(50% - 202px) !important;
+    color: rgba(255, 255, 255, 0.2) !important;
+    font-family: Lato, sans-serif !important;
+    font-size: clamp(58px, 4.3vw, 72px) !important;
+    font-weight: 400 !important;
+  }
+
+  .contact-desktop-submit {
+    top: calc(50% - 92px) !important;
+    min-width: 182px;
+    padding: 22px 34px !important;
+    border-radius: 999px !important;
+    background: #222526 !important;
+  }
+
+  .contact-desktop-submit-label {
+    font-family: Lato, sans-serif !important;
+    font-size: 22px !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+  }
+
+  .contact-desktop-back {
+    top: calc(50% + 14px) !important;
+  }
+
+  .contact-desktop-error {
+    top: calc(50% + 70px) !important;
+  }
+
+  .contact-desktop-social {
+    bottom: clamp(318px, 31vh, 360px) !important;
+    gap: 18px !important;
+  }
+
+  .contact-desktop-social-title {
+    font-family: Lato, sans-serif !important;
+    font-size: 20px !important;
+    line-height: 1.25 !important;
+  }
+
+  .contact-desktop-social-links {
+    gap: clamp(64px, 7vw, 108px) !important;
+    height: 118px !important;
+  }
+
+  .contact-desktop-social-links a {
+    gap: 10px !important;
+    width: 118px;
+    text-align: center;
+  }
+
+  .contact-desktop-social-links a > div {
+    width: 56px !important;
+    height: 56px !important;
+  }
+
+  .contact-desktop-social-links p {
+    width: 118px;
+    white-space: nowrap !important;
+    overflow-wrap: normal;
+    font-size: 16px !important;
+    line-height: 1.2 !important;
+  }
+
+  .contact-desktop-footer {
+    max-width: min(76vw, 1190px) !important;
+    padding-top: 0 !important;
+    padding-bottom: 42px !important;
+  }
+
+  .contact-desktop-legal {
+    gap: 20px !important;
+    margin-top: 0 !important;
+  }
+
+  .contact-desktop-legal p {
+    font-family: Lato, sans-serif !important;
+    font-size: clamp(11px, 0.72vw, 14px) !important;
+    line-height: 1.42 !important;
+  }
+
+  .contact-desktop-legal button {
+    font-size: clamp(12px, 0.85vw, 16px) !important;
+  }
+
+  .contact-desktop-footer > .w-full.h-\[1px\] {
+    margin-top: 24px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .contact-desktop-footer > div:last-child {
+    font-size: clamp(12px, 0.85vw, 16px) !important;
+  }
+
+  .contact-desktop-moderate-zoom-out .contact-desktop-title {
+    top: clamp(84px, 8vh, 120px) !important;
+    font-size: clamp(92px, 4.2vw, 132px) !important;
+    letter-spacing: clamp(42px, 2.1vw, 64px) !important;
+  }
+
+  .contact-desktop-moderate-zoom-out .contact-desktop-field {
+    top: calc(50% - 170px) !important;
+    width: min(54vw, 1180px) !important;
+  }
+
+  .contact-desktop-moderate-zoom-out .contact-desktop-input {
+    font-size: clamp(82px, 3.6vw, 118px) !important;
+  }
+
+  .contact-desktop-moderate-zoom-out .contact-desktop-line {
+    width: min(54vw, 1180px) !important;
+  }
+
+  .contact-desktop-moderate-zoom-out .contact-desktop-step {
+    left: calc(50% + min(33vw, 760px)) !important;
+    top: calc(50% - 152px) !important;
+    font-size: clamp(78px, 3.2vw, 112px) !important;
+  }
+
+  .contact-desktop-moderate-zoom-out .contact-desktop-social {
+    bottom: clamp(390px, 33vh, 460px) !important;
+  }
+
+  .contact-desktop-moderate-zoom-out .contact-desktop-footer {
+    max-width: min(76vw, 1560px) !important;
+    padding-bottom: 46px !important;
+  }
+
+  .contact-desktop-extreme-zoom-out .contact-desktop-title {
+    top: clamp(96px, 7vh, 142px) !important;
+    font-size: clamp(118px, 3.35vw, 154px) !important;
+    letter-spacing: clamp(58px, 1.7vw, 78px) !important;
+  }
+
+  .contact-desktop-extreme-zoom-out .contact-desktop-field {
+    top: calc(50% - 160px) !important;
+    width: min(38vw, 1180px) !important;
+  }
+
+  .contact-desktop-extreme-zoom-out .contact-desktop-input {
+    font-size: clamp(96px, 2.7vw, 132px) !important;
+  }
+
+  .contact-desktop-extreme-zoom-out .contact-desktop-line {
+    width: min(38vw, 1180px) !important;
+  }
+
+  .contact-desktop-extreme-zoom-out .contact-desktop-step {
+    left: calc(50% + min(24vw, 820px)) !important;
+    top: calc(50% - 142px) !important;
+    font-size: clamp(88px, 2.4vw, 124px) !important;
+  }
+
+  .contact-desktop-extreme-zoom-out .contact-desktop-submit {
+    top: calc(50% - 48px) !important;
+  }
+
+  .contact-desktop-extreme-zoom-out .contact-desktop-social {
+    bottom: clamp(276px, 24vh, 420px) !important;
+  }
+
+  .contact-desktop-extreme-zoom-out .contact-desktop-footer {
+    max-width: min(58vw, 1440px) !important;
+    padding-bottom: 46px !important;
+  }
+}
+
 /* Mobile Contact Us Form Styles */
 .mobile-form-step {
   font-family: 'Lato', sans-serif;
