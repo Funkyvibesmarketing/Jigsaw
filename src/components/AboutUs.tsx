@@ -78,6 +78,7 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
   const [direction, setDirection] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [isExtremeZoomedOut, setIsExtremeZoomedOut] = useState(window.innerWidth >= 3000);
   const [carouselIndex, setCarouselIndex] = useState(0);
   const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
   const viewportHeight = window.innerHeight / zoomFactor;
@@ -98,6 +99,7 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
+      setIsExtremeZoomedOut(window.innerWidth >= 3000);
     };
 
     checkMobile();
@@ -230,7 +232,7 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
   return (
     <div
       ref={containerRef}
-      className="relative w-full bg-white z-[90]"
+      className={`relative w-full bg-white z-[90] ${isExtremeZoomedOut ? 'about-us-extreme-zoom-out' : ''}`}
       style={{
         marginTop: `-${viewportHeight * 1.2}px`,
         minHeight: `${viewportHeight * 4}px`,

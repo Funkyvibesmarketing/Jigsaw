@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform, useMotionValue } from "motion/react";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 
 interface ContactUsProps {
   onScrollProgress?: (progress: number) => void;
@@ -41,11 +41,22 @@ function InfoCard({ title, children, className, cardOpacity, cardY, onClick }: {
 
 export default function ContactUs({ onScrollProgress }: ContactUsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isExtremeZoomedOut, setIsExtremeZoomedOut] = useState(window.innerWidth >= 3000);
 
   const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
   const viewportHeight = window.innerHeight / zoomFactor;
 
   const scrollYProgress = useMotionValue(0);
+
+  useEffect(() => {
+    const updateZoomState = () => {
+      setIsExtremeZoomedOut(window.innerWidth >= 3000);
+    };
+
+    updateZoomState();
+    window.addEventListener('resize', updateZoomState);
+    return () => window.removeEventListener('resize', updateZoomState);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -215,17 +226,17 @@ export default function ContactUs({ onScrollProgress }: ContactUsProps) {
 
         {/* Desktop View */}
         <motion.div 
-          className="hidden md:block bg-white relative size-full" 
+          className={`contact-us-intro-desktop hidden md:block bg-white relative size-full ${isExtremeZoomedOut ? 'contact-us-intro-extreme-zoom-out' : ''}`}
           data-name="Reach us"
           style={{ y: slideY, opacity }}
         >
 
 
           {/* Main Title */}
-          <p className="absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+0.5px)] not-italic text-[100px] text-[rgba(44,70,87,0.4)] text-center text-nowrap top-[calc(50%-218px)] translate-x-[-50%] whitespace-pre tracking-[48px]" style={{ fontWeight: 400 }}>REACH US</p>
+          <p className="contact-us-intro-title absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+0.5px)] not-italic text-[100px] text-[rgba(44,70,87,0.4)] text-center text-nowrap top-[calc(50%-218px)] translate-x-[-50%] whitespace-pre tracking-[48px]" style={{ fontWeight: 400 }}>REACH US</p>
 
           {/* Info Cards Container */}
-          <div className="absolute content-stretch flex gap-[32px] items-start left-[calc(50%+34.5px)] top-[calc(50%+96px)] translate-x-[-50%] translate-y-[-50%] w-[1293px]">
+          <div className="contact-us-intro-cards absolute content-stretch flex gap-[32px] items-start left-[calc(50%+34.5px)] top-[calc(50%+96px)] translate-x-[-50%] translate-y-[-50%] w-[1293px]">
             
             {/* Phone Card */}
             <InfoCard title="Phone" cardOpacity={card2Opacity} cardY={card2Y} onClick={handlePhoneClick}>

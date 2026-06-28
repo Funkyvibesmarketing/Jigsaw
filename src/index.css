@@ -6577,6 +6577,10 @@ html {
     line-height: 1.42;
     color: #222526;
   }
+
+  .about-us-extreme-zoom-out .about-us-desktop-carousel {
+    scale: 1.12;
+  }
 }
 
 /* ============================================================
@@ -6675,6 +6679,32 @@ html {
    Contact Us desktop Figma redesign
    ============================================================ */
 @media (min-width: 768px) {
+  .contact-us-intro-extreme-zoom-out .contact-us-intro-title {
+    font-size: 118px !important;
+    letter-spacing: 56px !important;
+    top: calc(50% - 230px) !important;
+  }
+
+  .contact-us-intro-extreme-zoom-out .contact-us-intro-cards {
+    width: 1460px !important;
+    gap: 42px !important;
+    top: calc(50% + 112px) !important;
+  }
+
+  .contact-us-intro-extreme-zoom-out .contact-us-intro-cards > div {
+    min-height: 250px;
+  }
+
+  .contact-us-intro-extreme-zoom-out .contact-us-intro-cards p:first-child {
+    font-size: 36px !important;
+    line-height: 1.15 !important;
+  }
+
+  .contact-us-intro-extreme-zoom-out .contact-us-intro-cards p:not(:first-child) {
+    font-size: 30px !important;
+    line-height: 1.35 !important;
+  }
+
   .contact-sticky-section {
     min-height: 1080px;
     padding-bottom: 0 !important;

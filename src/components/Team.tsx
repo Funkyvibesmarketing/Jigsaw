@@ -86,6 +86,7 @@ export function Team({
   const [currentMemberIndex, setCurrentMemberIndex] = useState(0);
   const [previousMemberIndex, setPreviousMemberIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isExtremeZoomedOut, setIsExtremeZoomedOut] = useState(window.innerWidth >= 3000);
   const currentMember = teamMembers[currentMemberIndex];
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -118,6 +119,16 @@ export function Team({
     if (onReady) {
       onReady();
     }
+  }, []);
+
+  useEffect(() => {
+    const updateZoomState = () => {
+      setIsExtremeZoomedOut(window.innerWidth >= 3000);
+    };
+
+    updateZoomState();
+    window.addEventListener('resize', updateZoomState);
+    return () => window.removeEventListener('resize', updateZoomState);
   }, []);
 
   // Debug logging for Process scroll
@@ -176,6 +187,7 @@ export function Team({
   };
 
   const { expandedWidth, closedWidth } = getOptimalWidths();
+  const desktopScale = isExtremeZoomedOut ? 0.88 : 0.8;
 
   // Function to get column style based on index
   const getColumnStyle = (index: number) => {
@@ -216,7 +228,7 @@ export function Team({
           <div
             className="relative w-[1600px] h-[800px]"
             style={{
-              transform: 'scale(0.8) translateY(-40px)',
+              transform: `scale(${desktopScale}) translateY(-40px)`,
               transformOrigin: 'center center'
             }}
           >
