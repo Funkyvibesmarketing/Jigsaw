@@ -115,6 +115,7 @@ export default function ContactUs({ onScrollProgress }: ContactUsProps) {
         minHeight: `${viewportHeight * 1.5}px`
       } as React.CSSProperties}
     >
+      <div className="contact-us-to-form-bg hidden md:block" aria-hidden="true" />
       {/* Sticky container */}
       <div className="sticky top-0 w-full overflow-hidden" style={{ height: `${viewportHeight}px` } as React.CSSProperties}>
         {/* Mobile View */}

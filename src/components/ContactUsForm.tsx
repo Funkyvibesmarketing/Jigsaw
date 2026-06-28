@@ -455,7 +455,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
   return (
     <div
       ref={containerRef}
-      className="relative w-full bg-[#2c4657] z-[80]  md:cursor-none"
+      className="contact-form-section relative w-full bg-[#2c4657] z-[80]  md:cursor-none"
     >
       {/* Custom Cursor - Desktop Only */}
       {showCursor && !hideCursorForLinks && !pdfViewerOpen && (
