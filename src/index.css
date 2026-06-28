@@ -5997,6 +5997,22 @@ html {
 /* ============================================================
    Services desktop carousel redesign
    ============================================================ */
+@media (min-width: 1921px) {
+  #HeroNavigation,
+  #AboutUsNavigation {
+    transform: scale(1.1);
+    transform-origin: left center;
+  }
+}
+
+@media (min-width: 3000px) {
+  #HeroNavigation,
+  #AboutUsNavigation {
+    transform: scale(1.1);
+    transform-origin: left center;
+  }
+}
+
 @media (min-width: 768px) {
   .services-desktop-category-bar {
     top: clamp(62px, 7vh, 82px) !important;

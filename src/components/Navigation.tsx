@@ -57,6 +57,7 @@ export function Navigation() {
     <motion.div
       className="fixed left-[40px] rounded-[72px] top-[calc(50%+0.5px)] translate-y-[-50%] z-[100]"
       style={{ opacity: navOpacity, width: '80px',zIndex:999 }}
+      id="HeroNavigation"
       data-name="Navigation"
     >
       <motion.div
@@ -71,7 +72,7 @@ export function Navigation() {
         onMouseLeave={() => setIsHovered(false)}
       >
         <div className="flex flex-col items-center size-full">
-          <div className="box-border content-stretch flex flex-col gap-[32px] items-center overflow-clip px-[12px] py-[16px] relative size-full">
+          <div className="box-border content-stretch flex flex-col gap-[25px] items-center overflow-clip px-[12px] py-[16px] relative size-full">
             {/* Logo Button */}
             <motion.div 
               className="flex h-[calc(1px*((var(--transform-inner-width)*1)+(var(--transform-inner-height)*0)))] items-center justify-center relative shrink-0 w-full"
@@ -101,9 +102,9 @@ export function Navigation() {
             </motion.div>
 
             {/* Navigation Icons */}
-            <div className="content-stretch flex flex-col gap-[20px] items-start relative shrink-0 w-[40px]">
+            <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-[50px]">
               {/* Home Icon */}
-              <div className="bg-[rgba(46,196,182,0.4)] relative rounded-[100px] shrink-0 w-full">
+              <div className="bg-[rgba(46,196,182,0.4)] relative rounded-[100px] shrink-0 w-full h-[91px]">
                 <div aria-hidden="true" className="absolute border border-[#2ec4b6] border-solid inset-0 pointer-events-none rounded-[100px]" />
                 <div className="flex flex-col items-center justify-center size-full">
                   <div className="box-border content-stretch flex flex-col gap-[8px] items-center justify-center px-[17.5px] py-[12px] relative w-full">
@@ -137,7 +138,7 @@ export function Navigation() {
                 { type: 'single', path: svgPaths.pfc60680 },
                 { type: 'single', path: svgPaths.p16e5a580 }
               ].map((icon, i) => (
-                <div key={i} className="bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full">
+                <div key={i} className="bg-[rgba(255,255,255,0.1)] relative rounded-[100px] shrink-0 w-full h-[50px]">
                   <div aria-hidden="true" className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-[100px]" />
                   <div className="flex flex-col items-center justify-center size-full">
                     <div className="box-border content-stretch flex flex-col gap-[8px] items-center justify-center px-[17.5px] py-[12px] relative w-full">
