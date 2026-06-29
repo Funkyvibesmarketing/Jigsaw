@@ -1,80 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import imgVector from "figma:asset/d5e8c58984c14c183924583d7a6a35d180f7b988.png";
 import imgVector3 from "figma:asset/5aa702b67fe4226d00799fb3446a7e9a9a904d28.png";
 import { AnimatedDoubtButton } from './AnimatedDoubtButton';
 import type { Service } from '../utils/servicesApi';
-
-// Arrow button component for category navigation (top)
-function CategoryArrowButton({ direction, onClick }: { direction: 'left' | 'right'; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="relative content-stretch flex items-center justify-center p-[4px] rounded-full size-[48px] transition-all duration-200 ease-out group overflow-hidden"
-      style={{
-        background: 'rgba(255, 255, 255, 0.05)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        boxShadow: `
-          inset 0 1px 0 0 rgba(255, 255, 255, 0.15),
-          inset 0 -1px 0 0 rgba(0, 0, 0, 0.1)
-        `
-      }}
-    >
-      {/* Border overlay */}
-      <div
-        aria-hidden="true"
-        className="absolute border border-[rgba(255,255,255,0.2)] border-solid inset-0 pointer-events-none rounded-full transition-all duration-200 ease-out group-hover:border-[#2ec4b6] group-hover:border-2"
-      />
-
-      {/* Hover glow effect */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-out pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle at center, rgba(46, 196, 182, 0.15) 0%, transparent 70%)'
-        }}
-      />
-
-      <div className="flex items-center justify-center relative shrink-0 z-10 w-full h-full">
-        {direction === 'left' ? (
-          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="19" viewBox="0 0 30 19" fill="none" className="transition-transform duration-200 group-hover:scale-110">
-            <path d="M8.91931 17.7855C8.62522 14.9708 6.52957 9.33734 0.499674 9.32147M8.9648 0.49984C8.6559 3.313 6.53063 8.93535 0.500732 8.91948M4.92212 9.13211L29.0417 9.19559" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="1.43 1.43" />
-          </svg>
-        ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="19" viewBox="0 0 30 19" fill="none" className="transition-transform duration-200 group-hover:scale-110">
-            <path d="M20.6217 17.7855C20.9158 14.9708 23.0114 9.33734 29.0413 9.32147M20.5762 0.49984C20.8851 3.313 23.0104 8.93535 29.0403 8.91948M24.6189 9.13211L0.499307 9.19559" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="1.43 1.43" />
-          </svg>
-        )}
-      </div>
-    </button>
-  );
-}
-
-// Arrow button component for card navigation (bottom)
-function CardArrowButton({ direction, onClick, disabled }: { direction: 'left' | 'right'; onClick: () => void; disabled: boolean }) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className={`flex items-center justify-center rounded-full size-[64px] border border-[rgba(255,255,255,0.3)] transition-all duration-200 ease-out ${disabled ? 'opacity-30 cursor-not-allowed' : 'hover:border-[#2ec4b6] hover:bg-[rgba(46,196,182,0.1)]'
-        }`}
-    >
-      {/* Left arrow points UP, Right arrow points DOWN */}
-      <div className="overflow-clip relative size-[40px]">
-        <div className="absolute flex inset-[28.38%_14.25%_28.22%_14.29%] items-center justify-center">
-          <div className={`flex-none h-[17.286px] w-[28.542px] ${direction === 'left' ? 'rotate-[-90deg]' : 'rotate-[90deg]'}`}>
-            <div className="relative size-full">
-              <div className="absolute inset-[-2.89%_-1.75%]">
-                <img alt="" className="block max-w-none size-full" height="18.286" src={imgVector3} width="29.542" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </button>
-  );
-}
 
 export function Services({
   scrollProgress,
@@ -759,6 +687,9 @@ export function Services({
               </div>
 
             </div>
+            {detailCardIndex === 0 && (
+              <p className="services-scroll-more-hint">Scroll up for more</p>
+            )}
             <div className="services-card-number-badge">
               {detailCardIndex + 1}
             </div>
@@ -905,26 +836,6 @@ export function Services({
             </motion.div>
           </AnimatePresence>
         )}
-      </div>
-
-      {/* Desktop category/card controls */}
-      <div className="services-desktop-side-controls hidden md:block">
-        <div className="services-category-arrow services-category-arrow-left">
-          <CategoryArrowButton direction="left" onClick={handleCategoryPrev} />
-        </div>
-        <div className="services-category-arrow services-category-arrow-right">
-          <CategoryArrowButton direction="right" onClick={handleCategoryNext} />
-        </div>
-        <button
-          type="button"
-          className="services-next-card-pill"
-          onClick={handleCardNext}
-        >
-          <span>Click to view next card</span>
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-            <path d="M3 9H14M14 9L9.5 4.5M14 9L9.5 13.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
       </div>
 
       {/* Bottom Navigation - Card Counter and Arrows - Desktop Only */}

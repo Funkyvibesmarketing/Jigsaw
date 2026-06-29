@@ -426,9 +426,18 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
             <div className="hero-compliance-desktop pointer-events-auto">
               <h2>Trusted Mortgage Compliance</h2>
               <div className="hero-compliance-desktop-copy">
-                <p>Jigsaw Financial operates as an Appointed Representative of a mortgage network authorised and regulated by the Financial Conduct Authority.</p>
-                <p>This structure provides additional oversight, with experienced compliance specialists supporting cases and helping ensure advice remains accurate and responsible.</p>
-                <p>We also stay closely informed of regulatory developments so our clients can feel confident they are being properly looked after.</p>
+                <p>
+                  <span>Jigsaw Financial operates as an Appointed Representative of a mortgage</span>
+                  <span>network authorised and regulated by the Financial Conduct Authority.</span>
+                </p>
+                <p>
+                  <span>This structure provides additional oversight, with experienced compliance specialists</span>
+                  <span>supporting cases and helping ensure advice remains accurate and responsible.</span>
+                </p>
+                <p>
+                  <span>We also stay closely informed of regulatory developments so our clients</span>
+                  <span>can feel confident they are being properly looked after.</span>
+                </p>
               </div>
             </div>
           </motion.div>

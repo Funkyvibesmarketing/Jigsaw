@@ -6083,15 +6083,14 @@ html {
 
   .services-card-number-badge {
     position: absolute;
-    right: 270px;
-    top: 50%;
+    right: 42px;
+    top: 42px;
     z-index: 60;
     display: flex;
     width: 58px;
     height: 58px;
     align-items: center;
     justify-content: center;
-    transform: translate(50%, -50%);
     border: 3px solid #ffffff;
     border-radius: 999px;
     background: #2ec4b6;
@@ -6100,6 +6099,20 @@ html {
     font-size: 20px;
     line-height: 1;
     box-shadow: 0 10px 18px rgba(0, 0, 0, 0.16);
+  }
+
+  .services-scroll-more-hint {
+    position: absolute;
+    left: 42px;
+    bottom: 28px;
+    z-index: 60;
+    margin: 0;
+    color: #222526;
+    font-family: Lato, sans-serif;
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.2;
   }
 
   .services-card-dots {
@@ -6220,7 +6233,8 @@ html {
 
   .services-moderate-zoom-out .services-card-number-badge,
   .services-extreme-zoom-out .services-card-number-badge {
-    right: 270px;
+    right: 42px;
+    top: 42px;
   }
 
   .services-moderate-zoom-out .services-card-dots,
@@ -6516,7 +6530,7 @@ html {
   left: 50%;
   top: calc(50% + 110px);
   z-index: 101;
-  width: min(86vw, 1120px);
+  width: min(88vw, 3934px);
   translate: -50% -50%;
   display: flex;
   flex-direction: column;
@@ -6527,9 +6541,9 @@ html {
 }
 
 .hero-compliance-desktop h2 {
-  margin: 0 0 24px;
+  margin: 0 0 clamp(22px, 1.7vw, 72px);
   font-family: Lato, sans-serif;
-  font-size: clamp(34px, 3.8vw, 52px);
+  font-size: clamp(34px, 2.35vw, 86px);
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: 1px;
@@ -6541,16 +6555,21 @@ html {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: clamp(22px, 1.2vw, 48px);
+  width: 100%;
   font-family: Lato, sans-serif;
-  font-size: clamp(16px, 1.65vw, 21px);
+  font-size: clamp(26px, 1.4vw, 72px);
   font-weight: 400;
-  line-height: 1.65;
+  line-height: clamp(44px, 2.35vw, 120px);
 }
 
 .hero-compliance-desktop-copy p {
-  max-width: 1140px;
+  width: 100%;
   margin: 0;
+}
+
+.hero-compliance-desktop-copy span {
+  display: block;
 }
 
 @media (min-width: 1921px) {
