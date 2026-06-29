@@ -6584,6 +6584,7 @@ html {
 
 .hero-extreme-zoom-out .hero-compliance-desktop {
   top: calc(40% + 0px);
+  scale: 0.88;
 }
 
 /* ============================================================
