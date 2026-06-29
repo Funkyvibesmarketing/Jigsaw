@@ -231,8 +231,7 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
     //}
 
     if (latest >= 0.75) {
-      //setHideDownArrow(true);
-      document.getElementById("downArrowButton").style.display = "none";
+      setHideDownArrow(true);
 
       //let opacity = 0; // start invisible
       //WeRewarded.style.display = "inline-block";
@@ -242,11 +241,10 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
 
       //console.log("Step 8 reached! Hiding down arrow. Scroll progress:", latest);
     } else {
-      //setHideDownArrow(false);
+      setHideDownArrow(false);
       //Reward section hiding
       //WeRewarded.style.opacity = 0;
       //--------------------
-      document.getElementById("downArrowButton").style.display = "block";
     }
   });
 
@@ -281,7 +279,7 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
 
           {/* JIGSAW Text - Always visible but changes gradient */}
           <motion.div
-            className="absolute h-[212.774px] left-[50%] top-[40px] translate-x-[-50%] w-[min(1190px,90vw)] max-w-[1190px]"
+            className="hero-jigsaw-desktop absolute h-[212.774px] left-[50%] top-[40px] translate-x-[-50%] w-[min(1190px,90vw)] max-w-[1190px]"
             style={{ opacity: topJigsawOpacity, y: textY }}
           >
             <img
@@ -298,7 +296,7 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
 
           {/* Background House Image - Fades in during Step 2 */}
           <motion.div
-            className="absolute flex h-[1086px] items-center justify-center left-1/2 -translate-x-1/2 w-[1318px] z-[1] pointer-events-none"
+            className="hero-house-bg-desktop absolute flex h-[1086px] items-center justify-center left-1/2 -translate-x-1/2 w-[1318px] z-[1] pointer-events-none"
             style={{
               opacity: bgImageOpacity,
               y: bgImageY,
@@ -320,7 +318,7 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
 
           {/* Main House Image - Slides up during Step 2 */}
           <motion.div
-            className="absolute h-[982px] left-0 w-full left-1/2 -translate-x-1/2 z-[2] pointer-events-none"
+            className="hero-house-main-desktop absolute h-[982px] left-0 w-full left-1/2 -translate-x-1/2 z-[2] pointer-events-none"
             style={{
               opacity: mainImageOpacity,
               y: mainImageY,
@@ -410,7 +408,7 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
             className="absolute bottom-[80px] right-[80px] z-[50]"
             style={{
               y: arrowY,
-              opacity: hideDownArrow ? 0 : arrowOpacity,
+              opacity: isExtremeZoomedOut && isDesktop ? (hideDownArrow ? 0 : 1) : (hideDownArrow ? 0 : arrowOpacity),
               pointerEvents: hideDownArrow ? 'none' : 'auto'
             }}
           >

@@ -6411,8 +6411,8 @@ html {
     left: 50%;
     top: calc(50% + 488px);
     width: min(50.5vw, 960px);
-    padding-top: clamp(14px, 1vw, 20px);
-    border-top: 2px solid rgba(255, 255, 255, 0.92);
+    padding-top: clamp(18px, 1.1vw, 34px);
+    border-top: clamp(4px, 0.32vw, 8px) solid #ffffff;
     translate: -50% 0;
     font-weight: 700;
     text-transform: uppercase;
@@ -6456,15 +6456,56 @@ html {
 }
 
 .hero-moderate-zoom-out .hero-sentence-desktop {
-  top: calc(50% + 320px);
+  top: calc(50% + 360px);
+  scale: 0.94;
+}
+
+.hero-moderate-zoom-out .hero-sentence-desktop-stack {
+  font-size: clamp(132px, 5.2vw, 205px);
+}
+
+.hero-moderate-zoom-out .hero-jigsaw-desktop,
+.hero-moderate-zoom-out .hero-house-bg-desktop,
+.hero-moderate-zoom-out .hero-house-main-desktop {
+  scale: 0.94;
 }
 
 .hero-extreme-zoom-out .hero-sentence-desktop {
   top: calc(50% + 80px);
+  scale: 0.92;
 }
 
 .hero-extreme-zoom-out .hero-sentence-desktop-stack {
-  font-size: clamp(140px, 5.6vw, 220px);
+  font-size: clamp(126px, 5vw, 198px);
+}
+
+.hero-extreme-zoom-out .hero-jigsaw-desktop,
+.hero-extreme-zoom-out .hero-house-bg-desktop,
+.hero-extreme-zoom-out .hero-house-main-desktop {
+  scale: 0.92;
+}
+
+.hero-extreme-zoom-out #downArrowButton {
+  position: fixed;
+  bottom: 90px;
+  right: 95px;
+  scale: 0.9;
+}
+
+.hero-large-display.hero-extreme-zoom-out .hero-sentence-desktop {
+  top: calc(50% + 220px);
+  width: min(58vw, 1480px);
+  scale: 1;
+}
+
+.hero-large-display.hero-extreme-zoom-out .hero-sentence-desktop-stack {
+  font-size: clamp(180px, 7.2vw, 280px);
+}
+
+.hero-large-display.hero-extreme-zoom-out .hero-jigsaw-desktop,
+.hero-large-display.hero-extreme-zoom-out .hero-house-bg-desktop,
+.hero-large-display.hero-extreme-zoom-out .hero-house-main-desktop {
+  scale: 1;
 }
 
 /* ============================================================
