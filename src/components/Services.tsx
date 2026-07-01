@@ -4,6 +4,39 @@ import imgVector3 from "figma:asset/5aa702b67fe4226d00799fb3446a7e9a9a904d28.png
 import { AnimatedDoubtButton } from './AnimatedDoubtButton';
 import type { Service } from '../utils/servicesApi';
 
+function ServicesScrollDownHint({ visible }: { visible: boolean }) {
+  return (
+    <motion.button
+      type="button"
+      className="services-desktop-scroll-hint hidden md:flex flex-col items-center gap-1 rounded-full bg-white/95 px-4 py-2 text-center text-[#2C4657] shadow-[0_20px_40px_rgba(0,0,0,0.12)] backdrop-blur-sm"
+      style={{ position: 'fixed', left: 0, right: 0, bottom: 48, margin: '0 auto', zIndex: 10001, width: 'max-content' }}
+      initial={{ opacity: 0, y: 16 }}
+      animate={visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+      transition={{ duration: 0.6, ease: [0.24, 1, 0.32, 1] }}
+      onClick={() => window.scrollBy({ top: window.innerHeight * 0.15, behavior: 'smooth' })}
+      aria-label="Scroll down"
+    >
+      <span className="font-['Lato:Regular',sans-serif] text-[14px] uppercase tracking-[0.24em]">Scroll down</span>
+      <motion.svg
+        className="h-[22px] w-[22px]"
+        viewBox="0 0 36 36"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        animate={visible ? { y: [0, 6, 0] } : { y: 0 }}
+        transition={{ repeat: Infinity, repeatType: 'loop', duration: 1.4, ease: 'easeInOut', delay: 0.2 }}
+      >
+        <path
+          d="M25.8025 23.2713C23.2692 23.5359 18.1991 25.422 18.1848 30.8489M10.2454 23.2303C12.7772 23.5083 17.8373 25.4211 17.823 30.848M18.0144 26.8687L18.0715 5.1611"
+          stroke="#2C4657"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeDasharray="1.29 1.29"
+        />
+      </motion.svg>
+    </motion.button>
+  );
+}
+
 export function Services({
   scrollProgress,
   services,
@@ -267,7 +300,14 @@ export function Services({
   const leftCategoryRight = `calc(50% - ${halfActiveCategoryWidth + minGap}px)`;
   const rightCategoryLeft = `calc(50% + ${halfActiveCategoryWidth + minGap}px)`;
 
-  if (scrollProgress < 0.55) return null;
+  const showDesktopScrollHint = !isMobileView && scrollProgress >= 0.50 && scrollProgress < 0.69;
+
+  if (scrollProgress < 0.55) {
+    if (showDesktopScrollHint) {
+      return <ServicesScrollDownHint visible />;
+    }
+    return null;
+  }
 
   return (
     <motion.div
@@ -963,6 +1003,8 @@ export function Services({
           </button>
         </div>
       </div>
+
+      {showDesktopScrollHint && <ServicesScrollDownHint visible />}
     </motion.div>
   );
 }
