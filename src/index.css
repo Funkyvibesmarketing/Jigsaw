@@ -6784,7 +6784,7 @@ html {
   }
 
   .contact-sticky-section {
-    min-height: 1080px;
+    min-height: 1200px;
     padding-bottom: 0 !important;
     background:
       radial-gradient(ellipse 78% 58% at 50% 8%, rgba(46, 196, 182, 0.28) 0%, rgba(45, 133, 191, 0.16) 38%, rgba(44, 70, 87, 0) 72%),
@@ -6792,11 +6792,11 @@ html {
   }
 
   .contact-sticky-moderate-zoom-out {
-    min-height: 1120px;
+    min-height: 1240px;
   }
 
   .contact-sticky-extreme-zoom-out {
-    min-height: 1180px;
+    min-height: 1280px;
   }
 
   .contact-desktop-form {
@@ -6896,7 +6896,8 @@ html {
   }
 
   .contact-desktop-social {
-    bottom: clamp(318px, 31vh, 360px) !important;
+    top: calc(50% + 72px) !important;
+    bottom: auto !important;
     gap: 18px !important;
   }
 
@@ -6938,7 +6939,7 @@ html {
 
   .contact-desktop-legal {
     gap: 20px !important;
-    margin-top: 0 !important;
+    margin-top: clamp(96px, 11vh, 160px) !important;
   }
 
   .contact-desktop-legal p {
@@ -6986,7 +6987,8 @@ html {
   }
 
   .contact-desktop-moderate-zoom-out .contact-desktop-social {
-    bottom: clamp(390px, 33vh, 460px) !important;
+    top: calc(50% + 84px) !important;
+    bottom: auto !important;
   }
 
   .contact-desktop-moderate-zoom-out .contact-desktop-footer {
@@ -7024,12 +7026,33 @@ html {
   }
 
   .contact-desktop-extreme-zoom-out .contact-desktop-social {
-    bottom: clamp(276px, 24vh, 420px) !important;
+    top: calc(50% + 108px) !important;
+    bottom: auto !important;
   }
 
   .contact-desktop-extreme-zoom-out .contact-desktop-footer {
     max-width: min(58vw, 1440px) !important;
     padding-bottom: 46px !important;
+  }
+
+  .contact-desktop-moderate-zoom-out .contact-desktop-legal {
+    margin-top: clamp(108px, 12vh, 170px) !important;
+  }
+
+  .contact-desktop-extreme-zoom-out .contact-desktop-legal {
+    margin-top: clamp(120px, 13vh, 190px) !important;
+  }
+
+  .contact-desktop-large-display .contact-desktop-legal {
+    margin-top: clamp(120px, 13vh, 200px) !important;
+  }
+
+  .contact-desktop-large-display.contact-desktop-moderate-zoom-out .contact-desktop-legal {
+    margin-top: clamp(132px, 14vh, 220px) !important;
+  }
+
+  .contact-desktop-large-display.contact-desktop-extreme-zoom-out .contact-desktop-legal {
+    margin-top: clamp(148px, 15vh, 240px) !important;
   }
 }
 

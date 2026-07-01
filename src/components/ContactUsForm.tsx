@@ -152,8 +152,14 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const isPhysicalLargeDisplay = () => {
+    const pixelRatio = window.devicePixelRatio || 1;
+    const screenWidth = Math.max(window.screen.width, window.screen.availWidth);
+    return screenWidth > 1920 || screenWidth * pixelRatio > 3000;
+  };
   const [isModerateZoomedOut, setIsModerateZoomedOut] = useState(window.innerWidth >= 1921 && window.innerWidth < 3000);
   const [isExtremeZoomedOut, setIsExtremeZoomedOut] = useState(window.innerWidth >= 3000);
+  const [isLargeDisplay, setIsLargeDisplay] = useState(isPhysicalLargeDisplay());
 
   // Track hover state for each social button
   const [facebookHovered, setFacebookHovered] = useState(false);
@@ -182,6 +188,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
     const updateZoomState = () => {
       setIsModerateZoomedOut(window.innerWidth >= 1921 && window.innerWidth < 3000);
       setIsExtremeZoomedOut(window.innerWidth >= 3000);
+      setIsLargeDisplay(isPhysicalLargeDisplay());
     };
 
     updateZoomState();
@@ -205,10 +212,10 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
   const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
   const viewportHeight = window.innerHeight / zoomFactor;
   const desktopSectionHeight = isExtremeZoomedOut
-    ? Math.max(1180, viewportHeight)
+    ? Math.max(1240, viewportHeight)
     : isModerateZoomedOut
-      ? Math.max(1120, viewportHeight)
-    : Math.max(980, viewportHeight);
+      ? Math.max(1200, viewportHeight)
+    : Math.max(1200, viewportHeight);
 
   const scrollYProgress = useMotionValue(0);
 
@@ -499,7 +506,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
 
         {/* Desktop View */}
         <motion.div
-          className={`contact-desktop-form hidden md:block bg-[#2c4657] relative size-full ${isModerateZoomedOut ? 'contact-desktop-moderate-zoom-out' : ''} ${isExtremeZoomedOut ? 'contact-desktop-extreme-zoom-out' : ''}`}
+          className={`contact-desktop-form hidden md:block bg-[#2c4657] relative size-full ${isLargeDisplay ? 'contact-desktop-large-display' : ''} ${isModerateZoomedOut ? 'contact-desktop-moderate-zoom-out' : ''} ${isExtremeZoomedOut ? 'contact-desktop-extreme-zoom-out' : ''}`}
           data-name="Contact us Form"
           style={{ y: slideY, opacity }}
         >
@@ -610,7 +617,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
             </>
           )}
 
-          <div className="contact-desktop-social absolute flex flex-col gap-[16px] items-center pb-[10px] bottom-[380px] left-1/2 -translate-x-1/2 w-[90%] max-w-[1190px] z-[90]">
+          <div className="contact-desktop-social absolute flex flex-col gap-[16px] items-center pb-[10px] left-1/2 -translate-x-1/2 w-[90%] max-w-[1190px] z-[90]">
             {/* Social Media Section (moved up for desktop) */}
             <div className="contact-desktop-social-inner flex flex-col gap-[16px] items-center w-full">
               <p className="contact-desktop-social-title font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[20px] text-center text-nowrap text-white tracking-[0.2px]">Follow us on:</p>
