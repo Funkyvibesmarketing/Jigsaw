@@ -278,7 +278,6 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
                   alt=""
                   className="absolute inset-0 max-w-none object-50%-50% object-cover opacity-[0.08] pointer-events-none size-full"
                   src={imgModernHouseAtTwilight4}
-                  fetchpriority="high"
                 />
               </div>
             </div>
@@ -295,7 +294,7 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
                   alt=""
                   className="absolute inset-0 max-w-none object-50%-50% object-cover pointer-events-none size-full"
                   src={imgModernHouseAtTwilight4}
-                  fetchpriority="high"
+                  fetchPriority="high"
                 />
               </div>
             </div>
@@ -313,7 +312,6 @@ export function HeroScrollSectionMobile({ onScrollProgress, splashViewed, onRead
                   className="absolute inset-0 max-w-none object-cover pointer-events-none size-full"
                   style={{ objectPosition: '50% 75%' }}
                   src={imgModernHouseAtTwilight4}
-                  fetchpriority="high"
                 />
               </div>
             </div>

@@ -1,18 +1,12 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { motion, useScroll, useTransform, useMotionValue, animate } from 'motion/react';
-import { Splash } from './components/Splash';
+import { motion, useScroll, useTransform, useMotionValue } from 'motion/react';
 import { SplashMobile } from './components/SplashMobile';
-import { HeroScrollSection } from './components/HeroScrollSection';
 import { HeroScrollSectionMobile } from './components/HeroScrollSectionMobile';
-import { AboutUs } from './components/AboutUs';
 import { AboutUsMobile } from './components/AboutUsMobile';
-import { CustomCursor } from './components/CustomCursor';
-import { AboutUsNavigation } from './components/AboutUsNavigation';
 import { MobileNavigation } from './components/MobileNavigation';
 import { MobileNavigationLight } from './components/MobileNavigationLight';
 import { MobileMenu } from './components/MobileMenu';
 import { MobileUpArrow } from './components/MobileUpArrow';
-import { UpArrowButton } from './components/UpArrowButton';
 import { WhatsAppButton } from './components/WhatsAppButton';
 import { fetchTeamMembers, defaultTeamMembers, type TeamMember } from './utils/teamApi';
 import { fetchServices, defaultServices, type Service } from './utils/servicesApi';
@@ -21,6 +15,14 @@ import { fetchAboutUsCarouselData, defaultAboutUsCarouselData, type carouselText
 import { useLenis } from './hooks/useLenis'; // Import Lenis hook
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { runWhenIdle } from './utils/performanceUtils';
+
+// Desktop-only sections — lazy so mobile never downloads them
+const Splash = lazy(() => import('./components/Splash').then((module) => ({ default: module.Splash })));
+const HeroScrollSection = lazy(() => import('./components/HeroScrollSection').then((module) => ({ default: module.HeroScrollSection })));
+const AboutUs = lazy(() => import('./components/AboutUs').then((module) => ({ default: module.AboutUs })));
+const CustomCursor = lazy(() => import('./components/CustomCursor').then((module) => ({ default: module.CustomCursor })));
+const AboutUsNavigation = lazy(() => import('./components/AboutUsNavigation').then((module) => ({ default: module.AboutUsNavigation })));
+const UpArrowButton = lazy(() => import('./components/UpArrowButton').then((module) => ({ default: module.UpArrowButton })));
 
 // Lazy load components that are not immediately visible
 const Reviews = lazy(() => import('./components/Reviews').then(module => ({ default: module.Reviews })));
@@ -143,9 +145,9 @@ export default function App() {
         }
         return prev;
       });
-    }, 45);
+    }, isMobile ? 80 : 45);
     return () => clearInterval(interval);
-  }, []);
+  }, [isMobile]);
 
   // Target data progress calculation (50% API, 50% Render)
   const targetDataProgress = (() => {
@@ -295,10 +297,11 @@ export default function App() {
     return () => unsubscribe();
   }, [scrollY, splashHasBeenViewed, splashOpacityValue, isSplashVisible, isMobile]);
 
-  // Fetch team members from API - Defer until Stage 2 (Mid-page) for core performance
+  // Fetch team members from API - defer on mobile until Reviews/Team wave
   useEffect(() => {
+    if (isMobile && mountStage < 2) return;
+
     const fetchMembers = async () => {
-      // Small staggered delay to prevent main thread lockup on iOS
       await new Promise(resolve => setTimeout(resolve, 0));
       try {
         const members = await fetchTeamMembers();
@@ -311,13 +314,14 @@ export default function App() {
     };
 
     fetchMembers();
-  }, []);
+  }, [isMobile, mountStage]);
 
-  // Fetch services from API - Defer until Stage 1 (Top-page) for core performance
+  // Fetch services from API - defer on mobile until About Us wave
   useEffect(() => {
+    if (isMobile && mountStage < 1) return;
+
     const fetchServiceList = async () => {
-      // Small staggered delay to prevent main thread lockup on iOS
-      await new Promise(resolve => setTimeout(resolve, 80));
+      await new Promise(resolve => setTimeout(resolve, isMobile ? 120 : 80));
       try {
         const serviceList = await fetchServices();
         setServices(serviceList);
@@ -329,13 +333,14 @@ export default function App() {
     };
 
     fetchServiceList();
-  }, []);
+  }, [isMobile, mountStage]);
 
-  // Fetch blogs from API - Defer until Stage 3 (Page bottom) for core performance
+  // Fetch blogs from API - defer on mobile until bottom wave
   useEffect(() => {
+    if (isMobile && mountStage < 3) return;
+
     const fetchBlogList = async () => {
-      // Small staggered delay to prevent main thread lockup on iOS
-      await new Promise(resolve => setTimeout(resolve, 160));
+      await new Promise(resolve => setTimeout(resolve, isMobile ? 200 : 160));
       try {
         const blogList = await fetchBlogs();
         setBlogs(blogList);
@@ -347,13 +352,14 @@ export default function App() {
     };
 
     fetchBlogList();
-  }, []);
+  }, [isMobile, mountStage]);
 
-  // Fetch about us carousel data from API - Defer until Stage 1 (Top-page) for core performance
+  // Fetch about us carousel data from API - defer on mobile until About Us wave
   useEffect(() => {
+    if (isMobile && mountStage < 1) return;
+
     const fetchCarousel = async () => {
-      // Small staggered delay to prevent main thread lockup on iOS
-      await new Promise(resolve => setTimeout(resolve, 240));
+      await new Promise(resolve => setTimeout(resolve, isMobile ? 180 : 240));
       try {
         const carouselData = await fetchAboutUsCarouselData();
         setCarouselTexts(carouselData);
@@ -365,7 +371,7 @@ export default function App() {
     };
 
     fetchCarousel();
-  }, []);
+  }, [isMobile, mountStage]);
 
   // Track active section using Intersection Observer
   useEffect(() => {
@@ -490,31 +496,35 @@ export default function App() {
       } as any}
     >
       {/* Custom Cursor - Fully deferred for performance */}
-      {(splashAnimationComplete || splashHasBeenViewed) && (
-        <CustomCursor
-          aboutUsScrollProgress={aboutUsScrollProgress}
-          reviewsScrollProgress={reviewsScrollProgress}
-          teamScrollProgress={teamScrollProgress}
-          processScrollProgress={processScrollProgress}
-          blogsScrollProgress={blogsScrollProgress}
-          contactUsScrollProgress={contactUsScrollProgress}
-          isSplashVisible={isSplashVisible}
-        />
+      {!isMobile && (splashAnimationComplete || splashHasBeenViewed) && (
+        <Suspense fallback={null}>
+          <CustomCursor
+            aboutUsScrollProgress={aboutUsScrollProgress}
+            reviewsScrollProgress={reviewsScrollProgress}
+            teamScrollProgress={teamScrollProgress}
+            processScrollProgress={processScrollProgress}
+            blogsScrollProgress={blogsScrollProgress}
+            contactUsScrollProgress={contactUsScrollProgress}
+            isSplashVisible={isSplashVisible}
+          />
+        </Suspense>
       )}
       {/* Navigation Bar - Desktop and Tablet only */}
       {!isMobile && (
-        <AboutUsNavigation
-          aboutUsScrollProgress={aboutUsScrollProgress}
-          reviewsScrollProgress={reviewsScrollProgress}
-          processScrollProgress={processScrollProgress}
-          blogsScrollProgress={blogsScrollProgress}
-          heroScrollProgress={heroScrollProgress}
-          teamScrollProgress={teamScrollProgress}
-          isReviewsActive={reviewsScrollProgress > 0 && reviewsScrollProgress < 0.80}
-          isContactUsSection={contactUsScrollProgress > 0}
-          contactUsFormScrollProgress={contactUsFormScrollProgress}
-          splashViewed={splashHasBeenViewed}
-        />
+        <Suspense fallback={null}>
+          <AboutUsNavigation
+            aboutUsScrollProgress={aboutUsScrollProgress}
+            reviewsScrollProgress={reviewsScrollProgress}
+            processScrollProgress={processScrollProgress}
+            blogsScrollProgress={blogsScrollProgress}
+            heroScrollProgress={heroScrollProgress}
+            teamScrollProgress={teamScrollProgress}
+            isReviewsActive={reviewsScrollProgress > 0 && reviewsScrollProgress < 0.80}
+            isContactUsSection={contactUsScrollProgress > 0}
+            contactUsFormScrollProgress={contactUsFormScrollProgress}
+            splashViewed={splashHasBeenViewed}
+          />
+        </Suspense>
       )}
 
       {/* Mobile Navigation - switches between dark (hero) and light (about us/services/reviews) */}
@@ -585,7 +595,13 @@ export default function App() {
           right: '-2px'
         }}
       >
-        {isMobile ? <SplashMobile dataProgress={dataProgress} onComplete={() => { }} /> : <Splash dataProgress={dataProgress} onComplete={() => { }} />}
+        {isMobile ? (
+          <SplashMobile dataProgress={dataProgress} onComplete={() => { }} />
+        ) : (
+          <Suspense fallback={null}>
+            <Splash dataProgress={dataProgress} onComplete={() => { }} />
+          </Suspense>
+        )}
       </motion.div>
 
       {/* Hero Screen - Conditional rendering based on screen size */}
@@ -597,11 +613,13 @@ export default function App() {
             onReady={() => setMountStage(prev => Math.max(prev, 1))}
           />
         ) : (
-          <HeroScrollSection
-            onScrollProgress={setHeroScrollProgress}
-            splashViewed={splashHasBeenViewed}
-            onReady={() => setMountStage(prev => Math.max(prev, 1))}
-          />
+          <Suspense fallback={<SectionLoader />}>
+            <HeroScrollSection
+              onScrollProgress={setHeroScrollProgress}
+              splashViewed={splashHasBeenViewed}
+              onReady={() => setMountStage(prev => Math.max(prev, 1))}
+            />
+          </Suspense>
         )}
       </div>
 
@@ -617,14 +635,16 @@ export default function App() {
                 onReady={() => setMountStage(prev => Math.max(prev, 2))}
               />
             ) : (
-              <AboutUs
-                onScrollProgress={setAboutUsScrollProgress}
-                onServicesScrollProgress={setServicesScrollProgress}
-                reviewsScrollProgress={reviewsScrollProgress}
-                services={services}
-                carouselTexts={carouselTexts}
-                onReady={() => setMountStage(prev => Math.max(prev, 2))}
-              />
+              <Suspense fallback={<SectionLoader />}>
+                <AboutUs
+                  onScrollProgress={setAboutUsScrollProgress}
+                  onServicesScrollProgress={setServicesScrollProgress}
+                  reviewsScrollProgress={reviewsScrollProgress}
+                  services={services}
+                  carouselTexts={carouselTexts}
+                  onReady={() => setMountStage(prev => Math.max(prev, 2))}
+                />
+              </Suspense>
             )}
           </div>
 
@@ -748,7 +768,9 @@ export default function App() {
           {/* Up Arrow Button - Desktop only - appears across all sections from Hero compliance onwards */}
           {!isMobile && (heroScrollProgress >= 0.82 || aboutUsScrollProgress > 0 || reviewsScrollProgress > 0 || teamScrollProgress > 0 || processScrollProgress > 0 || blogsScrollProgress > 0 || contactUsScrollProgress > 0 || contactUsFormScrollProgress > 0) && (
             <div className="fixed bottom-[40px] right-[24px] z-[250]">
-              <UpArrowButton onClick={handleScrollToTop} />
+              <Suspense fallback={null}>
+                <UpArrowButton onClick={handleScrollToTop} />
+              </Suspense>
             </div>
           )}
           <WhatsAppButton

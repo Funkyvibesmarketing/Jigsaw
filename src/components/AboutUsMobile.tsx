@@ -1,11 +1,12 @@
 import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, lazy, Suspense } from 'react';
 import svgPaths from '../imports/svg-4nnubvddnl';
 import imgVector from 'figma:asset/4234f71b7d4a1998f6e3282ba90ea09ce5633514.png';
 import backgroundGradient from 'figma:asset/42d2cf4a66b5216ee41ff6ee702481dc6863d649.png';
-import { ServicesMobile } from './ServicesMobile';
 import type { carouselTexts } from '../utils/aboutApi';
 import type { Service } from '../utils/servicesApi';
+
+const ServicesMobile = lazy(() => import('./ServicesMobile').then((module) => ({ default: module.ServicesMobile })));
 
 // Carousel text items (handled by prop)
 
@@ -296,9 +297,6 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
   const middleTextY = useTransform(scrollYProgress, [0, 0.08, 0.28, 0.45], [100, 0, 0, -400]);
   const middleTextOpacity = useTransform(scrollYProgress, [0, 0.35, 0.45], [1, 1, 0]);
 
-  // Middle text blur effect - stays clear while paused, only blurs near the end
-  const middleTextBlur = useTransform(scrollYProgress, [0, 0.40, 0.43, 0.45], ['blur(0px)', 'blur(0px)', 'blur(4px)', 'blur(8px)']);
-
   // SERVICES appears below and waits during the pause, then slides up
   // 0-0.28: Stays below (during About Us pause)
   // 0.28-0.45: Slides up to center
@@ -306,16 +304,6 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
 
   // Scale up after reaching middle - MUCH MORE zoom to fill screen
   const servicesScale = useTransform(scrollYProgress, [0.45, 0.65], [1, 25]);
-
-  // Color transitions - opacity increases quickly as it slides up
-  const servicesColor = useTransform(
-    scrollYProgress,
-    [0, 0.25, 0.35],
-    ['rgba(41, 65, 80, 0.2)', 'rgba(41, 65, 80, 0.6)', 'rgba(41, 65, 80, 1)']
-  );
-
-  // Blur effect - clears up quickly as it slides up
-  const servicesBlur = useTransform(scrollYProgress, [0, 0.25, 0.35], ['blur(6px)', 'blur(2px)', 'blur(0px)']);
 
   // SERVICES text opacity - fades out as zoom completes
   const servicesTextOpacity = useTransform(scrollYProgress, [0, 0.58, 0.62], [1, 1, 0]);
@@ -365,7 +353,6 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
             style={{
               y: middleTextY,
               opacity: middleTextOpacity,
-              filter: middleTextBlur,
               pointerEvents: scrollProgress < 0.60 ? 'auto' : 'none'
             }}
           >
@@ -552,7 +539,11 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
               touchAction: (scrollProgress >= 0.51 || isTutorialActive) ? 'auto' : 'none'
             }}
           >
-            <ServicesMobile services={services} scrollProgress={scrollProgress} />
+            {(scrollProgress >= 0.30 || isTutorialActive) && (
+              <Suspense fallback={null}>
+                <ServicesMobile services={services} scrollProgress={scrollProgress} />
+              </Suspense>
+            )}
           </div>
         </motion.div>
 
@@ -564,18 +555,6 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
           >
             <svg className="absolute top-0 left-0 w-full h-full pointer-events-none" viewBox="0 0 375 812" preserveAspectRatio="xMidYMid slice">
               <defs>
-                {/* Blur filter for solid text phase */}
-                <filter id="servicesBlurMobile">
-                  <feGaussianBlur stdDeviation={(() => {
-                    if (scrollProgress < 0.3) return 4;
-                    if (scrollProgress < 0.40) {
-                      const p = (scrollProgress - 0.3) / 0.1;
-                      return 4 - (4 * p);
-                    }
-                    return 0;
-                  })()} />
-                </filter>
-
                 {/* Mask for Services section - only visible through text during zoom */}
                 <mask id="servicesTextMaskMobile">
                   {/* White background - everything covered */}
@@ -665,7 +644,6 @@ export function AboutUsMobile({ onScrollProgress, carouselTexts, services, onRea
                   fontFamily="Lato, sans-serif"
                   fontWeight="700"
                   letterSpacing="8"
-                  filter="url(#servicesBlurMobile)"
                   opacity={solidTextOpacity}
                 >
                   SERVICES

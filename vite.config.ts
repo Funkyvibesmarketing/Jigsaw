@@ -1,11 +1,36 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 import compression from 'vite-plugin-compression';
 
+function injectHeroPreloads(): Plugin {
+  return {
+    name: 'inject-hero-preloads',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html, ctx) {
+        let mobile = '/src/assets/hero-mobile.webp';
+        let desktop = '/src/assets/77b24f13b4242da58b9f7acf069a8d06393d7e02.webp';
+
+        if (ctx.bundle) {
+          for (const fileName of Object.keys(ctx.bundle)) {
+            if (fileName.includes('hero-mobile')) mobile = `/${fileName}`;
+            if (fileName.includes('77b24f13')) desktop = `/${fileName}`;
+          }
+        }
+
+        return html
+          .replace('__HERO_MOBILE_PRELOAD__', mobile)
+          .replace('__HERO_DESKTOP_PRELOAD__', desktop);
+      },
+    },
+  };
+}
+
 export default defineConfig({
   plugins: [
     react(),
+    injectHeroPreloads(),
     compression({
       algorithm: 'brotliCompress',
       ext: '.br',
