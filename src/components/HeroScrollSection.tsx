@@ -17,18 +17,14 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
   const viewportHeight = window.innerHeight / zoomFactor;
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
   const isPhysicalLargeDisplay = () => {
-    const pixelRatio = window.devicePixelRatio || 1;
     const screenWidth = Math.max(window.screen.width, window.screen.availWidth);
-    return screenWidth > 1920 || screenWidth * pixelRatio > 3000;
+    return screenWidth >= 2200 || window.innerWidth >= 2200;
   };
   const isExtremeZoomOut = () => {
-    const screenWidth = Math.max(window.screen.width, window.screen.availWidth);
-    return window.innerWidth >= 3000 || (screenWidth > 0 && window.innerWidth / screenWidth >= 1.7);
+    return window.innerWidth >= 3000;
   };
   const isModerateZoomOut = () => {
-    const screenWidth = Math.max(window.screen.width, window.screen.availWidth);
-    const zoomRatio = screenWidth > 0 ? window.innerWidth / screenWidth : 1;
-    return window.innerWidth >= 1921 && window.innerWidth < 3000 && zoomRatio < 1.7;
+    return window.innerWidth >= 1921 && window.innerWidth < 3000;
   };
   const [isLargeDisplay, setIsLargeDisplay] = useState(
     isPhysicalLargeDisplay()
@@ -153,8 +149,8 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
     scrollYProgress,
     [0, 0.10, 0.14, 0.25, 0.36, 0.44],
     splashViewed
-      ? (isDesktop ? [-500, -500, -500, -500, -700, -1400] : [-280, -280, -280, -280, -480, -1180])
-      : (isDesktop ? [-400, -400, -400, -400, -600, -1300] : [1500, 1500, 0, 0, -200, -900])
+      ? (isDesktop ? [0, 0, 0, 0, -200, -900] : [-280, -280, -280, -280, -480, -1180])
+      : (isDesktop ? [0, 0, 0, 0, -200, -900] : [1500, 1500, 0, 0, -200, -900])
   );
 
   // Step 6: Down arrow appears (compressed from 0.48-0.53 to 0.32-0.37)

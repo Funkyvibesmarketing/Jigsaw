@@ -5998,6 +5998,7 @@ html {
    Services desktop carousel redesign
    ============================================================ */
 @media (min-width: 1921px) {
+
   #HeroNavigation,
   #AboutUsNavigation {
     transform: scale(1.1);
@@ -6006,6 +6007,7 @@ html {
 }
 
 @media (min-width: 3000px) {
+
   #HeroNavigation,
   #AboutUsNavigation {
     transform: scale(1.1);
@@ -6423,7 +6425,7 @@ html {
 @media (min-width: 768px) {
   .hero-sentence-desktop {
     left: 50%;
-    top: calc(50% + 488px);
+    top: calc(50% - 110px);
     width: min(50.5vw, 960px);
     padding-top: clamp(18px, 1.1vw, 34px);
     border-top: clamp(4px, 0.32vw, 8px) solid #ffffff;
@@ -6451,31 +6453,31 @@ html {
 
 @media (min-width: 1921px) {
   .hero-sentence-desktop {
-    top: calc(50% + 180px);
+    top: calc(50% - 150px);
     width: min(58vw, 1240px);
   }
 
   .hero-sentence-desktop-stack {
-    font-size: clamp(180px, 7.2vw, 280px);
+    font-size: clamp(72px, min(7.2vw, 14vh), 180px);
   }
 }
 
 .hero-large-display .hero-sentence-desktop {
-  top: calc(50% + 180px);
+  top: calc(50% - 150px);
   width: min(58vw, 1480px);
 }
 
 .hero-large-display .hero-sentence-desktop-stack {
-  font-size: clamp(180px, 7.2vw, 280px);
+  font-size: clamp(72px, min(7.2vw, 14vh), 180px);
 }
 
 .hero-moderate-zoom-out .hero-sentence-desktop {
-  top: calc(50% + 360px);
+  top: calc(50% - 220px);
   scale: 0.94;
 }
 
 .hero-moderate-zoom-out .hero-sentence-desktop-stack {
-  font-size: clamp(132px, 5.2vw, 205px);
+  font-size: clamp(72px, min(7vw, 13.5vh), 170px);
 }
 
 .hero-moderate-zoom-out .hero-jigsaw-desktop,
@@ -6485,12 +6487,12 @@ html {
 }
 
 .hero-extreme-zoom-out .hero-sentence-desktop {
-  top: calc(50% + 80px);
+  top: calc(50% - 290px);
   scale: 0.92;
 }
 
 .hero-extreme-zoom-out .hero-sentence-desktop-stack {
-  font-size: clamp(126px, 5vw, 198px);
+  font-size: clamp(72px, min(6.5vw, 13vh), 160px);
 }
 
 .hero-extreme-zoom-out .hero-jigsaw-desktop,
@@ -6507,13 +6509,13 @@ html {
 }
 
 .hero-large-display.hero-extreme-zoom-out .hero-sentence-desktop {
-  top: calc(50% + 220px);
+  top: calc(50% - 290px);
   width: min(58vw, 1480px);
   scale: 1;
 }
 
 .hero-large-display.hero-extreme-zoom-out .hero-sentence-desktop-stack {
-  font-size: clamp(180px, 7.2vw, 280px);
+  font-size: clamp(72px, min(7.2vw, 14vh), 180px);
 }
 
 .hero-large-display.hero-extreme-zoom-out .hero-jigsaw-desktop,
@@ -6769,7 +6771,7 @@ html {
     top: calc(50% + 112px) !important;
   }
 
-  .contact-us-intro-extreme-zoom-out .contact-us-intro-cards > div {
+  .contact-us-intro-extreme-zoom-out .contact-us-intro-cards>div {
     min-height: 250px;
   }
 
@@ -6853,7 +6855,7 @@ html {
     width: min(50vw, 760px) !important;
   }
 
-  .contact-desktop-line > div {
+  .contact-desktop-line>div {
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
@@ -6918,7 +6920,7 @@ html {
     text-align: center;
   }
 
-  .contact-desktop-social-links a > div {
+  .contact-desktop-social-links a>div {
     width: 56px !important;
     height: 56px !important;
   }
@@ -6952,12 +6954,12 @@ html {
     font-size: clamp(12px, 0.85vw, 16px) !important;
   }
 
-  .contact-desktop-footer > .w-full.h-\[1px\] {
+  .contact-desktop-footer>.w-full.h-\[1px\] {
     margin-top: 24px !important;
     margin-bottom: 24px !important;
   }
 
-  .contact-desktop-footer > div:last-child {
+  .contact-desktop-footer>div:last-child {
     font-size: clamp(12px, 0.85vw, 16px) !important;
   }
 
@@ -7293,6 +7295,7 @@ html {
     opacity: 0;
     transform: translate3d(-50%, calc(-50% + 50px), 0);
   }
+
   to {
     opacity: 1;
     transform: translate3d(-50%, calc(-50% + 30px), 0);
@@ -7300,51 +7303,105 @@ html {
 }
 
 @keyframes letter-enter-j {
-  from { opacity: 0; transform: translate3d(-20px, 0, 0); }
-  to { opacity: 1; transform: translate3d(0, 0, 0); }
+  from {
+    opacity: 0;
+    transform: translate3d(-20px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 @keyframes letter-enter-i {
-  from { opacity: 0; transform: translate3d(20px, 0, 0); }
-  to { opacity: 1; transform: translate3d(43px, 0, 0); }
+  from {
+    opacity: 0;
+    transform: translate3d(20px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(43px, 0, 0);
+  }
 }
 
 @keyframes letter-enter-g {
-  from { opacity: 0; transform: translate3d(39px, 0, 0); }
-  to { opacity: 1; transform: translate3d(64px, 0, 0); }
+  from {
+    opacity: 0;
+    transform: translate3d(39px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(64px, 0, 0);
+  }
 }
 
 @keyframes letter-enter-s {
-  from { opacity: 0; transform: translate3d(112px, 0, 0); }
-  to { opacity: 1; transform: translate3d(138px, 0, 0); }
+  from {
+    opacity: 0;
+    transform: translate3d(112px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(138px, 0, 0);
+  }
 }
 
 @keyframes letter-enter-a {
-  from { opacity: 0; transform: translate3d(195px, 0, 0); }
-  to { opacity: 1; transform: translate3d(190px, 0, 0); }
+  from {
+    opacity: 0;
+    transform: translate3d(195px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(190px, 0, 0);
+  }
 }
 
 @keyframes letter-enter-w {
-  from { opacity: 0; transform: translate3d(267px, 0, 0); }
-  to { opacity: 1; transform: translate3d(252px, 0, 0); }
+  from {
+    opacity: 0;
+    transform: translate3d(267px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(252px, 0, 0);
+  }
 }
 
 @keyframes logo-a-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes logo-a-scale-y {
-  from { transform: scale(0.5) translate3d(0, -30%, 0); }
-  to { transform: scale(1) translate3d(0, 0%, 0); }
+  from {
+    transform: scale(0.5) translate3d(0, -30%, 0);
+  }
+
+  to {
+    transform: scale(1) translate3d(0, 0%, 0);
+  }
 }
 
 @keyframes hint-bounce {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translate3d(0, 0, 0);
   }
+
   50% {
     transform: translate3d(0, 6px, 0);
   }
 }
-
