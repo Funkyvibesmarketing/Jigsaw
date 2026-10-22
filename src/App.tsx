@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import { useState, useEffect, useRef, useCallback, lazy, memo, Suspense } from 'react';
 import { motion, useScroll, useTransform, useMotionValue } from 'motion/react';
 import { SplashMobile } from './components/SplashMobile';
-import { HeroScrollSectionMobile } from './components/HeroScrollSectionMobile';
-import { AboutUsMobile } from './components/AboutUsMobile';
+import { HeroScrollSectionMobile as HeroScrollSectionMobileBase } from './components/HeroScrollSectionMobile';
+import { AboutUsMobile as AboutUsMobileBase } from './components/AboutUsMobile';
 import { MobileNavigation } from './components/MobileNavigation';
 import { MobileNavigationLight } from './components/MobileNavigationLight';
 import { MobileMenu } from './components/MobileMenu';
@@ -18,22 +18,28 @@ import { runWhenIdle } from './utils/performanceUtils';
 
 // Desktop-only sections — lazy so mobile never downloads them
 const Splash = lazy(() => import('./components/Splash').then((module) => ({ default: module.Splash })));
-const HeroScrollSection = lazy(() => import('./components/HeroScrollSection').then((module) => ({ default: module.HeroScrollSection })));
-const AboutUs = lazy(() => import('./components/AboutUs').then((module) => ({ default: module.AboutUs })));
+const HeroScrollSection = lazy(() => import('./components/HeroScrollSection').then((module) => ({ default: memo(module.HeroScrollSection) })));
+const AboutUs = lazy(() => import('./components/AboutUs').then((module) => ({ default: memo(module.AboutUs) })));
 const CustomCursor = lazy(() => import('./components/CustomCursor').then((module) => ({ default: module.CustomCursor })));
 const AboutUsNavigation = lazy(() => import('./components/AboutUsNavigation').then((module) => ({ default: module.AboutUsNavigation })));
 const UpArrowButton = lazy(() => import('./components/UpArrowButton').then((module) => ({ default: module.UpArrowButton })));
 
 // Lazy load components that are not immediately visible
-const Reviews = lazy(() => import('./components/Reviews').then(module => ({ default: module.Reviews })));
-const Team = lazy(() => import('./components/Team').then(module => ({ default: module.Team })));
-const TeamMobile = lazy(() => import('./components/TeamMobile').then(module => ({ default: module.TeamMobile })));
-const Process = lazy(() => import('./components/Process'));
-const ProcessMobile = lazy(() => import('./components/ProcessMobile'));
-const Blogs = lazy(() => import('./components/Blogs'));
-const BlogsMobile = lazy(() => import('./components/BlogsMobile').then(module => ({ default: module.BlogsMobile })));
-const ContactUs = lazy(() => import('./components/ContactUs'));
-const ContactUsForm = lazy(() => import('./components/ContactUsForm'));
+const Reviews = lazy(() => import('./components/Reviews').then(module => ({ default: memo(module.Reviews) })));
+const Team = lazy(() => import('./components/Team').then(module => ({ default: memo(module.Team) })));
+const TeamMobile = lazy(() => import('./components/TeamMobile').then(module => ({ default: memo(module.TeamMobile) })));
+const Process = lazy(() => import('./components/Process').then((module) => ({ default: memo(module.default) })));
+const ProcessMobile = lazy(() => import('./components/ProcessMobile').then((module) => ({ default: memo(module.default) })));
+const Blogs = lazy(() => import('./components/Blogs').then((module) => ({ default: memo(module.default) })));
+const BlogsMobile = lazy(() => import('./components/BlogsMobile').then(module => ({ default: memo(module.BlogsMobile) })));
+const ContactUs = lazy(() => import('./components/ContactUs').then((module) => ({ default: memo(module.default) })));
+const ContactUsForm = lazy(() => import('./components/ContactUsForm').then((module) => ({ default: memo(module.default) })));
+
+// Sections are memoized: App re-renders whenever any section crosses a scroll threshold, and without
+// memo every section on the page would re-render with it (a visible hitch while scrolling).
+const HeroScrollSectionMobile = memo(HeroScrollSectionMobileBase);
+const AboutUsMobile = memo(AboutUsMobileBase);
+const noop = () => { };
 
 // Loading skeleton/fallback component
 const SectionLoader = () => <div className="min-h-[200px] w-full flex items-center justify-center bg-transparent" />;
@@ -89,6 +95,12 @@ export default function App() {
   const [carouselTexts, setCarouselTexts] = useState<carouselTexts[]>(defaultAboutUsCarouselData);
   const [isLoadingCarousel, setIsLoadingCarousel] = useState(true);
   const [mountStage, setMountStage] = useState(0); // 0: Start, 1: Hero, 2: About, 3: Middle, 4: Process, 5: Complete
+  // Stable callbacks (inline arrows would make the memoized sections re-render anyway)
+  const onStage1Ready = useCallback(() => setMountStage(prev => Math.max(prev, 1)), []);
+  const onStage2Ready = useCallback(() => setMountStage(prev => Math.max(prev, 2)), []);
+  const onStage3Ready = useCallback(() => setMountStage(prev => Math.max(prev, 3)), []);
+  const onStage4Ready = useCallback(() => setMountStage(prev => Math.max(prev, 4)), []);
+  const onStage5Ready = useCallback(() => setMountStage(prev => Math.max(prev, 5)), []);
   const [visualProgress, setVisualProgress] = useState(0);
   const [timeProgress, setTimeProgress] = useState(0);
   const [minSplashTimerDone, setMinSplashTimerDone] = useState(false);
@@ -187,12 +199,12 @@ export default function App() {
   useLenis();
 
   // Handle up arrow click - scroll to top (splash screen)
-  const handleScrollToTop = () => {
+  const handleScrollToTop = useCallback(() => {
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
-  };
+  }, []);
 
   // Track scroll for splash fade transition
   const { scrollY } = useScroll();
@@ -266,6 +278,26 @@ export default function App() {
       });
     }
   }, [minSplashTimerDone, mountStage, dataProgress]);
+
+  // Once the page is up, decode the big section images in the background. Otherwise the browser
+  // decodes each one the first time it scrolls into view, which shows up as a stutter mid-scroll.
+  useEffect(() => {
+    if (!splashAnimationComplete) return;
+    let cancelled = false;
+    runWhenIdle(() => {
+      const images = Array.from(document.images).filter(
+        (img) => img.loading !== 'lazy' && !img.src.startsWith('data:')
+      );
+      // One at a time so the decodes don't compete with the first scroll
+      images.reduce<Promise<void>>(
+        (chain, img) => chain.then(() => (cancelled ? undefined : img.decode().catch(() => undefined))),
+        Promise.resolve()
+      );
+    }, 3000);
+    return () => {
+      cancelled = true;
+    };
+  }, [splashAnimationComplete]);
 
   // Track scroll position to hide navigation during splash and manage viewed state
   useEffect(() => {
@@ -596,10 +628,10 @@ export default function App() {
         }}
       >
         {isMobile ? (
-          <SplashMobile dataProgress={dataProgress} onComplete={() => { }} />
+          <SplashMobile dataProgress={dataProgress} onComplete={noop} />
         ) : (
           <Suspense fallback={null}>
-            <Splash dataProgress={dataProgress} onComplete={() => { }} />
+            <Splash dataProgress={dataProgress} onComplete={noop} />
           </Suspense>
         )}
       </motion.div>
@@ -610,14 +642,14 @@ export default function App() {
           <HeroScrollSectionMobile
             onScrollProgress={setHeroScrollProgress}
             splashViewed={splashHasBeenViewed}
-            onReady={() => setMountStage(prev => Math.max(prev, 1))}
+            onReady={onStage1Ready}
           />
         ) : (
           <Suspense fallback={<SectionLoader />}>
             <HeroScrollSection
               onScrollProgress={setHeroScrollProgress}
               splashViewed={splashHasBeenViewed}
-              onReady={() => setMountStage(prev => Math.max(prev, 1))}
+              onReady={onStage1Ready}
             />
           </Suspense>
         )}
@@ -632,7 +664,7 @@ export default function App() {
                 onScrollProgress={setAboutUsScrollProgress}
                 carouselTexts={carouselTexts}
                 services={services}
-                onReady={() => setMountStage(prev => Math.max(prev, 2))}
+                onReady={onStage2Ready}
               />
             ) : (
               <Suspense fallback={<SectionLoader />}>
@@ -642,7 +674,7 @@ export default function App() {
                   reviewsScrollProgress={reviewsScrollProgress}
                   services={services}
                   carouselTexts={carouselTexts}
-                  onReady={() => setMountStage(prev => Math.max(prev, 2))}
+                  onReady={onStage2Ready}
                 />
               </Suspense>
             )}
@@ -664,7 +696,7 @@ export default function App() {
                   onScrollProgress={setReviewsScrollProgress}
                   aboutUsScrollProgress={aboutUsScrollProgress}
                   processScrollProgress={processScrollProgress}
-                  onReady={() => {/* Managed by Team/Process for Wave 3 completion */ }}
+                  onReady={noop} // Wave 3 completion is managed by Team/Process
                 />
               </Suspense>
             </ErrorBoundary>
@@ -679,7 +711,7 @@ export default function App() {
                     aboutUsScrollProgress={aboutUsScrollProgress}
                     teamMembers={teamMembers}
                     processScrollProgress={processScrollProgress}
-                    onReady={() => {/* Managed by Process */ }}
+                    onReady={noop} // Managed by Process
                   />
                 )}
                 {isMobile && (
@@ -688,7 +720,7 @@ export default function App() {
                     teamMembers={teamMembers}
                     processScrollProgress={processScrollProgress}
                     onScrollProgress={setTeamScrollProgress}
-                    onReady={() => {/* Managed by Process */ }}
+                    onReady={noop} // Managed by Process
                   />
                 )}
               </Suspense>
@@ -701,14 +733,14 @@ export default function App() {
                 {!isMobile && (
                   <Process
                     onScrollProgress={setProcessScrollProgress}
-                    onReady={() => setMountStage(prev => Math.max(prev, 3))}
+                    onReady={onStage3Ready}
                   />
                 )}
                 {isMobile && (
                   <ProcessMobile
                     onScrollProgress={setProcessScrollProgress}
                     teamScrollProgress={teamInternalScrollProgress}
-                    onReady={() => setMountStage(prev => Math.max(prev, 3))}
+                    onReady={onStage3Ready}
                   />
                 )}
               </Suspense>
@@ -728,14 +760,14 @@ export default function App() {
                     onScrollProgress={setBlogsScrollProgress}
                     blogs={blogs}
                     contactUsScrollProgress={contactUsScrollProgress}
-                    onReady={() => setMountStage(prev => Math.max(prev, 4))}
+                    onReady={onStage4Ready}
                   />
                 )}
                 {isMobile && (
                   <BlogsMobile
                     onScrollProgress={setBlogsScrollProgress}
                     blogs={blogs}
-                    onReady={() => setMountStage(prev => Math.max(prev, 4))}
+                    onReady={onStage4Ready}
                   />
                 )}
               </Suspense>
@@ -748,7 +780,7 @@ export default function App() {
                 <ContactUs onScrollProgress={setContactUsScrollProgress} />
                 <ContactUsForm
                   onScrollProgress={setContactUsFormScrollProgress}
-                  onReady={() => setMountStage(prev => Math.max(prev, 5))}
+                  onReady={onStage5Ready}
                 />
               </Suspense>
             </ErrorBoundary>

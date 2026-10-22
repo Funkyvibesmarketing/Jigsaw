@@ -5,6 +5,7 @@ import svgPathsLinkedIn from '../imports/svg-cxhurimysf'; // Import LinkedIn SVG
 import imgVector from "figma:asset/29d00c96d16b578c0374f784d6e51ab7656ee486.png";
 import type { TeamMember } from '../utils/teamApi';
 import { reviewsProgress, processProgress } from '../utils/progressStore';
+import { measureGlyphCore, traceGlyphOutline, outlineToPath, coverScale } from '../utils/glyphMask';
 import imgTeamPreview from "figma:asset/8ff86b859ea6e1213d92ee504583e0bce2dc86d5.png";
 
 // LinkedIn Icon Component
@@ -73,8 +74,30 @@ const TEAM_ZOOM_START = 0.91; // short hold so "TEAM" can be read
 const TEAM_FONT_SIZE = 464;
 const TEAM_LETTER_SPACING = 96;
 const TEAM_MAX_SCALE = 40;
-// Zoom focal point relative to the text centre: middle of the "E" stem (measured with Lato Bold)
-const TEAM_FOCUS = { x: -404, y: -50 };
+// Zoom focal point relative to the text centre, and how far to zoom. This is a rough spot on the
+// "E" stem; once the font has loaded it's replaced by the E's measured thickest point (see
+// utils/glyphMask), zoomed just far enough to cover the screen.
+type TeamFocus = { x: number; y: number; scale: number };
+const TEAM_FOCUS: TeamFocus = { x: -404, y: -50, scale: TEAM_MAX_SCALE };
+const TEAM_ZOOM_COVER_MARGIN = 1.25;
+const TEAM_FONT_FAMILY = 'Lato, sans-serif';
+
+// Top-left of the E's em box relative to the TEAM text anchor (x=0, y=0, text-anchor middle,
+// dominant-baseline middle), worked out on a canvas with the same font. The mask text itself is
+// never drawn directly, so its letter positions can't be read from the SVG.
+const measureTeamEPosition = () => {
+  const ctx = document.createElement('canvas').getContext('2d');
+  if (!ctx) return null;
+  ctx.font = `700 ${TEAM_FONT_SIZE}px ${TEAM_FONT_FAMILY}`;
+  // text-anchor middle centres the full advance, including the letter-spacing after the last letter
+  const total = ctx.measureText('TEAM').width + 4 * TEAM_LETTER_SPACING;
+  // T's advance plus the T–E kerning, plus one letter-spacing
+  const x = -total / 2 + ctx.measureText('TE').width - ctx.measureText('E').width + TEAM_LETTER_SPACING;
+  // dominant-baseline middle puts the alphabetic baseline half an x-height below the anchor
+  const xHeight = ctx.measureText('x').actualBoundingBoxAscent;
+  const y = xHeight / 2 - ctx.measureText('E').fontBoundingBoxAscent;
+  return Number.isFinite(x) && Number.isFinite(y) ? { x, y } : null;
+};
 // Half the inked width of the word, so the slide starts fully off-screen
 const TEAM_HALF_WIDTH = 840;
 
@@ -97,22 +120,19 @@ const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2
 // Team content fades in as the TEAM text starts sliding in (0.82 → 0.85)
 const teamContentFadeFor = (p: number) => (p < TEAM_MASK_START ? 0 : clamp01((p - TEAM_MASK_START) / 0.03));
 
-const teamMaskFrame = (p: number, viewportWidth: number) => {
-  const f = TEAM_FOCUS;
+// Transform for the TEAM cutout. The white around the letters stays fully solid (no fade, so no
+// see-through white veil); the E simply grows until it covers the whole screen.
+const teamMaskTransform = (p: number, viewportWidth: number, f: TeamFocus) => {
   if (p < TEAM_ZOOM_START) {
     const a = easeOutCubic(clamp01((p - TEAM_MASK_START) / (TEAM_SLIDE_END - TEAM_MASK_START)));
     const tx = (viewportWidth / 2 + TEAM_HALF_WIDTH) * (1 - a);
-    return { transform: `translate(${tx} 0)`, opacity: 1 };
+    return `translate(${tx} 0)`;
   }
-  // Scale around the "E" stem while gliding it to the screen centre (identity at t = 0)
+  // Scale around the E's focal point while gliding it to the screen centre (identity at t = 0)
   const t = clamp01((p - TEAM_ZOOM_START) / (1 - TEAM_ZOOM_START));
   const e = easeInOutQuad(t);
-  const scale = Math.pow(TEAM_MAX_SCALE, e);
-  return {
-    transform: `translate(${f.x * (1 - e)} ${f.y * (1 - e)}) scale(${scale}) translate(${-f.x} ${-f.y})`,
-    // white fades out at the end so the Team section fills the screen with no pop
-    opacity: 1 - smoothstep(0.7, 1, t),
-  };
+  const scale = Math.pow(f.scale, e);
+  return `translate(${f.x * (1 - e)} ${f.y * (1 - e)}) scale(${scale}) translate(${-f.x} ${-f.y})`;
 };
 
 export function Team({
@@ -142,26 +162,54 @@ export function Team({
 
   // TEAM mask follows the live Reviews progress directly (no React re-render per frame)
   const teamTextRef = useRef<SVGTextElement | null>(null);
-  const teamOverlayRef = useRef<HTMLDivElement | null>(null);
+  const teamEPathRef = useRef<SVGPathElement | null>(null);
   const teamSvgRef = useRef<SVGSVGElement | null>(null);
+  const teamFocusRef = useRef<TeamFocus>(TEAM_FOCUS);
+  // Outline of the E as a path (same coordinates as the mask text), see utils/glyphMask
+  const [teamEPath, setTeamEPath] = useState<string | null>(null);
   const applyTeamMask = useCallback((p: number) => {
     if (containerRef.current) {
       containerRef.current.style.opacity = String(teamContentFadeFor(p));
     }
-    const text = teamTextRef.current;
-    const overlay = teamOverlayRef.current;
-    if (!text || !overlay) return;
     const width = teamSvgRef.current?.clientWidth || window.innerWidth;
-    const frame = teamMaskFrame(p, width);
-    text.setAttribute('transform', frame.transform);
-    overlay.style.opacity = String(frame.opacity);
+    const transform = teamMaskTransform(p, width, teamFocusRef.current);
+    teamTextRef.current?.setAttribute('transform', transform);
+    teamEPathRef.current?.setAttribute('transform', transform);
   }, []);
+
+  // Measure the E once the Lato webfont is ready (only once: it draws on a canvas)
+  const teamMeasureStartedRef = useRef(false);
+  const measureTeamE = useCallback(() => {
+    if (teamMeasureStartedRef.current) return;
+    teamMeasureStartedRef.current = true;
+    const fontsReady = document.fonts?.ready ?? Promise.resolve();
+    void fontsReady.then(() => {
+      try {
+        const e = measureTeamEPosition();
+        if (!e) return;
+        const core = measureGlyphCore('E', '700', TEAM_FONT_FAMILY, TEAM_FONT_SIZE);
+        if (!core) return;
+        const outline = traceGlyphOutline('E', '700', TEAM_FONT_FAMILY, TEAM_FONT_SIZE);
+        teamFocusRef.current = {
+          x: e.x + core.x,
+          y: e.y + core.y,
+          scale: Math.max(TEAM_MAX_SCALE, coverScale(core.radius, TEAM_ZOOM_COVER_MARGIN)),
+        };
+        if (outline && outline.length >= 3) setTeamEPath(outlineToPath(outline, e.x, e.y));
+        applyTeamMask(reviewsProgress.get());
+      } catch {
+        // keep the default focus
+      }
+    });
+  }, [applyTeamMask]);
+
   const setTeamTextRef = useCallback((el: SVGTextElement | null) => {
     teamTextRef.current = el;
     applyTeamMask(reviewsProgress.get());
-  }, [applyTeamMask]);
-  const setTeamOverlayRef = useCallback((el: HTMLDivElement | null) => {
-    teamOverlayRef.current = el;
+    if (el) measureTeamE();
+  }, [applyTeamMask, measureTeamE]);
+  const setTeamEPathRef = useCallback((el: SVGPathElement | null) => {
+    teamEPathRef.current = el;
     applyTeamMask(reviewsProgress.get());
   }, [applyTeamMask]);
   useEffect(() => reviewsProgress.subscribe(applyTeamMask), [applyTeamMask]);
@@ -543,14 +591,12 @@ export function Team({
       </div>
 
       {/* White overlay with TEAM text cutout - reveals team content through the text */}
-      {/* TEAM eases in from the right, holds, then zooms into the "E" while the white fades away */}
+      {/* TEAM eases in from the right, holds, then zooms into the "E" until it covers the screen */}
       {reviewsScrollProgress && reviewsScrollProgress >= TEAM_MASK_START && reviewsScrollProgress < 1.0 && (
         <div
-          ref={setTeamOverlayRef}
           className="fixed top-0 left-0 w-full overflow-hidden pointer-events-none z-[96]"
           style={{
-            height: `${viewportHeight}px`,
-            willChange: 'opacity'
+            height: `${viewportHeight}px`
           }}
         >
           {/* SVG with mask to create cutout effect */}
@@ -570,12 +616,14 @@ export function Team({
                     dominantBaseline="middle"
                     fill="black"
                     fontSize={TEAM_FONT_SIZE}
-                    fontFamily="Lato, sans-serif"
+                    fontFamily={TEAM_FONT_FAMILY}
                     fontWeight="700"
                     letterSpacing={TEAM_LETTER_SPACING}
                   >
                     TEAM
                   </text>
+                  {/* Same E as a path, so the cutout survives the huge final zoom */}
+                  {teamEPath && <path ref={setTeamEPathRef} d={teamEPath} fill="black" />}
                 </svg>
               </mask>
             </defs>

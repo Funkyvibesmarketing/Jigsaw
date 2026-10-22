@@ -5,6 +5,7 @@ import svgPaths from '../imports/svg-z5mgt22h4a';
 import imgVector from 'figma:asset/4234f71b7d4a1998f6e3282ba90ea09ce5633514.png';
 import imgRectangle from "figma:asset/ac4222b2f56bb8c362d5b0a6238628c6fa0aab37.png";
 import { Services } from './Services';
+import { measureGlyphCore, traceGlyphOutline, outlineToPath, coverScale } from '../utils/glyphMask';
 
 // Services only reacts to a few scroll thresholds, so skip re-rendering it on every scroll frame
 const MemoServices = memo(Services);
@@ -12,11 +13,12 @@ const MemoServices = memo(Services);
 // SERVICES zoom timing (fraction of this section's scroll progress)
 const ZOOM_START = 0.55;
 const ZOOM_END = 0.693;
-// Big enough that the V's solid tip swallows the whole screen
+// Fallback zoom; the real one is worked out from the V's measured shape (see measureZoomFocus)
 const ZOOM_MAX_SCALE = 70;
+// How much past "just covers the screen" the V zooms, so its edges are well off screen at the end
+const ZOOM_COVER_MARGIN = 1.25;
 // The solid SERVICES text is drawn with translate(40); the cutout starts at the same spot so there's no jump
 const SOLID_TEXT_SHIFT = 40;
-const SOLID_LETTER_SPACING = 40;
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 const easeInOutQuad = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
@@ -26,16 +28,16 @@ const smoothstep = (a: number, b: number, v: number) => {
   return t * t * (3 - 2 * t);
 };
 
-type ZoomFocus = { x: number; y: number };
-// Zoom focal point relative to the text anchor: inside the solid bottom tip of the "V"
-// (the glyph's bottom edge sits at ~+50 at 200px; x is re-measured from the real font once it renders)
-const DEFAULT_ZOOM_FOCUS: ZoomFocus = { x: -73, y: 36 };
+// x/y: zoom focal point relative to the text anchor; scale: how far to zoom at the end
+type ZoomFocus = { x: number; y: number; scale: number };
+// Rough spot inside the solid bottom of the "V" at 200px; replaced by the measured one once the font renders
+const DEFAULT_ZOOM_FOCUS: ZoomFocus = { x: -73, y: 36, scale: ZOOM_MAX_SCALE };
 
 // Scales around the focal point while gliding that point to the exact screen centre, so the
 // letters grow evenly in every direction. At t = 0 it lines up exactly with the solid text.
 const maskTransformFor = (t: number, f: ZoomFocus) => {
   const e = easeInOutQuad(t);
-  const scale = Math.pow(ZOOM_MAX_SCALE, e);
+  const scale = Math.pow(f.scale, e);
   const px = (SOLID_TEXT_SHIFT + f.x) * (1 - e);
   const py = f.y * (1 - e);
   return `translate(${px} ${py}) scale(${scale}) translate(${-f.x} ${-f.y})`;
@@ -253,8 +255,6 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
   // Slower zoom animation - 10% slower than before
   // 0 → 1 across the zoom
   const zoomT = useTransform(scrollYProgress, (p) => clamp01((p - ZOOM_START) / (ZOOM_END - ZOOM_START)));
-  // White around the letters dissolves near the end, so the reveal fills the screen smoothly
-  const overlayOpacity = useTransform(zoomT, (t) => 1 - smoothstep(0.7, 1, t));
   // Cards/titles fade in once the letters are big; before that the letters show the plain
   // dark-blue background (white cards inside the letters made them look empty)
   const servicesContentOpacity = useTransform(zoomT, (t) => smoothstep(0.45, 0.85, t));
@@ -263,45 +263,65 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
 
   // Focal point of the zoom, measured from the rendered solid text (the "V")
   const zoomFocusRef = useRef<ZoomFocus>({ ...DEFAULT_ZOOM_FOCUS });
+  // Outline of the V as a path (same coordinates as the mask text), see utils/glyphMask
+  const [maskVPath, setMaskVPath] = useState<string | null>(null);
   const measureZoomFocus = (el: SVGTextElement) => {
     try {
       if (el.getNumberOfChars() < 4) return;
-      const first = el.getExtentOfChar(0);
-      const v = el.getExtentOfChar(3); // S E R [V] I C E S
-      const anchorX = first.x + el.getComputedTextLength() / 2;
-      // the char's extent includes the trailing letter-spacing, which isn't part of the glyph
-      const x = v.x + (v.width - SOLID_LETTER_SPACING) / 2 - anchorX;
-      if (Number.isFinite(x) && Math.abs(x) < 400) {
-        zoomFocusRef.current = { ...zoomFocusRef.current, x };
+      const v = el.getExtentOfChar(3); // S E R [V] I C E S — the em box of the V, in the text's coordinates
+      const anchorX = el.x.baseVal[0]?.value;
+      const anchorY = el.y.baseVal[0]?.value;
+      const style = getComputedStyle(el);
+      const fontPx = parseFloat(style.fontSize);
+      const core = measureGlyphCore('V', style.fontWeight, style.fontFamily, fontPx);
+      if (!core || anchorX === undefined || anchorY === undefined) return;
+      const x = v.x + core.x - anchorX;
+      const y = v.y + core.y - anchorY;
+      const outline = traceGlyphOutline('V', style.fontWeight, style.fontFamily, fontPx);
+      if (outline && outline.length >= 3) setMaskVPath(outlineToPath(outline, v.x - anchorX, v.y - anchorY));
+      // Zoom until the solid core of the V covers the corners of the screen
+      const scale = Math.max(ZOOM_MAX_SCALE, coverScale(core.radius, ZOOM_COVER_MARGIN));
+      if (Number.isFinite(x) && Number.isFinite(y) && Math.abs(x) < 400 && Math.abs(y) < 200) {
+        zoomFocusRef.current = { x, y, scale };
+        const transform = maskTransformFor(zoomT.get(), zoomFocusRef.current);
+        maskTextRef.current?.setAttribute('transform', transform);
+        maskVRef.current?.setAttribute('transform', transform);
       }
     } catch {
       // keep the default focus
     }
   };
+  // Measure once, after the Lato webfont is ready (this ref callback runs on every render while
+  // scrolling, and the measuring draws on a canvas, so it mustn't repeat)
+  const zoomMeasureStartedRef = useRef(false);
   const setSolidTextRef = (el: SVGTextElement | null) => {
-    if (!el) return;
-    measureZoomFocus(el);
-    // Re-measure once the Lato webfont is ready (first paint may use the fallback font)
-    void document.fonts?.ready.then(() => el.isConnected && measureZoomFocus(el));
+    if (!el || zoomMeasureStartedRef.current) return;
+    zoomMeasureStartedRef.current = true;
+    const fontsReady = document.fonts?.ready ?? Promise.resolve();
+    void fontsReady.then(() => {
+      if (el.isConnected) measureZoomFocus(el);
+      else zoomMeasureStartedRef.current = false; // unmounted meanwhile; measure on the next mount
+    });
   };
 
   // Mask text is drawn once at 200px; zoom is applied as a transform straight from the scroll
   // value (no React re-render, no font relayout).
+  // The white around the letters stays fully solid (no fade, so no see-through white veil);
+  // the V simply grows until it covers the whole screen.
   const maskTextRef = useRef<SVGTextElement | null>(null);
-  const maskOverlayRef = useRef<HTMLDivElement | null>(null);
+  const maskVRef = useRef<SVGPathElement | null>(null);
   const setMaskTextRef = (el: SVGTextElement | null) => {
     maskTextRef.current = el;
     el?.setAttribute('transform', maskTransformFor(zoomT.get(), zoomFocusRef.current));
   };
-  const setMaskOverlayRef = (el: HTMLDivElement | null) => {
-    maskOverlayRef.current = el;
-    if (el) el.style.opacity = String(overlayOpacity.get());
+  const setMaskVRef = (el: SVGPathElement | null) => {
+    maskVRef.current = el;
+    el?.setAttribute('transform', maskTransformFor(zoomT.get(), zoomFocusRef.current));
   };
   useMotionValueEvent(zoomT, 'change', (t) => {
-    maskTextRef.current?.setAttribute('transform', maskTransformFor(t, zoomFocusRef.current));
-  });
-  useMotionValueEvent(overlayOpacity, 'change', (o) => {
-    if (maskOverlayRef.current) maskOverlayRef.current.style.opacity = String(o);
+    const transform = maskTransformFor(t, zoomFocusRef.current);
+    maskTextRef.current?.setAttribute('transform', transform);
+    maskVRef.current?.setAttribute('transform', transform);
   });
 
   // Color transitions - stays #294150 during zoom
@@ -640,13 +660,11 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
         />
 
         {/* Services Text Mask Overlay - Safari compatible approach */}
-        {/* Stays mounted to the end of the zoom; it has faded to transparent by then, so nothing pops */}
+        {/* Stays mounted to the end of the zoom; by then the V covers the whole screen, so nothing pops */}
         {scrollProgress >= ZOOM_START && scrollProgress < ZOOM_END && (
           <div
-            ref={setMaskOverlayRef}
             className="fixed top-0 left-0 w-full overflow-hidden pointer-events-none z-[25]"
             style={{
-              willChange: 'opacity',
               height: window.innerWidth > 1920 ? `${window.innerHeight / (window.innerWidth / 1920)}px` : '100vh'
             }}
           >
@@ -675,6 +693,15 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
                     >
                       SERVICES
                     </text>
+                    {/* Same V as a path, so the cutout survives the huge final zoom */}
+                    {maskVPath && (
+                      <path
+                        ref={setMaskVRef}
+                        d={maskVPath}
+                        fill="black"
+                        transform={maskTransformFor(zoomT.get(), zoomFocusRef.current)}
+                      />
+                    )}
                   </svg>
                 </mask>
               </defs>

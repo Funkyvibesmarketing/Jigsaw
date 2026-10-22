@@ -62,9 +62,14 @@ const TEXT_OUT_1: [number, number] = [0, 0.3];
 const TEXT_IN_2: [number, number] = [0.68, 1];
 const TEXT_OUT_2: [number, number] = [1, 1.3];
 const TEXT_IN_3: [number, number] = [1.68, 2];
-const STEP_CHANGE_SECONDS = 1.3; // one full change (text out + slide + text in)
-// Scroll progress where each change is triggered (+/- a little hysteresis so it can't flicker)
-const STEP_TRIGGERS = [0.35, 0.60];
+const STEP_CHANGE_SECONDS = 0.9; // one full change (text out + slide + text in)
+// Once step 3 is fully in, it stays on screen at least this long before the exit can begin
+const STEP3_HOLD_MS = 600;
+// Scroll progress where each change is triggered (+/- a little hysteresis so it can't flicker).
+// With the shortened step zone (STEP_ZONE_VH), step 1 (fully in at ~0.08 screens after the view
+// locks in), step 2 (0.45) and step 3 (0.85) each get ~0.4 screens before the exit (1.25),
+// so about one flick of the mouse wheel moves to the next step.
+const STEP_TRIGGERS = [0.43, 0.59];
 const STEP_TRIGGER_HYSTERESIS = 0.01;
 
 // ---- Section exit: "bars -> line -> light" ----
@@ -73,8 +78,16 @@ const STEP_TRIGGER_HYSTERESIS = 0.01;
 // (0 -> 0.75 covers exactly the same scroll as before).
 const PROCESS_HEIGHT_VH = 3.6;
 const ORIGINAL_HEIGHT_VH = 3;
+// The steps used to be spread over 2 screens of scrolling (from the view locking in at 1 screen
+// to the exit at 3), which felt like a long scroll between steps. That stretch now takes
+// STEP_ZONE_VH screens: real scroll there is stretched back into the original progress values,
+// so every timing below stays as designed and the section is just shorter on the page.
+const STEP_ZONE_START_VH = 1;
+const STEP_ZONE_DESIGN_VH = 2;
+const STEP_ZONE_VH = 1.25;
+const STEP_ZONE_SAVED_VH = STEP_ZONE_DESIGN_VH - STEP_ZONE_VH;
+const PROCESS_PAGE_HEIGHT_VH = PROCESS_HEIGHT_VH - STEP_ZONE_SAVED_VH;
 const EXIT_START = 0.75; // where the view used to be released
-const LINE_START_SCALE = 0.003; // the white line's starting thickness, as a share of the screen height
 const EXIT_END = 0.75 + 0.25 * ((PROCESS_HEIGHT_VH - ORIGINAL_HEIGHT_VH) / (PROCESS_HEIGHT_VH + 1 - ORIGINAL_HEIGHT_VH));
 const easeInCubic = (t: number) => t * t * t;
 const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
@@ -335,8 +348,17 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
     const handleScroll = () => {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
-      const total = rect.height + viewportHeight;
-      const current = viewportHeight - rect.top;
+      // Real scroll → the scroll the original (taller) layout would have had (see STEP_ZONE_VH)
+      const zoneStart = STEP_ZONE_START_VH * viewportHeight;
+      const zoneReal = STEP_ZONE_VH * viewportHeight;
+      const saved = STEP_ZONE_SAVED_VH * viewportHeight;
+      const scrolled = viewportHeight - rect.top;
+      const current = scrolled <= zoneStart
+        ? scrolled
+        : scrolled <= zoneStart + zoneReal
+          ? zoneStart + (scrolled - zoneStart) * (STEP_ZONE_DESIGN_VH / STEP_ZONE_VH)
+          : scrolled + saved;
+      const total = rect.height + saved + viewportHeight;
       // Up to the old release point progress is exactly as before; the added exit scroll and the
       // final scroll-away share the rest (see PROCESS_HEIGHT_VH)
       const knee = ORIGINAL_HEIGHT_VH * viewportHeight;
@@ -383,7 +405,9 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
       if (containerRef.current && window.innerWidth >= 768) {
         const rect = containerRef.current.getBoundingClientRect();
         // Check if mouse is within the Process section
-        if (e.clientY >= rect.top && e.clientY <= rect.bottom) {
+        // (not over the Blogs section, which slides up over the end of this one)
+        const blogsTop = document.getElementById('BlogsSection')?.getBoundingClientRect().top ?? Infinity;
+        if (e.clientY >= rect.top && e.clientY <= rect.bottom && e.clientY < blogsTop) {
           const zoomFactor = window.innerWidth > 1920 ? (window.innerWidth / 1920) : 1;
           setCursorPosition({ x: e.clientX / zoomFactor, y: e.clientY / zoomFactor });
           setShowCursor(true);
@@ -416,15 +440,14 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
   useEffect(() => {
     const unsubscribe = scrollYProgress.on("change", (latest) => {
       // Keep Process at z-90 until scroll progress > 0.15 (when Team has fully slid up)
-      // Then raise to z-100 to be on top
-      setZIndex(latest > 0.15 ? 100 : 90);
+      // Then raise to z-100 to be on top. From the exit on, drop to 0 so the Blogs section
+      // (pulled up to overlap the end of this one) slides up over it.
+      setZIndex(latest >= EXIT_START ? 0 : latest > 0.15 ? 100 : 90);
     });
     
     return () => unsubscribe();
   }, [scrollYProgress]);
 
-  // Container-level opacity to completely hide Process until it starts
-  const containerOpacity = useTransform(scrollYProgress, [0, 0.01], [0, 1]);
   
   // Container visibility - keep it hidden until scroll starts
   const [isVisible, setIsVisible] = useState(false);
@@ -448,48 +471,26 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
   // vertical inset must be large enough to keep the whole 104px bar row, including the 3 dots on top
   const entryBarClip = useTransform(scrollYProgress, (p) => `inset(-200px ${(100 * (1 - phase(p, 0.16, 0.28))).toFixed(2)}% -200px -20px)`);
 
-  // Exit (view held in place): 1) "OUR PROCESS" then the step content sink toward the progress
-  // bar and fade, 2) the bars collapse into one thin white line drawn across the screen,
-  // 3) the line opens up into a full white screen, which hands over to the white Blogs section
+  // Exit (view held in place): "OUR PROCESS" then the step content sink toward the progress bar
+  // and fade, and the bars flatten away, while the white Blogs section slides up over this view
+  // from the bottom with its "BLOGS" title riding at the top edge (Blogs is pulled up to overlap
+  // the end of this section, and this section drops behind it - see zIndex)
   const exitT = (p: number) => clamp01((p - EXIT_START) / (EXIT_END - EXIT_START));
-  const exitPhase = (p: number, from: number, to: number, ease = easeInOutCubic) => ease(clamp01((exitT(p) - from) / (to - from)));
-  const exitTitleY = useTransform(scrollYProgress, (p) => 160 * exitPhase(p, 0, 0.35));
-  const exitTitleOpacity = useTransform(scrollYProgress, (p) => 1 - exitPhase(p, 0, 0.3));
-  const exitContentY = useTransform(scrollYProgress, (p) => 140 * exitPhase(p, 0.08, 0.45));
-  const exitContentScale = useTransform(scrollYProgress, (p) => 1 - 0.12 * exitPhase(p, 0.08, 0.45));
-  const exitContentOpacity = useTransform(scrollYProgress, (p) => 1 - exitPhase(p, 0.12, 0.42));
-  const barScaleY = useTransform(scrollYProgress, (p) => (0.2 + 0.8 * phase(p, 0.18, 0.29)) * (1 - 0.94 * exitPhase(p, 0.3, 0.52)));
-  const barOpacity = useTransform(scrollYProgress, (p) => phase(p, 0.16, 0.22) * (1 - exitPhase(p, 0.5, 0.62)));
-  const lineScaleX = useTransform(scrollYProgress, (p) => exitPhase(p, 0.34, 0.6));
-  const lineScaleY = useTransform(scrollYProgress, (p) => {
-    const open = exitPhase(p, 0.58, 1);
-    return LINE_START_SCALE + (1 - LINE_START_SCALE) * open;
-  });
-  const lineOpacity = useTransform(scrollYProgress, (p) => (exitT(p) > 0.34 ? 1 : 0));
-
-  // Where the bars are on screen (the line starts there); measured, since the bar sits in a scaled wrapper
+  // Exit progress 0 → 1. Follows the scroll, but is held at 0 until step 3 has fully arrived
+  // (see the effect after stepPos), so scrolling on quickly can't fade step 3 out half-shown.
+  const exitProgress = useMotionValue(0);
+  const exitPhase = (x: number, from: number, to: number, ease = easeInOutCubic) => ease(clamp01((x - from) / (to - from)));
+  const exitTitleY = useTransform(exitProgress, (x) => 160 * exitPhase(x, 0, 0.35));
+  const exitTitleOpacity = useTransform(exitProgress, (x) => 1 - exitPhase(x, 0, 0.3));
+  const exitContentY = useTransform(exitProgress, (x) => 140 * exitPhase(x, 0.08, 0.45));
+  const exitContentScale = useTransform(exitProgress, (x) => 1 - 0.12 * exitPhase(x, 0.08, 0.45));
+  const exitContentOpacity = useTransform(exitProgress, (x) => 1 - exitPhase(x, 0.12, 0.42));
+  const barScaleY = useTransform([scrollYProgress, exitProgress], ([p, x]: number[]) => (0.2 + 0.8 * phase(p, 0.18, 0.29)) * (1 - 0.94 * exitPhase(x, 0.3, 0.52)));
+  const barOpacity = useTransform([scrollYProgress, exitProgress], ([p, x]: number[]) => phase(p, 0.16, 0.22) * (1 - exitPhase(x, 0.5, 0.62)));
+  // Hidden until the section starts
+  const viewOpacity = useTransform(scrollYProgress, [0, 0.01], [0, 1]);
   const stickyRef = useRef<HTMLDivElement>(null);
   const barWrapRef = useRef<HTMLDivElement>(null);
-  const [lineOriginY, setLineOriginY] = useState(0.93);
-  useEffect(() => {
-    const measure = () => {
-      const sticky = stickyRef.current?.getBoundingClientRect();
-      const row = barWrapRef.current?.querySelector('div.h-\\[104px\\]') as HTMLElement | null;
-      if (!sticky || !row || sticky.height === 0) return;
-      const r = row.getBoundingClientRect();
-      // the short bars' middle
-      setLineOriginY(clamp01((r.top + r.height * 0.79 - sticky.top) / sticky.height));
-    };
-    measure();
-    const unsubscribe = scrollYProgress.on('change', (p) => {
-      if (p > EXIT_START - 0.05 && p < EXIT_START) measure();
-    });
-    window.addEventListener('resize', measure);
-    return () => {
-      unsubscribe();
-      window.removeEventListener('resize', measure);
-    };
-  }, [scrollYProgress]);
 
   // Animated step position (see STEP_TRIGGERS): 0 = step 1, 1 = step 2, 2 = step 3
   const stepPos = useMotionValue(0);
@@ -505,60 +506,69 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
     stepPos.jump(target);
     let anim: ReturnType<typeof animate> | null = null;
 
-    // Hold the page still while a change plays, so it always finishes before the section can
-    // scroll away (wheel input during the change is swallowed; scrolling resumes right after)
-    let lockToken = 0;
-    let locked = false;
-    const blockScroll = (e: Event) => {
-      if (e.cancelable) e.preventDefault();
-    };
-    const lock = () => {
-      if (locked) return;
-      locked = true;
-      window.dispatchEvent(new CustomEvent('lenisStop')); // also halts any smooth-scroll still in motion
-      window.addEventListener('wheel', blockScroll, { passive: false });
-      window.addEventListener('touchmove', blockScroll, { passive: false });
-    };
-    // Only hold the page for the user's own scrolling (wheel / touch / keys) - never for an
-    // automatic scroll such as a menu click jumping past this section
-    let lastUserInput = -Infinity;
-    const markUserInput = () => {
-      lastUserInput = performance.now();
-    };
-    window.addEventListener('wheel', markUserInput, { passive: true });
-    window.addEventListener('touchmove', markUserInput, { passive: true });
-    window.addEventListener('keydown', markUserInput);
-    const unlock = () => {
-      if (!locked) return;
-      locked = false;
-      window.removeEventListener('wheel', blockScroll);
-      window.removeEventListener('touchmove', blockScroll);
-      window.dispatchEvent(new CustomEvent('lenisStart'));
-    };
-
+    // The page keeps scrolling while a change plays (it used to freeze the wheel until the change
+    // finished, which felt stuck). Scrolling on quickly just chains into the next change.
     const unsubscribe = scrollYProgress.on('change', (p) => {
       const next = targetFor(p, target);
       if (next === target) return;
       target = next;
       anim?.stop();
-      const token = ++lockToken;
-      if (performance.now() - lastUserInput < 400) lock();
       const distance = Math.abs(next - stepPos.get());
       // linear here: each phase inside the change applies its own easing
       anim = animate(stepPos, next, { duration: STEP_CHANGE_SECONDS * Math.pow(distance, 0.7), ease: 'linear' });
-      anim.then(() => {
-        if (token === lockToken) unlock();
-      });
     });
     return () => {
       unsubscribe();
       anim?.stop();
-      unlock();
-      window.removeEventListener('wheel', markUserInput);
-      window.removeEventListener('touchmove', markUserInput);
-      window.removeEventListener('keydown', markUserInput);
     };
   }, [scrollYProgress, stepPos]);
+
+  // Drive exitProgress: it tracks the scroll directly, except that it stays at 0 while step 3 is
+  // still arriving. If the scroll has already moved into the exit by the time step 3 is in, the
+  // exit glides up to where the scroll is instead of jumping there.
+  useEffect(() => {
+    let glide: ReturnType<typeof animate> | null = null;
+    // Step 3 stays fully on screen for STEP3_HOLD_MS after it arrives before the exit may start
+    let step3Since: number | null = stepPos.get() >= 1.999 ? -Infinity : null;
+    let holdTimer: ReturnType<typeof setTimeout> | null = null;
+    const update = () => {
+      const atStep3 = stepPos.get() >= 1.999;
+      if (!atStep3) step3Since = null;
+      else if (step3Since === null) step3Since = performance.now();
+      const held = step3Since !== null && performance.now() - step3Since < STEP3_HOLD_MS;
+      if (held && !holdTimer) {
+        holdTimer = setTimeout(() => {
+          holdTimer = null;
+          update();
+        }, STEP3_HOLD_MS - (performance.now() - (step3Since ?? 0)) + 16);
+      }
+      const target = atStep3 && !held ? exitT(scrollYProgress.get()) : 0;
+      const diff = Math.abs(target - exitProgress.get());
+      if (!glide && diff < 0.04) {
+        exitProgress.set(target);
+        return;
+      }
+      if (diff < 0.001) return;
+      glide?.stop();
+      const g = animate(exitProgress, target, { duration: 0.45, ease: 'easeOut' });
+      glide = g;
+      g.then(() => {
+        if (glide === g) {
+          glide = null;
+          update();
+        }
+      });
+    };
+    update();
+    const offScroll = scrollYProgress.on('change', update);
+    const offStep = stepPos.on('change', update);
+    return () => {
+      offScroll();
+      offStep();
+      glide?.stop();
+      if (holdTimer) clearTimeout(holdTimer);
+    };
+  }, [scrollYProgress, stepPos, exitProgress]);
 
   // Original right-to-left slide, now driven by the step position
   const slideA = (s: number) => easeInOutCubic(changeT(s, CHANGE_A));
@@ -640,14 +650,14 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
   });
 
   return (
-    <div
+    <motion.div
       ref={containerRef}
       className="relative w-full bg-[#2c4657] md:cursor-none"
       style={{
         marginTop: `${viewportHeight * 0.5}px`,
-        height: `${viewportHeight * PROCESS_HEIGHT_VH}px`,
+        height: `${viewportHeight * PROCESS_PAGE_HEIGHT_VH}px`,
         zIndex
-      } as React.CSSProperties}
+      }}
     >
       {/* Custom Cursor - Desktop Only */}
       {showCursor && (
@@ -672,15 +682,15 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
       )}
 
       {/* Sticky container for all content AND progress bar */}
-      <div 
+      <motion.div
         ref={stickyRef}
-        className="sticky top-0 w-full" 
-        style={{ 
+        className="sticky top-0 w-full"
+        style={{
           height: `${viewportHeight}px`,
-          opacity: containerOpacity,
+          opacity: viewOpacity,
           visibility: isVisible ? 'visible' : 'hidden',
           pointerEvents: isVisible ? 'auto' : 'none'
-        } as React.CSSProperties}
+        }}
       >
         {/* Background cover extending above viewport to cover gap when Team slides up */}
         <div className="absolute left-0 right-0 bottom-0 bg-[#2c4657]" style={{ top: `-${viewportHeight}px` }} />
@@ -791,18 +801,7 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
           </motion.div>
         </div>
 
-        {/* Exit: thin white line drawn across the bars, which then opens up to fill the screen */}
-        <motion.div
-          className="absolute inset-0 bg-white pointer-events-none z-20"
-          style={{
-            scaleX: lineScaleX,
-            scaleY: lineScaleY,
-            opacity: lineOpacity,
-            transformOrigin: `50% ${(lineOriginY * 100).toFixed(2)}%`,
-            boxShadow: '0 0 24px rgba(255,255,255,0.6)',
-          }}
-        />
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

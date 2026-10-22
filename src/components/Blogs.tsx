@@ -387,8 +387,14 @@ function BlogPopup({
 const PARENT_THRESHOLDS = [0.01, 0.2];
 const parentBucket = (p: number) => (p <= 0 ? -1 : PARENT_THRESHOLDS.filter((t) => p >= t).length);
 
-const TITLE_FLIP_FROM = 0.21;
-const TITLE_FLIP_TO = 0.35;
+// This section is pulled up over the end of Our Process (BLOGS_OVERLAP_VH) and slides up over it
+// like a white sheet while Our Process plays its exit. The "BLOGS" title rides near the sheet's top
+// edge and flips in as the sheet rises (0 → 0.15); the section pins at ~0.22, then the cards rise.
+const TITLE_FLIP_FROM = 0;
+const TITLE_FLIP_TO = 0.15;
+// Length of Our Process's exit scroll (see PROCESS_HEIGHT_VH - ORIGINAL_HEIGHT_VH in Process.tsx),
+// so the sheet starts rising exactly when that exit begins
+const BLOGS_OVERLAP_VH = 0.6;
 const TITLE_FLIP_STAGGER = 0.5;
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
@@ -478,16 +484,16 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
   // Step 1: White screen slides up from bottom (0 - 0.30)
   const whiteScreenY = useTransform(scrollYProgress, [0, 0.30], [viewportHeight, 0]);
 
-  // Step 2: BLOGS text slides up from bottom (0.21 - 0.45)
-  // Start when white screen covers 70% height (at scroll progress 0.21)
-  const titleY = useTransform(scrollYProgress, [0.21, 0.45], [0, -viewportHeight * 0.85]);
-  const titleOpacity = useTransform(scrollYProgress, [0.21, 0.26], [0, 1]);
+  // Step 2: BLOGS title sits at its spot above the cards from the start and flips in as the
+  // section comes up (see TITLE_FLIP_FROM)
+  const titleY = -viewportHeight * 0.85;
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.03], [0, 1]);
 
-  // Step 3: Cards slide up from bottom (0.40 - 0.50)
-  const cardsY = useTransform(scrollYProgress, [0.40, 0.50], [viewportHeight, viewportHeight * (scrl / 100)]);
-  const cardsOpacity = useTransform(scrollYProgress, [0.40, 0.45, 0.50], [0, 0.3, 1]);
+  // Step 3: Cards slide up from bottom (0.20 - 0.32), finishing just after the section pins
+  const cardsY = useTransform(scrollYProgress, [0.20, 0.32], [viewportHeight, viewportHeight * (scrl / 100)]);
+  const cardsOpacity = useTransform(scrollYProgress, [0.20, 0.25, 0.32], [0, 0.3, 1]);
   // Cards also grow in from slightly smaller as they rise
-  const cardsScale = useTransform(scrollYProgress, (p) => 0.86 + 0.14 * easeOutCubic(clamp01((p - 0.40) / 0.13)));
+  const cardsScale = useTransform(scrollYProgress, (p) => 0.86 + 0.14 * easeOutCubic(clamp01((p - 0.20) / 0.13)));
 
   // Fade out the blogs section when Contact Us slides up: a white layer fades in on top, driven
   // straight from the live Contact progress. (Fading the container itself re-rendered Blogs every
@@ -535,7 +541,13 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
     <div
       ref={containerRef}
       className="relative w-full bg-white"
-      style={{ minHeight: `${viewportHeight * 3.5}px`, position: "relative" }}
+      // Pulled up over the end of Our Process and slides up over it like a sheet (see TITLE_FLIP_FROM)
+      style={{
+        minHeight: `${viewportHeight * 3.5}px`,
+        position: "relative",
+        marginTop: `${-viewportHeight * BLOGS_OVERLAP_VH}px`,
+        boxShadow: '0 -24px 60px rgba(0, 0, 0, 0.25)',
+      }}
     >
       {/* Sticky container */}
       <div className="sticky top-0 w-full overflow-hidden" style={{ height: `${viewportHeight}px` }}>

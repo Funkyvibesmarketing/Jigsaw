@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { frame, cancelFrame, type FrameData } from 'motion/react';
 import type Lenis from 'lenis';
 
 // Lenis runs only on desktop-like devices: wide screen + precise pointer (mouse/trackpad).
@@ -23,13 +24,28 @@ export function useLenis() {
     if (typeof window === 'undefined') return;
 
     let lenis: Lenis | null = null;
-    let rafId = 0;
     let loading = false;
     let unmounted = false;
+    let inLenisFrame = false;
+    let dispatching = false;
 
-    const raf = (time: number) => {
-      lenis?.raf(time);
-      rafId = requestAnimationFrame(raf);
+    // Lenis runs inside Motion's frame loop (before Motion draws), not in its own requestAnimationFrame.
+    // Together with the scroll event below, the page moves and every scroll animation updates in
+    // the same frame. With separate loops the animations lagged one frame behind the scroll,
+    // which reads as a slight shake on pinned sections.
+    const raf = ({ timestamp }: FrameData) => {
+      inLenisFrame = true;
+      lenis?.raf(timestamp);
+      inLenisFrame = false;
+    };
+
+    // The sections listen for window 'scroll', which the browser only fires on the next frame.
+    // Fire it right away for each smooth-scroll step so they update in this frame.
+    const syncScroll = () => {
+      if (!inLenisFrame || dispatching || lenis?.isScrolling !== 'smooth') return;
+      dispatching = true;
+      window.dispatchEvent(new Event('scroll'));
+      dispatching = false;
     };
 
     const handleStop = () => lenis?.stop();
@@ -75,13 +91,14 @@ export function useLenis() {
           infinite: false,
         });
 
+        lenis.on('scroll', syncScroll);
         window.scrollTo = lenisScrollTo as typeof window.scrollTo;
-        rafId = requestAnimationFrame(raf);
+        frame.update(raf, true);
       });
     };
 
     const destroy = () => {
-      cancelAnimationFrame(rafId);
+      cancelFrame(raf);
       lenis?.destroy();
       lenis = null;
       if (window.scrollTo === (lenisScrollTo as unknown)) window.scrollTo = nativeScrollTo;
