@@ -10,6 +10,12 @@ import { DownArrowButton } from './DownArrowButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import AboutUsScrollEffect from '../imports/AboutUsScrollEffect';
 
+// Values the rest of the page compares heroScrollProgress against (App, sidebar, WhatsApp button).
+// App is only told when one of them is crossed: reporting every frame re-rendered the whole page
+// on every scroll frame while the hero was on screen, which made scrolling here judder.
+const PARENT_THRESHOLDS = [0.01, 0.32, 0.82, 0.9];
+const parentBucket = (p: number) => (p <= 0 ? -1 : PARENT_THRESHOLDS.filter((t) => p >= t).length);
+
 export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: { onScrollProgress?: (progress: number) => void; splashViewed?: boolean; onReady?: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hideDownArrow, setHideDownArrow] = useState(false);
@@ -72,6 +78,7 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
 
   // Track scroll progress through this section using zoom-safe layout metrics
   const scrollYProgress = useMotionValue(0);
+  const lastParentBucketRef = useRef<number | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,8 +87,10 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
       // start start (rect.top = 0) to end start (rect.top = -rect.height)
       const progress = Math.min(1, Math.max(0, -rect.top / rect.height));
       scrollYProgress.set(progress);
-      if (onScrollProgress) {
-        onScrollProgress(progress);
+      const bucket = parentBucket(progress);
+      if (bucket !== lastParentBucketRef.current) {
+        lastParentBucketRef.current = bucket;
+        onScrollProgress?.(progress);
       }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -190,6 +199,10 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
   const complianceY = useTransform(scrollYProgress, [0.38, 0.41, 0.48, 0.75], [300, 0, -200, -1200]);
   const complianceOpacity = useTransform(scrollYProgress, [0.38, 0.41, 0.48, 0.75], [0, 1, 1, 1]);
 
+  // Section exit (0.45 → 0.70 = About Us slides over the hero): hero is pushed back and dimmed
+  const exitScale = useTransform(scrollYProgress, [0.45, 0.70], [1, 0.9]);
+  const exitDim = useTransform(scrollYProgress, [0.45, 0.70], [0, 0.65]);
+
   // We're Rewarded text specific parallax - moves slower for depth effect
   const rewardedTextY = useTransform(scrollYProgress, [0.48, 0.75], [0, -400]);
   const rewardedTextOpacity = useTransform(scrollYProgress, [0.38, 0.41, 0.48, 0.75], [0, 1, 1, 1]);
@@ -258,7 +271,16 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
           height: '100vh'
         }}
       >
-        <div className="relative size-full overflow-hidden m-0 p-0">
+        {/* Exit dim layer - darkens the hero as About Us slides over it */}
+        <motion.div
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none"
+          style={{ opacity: exitDim, zIndex: 300, backgroundColor: '#0d1419' }}
+        />
+        <motion.div
+          className="relative size-full overflow-hidden m-0 p-0"
+          style={{ scale: exitScale, transformOrigin: '50% 30%' }}
+        >
           {/* Base background that transitions from light to dark blue - stays dark during compliance */}
           <motion.div
             className="absolute inset-0 z-[0] m-0 p-0"
@@ -520,7 +542,7 @@ export function HeroScrollSection({ onScrollProgress, splashViewed, onReady }: {
               </svg>
             </motion.div>
           </motion.div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

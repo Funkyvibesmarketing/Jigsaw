@@ -1,10 +1,60 @@
-import { motion, useScroll, useTransform, AnimatePresence, useMotionValue } from 'motion/react';
-import { useRef, useEffect, useState } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useMotionValueEvent } from 'motion/react';
+import { useRef, useEffect, useState, memo } from 'react';
 import svgPathsOld from '../imports/svg-i4lcoo4sqc';
 import svgPaths from '../imports/svg-z5mgt22h4a';
 import imgVector from 'figma:asset/4234f71b7d4a1998f6e3282ba90ea09ce5633514.png';
 import imgRectangle from "figma:asset/ac4222b2f56bb8c362d5b0a6238628c6fa0aab37.png";
 import { Services } from './Services';
+
+// Services only reacts to a few scroll thresholds, so skip re-rendering it on every scroll frame
+const MemoServices = memo(Services);
+
+// SERVICES zoom timing (fraction of this section's scroll progress)
+const ZOOM_START = 0.55;
+const ZOOM_END = 0.693;
+// Big enough that the V's solid tip swallows the whole screen
+const ZOOM_MAX_SCALE = 70;
+// The solid SERVICES text is drawn with translate(40); the cutout starts at the same spot so there's no jump
+const SOLID_TEXT_SHIFT = 40;
+const SOLID_LETTER_SPACING = 40;
+
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+const easeInOutQuad = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+const smoothstep = (a: number, b: number, v: number) => {
+  const t = clamp01((v - a) / (b - a));
+  return t * t * (3 - 2 * t);
+};
+
+type ZoomFocus = { x: number; y: number };
+// Zoom focal point relative to the text anchor: inside the solid bottom tip of the "V"
+// (the glyph's bottom edge sits at ~+50 at 200px; x is re-measured from the real font once it renders)
+const DEFAULT_ZOOM_FOCUS: ZoomFocus = { x: -73, y: 36 };
+
+// Scales around the focal point while gliding that point to the exact screen centre, so the
+// letters grow evenly in every direction. At t = 0 it lines up exactly with the solid text.
+const maskTransformFor = (t: number, f: ZoomFocus) => {
+  const e = easeInOutQuad(t);
+  const scale = Math.pow(ZOOM_MAX_SCALE, e);
+  const px = (SOLID_TEXT_SHIFT + f.x) * (1 - e);
+  const py = f.y * (1 - e);
+  return `translate(${px} ${py}) scale(${scale}) translate(${-f.x} ${-f.y})`;
+};
+
+// Values the parent (App, nav, Reviews, cursor…) compares aboutUsScrollProgress against.
+// Reporting only when one of these is crossed stops the whole page re-rendering every scroll frame.
+const PARENT_THRESHOLDS = [0.01, 0.05, 0.50, 0.55, 0.68, 0.72, 0.76, 0.82, 0.98];
+const parentBucket = (p: number) => (p <= 0 ? -1 : PARENT_THRESHOLDS.filter((t) => p >= t).length);
+// Reviews fades in continuously across this range, so it needs every value there
+const isParentContinuous = (p: number) => p >= 0.72 && p < 0.76;
+
+// Nothing in this component's render changes during the middle of the zoom (the zoom itself runs
+// off motion values), so hold React state steady there instead of re-rendering every frame
+const renderProgressFor = (p: number) => (p > 0.56 && p < 0.68 ? 0.62 : p);
+
+// Collapse scroll progress to the thresholds Services actually checks (0.40, 0.50, 0.55–0.56, 0.69, 0.9)
+const servicesProgressStep = (p: number) =>
+  p < 0.40 ? 0 : p < 0.50 ? 0.45 : p < 0.55 ? 0.5 : p < 0.56 ? p : p < 0.69 ? 0.6 : p < 0.9 ? 0.7 : 0.95;
 import backgroundGradient from 'figma:asset/42d2cf4a66b5216ee41ff6ee702481dc6863d649.png';
 import type { Service } from '../utils/servicesApi';
 import type { carouselTexts } from '../utils/aboutApi';
@@ -139,6 +189,7 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
 
   // Track scroll progress through this section using zoom-safe layout metrics
   const scrollYProgress = useMotionValue(0);
+  const lastParentBucketRef = useRef<number | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -150,8 +201,13 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
       const progress = Math.min(1, Math.max(0, current / total));
       
       scrollYProgress.set(progress);
-      setScrollProgress(progress);
-      onScrollProgress?.(progress);
+      setScrollProgress(renderProgressFor(progress));
+
+      const bucket = parentBucket(progress);
+      if (bucket !== lastParentBucketRef.current || isParentContinuous(progress)) {
+        lastParentBucketRef.current = bucket;
+        onScrollProgress?.(progress);
+      }
 
       // Report services scroll progress when in Services Step 2 range (0.78 to 1.0)
       if (progress >= 0.78 && progress < 1.0) {
@@ -169,9 +225,18 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
     };
   }, [onScrollProgress, onServicesScrollProgress, viewportHeight]);
 
-  // Middle text stays centered initially, then moves up and fades out
-  const middleTextY = useTransform(scrollYProgress, [0, 0.25, 0.35, 0.45], [0, 0, -150, -500]);
-  const middleTextOpacity = useTransform(scrollYProgress, [0, 0.35, 0.45], [1, 1, 0]);
+  // Section entry (0 → 0.20 = sliding over the hero until it locks in place)
+  const entryRadius = useTransform(scrollYProgress, [0, 0.16, 0.20], [64, 64, 0]);
+  const entryShadow = useTransform(
+    scrollYProgress,
+    [0, 0.16, 0.20],
+    ['0px -24px 80px rgba(0, 0, 0, 0.45)', '0px -24px 80px rgba(0, 0, 0, 0.45)', '0px -24px 80px rgba(0, 0, 0, 0)']
+  );
+
+  // Middle text: rises + fades in while About Us slides over the hero (0.06 → 0.20, where the
+  // section locks in place), stays centered, then moves up and fades out
+  const middleTextY = useTransform(scrollYProgress, [0, 0.06, 0.20, 0.25, 0.35, 0.45], [120, 120, 0, 0, -150, -500]);
+  const middleTextOpacity = useTransform(scrollYProgress, [0, 0.06, 0.20, 0.35, 0.45], [0, 0, 1, 1, 0]);
 
   // SERVICES moves continuously from bottom to middle, then stays in place during zoom
   // Starts at bottom of screen and slides up to center
@@ -186,7 +251,58 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
 
   // Scale up after reaching middle, centered on letter "V" - massive zoom to fill entire screen
   // Slower zoom animation - 10% slower than before
-  const servicesScale = useTransform(scrollYProgress, [0.55, 0.693], [1, 15]);
+  // 0 → 1 across the zoom
+  const zoomT = useTransform(scrollYProgress, (p) => clamp01((p - ZOOM_START) / (ZOOM_END - ZOOM_START)));
+  // White around the letters dissolves near the end, so the reveal fills the screen smoothly
+  const overlayOpacity = useTransform(zoomT, (t) => 1 - smoothstep(0.7, 1, t));
+  // Cards/titles fade in once the letters are big; before that the letters show the plain
+  // dark-blue background (white cards inside the letters made them look empty)
+  const servicesContentOpacity = useTransform(zoomT, (t) => smoothstep(0.45, 0.85, t));
+  // Services content behind the letters settles from slightly zoomed-in to normal (depth effect)
+  const servicesRevealScale = useTransform(zoomT, (t) => 1.12 - 0.12 * easeOutCubic(t));
+
+  // Focal point of the zoom, measured from the rendered solid text (the "V")
+  const zoomFocusRef = useRef<ZoomFocus>({ ...DEFAULT_ZOOM_FOCUS });
+  const measureZoomFocus = (el: SVGTextElement) => {
+    try {
+      if (el.getNumberOfChars() < 4) return;
+      const first = el.getExtentOfChar(0);
+      const v = el.getExtentOfChar(3); // S E R [V] I C E S
+      const anchorX = first.x + el.getComputedTextLength() / 2;
+      // the char's extent includes the trailing letter-spacing, which isn't part of the glyph
+      const x = v.x + (v.width - SOLID_LETTER_SPACING) / 2 - anchorX;
+      if (Number.isFinite(x) && Math.abs(x) < 400) {
+        zoomFocusRef.current = { ...zoomFocusRef.current, x };
+      }
+    } catch {
+      // keep the default focus
+    }
+  };
+  const setSolidTextRef = (el: SVGTextElement | null) => {
+    if (!el) return;
+    measureZoomFocus(el);
+    // Re-measure once the Lato webfont is ready (first paint may use the fallback font)
+    void document.fonts?.ready.then(() => el.isConnected && measureZoomFocus(el));
+  };
+
+  // Mask text is drawn once at 200px; zoom is applied as a transform straight from the scroll
+  // value (no React re-render, no font relayout).
+  const maskTextRef = useRef<SVGTextElement | null>(null);
+  const maskOverlayRef = useRef<HTMLDivElement | null>(null);
+  const setMaskTextRef = (el: SVGTextElement | null) => {
+    maskTextRef.current = el;
+    el?.setAttribute('transform', maskTransformFor(zoomT.get(), zoomFocusRef.current));
+  };
+  const setMaskOverlayRef = (el: HTMLDivElement | null) => {
+    maskOverlayRef.current = el;
+    if (el) el.style.opacity = String(overlayOpacity.get());
+  };
+  useMotionValueEvent(zoomT, 'change', (t) => {
+    maskTextRef.current?.setAttribute('transform', maskTransformFor(t, zoomFocusRef.current));
+  });
+  useMotionValueEvent(overlayOpacity, 'change', (o) => {
+    if (maskOverlayRef.current) maskOverlayRef.current.style.opacity = String(o);
+  });
 
   // Color transitions - stays #294150 during zoom
   const servicesColor = useTransform(
@@ -230,10 +346,14 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
   const nextService = services[nextIndex];
 
   return (
-    <div
+    <motion.div
       ref={containerRef}
       className={`relative w-full bg-white z-[90] ${isExtremeZoomedOut ? 'about-us-extreme-zoom-out' : ''}`}
       style={{
+        // Entry: slides in as a sheet with rounded top + shadow, which flatten as it locks in place
+        borderTopLeftRadius: entryRadius,
+        borderTopRightRadius: entryRadius,
+        boxShadow: entryShadow,
         marginTop: `-${viewportHeight * 1.2}px`,
         minHeight: `${viewportHeight * 4}px`,
         touchAction: 'pan-y', // Allow vertical scrolling on touch devices
@@ -470,66 +590,6 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
                 })()} />
               </filter>
 
-              {/* Mask for Services section - only visible through text during zoom */}
-              <mask id="servicesTextMask">
-                {/* Black background - everything hidden */}
-                <rect x="0" y="0" width="100%" height="100%" fill="black" />
-
-                {/* White text - reveals Services section through letters */}
-                <text
-                  x="50%"
-                  y="50%"
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  fill="white"
-                  fontSize={(() => {
-                    const baseSize = 200;
-                    if (scrollProgress < 0.55) return baseSize;
-                    if (scrollProgress >= 0.693) return baseSize * 15; // 10% slower completion time
-
-                    const progress = (scrollProgress - 0.55) / (0.693 - 0.55); // 10% slower zoom duration
-                    const scale = 1 + (14 * progress); // 1x to 15x scale
-                    return baseSize * scale;
-                  })()}
-                  fontFamily="Lato, sans-serif"
-                  fontWeight="700"
-                  letterSpacing={(() => {
-                    const baseFontSize = 200;
-                    const baseLetterSpacing = 40;
-                    const fontSize = (() => {
-                      if (scrollProgress < 0.55) return baseFontSize;
-                      if (scrollProgress >= 0.693) return baseFontSize * 15;
-                      const progress = (scrollProgress - 0.55) / (0.693 - 0.55);
-                      const scale = 1 + (14 * progress);
-                      return baseFontSize * scale;
-                    })();
-                    return String((baseLetterSpacing * fontSize) / baseFontSize);
-                  })()}
-                  transform={(() => {
-                    // Center the "V" (5th letter, index 4) in "SERVICES" (8 letters)
-                    // Calculate offset to move "V" to screen center
-                    const baseFontSize = 200;
-                    const baseLetterSpacing = 40;
-                    const fontSize = (() => {
-                      if (scrollProgress < 0.55) return baseFontSize;
-                      if (scrollProgress >= 0.693) return baseFontSize * 15;
-                      const progress = (scrollProgress - 0.55) / (0.693 - 0.55);
-                      const scale = 1 + (14 * progress);
-                      return baseFontSize * scale;
-                    })();
-                    const letterSpacing = (baseLetterSpacing * fontSize) / baseFontSize;
-
-                    // "V" is at position 4 (0-indexed), center of word is at position 3.5
-                    // Need to shift right by (4 - 3.5) = 0.5 character widths
-                    const charWidth = fontSize * 0.65; // Approximate character width
-                    const offset = (4 - 3.5) * (charWidth + letterSpacing);
-
-                    return `translate(${offset}, 0)`;
-                  })()}
-                >
-                  SERVICES
-                </text>
-              </mask>
             </defs>
           </svg>
 
@@ -559,6 +619,7 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
                 fontFamily="Lato, sans-serif"
                 fontWeight="700"
                 letterSpacing="40"
+                ref={setSolidTextRef}
                 filter="url(#servicesBlur)"
                 transform="translate(40, 0)"
                 opacity={solidTextOpacity}
@@ -570,18 +631,22 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
         </motion.div>
 
         {/* Services Step 2 Section - integrated into scroll flow */}
-        <Services
-          scrollProgress={scrollProgress}
+        <MemoServices
+          scrollProgress={servicesProgressStep(scrollProgress)}
           services={services}
           reviewsScrollProgress={reviewsScrollProgress}
+          revealScale={servicesRevealScale}
+          revealContentOpacity={servicesContentOpacity}
         />
 
         {/* Services Text Mask Overlay - Safari compatible approach */}
-        {scrollProgress >= 0.55 && scrollProgress < 0.68 && (
+        {/* Stays mounted to the end of the zoom; it has faded to transparent by then, so nothing pops */}
+        {scrollProgress >= ZOOM_START && scrollProgress < ZOOM_END && (
           <div
+            ref={setMaskOverlayRef}
             className="fixed top-0 left-0 w-full overflow-hidden pointer-events-none z-[25]"
             style={{
-              opacity: 1,
+              willChange: 'opacity',
               height: window.innerWidth > 1920 ? `${window.innerHeight / (window.innerWidth / 1920)}px` : '100vh'
             }}
           >
@@ -593,52 +658,24 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
                   <rect x="0" y="0" width="100%" height="100%" fill="white" />
 
                   {/* Black text - creates the cutout (hole) with zoom animation */}
-                  <text
-                    x="50%"
-                    y="50%"
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fill="black"
-                    fontSize={(() => {
-                      const baseSize = 200;
-                      if (scrollProgress < 0.55) return baseSize;
-                      if (scrollProgress >= 0.693) return baseSize * 15;
-                      const progress = (scrollProgress - 0.55) / (0.693 - 0.55);
-                      const scale = 1 + (14 * progress);
-                      return baseSize * scale;
-                    })()}
-                    fontFamily="Lato, sans-serif"
-                    fontWeight="700"
-                    letterSpacing={(() => {
-                      const baseFontSize = 200;
-                      const baseLetterSpacing = 40;
-                      const fontSize = (() => {
-                        if (scrollProgress < 0.55) return baseFontSize;
-                        if (scrollProgress >= 0.693) return baseFontSize * 15;
-                        const progress = (scrollProgress - 0.55) / (0.693 - 0.55);
-                        const scale = 1 + (14 * progress);
-                        return baseFontSize * scale;
-                      })();
-                      return String((baseLetterSpacing * fontSize) / baseFontSize);
-                    })()}
-                    transform={(() => {
-                      const baseFontSize = 200;
-                      const baseLetterSpacing = 40;
-                      const fontSize = (() => {
-                        if (scrollProgress < 0.55) return baseFontSize;
-                        if (scrollProgress >= 0.693) return baseFontSize * 15;
-                        const progress = (scrollProgress - 0.55) / (0.693 - 0.55);
-                        const scale = 1 + (14 * progress);
-                        return baseFontSize * scale;
-                      })();
-                      const letterSpacing = (baseLetterSpacing * fontSize) / baseFontSize;
-                      const charWidth = fontSize * 0.65;
-                      const offset = (4 - 3.5) * (charWidth + letterSpacing);
-                      return `translate(${offset}, 0)`;
-                    })()}
-                  >
-                    SERVICES
-                  </text>
+                  {/* Positioned at the screen centre; zoom is a pure scale set from the scroll value (no re-render / relayout) */}
+                  <svg x="50%" y="50%" overflow="visible">
+                    <text
+                      ref={setMaskTextRef}
+                      x="0"
+                      y="0"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fill="black"
+                      fontSize="200"
+                      fontFamily="Lato, sans-serif"
+                      fontWeight="700"
+                      letterSpacing="40"
+                      transform={maskTransformFor(zoomT.get(), zoomFocusRef.current)}
+                    >
+                      SERVICES
+                    </text>
+                  </svg>
                 </mask>
               </defs>
 
@@ -648,6 +685,6 @@ export function AboutUs({ onScrollProgress, onServicesScrollProgress, reviewsScr
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

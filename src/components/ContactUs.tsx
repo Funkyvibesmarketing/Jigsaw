@@ -1,15 +1,41 @@
-import { motion, useScroll, useTransform, useMotionValue } from "motion/react";
+import { motion, useScroll, useTransform, useMotionValue, type MotionValue } from "motion/react";
 import { useRef, useEffect, useState } from "react";
+import { contactProgress } from "../utils/progressStore";
+
+// Values the rest of the page compares contactUsScrollProgress against; App is only told when
+// one is crossed instead of re-rendering the whole page every scroll frame
+const PARENT_THRESHOLDS = [0.01];
+const parentBucket = (p: number) => (p <= 0 ? -1 : PARENT_THRESHOLDS.filter((t) => p >= t).length);
 
 interface ContactUsProps {
   onScrollProgress?: (progress: number) => void;
 }
 
-function InfoCard({ title, children, className, cardOpacity, cardY, onClick }: { title: string; children: React.ReactNode; className?: string; cardOpacity: any; cardY: any; onClick?: () => void }) {
+// ---- Desktop entry ----
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+const easeOutBack = (t: number) => {
+  const c1 = 1.2;
+  const c3 = c1 + 1;
+  return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+};
+const phase = (p: number, from: number, to: number) => clamp01((p - from) / (to - from));
+
+// A card "standing up": tips up from a 3D tilt while rising and growing to full size
+function useCardEntry(progress: MotionValue<number>, from: number, to: number) {
+  return {
+    opacity: useTransform(progress, (p) => easeOutCubic(phase(p, from, from + (to - from) * 0.6))),
+    y: useTransform(progress, (p) => 90 * (1 - easeOutCubic(phase(p, from, to)))),
+    rotateX: useTransform(progress, (p) => 42 * (1 - easeOutCubic(phase(p, from, to)))),
+    scale: useTransform(progress, (p) => 0.9 + 0.1 * easeOutBack(phase(p, from, to))),
+  };
+}
+
+function InfoCard({ title, children, className, cardOpacity, cardY, cardRotateX, cardScale, onClick }: { title: string; children: React.ReactNode; className?: string; cardOpacity: any; cardY: any; cardRotateX?: any; cardScale?: any; onClick?: () => void }) {
   return (
     <motion.div 
       className={`basis-0 bg-[rgba(255,255,255,0.1)] grow min-h-px min-w-px relative rounded-[12px] self-stretch shrink-0 transition-all duration-300 hover:bg-[rgba(228,236,241,0.6)] group cursor-pointer ${className}`}
-      style={{ opacity: cardOpacity, y: cardY }}
+      style={{ opacity: cardOpacity, y: cardY, rotateX: cardRotateX, scale: cardScale, transformOrigin: '50% 100%' }}
       onClick={onClick}
     >
       <div className="flex flex-col items-center justify-center overflow-clip rounded-[inherit] size-full">
@@ -47,6 +73,7 @@ export default function ContactUs({ onScrollProgress }: ContactUsProps) {
   const viewportHeight = window.innerHeight / zoomFactor;
 
   const scrollYProgress = useMotionValue(0);
+  const lastParentBucketRef = useRef<number | null>(null);
 
   useEffect(() => {
     const updateZoomState = () => {
@@ -67,7 +94,12 @@ export default function ContactUs({ onScrollProgress }: ContactUsProps) {
       const progress = total <= 0 ? 0 : Math.min(1, Math.max(0, current / total));
       
       scrollYProgress.set(progress);
-      onScrollProgress?.(progress);
+      contactProgress.set(progress);
+      const bucket = parentBucket(progress);
+      if (bucket !== lastParentBucketRef.current) {
+        lastParentBucketRef.current = bucket;
+        onScrollProgress?.(progress);
+      }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll);
@@ -82,15 +114,22 @@ export default function ContactUs({ onScrollProgress }: ContactUsProps) {
   const slideY = useTransform(scrollYProgress, [0, 0.3], [100, 0]);
   const opacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
   
-  // Card staggered animations
-  const card1Opacity = useTransform(scrollYProgress, [0.15, 0.25], [0, 1]);
-  const card1Y = useTransform(scrollYProgress, [0.15, 0.25], [40, 0]);
-  
-  const card2Opacity = useTransform(scrollYProgress, [0.2, 0.3], [0, 1]);
-  const card2Y = useTransform(scrollYProgress, [0.2, 0.3], [40, 0]);
-  
-  const card3Opacity = useTransform(scrollYProgress, [0.25, 0.35], [0, 1]);
-  const card3Y = useTransform(scrollYProgress, [0.25, 0.35], [40, 0]);
+  // Title: opens from the centre outwards (curtain), sharpening from blurred as it rises
+  const titleReveal = (p: number) => easeOutCubic(phase(p, 0.08, 0.28));
+  const titleClip = useTransform(scrollYProgress, (p) => {
+    const side = (50 * (1 - titleReveal(p))).toFixed(2);
+    return `inset(-20% ${side}% -20% ${side}%)`;
+  });
+  const titleBlur = useTransform(scrollYProgress, (p) => {
+    const b = 10 * (1 - titleReveal(p));
+    return b < 0.2 ? 'none' : `blur(${b.toFixed(1)}px)`;
+  });
+  const titleY = useTransform(scrollYProgress, (p) => 40 * (1 - titleReveal(p)));
+
+  // Cards stand up from the centre outwards: Address (middle) first, then Phone + Email
+  const card1 = useCardEntry(scrollYProgress, 0.16, 0.34); // Address
+  const card2 = useCardEntry(scrollYProgress, 0.21, 0.39); // Phone
+  const card3 = useCardEntry(scrollYProgress, 0.21, 0.39); // Email
 
   // Click handlers
   const handlePhoneClick = () => {
@@ -233,14 +272,16 @@ export default function ContactUs({ onScrollProgress }: ContactUsProps) {
         >
 
 
-          {/* Main Title */}
-          <p className="contact-us-intro-title absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+0.5px)] not-italic text-[100px] text-[rgba(44,70,87,0.4)] text-center text-nowrap top-[calc(50%-218px)] translate-x-[-50%] whitespace-pre tracking-[48px]" style={{ fontWeight: 400 }}>REACH US</p>
+          {/* Main Title (opens from the centre on entry) */}
+          <motion.div className="absolute inset-0 pointer-events-none" style={{ y: titleY }}>
+            <motion.p className="contact-us-intro-title absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+0.5px)] not-italic text-[100px] text-[rgba(44,70,87,0.4)] text-center text-nowrap top-[calc(50%-218px)] translate-x-[-50%] whitespace-pre tracking-[48px]" style={{ fontWeight: 400, clipPath: titleClip, filter: titleBlur }}>REACH US</motion.p>
+          </motion.div>
 
           {/* Info Cards Container */}
-          <div className="contact-us-intro-cards absolute content-stretch flex gap-[32px] items-start left-[calc(50%+34.5px)] top-[calc(50%+96px)] translate-x-[-50%] translate-y-[-50%] w-[1293px]">
+          <div className="contact-us-intro-cards absolute content-stretch flex gap-[32px] items-start left-[calc(50%+34.5px)] top-[calc(50%+96px)] translate-x-[-50%] translate-y-[-50%] w-[1293px]" style={{ perspective: 1400 }}>
             
             {/* Phone Card */}
-            <InfoCard title="Phone" cardOpacity={card2Opacity} cardY={card2Y} onClick={handlePhoneClick}>
+            <InfoCard title="Phone" cardOpacity={card2.opacity} cardY={card2.y} cardRotateX={card2.rotateX} cardScale={card2.scale} onClick={handlePhoneClick}>
               <p className="font-['Lato:Light',sans-serif] leading-[40px] min-w-full not-italic relative shrink-0 text-[#2c4657] text-[28px] w-[min-content]">
                 <span className="font-['Lato:Light',sans-serif]">0161 667 5990</span>
               </p>
@@ -248,12 +289,12 @@ export default function ContactUs({ onScrollProgress }: ContactUsProps) {
             </InfoCard>
 
             {/* Address Card */}
-            <InfoCard title="Address" cardOpacity={card1Opacity} cardY={card1Y} onClick={handleAddressClick}>
+            <InfoCard title="Address" cardOpacity={card1.opacity} cardY={card1.y} cardRotateX={card1.rotateX} cardScale={card1.scale} onClick={handleAddressClick}>
               <p className="font-['Lato:Light',sans-serif] leading-[36px] min-w-full not-italic relative shrink-0 text-[#2c4657] text-[24px] w-[min-content]">Suite 2F2 Sovereign House, Stockport Road, Cheadle, SK8 2EA</p>
             </InfoCard>
 
             {/* Email Card */}
-            <InfoCard title="Email" cardOpacity={card3Opacity} cardY={card3Y} onClick={handleEmailClick}>
+            <InfoCard title="Email" cardOpacity={card3.opacity} cardY={card3.y} cardRotateX={card3.rotateX} cardScale={card3.scale} onClick={handleEmailClick}>
               <p className="font-['Lato:Light',sans-serif] leading-[40px] min-w-full not-italic relative shrink-0 text-[#2c4657] text-[28px] w-[min-content]">info@jigsaw.ltd</p>
               <p className="font-['Lato:Light',sans-serif] leading-[40px] min-w-full not-italic relative shrink-0 text-[#2c4657] text-[28px] w-[min-content]">&nbsp;</p>
             </InfoCard>

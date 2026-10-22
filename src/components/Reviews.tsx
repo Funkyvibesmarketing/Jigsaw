@@ -1,10 +1,40 @@
 import { motion, useScroll, useTransform, AnimatePresence, useMotionValue } from 'motion/react';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, memo } from 'react';
 import imgVector from "figma:asset/d9d043aba62229fe40aba8743fc6dbfe62b9cdd3.png";
 import imgVectorMobile from "figma:asset/add4cb2fc6a41d59b6193f6298e99d6b25b9b0e5.png";
 import svgPathsMobile from "../imports/svg-avyll6yivq";
 import svgPathsTeam from "../imports/svg-jpxqepf0ih";
 import imgTeamPreview from "figma:asset/8ff86b859ea6e1213d92ee504583e0bce2dc86d5.png";
+import { reviewsProgress } from '../utils/progressStore';
+
+// Desktop section height in viewports. The extra 0.6 viewport (vs the original 4) only goes to the
+// TEAM slide + zoom at the end, so the review cards keep their timing but TEAM moves ~2x slower.
+const DESKTOP_HEIGHT_VH = 4.6;
+const ORIGINAL_SCROLL_VH = 3; // scrollable distance the 0–0.82 timings were designed for
+const TEAM_START = 0.82;
+
+// Scrolled distance (in viewports) → progress, with the TEAM segment (0.82 → 1) stretched out
+// totalVh = the measured scrollable distance, so the end of the section is always exactly 1
+// (the real height can come out a little under DESKTOP_HEIGHT_VH, e.g. with browser zoom)
+const desktopProgressFor = (scrolledVh: number, totalVh = DESKTOP_HEIGHT_VH - 1) => {
+  const knee = TEAM_START * ORIGINAL_SCROLL_VH;
+  if (scrolledVh <= knee) return scrolledVh / ORIGINAL_SCROLL_VH;
+  const teamVh = Math.max(0.001, totalVh - knee);
+  return Math.min(1, TEAM_START + (1 - TEAM_START) * ((scrolledVh - knee) / teamVh));
+};
+
+// Values the rest of the page compares reviewsScrollProgress against. App is only told when one
+// is crossed (or inside a range that animates continuously), instead of re-rendering every frame.
+const PARENT_THRESHOLDS = [0.01, 0.05, 0.15, 0.2, 0.8, 0.82, 0.85, 0.88, 0.9, 0.98, 1];
+const parentBucket = (p: number) => (p <= 0 ? -1 : PARENT_THRESHOLDS.filter((t) => p >= t).length);
+const isParentContinuous = (p: number) => p >= 0.15 && p < 0.2;
+// Thresholds this component's own render checks
+const selfBucket = (p: number) => (p < 0.5 ? 0 : p < 0.82 ? 1 : p < 0.86 ? 2 : p < 1 ? 3 : 4);
+// Desktop: from here until the end, the Team section fully covers Reviews
+const COVERED_BY_TEAM_START = 0.86;
+// Review cards only get static text, so skip re-rendering them on every scroll frame.
+const ReviewCard = memo(ReviewCardBase);
+const ReviewCardMobile = memo(ReviewCardMobileBase);
 
 function ReviewsScrollDownHint({ visible }: { visible: boolean }) {
   return (
@@ -229,7 +259,7 @@ function Frame4Mobile() {
 }
 
 // Review Card Component
-function ReviewCard({ review, author, date }: { review: string; author: string; date: string }) {
+function ReviewCardBase({ review, author, date }: { review: string; author: string; date: string }) {
   return (
     <motion.div
       className="relative rounded-[16px] w-[502px] md:block hidden overflow-hidden backdrop-blur-[14px] backdrop-filter bg-[rgba(228,236,241,0.4)] border border-[rgba(46,196,182,0.3)] border-solid shadow-[0px_4px_28px_-1px_rgba(46,196,182,0.12)]"
@@ -280,7 +310,7 @@ function ReviewCard({ review, author, date }: { review: string; author: string; 
 // Mobile Review Card Component - scaled down from desktop
 // Uses CSS keyframe animation (GPU compositor) instead of Framer Motion infinite
 // loop (JS thread) to prevent main-thread blocking on iOS.
-function ReviewCardMobile({ review, author, date, animClass = 'float-card-a' }: { review: string; author: string; date: string; animClass?: string }) {
+function ReviewCardMobileBase({ review, author, date, animClass = 'float-card-a' }: { review: string; author: string; date: string; animClass?: string }) {
   return (
     <div
       className={`relative rounded-[16px] w-[305px] overflow-hidden ${animClass}`}
@@ -379,6 +409,8 @@ export function Reviews({
   // Track scroll progress through this section using zoom-safe layout metrics
   const scrollYProgress = useMotionValue(0);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const lastParentBucketRef = useRef<number | null>(null);
+  const lastSelfBucketRef = useRef<number | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -393,12 +425,27 @@ export function Reviews({
       // start start (rectTop = 0) to end end (rectTop = viewportHeight - rectHeight)
       const total = rectHeight - viewportHeight;
       const current = -rectTop;
-      const progress = total <= 0 ? 0 : Math.min(1, Math.max(0, current / total));
-      
+      const mobile = window.innerWidth < 768;
+      const progress = total <= 0
+        ? 0
+        : mobile
+          ? Math.min(1, Math.max(0, current / total))
+          : desktopProgressFor(Math.min(total, Math.max(0, current)) / viewportHeight, total / viewportHeight);
+
       scrollYProgress.set(progress);
-      setScrollProgress(progress);
-      if (onScrollProgress) {
-        onScrollProgress(progress);
+      reviewsProgress.set(progress);
+
+      const selfB = selfBucket(progress);
+      if (selfB !== lastSelfBucketRef.current) {
+        lastSelfBucketRef.current = selfB;
+        setScrollProgress(progress);
+      }
+
+      // Mobile TEAM animation still reads every value from props
+      const bucket = parentBucket(progress);
+      if (mobile || bucket !== lastParentBucketRef.current || isParentContinuous(progress)) {
+        lastParentBucketRef.current = bucket;
+        onScrollProgress?.(progress);
       }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -879,7 +926,7 @@ Very thorough and quick to reply! Would highly recommend!"`} author="~Rebecca" d
       ref={containerRef}
       className="relative w-full bg-white"
       style={{
-        minHeight: isMobile ? '500vh' : `${viewportHeight * 4}px`,
+        minHeight: isMobile ? '500vh' : `${viewportHeight * DESKTOP_HEIGHT_VH}px`,
         marginTop: '0vh',
         pointerEvents: (aboutUsScrollProgress && aboutUsScrollProgress >= 0.72 && aboutUsScrollProgress < 0.98) || (processScrollProgress && processScrollProgress >= 0.05) ? 'none' : 'auto',
         opacity: reviewsSectionOpacity,
@@ -896,6 +943,8 @@ Very thorough and quick to reply! Would highly recommend!"`} author="~Rebecca" d
           pointerEvents: (aboutUsScrollProgress && aboutUsScrollProgress >= 0.72 && aboutUsScrollProgress < 0.98) || (processScrollProgress && processScrollProgress >= 0.05) ? 'none' : 'auto',
           zIndex: 20,
           opacity: reviewsSectionOpacity,
+          // Skip painting the (blurred, fading) review cards while the Team section covers them
+          visibility: !isMobile && scrollProgress >= COVERED_BY_TEAM_START && scrollProgress < 1 ? 'hidden' : undefined,
           touchAction: 'pan-y', // Enable vertical touch scrolling
           WebkitOverflowScrolling: 'touch' // Smooth scrolling on iOS
         } as React.CSSProperties}

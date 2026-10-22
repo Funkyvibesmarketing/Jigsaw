@@ -138,6 +138,36 @@ function SocialButton({
   );
 }
 
+// ---- Desktop entry (scroll-driven, applied through CSS variables so nothing re-renders) ----
+// Note: Tailwind v4 centres with the CSS `translate` property (e.g. -translate-x-1/2), so any inline
+// `translate` below must keep that -50% or the element loses its centring.
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+const easeOutBack = (t: number) => {
+  const c1 = 1.5;
+  const c3 = c1 + 1;
+  return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+};
+const ramp = (p: number, from: number, to: number) => clamp01((p - from) / (to - from));
+const FORM_TITLE = 'CONTACT US';
+
+// Each value is 0 (hidden / start pose) -> 1 (in place)
+function formEntryVars(p: number): Record<string, string> {
+  const vars: Record<string, string> = {};
+  // Title: letters ride in on a wave, one after another
+  FORM_TITLE.split('').forEach((_, i) => {
+    const start = 0.08 + (i / (FORM_TITLE.length - 1)) * 0.12;
+    vars[`--cf-t${i}`] = easeOutCubic(ramp(p, start, start + 0.12)).toFixed(4);
+  });
+  vars['--cf-step'] = easeOutCubic(ramp(p, 0.18, 0.32)).toFixed(4);
+  vars['--cf-field'] = easeOutCubic(ramp(p, 0.2, 0.34)).toFixed(4);
+  vars['--cf-line'] = easeOutCubic(ramp(p, 0.24, 0.4)).toFixed(4);
+  vars['--cf-btn'] = easeOutBack(ramp(p, 0.28, 0.4)).toFixed(4);
+  vars['--cf-btn-o'] = ramp(p, 0.28, 0.34).toFixed(4);
+  vars['--cf-social'] = easeOutCubic(ramp(p, 0.32, 0.46)).toFixed(4);
+  return vars;
+}
+
 export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFormProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentStep, setCurrentStep] = useState(1);
@@ -218,6 +248,8 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
     : Math.max(1200, viewportHeight);
 
   const scrollYProgress = useMotionValue(0);
+  // Only "has the form section started?" (> 0) is used elsewhere, so App is only told when that flips
+  const lastStartedRef = useRef<boolean | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -228,7 +260,11 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
       const progress = total <= 0 ? 0 : Math.min(1, Math.max(0, current / total));
       
       scrollYProgress.set(progress);
-      onScrollProgress?.(progress);
+      const started = progress > 0;
+      if (started !== lastStartedRef.current) {
+        lastStartedRef.current = started;
+        onScrollProgress?.(progress);
+      }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll);
@@ -278,6 +314,25 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
       }
     };
   }, []);
+
+  // Desktop entry choreography (see formEntryVars)
+  const desktopFormRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    // Only write values that changed (they stop changing once the entry has finished)
+    const last: Record<string, string> = {};
+    const apply = (p: number) => {
+      const el = desktopFormRef.current;
+      if (!el) return;
+      const vars = formEntryVars(p);
+      for (const k in vars) {
+        if (last[k] === vars[k]) continue;
+        last[k] = vars[k];
+        el.style.setProperty(k, vars[k]);
+      }
+    };
+    apply(scrollYProgress.get());
+    return scrollYProgress.on('change', apply);
+  }, [scrollYProgress]);
 
   // Slide up animation for the entire ContactUsForm section
   const slideY = useTransform(scrollYProgress, [0, 0.3], [100, 0]);
@@ -391,7 +446,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
               placeholder="Your name"
               className="contact-desktop-input font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[48px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] caret-white"
             />
-            <div className="contact-desktop-line h-0 relative shrink-0 w-full flex justify-center">
+            <div className="contact-desktop-line h-0 relative shrink-0 w-full flex justify-center" style={{ transform: 'scaleX(var(--cf-line, 1))' }}>
               <div className="absolute bottom-0 top-[-1px] w-[600px]">
                 <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 600 1">
                   <line id="Line 32" stroke="var(--stroke-0, white)" strokeOpacity="0.5" x2="600" y1="0.5" y2="0.5" />
@@ -410,7 +465,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
               placeholder="Your email"
               className="contact-desktop-input font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[48px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] caret-white"
             />
-            <div className="contact-desktop-line h-0 relative shrink-0 w-full flex justify-center">
+            <div className="contact-desktop-line h-0 relative shrink-0 w-full flex justify-center" style={{ transform: 'scaleX(var(--cf-line, 1))' }}>
               <div className="absolute bottom-0 top-[-1px] w-[600px]">
                 <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 600 1">
                   <line stroke="var(--stroke-0, white)" strokeOpacity="0.5" x2="600" y1="0.5" y2="0.5" />
@@ -429,7 +484,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
               placeholder="Your phone"
               className="contact-desktop-input font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[48px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] caret-white"
             />
-            <div className="contact-desktop-line h-0 relative shrink-0 w-full flex justify-center">
+            <div className="contact-desktop-line h-0 relative shrink-0 w-full flex justify-center" style={{ transform: 'scaleX(var(--cf-line, 1))' }}>
               <div className="absolute bottom-0 top-[-1px] w-[600px]">
                 <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 600 1">
                   <line stroke="var(--stroke-0, white)" strokeOpacity="0.5" x2="600" y1="0.5" y2="0.5" />
@@ -447,7 +502,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
               placeholder="Your message"
               className="contact-desktop-input contact-desktop-textarea font-['Lato:Light',sans-serif] leading-[normal] min-w-full not-italic relative shrink-0 text-[28px] text-white text-center w-[min-content] bg-transparent border-none outline-none placeholder:text-[rgba(255,255,255,0.2)] resize-none h-[60px] caret-white"
             />
-            <div className="contact-desktop-line h-0 relative shrink-0 w-full">
+            <div className="contact-desktop-line h-0 relative shrink-0 w-full" style={{ transform: 'scaleX(var(--cf-line, 1))' }}>
               <div className="absolute bottom-0 left-0 right-0 top-[-1px]">
                 <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 382 1">
                   <line stroke="white" strokeOpacity="0.5" x2="382" y1="0.5" y2="0.5" />
@@ -506,6 +561,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
 
         {/* Desktop View */}
         <motion.div
+          ref={desktopFormRef}
           className={`contact-desktop-form hidden md:block bg-[#2c4657] relative size-full ${isLargeDisplay ? 'contact-desktop-large-display' : ''} ${isModerateZoomedOut ? 'contact-desktop-moderate-zoom-out' : ''} ${isExtremeZoomedOut ? 'contact-desktop-extreme-zoom-out' : ''}`}
           data-name="Contact us Form"
           style={{ y: slideY, opacity }}
@@ -553,16 +609,32 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
 
           {/* Main Title */}
           {!isSubmitted && (
-            <p className="contact-desktop-title absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 not-italic text-[100px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[100px] translate-x-[-50%] whitespace-pre tracking-[48px]">CONTACT US</p>
+            <p className="contact-desktop-title absolute font-['Lato:Regular',sans-serif] leading-[normal] left-1/2 not-italic text-[100px] text-[rgba(255,255,255,0.2)] text-center text-nowrap top-[100px] translate-x-[-50%] whitespace-pre tracking-[48px]" aria-label={FORM_TITLE}>
+              {FORM_TITLE.split('').map((char, i) => char === ' ' ? ' ' : (
+                <span
+                  key={i}
+                  style={{
+                    display: 'inline-block',
+                    transformOrigin: '0% 100%',
+                    transform: `translateY(calc((1 - var(--cf-t${i}, 1)) * 70px)) rotate(calc((1 - var(--cf-t${i}, 1)) * 12deg))`,
+                    opacity: `var(--cf-t${i}, 1)`,
+                  }}
+                >
+                  {char}
+                </span>
+              ))}
+            </p>
           )}
 
           {!isSubmitted && (
             <>
               {/* Step Indicator */}
-              <p className="contact-desktop-step absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+440px)] not-italic text-[72px] text-[rgba(255,255,255,0.2)] text-center text-nowrap translate-x-[-50%] whitespace-pre" style={{ top: 'calc(50% - 210px)' }}>{currentStep}/4</p>
+              <p className="contact-desktop-step absolute font-['Lato:Regular',sans-serif] leading-[normal] left-[calc(50%+440px)] not-italic text-[72px] text-[rgba(255,255,255,0.2)] text-center text-nowrap translate-x-[-50%] whitespace-pre" style={{ top: 'calc(50% - 210px)', opacity: 'var(--cf-step, 1)', translate: 'calc(-50% + (1 - var(--cf-step, 1)) * 80px) 0' }}>{currentStep}/4</p>
 
-              {/* Form Field */}
-              {renderFormField()}
+              {/* Form Field (rises in on entry) */}
+              <div className="absolute inset-0" style={{ opacity: 'var(--cf-field, 1)', translate: '0 calc((1 - var(--cf-field, 1)) * 40px)' }}>
+                {renderFormField()}
+              </div>
 
               {/* Submit Button */}
               <button
@@ -582,7 +654,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
                   ? 'opacity-50 cursor-not-allowed md:cursor-none'
                   : 'opacity-100 cursor-pointer md:cursor-none hover:opacity-90'
                   }`}
-                style={{ top: 'calc(50% - 135px)' }}
+                style={{ top: 'calc(50% - 135px)', scale: 'calc(0.7 + 0.3 * var(--cf-btn, 1))', translate: '-50% calc((1 - var(--cf-btn, 1)) * 30px)', filter: 'opacity(var(--cf-btn-o, 1))' }}
               >
                 <p className="contact-desktop-submit-label font-['Lato:Regular',sans-serif] leading-[24px] not-italic relative shrink-0 text-[24px] text-nowrap text-white whitespace-pre">
                   {isSubmitting ? 'Sending...' : currentStep === 4 ? 'Submit' : 'Submit & next'}
@@ -617,7 +689,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
             </>
           )}
 
-          <div className="contact-desktop-social absolute flex flex-col gap-[16px] items-center pb-[10px] left-1/2 -translate-x-1/2 w-[90%] max-w-[1190px] z-[90]">
+          <div className="contact-desktop-social absolute flex flex-col gap-[16px] items-center pb-[10px] left-1/2 -translate-x-1/2 w-[90%] max-w-[1190px] z-[90]" style={{ opacity: 'var(--cf-social, 1)', translate: '-50% calc((1 - var(--cf-social, 1)) * 50px)' }}>
             {/* Social Media Section (moved up for desktop) */}
             <div className="contact-desktop-social-inner flex flex-col gap-[16px] items-center w-full">
               <p className="contact-desktop-social-title font-['Lato:Regular',sans-serif] leading-[24px] not-italic text-[20px] text-center text-nowrap text-white tracking-[0.2px]">Follow us on:</p>
@@ -679,7 +751,7 @@ export default function ContactUsForm({ onScrollProgress, onReady }: ContactUsFo
               </div>
             </div>
           </div>
-          <div className="contact-desktop-footer absolute flex flex-col gap-[16px] items-center pb-[10px] pt-[80px] bottom-[0px] left-1/2 -translate-x-1/2 w-[90%] max-w-[1190px]">
+          <div className="contact-desktop-footer absolute flex flex-col gap-[16px] items-center pb-[10px] pt-[80px] bottom-[0px] left-1/2 -translate-x-1/2 w-[90%] max-w-[1190px]" style={{ opacity: 'var(--cf-social, 1)', translate: '-50% calc((1 - var(--cf-social, 1)) * 50px)' }}>
             {/* Text Content Section */}
             <div className="content-stretch flex flex-col gap-[24px] items-center w-full">
               {/* Social buttons moved above for desktop; legal text follows */}

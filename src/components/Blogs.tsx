@@ -1,5 +1,6 @@
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValue } from "motion/react";
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, type MotionValue } from "motion/react";
 import { useRef, useEffect, useState } from "react";
+import { contactProgress } from "../utils/progressStore";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow, Navigation } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
@@ -301,6 +302,7 @@ function BlogPopup({
             ref={contentRef}
             onScroll={handleContentScroll}
             onWheel={handleWheel}
+            data-lenis-prevent
             className="overflow-y-scroll relative w-full pr-[16px] hide-scrollbar"
             style={{ height: '360px', minHeight: '360px', maxHeight: '360px' }}
           >
@@ -380,6 +382,33 @@ function BlogPopup({
   );
 }
 
+// ---- Entry: "BLOGS" letters flip up into place one after another ----
+// Values the rest of the page compares blogsScrollProgress against (see App / navigation)
+const PARENT_THRESHOLDS = [0.01, 0.2];
+const parentBucket = (p: number) => (p <= 0 ? -1 : PARENT_THRESHOLDS.filter((t) => p >= t).length);
+
+const TITLE_FLIP_FROM = 0.21;
+const TITLE_FLIP_TO = 0.35;
+const TITLE_FLIP_STAGGER = 0.5;
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+function FlipLetter({ char, index, count, progress }: { char: string; index: number; count: number; progress: MotionValue<number> }) {
+  const local = (p: number) => {
+    const t = clamp01((p - TITLE_FLIP_FROM) / (TITLE_FLIP_TO - TITLE_FLIP_FROM));
+    const start = (index / Math.max(1, count - 1)) * TITLE_FLIP_STAGGER;
+    return easeOutCubic(clamp01((t - start) / (1 - TITLE_FLIP_STAGGER)));
+  };
+  const rotateX = useTransform(progress, (p) => -95 * (1 - local(p)));
+  const y = useTransform(progress, (p) => 40 * (1 - local(p)));
+  const opacity = useTransform(progress, (p) => clamp01(local(p) * 1.6));
+  return (
+    <motion.span style={{ display: 'inline-block', rotateX, y, opacity, transformOrigin: '50% 100%' }}>
+      {char}
+    </motion.span>
+  );
+}
+
 export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollProgress = 0, onReady }: BlogsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
@@ -409,6 +438,7 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
   const viewportHeight = window.innerHeight / zoomFactor;
 
   const scrollYProgress = useMotionValue(0);
+  const lastParentBucketRef = useRef<number | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -419,7 +449,11 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
       const progress = total <= 0 ? 0 : Math.min(1, Math.max(0, current / total));
       
       scrollYProgress.set(progress);
-      onScrollProgress?.(progress);
+      const bucket = parentBucket(progress);
+      if (bucket !== lastParentBucketRef.current) {
+        lastParentBucketRef.current = bucket;
+        onScrollProgress?.(progress);
+      }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll);
@@ -452,9 +486,20 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
   // Step 3: Cards slide up from bottom (0.40 - 0.50)
   const cardsY = useTransform(scrollYProgress, [0.40, 0.50], [viewportHeight, viewportHeight * (scrl / 100)]);
   const cardsOpacity = useTransform(scrollYProgress, [0.40, 0.45, 0.50], [0, 0.3, 1]);
+  // Cards also grow in from slightly smaller as they rise
+  const cardsScale = useTransform(scrollYProgress, (p) => 0.86 + 0.14 * easeOutCubic(clamp01((p - 0.40) / 0.13)));
 
-  // Fade out entire blogs section when Contact Us slides up
-  const blogsOpacity = contactUsScrollProgress > 0 ? Math.max(0, 1 - (contactUsScrollProgress * 3)) : 1;
+  // Fade out the blogs section when Contact Us slides up: a white layer fades in on top, driven
+  // straight from the live Contact progress. (Fading the container itself re-rendered Blogs every
+  // frame and made the carousel - which watches its parents - re-measure itself every frame.)
+  const fadeOverlayRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const apply = (cp: number) => {
+      if (fadeOverlayRef.current) fadeOverlayRef.current.style.opacity = String(cp > 0 ? Math.min(1, cp * 3) : 0);
+    };
+    apply(contactProgress.get());
+    return contactProgress.subscribe(apply);
+  }, []);
 
   const handlePrevious = () => {
     swiperInstance?.slidePrev();
@@ -490,10 +535,12 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
     <div
       ref={containerRef}
       className="relative w-full bg-white"
-      style={{ minHeight: `${viewportHeight * 3.5}px`, opacity: blogsOpacity, position: "relative" }}
+      style={{ minHeight: `${viewportHeight * 3.5}px`, position: "relative" }}
     >
       {/* Sticky container */}
       <div className="sticky top-0 w-full overflow-hidden" style={{ height: `${viewportHeight}px` }}>
+        {/* Fade-out layer (see fadeOverlayRef) */}
+        <div ref={fadeOverlayRef} className="absolute inset-0 bg-white pointer-events-none" style={{ opacity: 0, zIndex: 60 }} />
 
         {/* Scaled wrapper for desktop */}
         <div className="absolute inset-0 flex items-center justify-center">
@@ -512,15 +559,21 @@ export default function Blogs({ onScrollProgress, blogs = [], contactUsScrollPro
               className="absolute left-[calc(50%+0.5px)] bottom-0 translate-x-[-50%] z-30"
               style={{ opacity: titleOpacity, y: titleY }}
             >
-              <p className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[#2C4657] text-[110px] text-center text-nowrap tracking-[40px] whitespace-pre">
-                BLOGS
+              <p
+                className="font-['Lato:Regular',sans-serif] leading-[normal] not-italic text-[#2C4657] text-[110px] text-center text-nowrap tracking-[40px] whitespace-pre"
+                style={{ perspective: 700 }}
+                aria-label="BLOGS"
+              >
+                {'BLOGS'.split('').map((char, i) => (
+                  <FlipLetter key={i} char={char} index={i} count={5} progress={scrollYProgress} />
+                ))}
               </p>
             </motion.div>
 
             {/* Blog Cards Container */}
             <motion.div
               className="absolute left-1/2 bottom-0 -translate-x-1/2 w-full z-40"
-              style={{ opacity: cardsOpacity, y: cardsY }}
+              style={{ opacity: cardsOpacity, y: cardsY, scale: cardsScale, transformOrigin: '50% 100%' }}
             >
               <div className="relative w-full">
                 {isMounted && (

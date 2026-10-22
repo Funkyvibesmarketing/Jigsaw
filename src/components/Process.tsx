@@ -1,9 +1,131 @@
-import { motion, useScroll, useTransform, MotionValue, useMotionValue } from "motion/react";
+import { motion, useScroll, useTransform, MotionValue, useMotionValue, animate } from "motion/react";
 import { useRef, useEffect, useState } from "react";
 import Process1stStep from "../imports/Process1stStep";
 import Process2ndStep from "../imports/Process2ndStep";
 import Process3rdStep from "../imports/Process3rdStep";
 import cursorSvgPaths from "../imports/svg-3ga094bafp";
+import { processProgress } from "../utils/progressStore";
+import { RevealText } from "./RevealText";
+
+// Values the rest of the page compares processScrollProgress against. App is only told when one
+// is crossed, instead of re-rendering the whole page on every scroll frame.
+const PARENT_THRESHOLDS = [0.01, 0.05, 0.1, 0.15];
+const parentBucket = (p: number) => (p <= 0 ? -1 : PARENT_THRESHOLDS.filter((t) => p >= t).length);
+
+// ---- Section entry choreography (scroll-driven; the sticky view locks in at ~0.25) ----
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+const easeOutBack = (t: number) => {
+  const c1 = 1.4;
+  const c3 = c1 + 1;
+  return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+};
+// 0 → 1 between two progress values, eased
+const phase = (p: number, from: number, to: number, ease = easeOutCubic) => ease(clamp01((p - from) / (to - from)));
+
+const TITLE_TEXT = 'OUR PROCESS';
+const TITLE_FROM = 0.05;
+const TITLE_TO = 0.24;
+const TITLE_STAGGER = 0.45; // share of the title phase spread across the letters
+
+// One letter of "OUR PROCESS": starts spread out from the centre, low and blurred, then
+// rises and snaps into place - letters arrive one after another, left to right
+function TitleLetter({ char, index, count, progress }: { char: string; index: number; count: number; progress: MotionValue<number> }) {
+  const local = (p: number) => {
+    const t = clamp01((p - TITLE_FROM) / (TITLE_TO - TITLE_FROM));
+    const start = (index / Math.max(1, count - 1)) * TITLE_STAGGER;
+    return easeOutCubic(clamp01((t - start) / (1 - TITLE_STAGGER)));
+  };
+  const spread = (index - (count - 1) / 2) * 38;
+  const x = useTransform(progress, (p) => spread * (1 - local(p)));
+  const y = useTransform(progress, (p) => 90 * (1 - local(p)));
+  const opacity = useTransform(progress, (p) => local(p));
+  const filter = useTransform(progress, (p) => {
+    const b = 14 * (1 - local(p));
+    return b < 0.2 ? 'none' : `blur(${b.toFixed(1)}px)`;
+  });
+  return (
+    <motion.span className="inline-block" style={{ x, y, opacity, filter, whiteSpace: 'pre' }}>
+      {char}
+    </motion.span>
+  );
+}
+
+// ---- Step changes (1 -> 2 at 0.30-0.40, 2 -> 3 at 0.55-0.65; same timing as the progress bar dot) ----
+// Step changes are TRIGGERED by scroll (not scrubbed), then play out on their own time, so a
+// mouse-wheel notch never leaves a half-finished change on screen. Everything below runs off a
+// "step position" value that animates 0 -> 1 -> 2 (step 1 -> 2 -> 3), and back when scrolling up.
+// Within each change: old text lifts out, then the panels slide right-to-left, then new text rises in.
+const CHANGE_A: [number, number] = [0.22, 0.78]; // the slide, in step-position units
+const CHANGE_B: [number, number] = [1.22, 1.78];
+const TEXT_OUT_1: [number, number] = [0, 0.3];
+const TEXT_IN_2: [number, number] = [0.68, 1];
+const TEXT_OUT_2: [number, number] = [1, 1.3];
+const TEXT_IN_3: [number, number] = [1.68, 2];
+const STEP_CHANGE_SECONDS = 1.3; // one full change (text out + slide + text in)
+// Scroll progress where each change is triggered (+/- a little hysteresis so it can't flicker)
+const STEP_TRIGGERS = [0.35, 0.60];
+const STEP_TRIGGER_HYSTERESIS = 0.01;
+
+// ---- Section exit: "bars -> line -> light" ----
+// The section is 0.6 viewport taller than before; that extra scroll is spent at the end, with the
+// view still held in place, on the exit. Progress is remapped so every earlier timing is unchanged
+// (0 -> 0.75 covers exactly the same scroll as before).
+const PROCESS_HEIGHT_VH = 3.6;
+const ORIGINAL_HEIGHT_VH = 3;
+const EXIT_START = 0.75; // where the view used to be released
+const LINE_START_SCALE = 0.003; // the white line's starting thickness, as a share of the screen height
+const EXIT_END = 0.75 + 0.25 * ((PROCESS_HEIGHT_VH - ORIGINAL_HEIGHT_VH) / (PROCESS_HEIGHT_VH + 1 - ORIGINAL_HEIGHT_VH));
+const easeInCubic = (t: number) => t * t * t;
+const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const changeT = (p: number, [from, to]: [number, number]) => clamp01((p - from) / (to - from));
+
+type StepPose = {
+  iconScale: number; iconRotate: number; iconOpacity: number; iconY: number;
+  titleY: number; titleOpacity: number; descY: number; descOpacity: number;
+};
+
+// Layered on top of the original sideways slides:
+// - outgoing step: icon spins away + shrinks + fades, title then description lift up and fade
+// - incoming step: icon spins in with a small overshoot, title then description rise into place
+//   (incoming fade/slide-in still comes from the original animation)
+function stepPose(p: number, enter: [number, number] | null, leave: [number, number] | null): StepPose {
+  const tin = enter ? changeT(p, enter) : 1;
+  const tout = leave ? changeT(p, leave) : 0;
+
+  const iconIn = clamp01(tin / 0.85);
+  const iconOut = easeInCubic(clamp01(tout / 0.7));
+  const titleIn = easeOutCubic(clamp01((tin - 0.1) / 0.8));
+  const titleOut = easeInCubic(clamp01(tout / 0.6));
+  const descIn = easeOutCubic(clamp01((tin - 0.25) / 0.75));
+  const descOut = easeInCubic(clamp01((tout - 0.08) / 0.6));
+
+  return {
+    iconScale: (0.7 + 0.3 * easeOutBack(iconIn)) * (1 - 0.4 * iconOut),
+    iconRotate: 90 * (1 - easeOutCubic(iconIn)) - 90 * iconOut,
+    iconOpacity: 1 - iconOut,
+    iconY: -30 * iconOut,
+    titleY: 60 * (1 - titleIn) - 60 * titleOut,
+    titleOpacity: 1 - titleOut,
+    descY: 50 * (1 - descIn) - 50 * descOut,
+    descOpacity: 1 - descOut,
+  };
+}
+
+// MotionValues for one step's pose (pass the result straight to the step component)
+function useStepPose(progress: MotionValue<number>, enter: [number, number] | null, leave: [number, number] | null) {
+  const pose = (key: keyof StepPose) => (p: number) => stepPose(p, enter, leave)[key];
+  return {
+    iconScale: useTransform(progress, pose('iconScale')),
+    iconRotate: useTransform(progress, pose('iconRotate')),
+    iconOpacity: useTransform(progress, pose('iconOpacity')),
+    iconY: useTransform(progress, pose('iconY')),
+    titleY: useTransform(progress, pose('titleY')),
+    titleOpacity: useTransform(progress, pose('titleOpacity')),
+    descY: useTransform(progress, pose('descY')),
+    descOpacity: useTransform(progress, pose('descOpacity')),
+  };
+}
 
 interface ProcessProps {
   onScrollProgress?: (progress: number) => void;
@@ -207,6 +329,7 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
   const viewportHeight = window.innerHeight / zoomFactor;
 
   const scrollYProgress = useMotionValue(0);
+  const lastParentBucketRef = useRef<number | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -214,10 +337,23 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
       const rect = containerRef.current.getBoundingClientRect();
       const total = rect.height + viewportHeight;
       const current = viewportHeight - rect.top;
-      const progress = total <= 0 ? 0 : Math.min(1, Math.max(0, current / total));
+      // Up to the old release point progress is exactly as before; the added exit scroll and the
+      // final scroll-away share the rest (see PROCESS_HEIGHT_VH)
+      const knee = ORIGINAL_HEIGHT_VH * viewportHeight;
+      const progress = total <= 0
+        ? 0
+        : current <= knee
+          ? Math.max(0, current / (knee + viewportHeight))
+          : Math.min(1, EXIT_START + (1 - EXIT_START) * ((current - knee) / (total - knee)));
       
       scrollYProgress.set(progress);
-      onScrollProgress?.(progress);
+      processProgress.set(progress);
+
+      const bucket = parentBucket(progress);
+      if (bucket !== lastParentBucketRef.current) {
+        lastParentBucketRef.current = bucket;
+        onScrollProgress?.(progress);
+      }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll);
@@ -301,88 +437,206 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
     return () => unsubscribe();
   }, [scrollYProgress]);
   
-  // Step 2 (now Step 1): "Understand your problem" - Visible immediately (0 - 0.40)
-  const step2SlideX = useTransform(scrollYProgress, 
-    [0, 0, 0.30, 0.40], 
-    ["0vw", "0vw", "0vw", "-100vw"]
-  );
-  
-  // Step 2: Icon and text are fully visible immediately
-  const step2IconSlideX = useTransform(scrollYProgress, [0, 0], [0, 0]);
-  const step2IconOpacity = useTransform(scrollYProgress, [0, 0.02], [1, 1]);
-  
-  const step2TextSlideX = useTransform(scrollYProgress, [0, 0], [0, 0]);
-  const step2TextOpacity = useTransform(scrollYProgress, [0, 0.02], [1, 1]);
-  
+  // Entry: icon pops (slight overshoot), ring draws, then title and description rise in
+  const entryIconScale = useTransform(scrollYProgress, (p) => 0.55 + 0.45 * phase(p, 0.10, 0.22, easeOutBack));
+  const entryIconY = useTransform(scrollYProgress, (p) => 60 * (1 - phase(p, 0.10, 0.22)));
+  const entryTitleY = useTransform(scrollYProgress, (p) => 70 * (1 - phase(p, 0.15, 0.25)));
+  const entryTitleOpacity = useTransform(scrollYProgress, (p) => phase(p, 0.15, 0.25));
+  const entryDescY = useTransform(scrollYProgress, (p) => 50 * (1 - phase(p, 0.18, 0.28)));
+  const entryDescOpacity = useTransform(scrollYProgress, (p) => phase(p, 0.18, 0.28));
+  // Only clips sideways (the left-to-right sweep). The wrapper has no height of its own, so the
+  // vertical inset must be large enough to keep the whole 104px bar row, including the 3 dots on top
+  const entryBarClip = useTransform(scrollYProgress, (p) => `inset(-200px ${(100 * (1 - phase(p, 0.16, 0.28))).toFixed(2)}% -200px -20px)`);
+
+  // Exit (view held in place): 1) "OUR PROCESS" then the step content sink toward the progress
+  // bar and fade, 2) the bars collapse into one thin white line drawn across the screen,
+  // 3) the line opens up into a full white screen, which hands over to the white Blogs section
+  const exitT = (p: number) => clamp01((p - EXIT_START) / (EXIT_END - EXIT_START));
+  const exitPhase = (p: number, from: number, to: number, ease = easeInOutCubic) => ease(clamp01((exitT(p) - from) / (to - from)));
+  const exitTitleY = useTransform(scrollYProgress, (p) => 160 * exitPhase(p, 0, 0.35));
+  const exitTitleOpacity = useTransform(scrollYProgress, (p) => 1 - exitPhase(p, 0, 0.3));
+  const exitContentY = useTransform(scrollYProgress, (p) => 140 * exitPhase(p, 0.08, 0.45));
+  const exitContentScale = useTransform(scrollYProgress, (p) => 1 - 0.12 * exitPhase(p, 0.08, 0.45));
+  const exitContentOpacity = useTransform(scrollYProgress, (p) => 1 - exitPhase(p, 0.12, 0.42));
+  const barScaleY = useTransform(scrollYProgress, (p) => (0.2 + 0.8 * phase(p, 0.18, 0.29)) * (1 - 0.94 * exitPhase(p, 0.3, 0.52)));
+  const barOpacity = useTransform(scrollYProgress, (p) => phase(p, 0.16, 0.22) * (1 - exitPhase(p, 0.5, 0.62)));
+  const lineScaleX = useTransform(scrollYProgress, (p) => exitPhase(p, 0.34, 0.6));
+  const lineScaleY = useTransform(scrollYProgress, (p) => {
+    const open = exitPhase(p, 0.58, 1);
+    return LINE_START_SCALE + (1 - LINE_START_SCALE) * open;
+  });
+  const lineOpacity = useTransform(scrollYProgress, (p) => (exitT(p) > 0.34 ? 1 : 0));
+
+  // Where the bars are on screen (the line starts there); measured, since the bar sits in a scaled wrapper
+  const stickyRef = useRef<HTMLDivElement>(null);
+  const barWrapRef = useRef<HTMLDivElement>(null);
+  const [lineOriginY, setLineOriginY] = useState(0.93);
+  useEffect(() => {
+    const measure = () => {
+      const sticky = stickyRef.current?.getBoundingClientRect();
+      const row = barWrapRef.current?.querySelector('div.h-\\[104px\\]') as HTMLElement | null;
+      if (!sticky || !row || sticky.height === 0) return;
+      const r = row.getBoundingClientRect();
+      // the short bars' middle
+      setLineOriginY(clamp01((r.top + r.height * 0.79 - sticky.top) / sticky.height));
+    };
+    measure();
+    const unsubscribe = scrollYProgress.on('change', (p) => {
+      if (p > EXIT_START - 0.05 && p < EXIT_START) measure();
+    });
+    window.addEventListener('resize', measure);
+    return () => {
+      unsubscribe();
+      window.removeEventListener('resize', measure);
+    };
+  }, [scrollYProgress]);
+
+  // Animated step position (see STEP_TRIGGERS): 0 = step 1, 1 = step 2, 2 = step 3
+  const stepPos = useMotionValue(0);
+  useEffect(() => {
+    const targetFor = (p: number, current: number) =>
+      STEP_TRIGGERS.reduce((n, t, i) => {
+        // above a trigger -> past that step; inside the hysteresis band keep the current side
+        if (p >= t + STEP_TRIGGER_HYSTERESIS) return i + 1;
+        if (p > t - STEP_TRIGGER_HYSTERESIS && current > i) return i + 1;
+        return n;
+      }, 0);
+    let target = targetFor(scrollYProgress.get(), 0);
+    stepPos.jump(target);
+    let anim: ReturnType<typeof animate> | null = null;
+
+    // Hold the page still while a change plays, so it always finishes before the section can
+    // scroll away (wheel input during the change is swallowed; scrolling resumes right after)
+    let lockToken = 0;
+    let locked = false;
+    const blockScroll = (e: Event) => {
+      if (e.cancelable) e.preventDefault();
+    };
+    const lock = () => {
+      if (locked) return;
+      locked = true;
+      window.dispatchEvent(new CustomEvent('lenisStop')); // also halts any smooth-scroll still in motion
+      window.addEventListener('wheel', blockScroll, { passive: false });
+      window.addEventListener('touchmove', blockScroll, { passive: false });
+    };
+    // Only hold the page for the user's own scrolling (wheel / touch / keys) - never for an
+    // automatic scroll such as a menu click jumping past this section
+    let lastUserInput = -Infinity;
+    const markUserInput = () => {
+      lastUserInput = performance.now();
+    };
+    window.addEventListener('wheel', markUserInput, { passive: true });
+    window.addEventListener('touchmove', markUserInput, { passive: true });
+    window.addEventListener('keydown', markUserInput);
+    const unlock = () => {
+      if (!locked) return;
+      locked = false;
+      window.removeEventListener('wheel', blockScroll);
+      window.removeEventListener('touchmove', blockScroll);
+      window.dispatchEvent(new CustomEvent('lenisStart'));
+    };
+
+    const unsubscribe = scrollYProgress.on('change', (p) => {
+      const next = targetFor(p, target);
+      if (next === target) return;
+      target = next;
+      anim?.stop();
+      const token = ++lockToken;
+      if (performance.now() - lastUserInput < 400) lock();
+      const distance = Math.abs(next - stepPos.get());
+      // linear here: each phase inside the change applies its own easing
+      anim = animate(stepPos, next, { duration: STEP_CHANGE_SECONDS * Math.pow(distance, 0.7), ease: 'linear' });
+      anim.then(() => {
+        if (token === lockToken) unlock();
+      });
+    });
+    return () => {
+      unsubscribe();
+      anim?.stop();
+      unlock();
+      window.removeEventListener('wheel', markUserInput);
+      window.removeEventListener('touchmove', markUserInput);
+      window.removeEventListener('keydown', markUserInput);
+    };
+  }, [scrollYProgress, stepPos]);
+
+  // Original right-to-left slide, now driven by the step position
+  const slideA = (s: number) => easeInOutCubic(changeT(s, CHANGE_A));
+  const slideB = (s: number) => easeInOutCubic(changeT(s, CHANGE_B));
+  const step2SlideX = useTransform(stepPos, (s) => `${-100 * slideA(s)}vw`);
+  const step3SlideX = useTransform(stepPos, (s) => `${100 * (1 - slideA(s)) - 100 * slideB(s)}vw`);
+  const step4SlideX = useTransform(stepPos, (s) => `${100 * (1 - slideB(s))}vw`);
+  const step3IconSlideX = useTransform(stepPos, (s) => 300 * (1 - slideA(s)));
+  const step3TextSlideX = useTransform(stepPos, (s) => 200 * (1 - slideA(s)));
+  const step4IconSlideX = useTransform(stepPos, (s) => 300 * (1 - slideB(s)));
+  const step4TextSlideX = useTransform(stepPos, (s) => 200 * (1 - slideB(s)));
+  const step3IconScale = useTransform(stepPos, (s) => 0.8 + 0.2 * clamp01(slideA(s) / 0.7));
+  const step3IconOpacity = useTransform(stepPos, (s) => clamp01(slideA(s) / 0.7));
+  const step3TextOpacity = useTransform(stepPos, (s) => slideA(s));
+  const step4IconScale = useTransform(stepPos, (s) => 0.8 + 0.2 * clamp01(slideB(s) / 0.7));
+  const step4IconOpacity = useTransform(stepPos, (s) => clamp01(slideB(s) / 0.7));
+  const step4TextOpacity = useTransform(stepPos, (s) => slideB(s));
+
+  // Icon spin on top of the slide
+  const pose1 = useStepPose(stepPos, null, CHANGE_A);
+  const pose2 = useStepPose(stepPos, CHANGE_A, CHANGE_B);
+  const pose3 = useStepPose(stepPos, CHANGE_B, null);
+
+  // Progress bar follows the same animation: dot travels while the panels slide
+  const barDriver = useTransform([scrollYProgress, stepPos], ([p, s]: number[]) => {
+    if (s <= 0.001) return Math.min(p, 0.2999);
+    if (s < 0.999) return 0.30 + 0.10 * slideA(s);
+    if (s <= 1.001) return 0.47;
+    if (s < 1.999) return 0.55 + 0.10 * slideB(s);
+    return Math.max(0.651, p);
+  });
+
+  const mul = ([a, b]: number[]) => a * b;
+  const step2IconScale = useTransform([step3IconScale, pose2.iconScale], mul);
+  const step2IconOpacity = useTransform([step3IconOpacity, pose2.iconOpacity], mul);
+  const step3IconScaleAll = useTransform([step4IconScale, pose3.iconScale], mul);
+  const step1IconScale = useTransform([entryIconScale, pose1.iconScale], ([a, b]: number[]) => a * b);
+  const step1IconY = useTransform([entryIconY, pose1.iconY], ([a, b]: number[]) => a + b);
+
   // Step 2: Progress bar animations - only bar 0 animates (0 - 30%)
   const totalBars = 29;
   const step2BarOpacities = Array.from({ length: totalBars }, (_, i) => {
     if (i === 0) {
       // Bar 0 animates from dim to bright during Step 2
-      return useTransform(scrollYProgress, [0.08, 0.18], [0, 1]);
+      return useTransform(barDriver, [0.08, 0.18], [0, 1]);
     }
     // All other bars don't animate in this step
-    return useTransform(scrollYProgress, [0, 1], [0, 0]);
+    return useTransform(barDriver, [0, 1], [0, 0]);
   });
-  
-  // Step 3: Icon animations (relative to step container)
-  const step3IconSlideX = useTransform(scrollYProgress, [0.30, 0.40], [300, 0]);
-  const step3IconScale = useTransform(scrollYProgress, [0.30, 0.37], [0.8, 1]);
-  const step3IconOpacity = useTransform(scrollYProgress, [0.30, 0.37], [0, 1]);
-  
-  // Step 3: Text animations (relative to step container)
-  const step3TextSlideX = useTransform(scrollYProgress, [0.31, 0.40], [200, 0]);
-  const step3TextOpacity = useTransform(scrollYProgress, [0.31, 0.40], [0, 1]);
-  
-  // Step 3 (previously Step 3): Slides from left (-100vw) to center (0), then to left (-100vw)
-  const step3SlideX = useTransform(scrollYProgress, 
-    [0.30, 0.40, 0.55, 0.65], 
-    ["100vw", "0vw", "0vw", "-100vw"]
-  );
   
   // Step 3: Progress bar animations - bars 1-14 animate during dot movement (30-40%)
   const step3BarOpacities = Array.from({ length: totalBars }, (_, i) => {
     if (i === 0) {
       // Bar 0 is already bright, stays bright
-      return useTransform(scrollYProgress, [0, 1], [1, 1]);
+      return useTransform(barDriver, [0, 1], [1, 1]);
     }
     if (i >= 1 && i <= 14) {
       // Bars 1-14 animate during dot movement from bar 0 to bar 14 (30% - 40%)
       const barProgress = (i - 1) / 13; // 0 to 1 for bars 1-14 (13 intervals)
       const startProgress = 0.30 + (barProgress * (0.40 - 0.30));
       const endProgress = Math.min(startProgress + 0.015, 0.40);
-      return useTransform(scrollYProgress, [startProgress, endProgress], [0, 1]);
+      return useTransform(barDriver, [startProgress, endProgress], [0, 1]);
     }
     // Bars 15-28 don't animate in this step
-    return useTransform(scrollYProgress, [0, 1], [0, 0]);
+    return useTransform(barDriver, [0, 1], [0, 0]);
   });
-  
-  // Step 4 (previously Step 4): Slides from right (100vw) to center (0) and stays there
-  const step4SlideX = useTransform(scrollYProgress, 
-    [0.55, 0.65, 1.0], 
-    ["100vw", "0vw", "0vw"]
-  );
-  
-  // Step 4: Icon animations (relative to step container)
-  const step4IconSlideX = useTransform(scrollYProgress, [0.55, 0.65], [300, 0]);
-  const step4IconScale = useTransform(scrollYProgress, [0.55, 0.62], [0.8, 1]);
-  const step4IconOpacity = useTransform(scrollYProgress, [0.55, 0.62], [0, 1]);
-  
-  // Step 4: Text animations (relative to step container)
-  const step4TextSlideX = useTransform(scrollYProgress, [0.56, 0.65], [200, 0]);
-  const step4TextOpacity = useTransform(scrollYProgress, [0.56, 0.65], [0, 1]);
   
   // Step 4: Progress bar animations - bars 15-28 animate during dot movement (55-65%)
   const step4BarOpacities = Array.from({ length: totalBars }, (_, i) => {
     if (i <= 14) {
       // Bars 0-14 are already bright, stay bright
-      return useTransform(scrollYProgress, [0, 1], [1, 1]);
+      return useTransform(barDriver, [0, 1], [1, 1]);
     }
     // Bars 15-28 animate during dot movement from bar 14 to bar 28 (55% - 65%)
     const barProgress = (i - 14) / 14; // 0 to 1 (bar 15 = 0, bar 28 = 1)
     const startProgress = 0.55 + (barProgress * (0.65 - 0.55));
     const endProgress = Math.min(startProgress + 0.015, 0.65);
-    return useTransform(scrollYProgress, [startProgress, endProgress], [0, 1]);
+    return useTransform(barDriver, [startProgress, endProgress], [0, 1]);
   });
 
   return (
@@ -391,7 +645,7 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
       className="relative w-full bg-[#2c4657] md:cursor-none"
       style={{
         marginTop: `${viewportHeight * 0.5}px`,
-        height: `${viewportHeight * 3}px`,
+        height: `${viewportHeight * PROCESS_HEIGHT_VH}px`,
         zIndex
       } as React.CSSProperties}
     >
@@ -419,6 +673,7 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
 
       {/* Sticky container for all content AND progress bar */}
       <div 
+        ref={stickyRef}
         className="sticky top-0 w-full" 
         style={{ 
           height: `${viewportHeight}px`,
@@ -432,8 +687,9 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
         
         {/* Scaled content wrapper - Desktop only */}
         <div className="absolute inset-0 md:scale-[0.85] md:origin-center" style={{ transform: `translateY(${viewportHeight * 0.05}px)` }}>
-          {/* "OUR PROCESS" Title - Desktop Only */}
+          {/* "OUR PROCESS" Title - Desktop Only (letters assemble on entry, sink away on exit) */}
           <div className="hidden md:block absolute top-[-50px] left-1/2 -translate-x-1/2 pointer-events-none z-[5]">
+            <motion.div style={{ y: exitTitleY, opacity: exitTitleOpacity }}>
             <p 
               className="font-['Lato',sans-serif] text-white uppercase text-center text-nowrap"
               style={{
@@ -442,71 +698,110 @@ export default function Process({ onScrollProgress, onReady }: ProcessProps) {
                 fontWeight: 400,
                 lineHeight: 'normal'
               }}
+              aria-label={TITLE_TEXT}
             >
-              OUR PROCESS
+              {TITLE_TEXT.split('').map((char, i) => (
+                <TitleLetter key={i} char={char} index={i} count={TITLE_TEXT.length} progress={scrollYProgress} />
+              ))}
             </p>
+            </motion.div>
           </div>
           
-          {/* SLIDER CONTAINER - Separate container for sliding content */}
-          <div className="absolute inset-0 overflow-hidden">
+          {/* SLIDER CONTAINER - Separate container for sliding content (sinks + fades on exit) */}
+          <motion.div
+            className="absolute inset-0 overflow-hidden"
+            style={{ y: exitContentY, scale: exitContentScale, opacity: exitContentOpacity, transformOrigin: '50% 100%' }}
+          >
             {/* Content wrapper - no more slide animation needed */}
             <div className="absolute inset-0 w-full h-full">
-              {/* Horizontal Slider Container for Steps 2, 3, 4 */}
+              {/* Horizontal Slider Container for Steps (original right-to-left slide) */}
               <div className="absolute inset-0">
-                {/* Step 2: "Understand your problem" - Starts visible immediately */}
+                {/* Step 1: "Understanding You" - visible immediately, slides out left */}
                 <motion.div
                   className="absolute inset-0"
                   style={{ x: step2SlideX }}
                 >
-                  <Process1stStep 
-                    iconSlideX={step2IconSlideX}
-                    iconOpacity={step2IconOpacity}
-                    textSlideX={step2TextSlideX}
-                    textOpacity={step2TextOpacity}
+                  <Process1stStep
+                    iconScale={step1IconScale}
+                    iconY={step1IconY}
+                    iconRotate={pose1.iconRotate}
+                    iconOpacity={pose1.iconOpacity}
+                    titleY={entryTitleY}
+                    titleOpacity={entryTitleOpacity}
+                    descY={entryDescY}
+                    descOpacity={entryDescOpacity}
+                    titleContent={<RevealText text="1. Understanding You" progress={stepPos} leave={TEXT_OUT_1} />}
+                    descContent={<RevealText text={"We take time to understand your needs, goals, and aspirations-so every\nrecommendation starts with you, not a product."} progress={stepPos} leave={TEXT_OUT_1} />}
                   />
                 </motion.div>
 
-                {/* Step 3: Research for best solution */}
+                {/* Step 2: Tailored Solutions - slides in from right, then out left */}
                 <motion.div
                   className="absolute inset-0"
                   style={{ x: step3SlideX }}
                 >
-                  <Process2ndStep 
+                  <Process2ndStep
                     iconSlideX={step3IconSlideX}
-                    iconScale={step3IconScale}
-                    iconOpacity={step3IconOpacity}
+                    iconScale={step2IconScale}
+                    iconOpacity={step2IconOpacity}
+                    iconRotate={pose2.iconRotate}
+                    iconY={pose2.iconY}
                     textSlideX={step3TextSlideX}
                     textOpacity={step3TextOpacity}
+                    titleContent={<RevealText text="2. Tailored Solutions" progress={stepPos} enter={TEXT_IN_2} leave={TEXT_OUT_2} />}
+                    descContent={<RevealText text={"We search the market to find mortgage and protection options matched\nto you-because every client matters."} progress={stepPos} enter={TEXT_IN_2} leave={TEXT_OUT_2} />}
                   />
                 </motion.div>
 
-                {/* Step 4: Taking your stress away - Final step */}
+                {/* Step 3: Ongoing Support - slides in from right and stays */}
                 <motion.div
                   className="absolute inset-0"
                   style={{ x: step4SlideX }}
                 >
-                  <Process3rdStep 
+                  <Process3rdStep
                     iconSlideX={step4IconSlideX}
-                    iconScale={step4IconScale}
+                    iconScale={step3IconScaleAll}
                     iconOpacity={step4IconOpacity}
+                    iconRotate={pose3.iconRotate}
+                    iconY={pose3.iconY}
                     textSlideX={step4TextSlideX}
                     textOpacity={step4TextOpacity}
+                    titleContent={<RevealText text="3. Ongoing Support" progress={stepPos} enter={TEXT_IN_3} />}
+                    descContent={<RevealText text={"One fee for expert advice, meaning continued support and free\nremortgage advice when the time is right."} progress={stepPos} enter={TEXT_IN_3} />}
                   />
                 </motion.div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* PROGRESS BAR CONTAINER - Completely separate, no overflow clipping, no transforms */}
-          <div className="absolute bottom-0 left-0 right-0 pointer-events-none z-10 md:mb-[-25px]">
+          {/* On entry it sweeps in from left to right while the bars grow up */}
+          {/* On exit the bars collapse flat into the white line */}
+          <motion.div
+            ref={barWrapRef}
+            className="absolute bottom-0 left-0 right-0 pointer-events-none z-10 md:mb-[-25px]"
+            style={{ clipPath: entryBarClip, scaleY: barScaleY, opacity: barOpacity, transformOrigin: '50% 82%' }}
+          >
             <BottomProgressBar 
               step2BarOpacities={step2BarOpacities}
               step3BarOpacities={step3BarOpacities}
               step4BarOpacities={step4BarOpacities}
-              currentStep={scrollYProgress}
+              currentStep={barDriver}
             />
-          </div>
+          </motion.div>
         </div>
+
+        {/* Exit: thin white line drawn across the bars, which then opens up to fill the screen */}
+        <motion.div
+          className="absolute inset-0 bg-white pointer-events-none z-20"
+          style={{
+            scaleX: lineScaleX,
+            scaleY: lineScaleY,
+            opacity: lineOpacity,
+            transformOrigin: `50% ${(lineOriginY * 100).toFixed(2)}%`,
+            boxShadow: '0 0 24px rgba(255,255,255,0.6)',
+          }}
+        />
       </div>
     </div>
   );

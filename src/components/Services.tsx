@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence, type MotionValue } from 'motion/react';
 import imgVector3 from "figma:asset/5aa702b67fe4226d00799fb3446a7e9a9a904d28.png";
 import { AnimatedDoubtButton } from './AnimatedDoubtButton';
 import type { Service } from '../utils/servicesApi';
@@ -8,7 +8,7 @@ function ServicesScrollDownHint({ visible }: { visible: boolean }) {
   return (
     <motion.button
       type="button"
-      className="services-desktop-scroll-hint hidden md:flex flex-col items-center gap-1 rounded-full bg-white/95 px-4 py-2 text-center text-[#2C4657] shadow-[0_20px_40px_rgba(0,0,0,0.12)] backdrop-blur-sm"
+      className="services-desktop-scroll-hint hidden md:flex flex-col items-center gap-1 rounded-full bg-white/95 px-4 py-2 text-center text-[#2C4657] shadow-[0_20px_40px_rgba(0,0,0,0.12)]"
       style={{ position: 'fixed', left: 0, right: 0, bottom: 48, margin: '0 auto', zIndex: 10001, width: 'max-content' }}
       initial={{ opacity: 0, y: 16 }}
       animate={visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
@@ -40,11 +40,17 @@ function ServicesScrollDownHint({ visible }: { visible: boolean }) {
 export function Services({
   scrollProgress,
   services,
-  reviewsScrollProgress
+  reviewsScrollProgress,
+  revealScale,
+  revealContentOpacity
 }: {
   scrollProgress: number;
   services: Service[];
   reviewsScrollProgress?: number;
+  // Driven by the SERVICES zoom: content settles from slightly zoomed-in to normal
+  revealScale?: MotionValue<number>;
+  // Driven by the SERVICES zoom: cards and titles fade in as the letters open up
+  revealContentOpacity?: MotionValue<number>;
 }) {
   const [currentServiceIndex, setCurrentServiceIndex] = useState(0);
   const [detailCardIndex, setDetailCardIndex] = useState(0);
@@ -54,7 +60,14 @@ export function Services({
   const activeCategoryRef = useRef<HTMLDivElement>(null);
   const [activeCategoryWidth, setActiveCategoryWidth] = useState(0);
   const isScrollingRef = useRef(false);
-  const cardStackRef = useRef<HTMLDivElement>(null);
+  const scrollProgressRef = useRef(scrollProgress);
+  scrollProgressRef.current = scrollProgress;
+  const cardStackRef = useRef<HTMLDivElement | null>(null);
+  const [cardStackEl, setCardStackEl] = useState<HTMLDivElement | null>(null);
+  const setCardStackRef = useCallback((el: HTMLDivElement | null) => {
+    cardStackRef.current = el;
+    setCardStackEl(el);
+  }, []);
   // Refs to hold live state for the stable wheel listener
   const detailCardIndexRef = useRef(0);
   const currentServiceRef = useRef(services[0]);
@@ -109,7 +122,9 @@ export function Services({
   // Visibility and positioning based on scroll progress
   // Start fading in during mask zoom (0.55) so content is visible through the cutout immediately
   const servicesSectionOpacity = (() => {
-    if (scrollProgress < 0.55) return 0;
+    // 0.001 (not 0) while pre-mounted: invisible, but the browser still paints/decodes it ahead
+    // of the zoom, so the first reveal frame doesn't stall
+    if (scrollProgress < 0.55) return 0.001;
     if (scrollProgress < 0.56) {
       // Very quick fade in from 0.55 to 0.56 to match solid text fade out
       const progress = (scrollProgress - 0.55) / 0.01;
@@ -154,19 +169,30 @@ export function Services({
   };
 
 
-  // Stable wheel listener - reads live state via refs, never needs to be re-registered
+  // Wheel listener - reads live state via refs. Attached when the card stack mounts
+  // (it renders later than this component, so a mount-only effect would miss it).
   useEffect(() => {
-    const stack = cardStackRef.current;
+    const stack = cardStackEl;
     if (!stack) return;
 
     const onWheel = (e: WheelEvent) => {
-      // Always prevent page scroll when mouse is over the card stack
-      e.preventDefault();
-
-      if (isScrollingRef.current) return;
+      // Before the section is fully revealed (during the SERVICES zoom), the wheel only scrolls the page
+      if (e.deltaY === 0 || scrollProgressRef.current < 0.69) return;
 
       const idx = detailCardIndexRef.current;
       const svc = currentServiceRef.current;
+      const atEnd = e.deltaY > 0 && idx >= svc.detailCards.length - 1;
+      const atStart = e.deltaY < 0 && idx <= 0;
+
+      // Past the first/last card: let the page (Lenis) keep scrolling.
+      // While a card is still animating, keep blocking so trackpad momentum doesn't jump the page.
+      if ((atEnd || atStart) && !isScrollingRef.current) return;
+
+      // Otherwise the wheel flips cards and must not scroll the page
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (isScrollingRef.current) return;
 
       if (Math.abs(e.deltaY) > 20) {
         if (e.deltaY > 0) {
@@ -192,9 +218,8 @@ export function Services({
     };
 
     stack.addEventListener('wheel', onWheel, { passive: false });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     return () => stack.removeEventListener('wheel', onWheel);
-  }, []); // Empty deps: listener is set up once and reads state via refs
+  }, [cardStackEl]);
 
   const currentCard = currentService.detailCards[detailCardIndex];
 
@@ -302,18 +327,26 @@ export function Services({
 
   const showDesktopScrollHint = !isMobileView && scrollProgress >= 0.50 && scrollProgress < 0.69;
 
-  if (scrollProgress < 0.55) {
-    if (showDesktopScrollHint) {
-      return <ServicesScrollDownHint visible />;
-    }
+  if (scrollProgress < 0.40) {
     return null;
   }
 
+  // 0.40–0.55: mounted but invisible, so the cards/images are ready before the SERVICES zoom
+  // reveals them (mounting at 0.55 caused a visible freeze at the start of the zoom)
+  const isPreMount = scrollProgress < 0.55;
+  // Only keep a GPU layer while the zoom is running, so text is crisp once it settles
+  const isZooming = scrollProgress >= 0.50 && scrollProgress < 0.69;
+  const contentOpacity = scrollProgress < 0.69 && revealContentOpacity ? revealContentOpacity : 1;
+
   return (
+    <>
+    {isPreMount && showDesktopScrollHint && <ServicesScrollDownHint visible />}
     <motion.div
       ref={containerRef}
       className={`absolute inset-0 z-20 bg-[#2c4657] pointer-events-auto overflow-hidden ${isModerateZoomedOut ? 'services-moderate-zoom-out' : ''} ${isExtremeZoomedOut ? 'services-extreme-zoom-out' : ''}`}
       style={{
+        scale: scrollProgress < 0.69 ? revealScale : 1,
+        willChange: isZooming ? 'transform' : undefined,
         opacity: servicesSectionOpacity,
         pointerEvents: servicesSectionPointerEvents,
         // Only start sliding up after mask animation completes (scrollProgress >= 0.9) on DESKTOP
@@ -352,7 +385,7 @@ export function Services({
       </div>
 
       {/* Category Carousel - Desktop Only */}
-      <div className="services-desktop-category-bar hidden md:block absolute left-0 top-[50px] z-50 w-full px-8">
+      <motion.div style={{ opacity: contentOpacity }} className="services-desktop-category-bar hidden md:block absolute left-0 top-[50px] z-50 w-full px-8">
         <div className="relative flex items-center justify-center w-full max-w-[1600px] mx-auto h-[60px] gap-[64px]">
           {/* Left - Previous Category Name */}
           <div className="flex-1 flex justify-end items-center h-full">
@@ -384,38 +417,15 @@ export function Services({
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Card Stack - Desktop Only */}
-      <div
-        ref={cardStackRef}
-        data-scroll-lock
-        data-lenis-prevent
+      <motion.div
+        ref={setCardStackRef}
         className="services-desktop-card-stack hidden md:block absolute left-1/2 top-1/2 z-10"
         style={{
-          transform: 'translate(-50%, -50%) scale(' + scale + ')'
-        }}
-        onMouseEnter={() => window.dispatchEvent(new Event('lenisStop'))}
-        onMouseLeave={() => window.dispatchEvent(new Event('lenisStart'))}
-        onWheel={(e) => {
-          if (isScrollingRef.current) return;
-          const idx = detailCardIndexRef.current;
-          const svc = currentServiceRef.current;
-          if (Math.abs(e.deltaY) > 20) {
-            if (e.deltaY > 0 && idx < svc.detailCards.length - 1) {
-              setDirection('left');
-              setDetailCardIndex(prev => prev + 1);
-              setNavigationSource('card');
-              isScrollingRef.current = true;
-              setTimeout(() => { isScrollingRef.current = false; }, 800);
-            } else if (e.deltaY < 0 && idx > 0) {
-              setDirection('right');
-              setDetailCardIndex(prev => prev - 1);
-              setNavigationSource('card');
-              isScrollingRef.current = true;
-              setTimeout(() => { isScrollingRef.current = false; }, 800);
-            }
-          }
+          transform: 'translate(-50%, -50%) scale(' + scale + ')',
+          opacity: contentOpacity
         }}
       >
         {/* Back Card (furthest back, center-bottom) */}
@@ -876,7 +886,7 @@ export function Services({
             </motion.div>
           </AnimatePresence>
         )}
-      </div>
+      </motion.div>
 
       {/* Bottom Navigation - Card Counter and Arrows - Desktop Only */}
       {/* <div className="hidden md:flex absolute content-stretch gap-[32px] items-center left-1/2 -translate-x-1/2 bottom-[15px]">
@@ -1004,7 +1014,8 @@ export function Services({
         </div>
       </div>
 
-      {showDesktopScrollHint && <ServicesScrollDownHint visible />}
+      {!isPreMount && showDesktopScrollHint && <ServicesScrollDownHint visible />}
     </motion.div>
+    </>
   );
 }

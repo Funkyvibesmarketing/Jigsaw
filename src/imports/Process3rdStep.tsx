@@ -1,3 +1,4 @@
+import type React from "react";
 import svgPaths from "./svg-k4gs4aeqfc";
 import imgVector from "figma:asset/29d00c96d16b578c0374f784d6e51ab7656ee486.png";
 import { motion, MotionValue } from "motion/react";
@@ -37,14 +38,11 @@ interface Frame13Props {
   iconOpacity?: MotionValue<number>;
 }
 
-function Frame13({ iconSlideX, iconScale, iconOpacity }: Frame13Props) {
+function Frame13() {
   return (
-    <motion.div
-      className="absolute bg-[rgba(255,255,255,0.1)] box-border content-stretch flex gap-[4.313px] items-center left-1/2 -translate-x-1/2 p-[39.892px] rounded-[100px] size-[200px] top-[150px]"
-      style={{ x: iconSlideX, scale: iconScale, opacity: iconOpacity }}
-    >
+    <div className="absolute bg-[rgba(255,255,255,0.1)] box-border content-stretch flex gap-[4.313px] items-center left-1/2 -translate-x-1/2 p-[39.892px] rounded-[100px] size-[200px] top-[150px]">
       <Frame12 />
-    </motion.div>
+    </div>
   );
 }
 
@@ -167,6 +165,16 @@ interface Process3rdStepProps {
   iconOpacity?: MotionValue<number>;
   textSlideX?: MotionValue<number>;
   textOpacity?: MotionValue<number>;
+  // Step-change animation (all optional)
+  iconRotate?: MotionValue<number>;
+  iconY?: MotionValue<number>;
+  titleY?: MotionValue<number>;
+  titleOpacity?: MotionValue<number>;
+  descY?: MotionValue<number>;
+  descOpacity?: MotionValue<number>;
+  // Optional animated replacements for the title / description text (same <p> styling)
+  titleContent?: React.ReactNode;
+  descContent?: React.ReactNode;
   barOpacities?: MotionValue<number>[];
 }
 
@@ -176,25 +184,37 @@ export default function Process3rdStep({
   iconOpacity,
   textSlideX,
   textOpacity,
-  barOpacities
+  iconRotate,
+  iconY,
+  titleY,
+  titleOpacity,
+  descY,
+  descOpacity,
+  titleContent,
+  descContent
 }: Process3rdStepProps) {
   return (
     <div className="bg-[#2c4657] relative size-full" data-name="Process (3rd step)">
-      {/* Removed Frame6, Frame1, and keep scrolling text - using centralized navigation instead */}
+      {/* Center icon - transforms on a wrapper, around the 200px circle's centre */}
+      <motion.div
+        className="absolute inset-0"
+        style={{ x: iconSlideX, y: iconY, scale: iconScale, rotate: iconRotate, opacity: iconOpacity, transformOrigin: '50% 250px' }}
+      >
+        <Frame13 />
+      </motion.div>
 
-      {/* Center icon with animation - using Step 3 layout */}
-      <Frame13 iconSlideX={iconSlideX} iconScale={iconScale} iconOpacity={iconOpacity} />
-
-      {/* Text content with slide in from right animation - using Step 3 layout */}
+      {/* Text content */}
       <motion.div
         className="absolute inset-0"
         style={{ x: textSlideX, opacity: textOpacity }}
       >
-        <p className="absolute font-['Lato:SemiBold',sans-serif] leading-[normal] left-1/2 -translate-x-1/2 not-italic text-[56px] text-center text-white top-[440px] whitespace-pre">3. Ongoing Support</p>
-        <p className="absolute font-['Lato:Light',sans-serif] leading-[32px] left-1/2 not-italic opacity-70 text-[24px] text-center text-white top-[530px] translate-x-[-50%] whitespace-pre">One fee for expert advice, meaning continued support and free <br />remortgage advice when the time is right.</p>
+        <motion.div className="absolute inset-0" style={{ y: titleY, opacity: titleOpacity }}>
+          <p className="absolute font-['Lato:SemiBold',sans-serif] leading-[normal] left-1/2 -translate-x-1/2 not-italic text-[56px] text-center text-white top-[440px] whitespace-pre">{titleContent ?? "3. Ongoing Support"}</p>
+        </motion.div>
+        <motion.div className="absolute inset-0" style={{ y: descY, opacity: descOpacity }}>
+          <p className="absolute font-['Lato:Light',sans-serif] leading-[32px] left-1/2 not-italic opacity-70 text-[24px] text-center text-white top-[530px] translate-x-[-50%] whitespace-pre">{descContent ?? (<>One fee for expert advice, meaning continued support and free <br />remortgage advice when the time is right.</>)}</p>
+        </motion.div>
       </motion.div>
-
-      {/* Progress bar removed - now handled centrally in Process.tsx */}
     </div>
   );
 }

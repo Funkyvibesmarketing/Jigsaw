@@ -1,3 +1,4 @@
+import type React from "react";
 import svgPaths from "./svg-gfu6b0tm98";
 import imgVector from "figma:asset/29d00c96d16b578c0374f784d6e51ab7656ee486.png";
 import { motion, MotionValue } from "motion/react";
@@ -372,6 +373,17 @@ interface Process1stStepProps {
   iconOpacity?: MotionValue<number>;
   textSlideX?: MotionValue<number>;
   textOpacity?: MotionValue<number>;
+  // Section entry / step change (all optional): icon pop + spin, title + description rise
+  iconScale?: MotionValue<number>;
+  iconY?: MotionValue<number>;
+  iconRotate?: MotionValue<number>;
+  titleY?: MotionValue<number>;
+  titleOpacity?: MotionValue<number>;
+  descY?: MotionValue<number>;
+  descOpacity?: MotionValue<number>;
+  // Optional animated replacements for the title / description text (same <p> styling)
+  titleContent?: React.ReactNode;
+  descContent?: React.ReactNode;
   barOpacities?: MotionValue<number>[];
 }
 
@@ -380,7 +392,16 @@ export default function Process1stStep({
   iconOpacity,
   textSlideX,
   textOpacity,
-  barOpacities
+  barOpacities,
+  iconScale,
+  iconY,
+  iconRotate,
+  titleY,
+  titleOpacity,
+  descY,
+  descOpacity,
+  titleContent,
+  descContent
 }: Process1stStepProps) {
   return (
     <div className="bg-[#2c4657] relative size-full" data-name="Process (1st step)">
@@ -390,15 +411,26 @@ export default function Process1stStep({
       <motion.div
         style={{ x: iconSlideX, opacity: iconOpacity }}
       >
-        <Frame13 />
+        {/* Pops in around its own centre (the 200px circle at top 150) */}
+        <motion.div
+          className="absolute inset-0"
+          style={{ scale: iconScale, y: iconY, rotate: iconRotate, transformOrigin: '50% 250px' }}
+        >
+          <Frame13 />
+        </motion.div>
+
       </motion.div>
 
       {/* Text content with slide in from right animation */}
       <motion.div
         style={{ x: textSlideX, opacity: textOpacity }}
       >
-        <p className="absolute font-['Lato:SemiBold',sans-serif] leading-[normal] left-1/2 -translate-x-1/2 not-italic text-[56px] text-center text-white top-[440px] whitespace-pre">1. Understanding You</p>
-        <p className="absolute font-['Lato:Light',sans-serif] leading-[32px] left-1/2 not-italic opacity-70 text-[24px] text-center text-white top-[530px] translate-x-[-50%] whitespace-pre">We take time to understand your needs, goals, and aspirations-so every <br />recommendation starts with you, not a product.</p>
+        <motion.div className="absolute inset-0" style={{ y: titleY, opacity: titleOpacity }}>
+          <p className="absolute font-['Lato:SemiBold',sans-serif] leading-[normal] left-1/2 -translate-x-1/2 not-italic text-[56px] text-center text-white top-[440px] whitespace-pre">{titleContent ?? "1. Understanding You"}</p>
+        </motion.div>
+        <motion.div className="absolute inset-0" style={{ y: descY, opacity: descOpacity }}>
+          <p className="absolute font-['Lato:Light',sans-serif] leading-[32px] left-1/2 not-italic opacity-70 text-[24px] text-center text-white top-[530px] translate-x-[-50%] whitespace-pre">{descContent ?? (<>We take time to understand your needs, goals, and aspirations-so every <br />recommendation starts with you, not a product.</>)}</p>
+        </motion.div>
       </motion.div>
 
       {/* Progress bar removed - now handled centrally in Process.tsx */}

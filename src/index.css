@@ -4929,6 +4929,28 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Lenis smooth scroll (desktop only; classes are added by Lenis) */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+/* Lenis moves the page a little every frame; the native smooth scroll above would animate each
+   of those small moves again and make scrolling feel laggy/jumpy, so turn it off while Lenis runs */
+html.lenis {
+  scroll-behavior: auto !important;
+}
+
+.lenis [data-lenis-prevent],
+.lenis [data-lenis-prevent-wheel],
+.lenis [data-lenis-prevent-touch] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
 .font-lato-light {
   font-family: Lato, sans-serif;
   font-weight: 300;

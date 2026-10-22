@@ -1,9 +1,10 @@
-import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
-import { useRef, useEffect, useState } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence, motionValue } from 'motion/react';
+import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import svgPaths from '../imports/svg-n75w9nmva4';
 import svgPathsLinkedIn from '../imports/svg-cxhurimysf'; // Import LinkedIn SVG paths
 import imgVector from "figma:asset/29d00c96d16b578c0374f784d6e51ab7656ee486.png";
 import type { TeamMember } from '../utils/teamApi';
+import { reviewsProgress, processProgress } from '../utils/progressStore';
 import imgTeamPreview from "figma:asset/8ff86b859ea6e1213d92ee504583e0bce2dc86d5.png";
 
 // LinkedIn Icon Component
@@ -65,6 +66,55 @@ function LinkedInButton({ linkedinUrl }: { linkedinUrl: string }) {
   );
 }
 
+// ---- TEAM mask animation (driven by Reviews scroll progress 0.82 → 1) ----
+const TEAM_MASK_START = 0.82;
+const TEAM_SLIDE_END = 0.885; // eased slide in from the right
+const TEAM_ZOOM_START = 0.91; // short hold so "TEAM" can be read
+const TEAM_FONT_SIZE = 464;
+const TEAM_LETTER_SPACING = 96;
+const TEAM_MAX_SCALE = 40;
+// Zoom focal point relative to the text centre: middle of the "E" stem (measured with Lato Bold)
+const TEAM_FOCUS = { x: -404, y: -50 };
+// Half the inked width of the word, so the slide starts fully off-screen
+const TEAM_HALF_WIDTH = 840;
+
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+const easeInOutQuad = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+const smoothstep = (a: number, b: number, v: number) => {
+  const t = clamp01((v - a) / (b - a));
+  return t * t * (3 - 2 * t);
+};
+
+// ---- Exit (driven by Process scroll progress 0 → 0.15) ----
+// The member columns lift away one after another, left to right, like blinds being raised,
+// while the dark background dissolves into the (same-colour) Process section rising behind.
+const TEAM_EXIT_END = 0.15;
+const TEAM_EXIT_STAGGER = 0.11; // delay between columns, as a fraction of the exit
+
+const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+// Team content fades in as the TEAM text starts sliding in (0.82 → 0.85)
+const teamContentFadeFor = (p: number) => (p < TEAM_MASK_START ? 0 : clamp01((p - TEAM_MASK_START) / 0.03));
+
+const teamMaskFrame = (p: number, viewportWidth: number) => {
+  const f = TEAM_FOCUS;
+  if (p < TEAM_ZOOM_START) {
+    const a = easeOutCubic(clamp01((p - TEAM_MASK_START) / (TEAM_SLIDE_END - TEAM_MASK_START)));
+    const tx = (viewportWidth / 2 + TEAM_HALF_WIDTH) * (1 - a);
+    return { transform: `translate(${tx} 0)`, opacity: 1 };
+  }
+  // Scale around the "E" stem while gliding it to the screen centre (identity at t = 0)
+  const t = clamp01((p - TEAM_ZOOM_START) / (1 - TEAM_ZOOM_START));
+  const e = easeInOutQuad(t);
+  const scale = Math.pow(TEAM_MAX_SCALE, e);
+  return {
+    transform: `translate(${f.x * (1 - e)} ${f.y * (1 - e)}) scale(${scale}) translate(${-f.x} ${-f.y})`,
+    // white fades out at the end so the Team section fills the screen with no pop
+    opacity: 1 - smoothstep(0.7, 1, t),
+  };
+};
+
 export function Team({
   reviewsScrollProgress,
   servicesScrollProgress,
@@ -88,7 +138,37 @@ export function Team({
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isExtremeZoomedOut, setIsExtremeZoomedOut] = useState(window.innerWidth >= 3000);
   const currentMember = teamMembers[currentMemberIndex];
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // TEAM mask follows the live Reviews progress directly (no React re-render per frame)
+  const teamTextRef = useRef<SVGTextElement | null>(null);
+  const teamOverlayRef = useRef<HTMLDivElement | null>(null);
+  const teamSvgRef = useRef<SVGSVGElement | null>(null);
+  const applyTeamMask = useCallback((p: number) => {
+    if (containerRef.current) {
+      containerRef.current.style.opacity = String(teamContentFadeFor(p));
+    }
+    const text = teamTextRef.current;
+    const overlay = teamOverlayRef.current;
+    if (!text || !overlay) return;
+    const width = teamSvgRef.current?.clientWidth || window.innerWidth;
+    const frame = teamMaskFrame(p, width);
+    text.setAttribute('transform', frame.transform);
+    overlay.style.opacity = String(frame.opacity);
+  }, []);
+  const setTeamTextRef = useCallback((el: SVGTextElement | null) => {
+    teamTextRef.current = el;
+    applyTeamMask(reviewsProgress.get());
+  }, [applyTeamMask]);
+  const setTeamOverlayRef = useCallback((el: HTMLDivElement | null) => {
+    teamOverlayRef.current = el;
+    applyTeamMask(reviewsProgress.get());
+  }, [applyTeamMask]);
+  useEffect(() => reviewsProgress.subscribe(applyTeamMask), [applyTeamMask]);
+  const setContainerRef = useCallback((el: HTMLDivElement | null) => {
+    containerRef.current = el;
+    if (el) el.style.opacity = String(teamContentFadeFor(reviewsProgress.get()));
+  }, []);
 
   // Handler for clicking on team member columns
   const handleMemberClick = (index: number) => {
@@ -106,13 +186,9 @@ export function Team({
 
   // Team content fades in when Reviews scroll progress reaches 0.82 (when TEAM text starts sliding)
   // Should be fully visible by scroll progress 0.85
-  let teamContentOpacity = reviewsScrollProgress && reviewsScrollProgress >= 0.82 ?
-    Math.min((reviewsScrollProgress - 0.82) / 0.03, 1) : 0;
+  // (set per frame from the live Reviews progress in applyTeamMask; this is only for pointer events)
+  const teamContentOpacity = reviewsScrollProgress && reviewsScrollProgress >= 0.82 ? 1 : 0;
 
-  // Slide up transform when Process section starts - calculate immediately, no spring
-  const teamTranslateY = processScrollProgress && processScrollProgress > 0
-    ? `${-viewportHeight * Math.min(processScrollProgress / 0.15, 1)}px`
-    : '0px';
 
   // Signal readiness on mount
   useEffect(() => {
@@ -131,16 +207,6 @@ export function Team({
     return () => window.removeEventListener('resize', updateZoomState);
   }, []);
 
-  // Debug logging for Process scroll
-  useEffect(() => {
-    // if (processScrollProgress && processScrollProgress > 0) {
-    //   console.log('Process Scroll Debug:', {
-    //     processScrollProgress,
-    //     teamTranslateY,
-    //     calculation: `${-100 * Math.min(processScrollProgress / 0.15, 1)}vh`
-    //   });
-    // }
-  }, [processScrollProgress, teamTranslateY]);
 
   // Check if Services Step 1 is currently visible (AboutUs scroll 0.72-0.98)
   const isServicesStep1Active = aboutUsScrollProgress && aboutUsScrollProgress >= 0.72 && aboutUsScrollProgress < 0.98;
@@ -189,6 +255,42 @@ export function Team({
   const { expandedWidth, closedWidth } = getOptimalWidths();
   const desktopScale = isExtremeZoomedOut ? 0.88 : 0.8;
 
+  // Exit animation state, updated per frame straight from the live Process progress
+  const isExiting = !!processScrollProgress && processScrollProgress >= 0.01;
+  const columnExit = useMemo(
+    () => teamMembers.map(() => ({ y: motionValue(0), opacity: motionValue(1) })),
+    [teamMembers.length]
+  );
+  const exitBgRef = useRef<HTMLDivElement | null>(null);
+  const exitGlowRef = useRef<HTMLDivElement | null>(null);
+  const applyExit = useCallback((p: number) => {
+    const e = clamp01(p / TEAM_EXIT_END);
+    const n = columnExit.length;
+    const stagger = n > 1 ? Math.min(TEAM_EXIT_STAGGER, 0.6 / (n - 1)) : 0;
+    const span = 1 - (n - 1) * stagger;
+    // far enough (in the 0.8-scaled design space) to clear the top of the screen
+    const lift = (viewportHeight * 1.2) / desktopScale;
+    columnExit.forEach((col, i) => {
+      const local = clamp01((e - i * stagger) / span);
+      col.y.set(-easeInOutCubic(local) * lift);
+      col.opacity.set(1 - smoothstep(0.55, 1, local));
+    });
+    if (exitBgRef.current) {
+      exitBgRef.current.style.backgroundColor = `rgba(44, 70, 87, ${1 - smoothstep(0.35, 1, e)})`;
+    }
+    if (exitGlowRef.current) {
+      exitGlowRef.current.style.opacity = String(1 - smoothstep(0, 0.5, e));
+    }
+  }, [columnExit, viewportHeight, desktopScale]);
+  const setExitBgRef = useCallback((el: HTMLDivElement | null) => {
+    exitBgRef.current = el;
+    if (el) applyExit(processProgress.get());
+  }, [applyExit]);
+  useEffect(() => {
+    applyExit(processProgress.get());
+    return processProgress.subscribe(applyExit);
+  }, [applyExit]);
+
   // Function to get column style based on index
   const getColumnStyle = (index: number) => {
     let left = startX;
@@ -212,18 +314,17 @@ export function Team({
     <>
       {/* Team content - fixed position, overlays on top of Reviews */}
       <div
-        ref={containerRef}
+        ref={setContainerRef}
         className="fixed top-0 left-0 w-full overflow-hidden z-[95]"
         style={{
           height: `${viewportHeight}px`,
-          opacity: teamContentOpacity,
-          transform: `translateY(${teamTranslateY})`,
-          pointerEvents: (teamContentOpacity > 0 && !isServicesStep1Active && !isServicesStep2Active) ? 'auto' : 'none',
+          // opacity is driven by applyTeamMask (live scroll), not by React re-renders
+          pointerEvents: (teamContentOpacity > 0 && !isServicesStep1Active && !isServicesStep2Active && !isExiting) ? 'auto' : 'none',
           visibility: isServicesStep1Active ? 'hidden' : 'visible',
           transition: 'opacity 0.3s ease-out'
         }}
       >
-        <div className="absolute inset-0 bg-[#2c4657] flex items-center justify-center">
+        <div ref={setExitBgRef} className="absolute inset-0 bg-[#2c4657] flex items-center justify-center">
           {/* Scaled container - design is 1440px wide, scale to fit viewport with padding */}
           <div
             className="relative w-[1600px] h-[800px]"
@@ -233,7 +334,7 @@ export function Team({
             }}
           >
             {/* Background glow effect */}
-            <div className="absolute left-[362px] size-[538px] top-[260px]">
+            <div ref={exitGlowRef} className="absolute left-[362px] size-[538px] top-[260px]">
               <div className="absolute inset-[-36.43%]">
                 <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 930 930">
                   <g filter="url(#filter0_f_604_60)">
@@ -296,7 +397,7 @@ export function Team({
                 <motion.div
                   key={member.id}
                   className="absolute top-0 h-full cursor-pointer overflow-hidden group"
-                  style={{ zIndex }}
+                  style={{ zIndex, y: columnExit[index]?.y, opacity: columnExit[index]?.opacity }}
                   animate={{ left, width }}
                   transition={{
                     type: "spring",
@@ -442,66 +543,40 @@ export function Team({
       </div>
 
       {/* White overlay with TEAM text cutout - reveals team content through the text */}
-      {/* Mask starts sliding in at 0.82, then zooms from 0.90+, stays visible longer */}
-      {reviewsScrollProgress && reviewsScrollProgress >= 0.82 && reviewsScrollProgress < 1.0 && (
+      {/* TEAM eases in from the right, holds, then zooms into the "E" while the white fades away */}
+      {reviewsScrollProgress && reviewsScrollProgress >= TEAM_MASK_START && reviewsScrollProgress < 1.0 && (
         <div
+          ref={setTeamOverlayRef}
           className="fixed top-0 left-0 w-full overflow-hidden pointer-events-none z-[96]"
           style={{
             height: `${viewportHeight}px`,
-            opacity: 1 // Full opacity immediately - no fade
+            willChange: 'opacity'
           }}
         >
           {/* SVG with mask to create cutout effect */}
-          <svg className="absolute inset-0 w-full h-full">
+          <svg ref={teamSvgRef} className="absolute inset-0 w-full h-full">
             <defs>
               <mask id="teamTextMask">
                 {/* White background - everything covered */}
                 <rect x="0" y="0" width="100%" height="100%" fill="white" />
 
-                {/* Black text - creates the cutout (hole) with slide + zoom animation */}
-                <text
-                  x={(() => {
-                    // Slide from right: starts at 150% at 0.82, center (50%) at 0.90 (earlier)
-                    if (reviewsScrollProgress < 0.90) {
-                      const slideProgress = Math.min((reviewsScrollProgress - 0.82) / (0.90 - 0.82), 1);
-                      return `${150 - (100 * slideProgress)}%`;
-                    }
-                    return "50%";
-                  })()}
-                  y="50%"
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  fill="black"
-                  fontSize={(() => {
-                    // Zoom animation - MUCH SLOWER: greatly extended scroll range
-                    // Base size is 232px, scale from 2 to 12 over EXTENDED scroll range
-                    const baseSize = 232;
-                    if (!reviewsScrollProgress || reviewsScrollProgress < 0.90) return baseSize * 2; // Hold at 2x during slide-in
-                    if (reviewsScrollProgress >= 0.999) return baseSize * 12; // Reduced max zoom from 15 to 12
-
-                    // Linear progression from 0.90 to 0.999 (0.099 scroll range - even slower)
-                    const progress = (reviewsScrollProgress - 0.90) / (0.999 - 0.90);
-                    const scale = 2 + (10 * progress); // 2x to 12x scale (linear)
-                    return baseSize * scale;
-                  })()}
-                  fontFamily="Lato, sans-serif"
-                  fontWeight="700"
-                  letterSpacing={(() => {
-                    // Scale letter spacing proportionally to fontSize
-                    const baseFontSize = 232;
-                    const baseLetterSpacing = 48;
-                    const fontSize = (() => {
-                      if (!reviewsScrollProgress || reviewsScrollProgress < 0.90) return baseFontSize * 2;
-                      if (reviewsScrollProgress >= 0.999) return baseFontSize * 12;
-                      const progress = (reviewsScrollProgress - 0.90) / (0.999 - 0.90);
-                      const scale = 2 + (10 * progress);
-                      return baseFontSize * scale;
-                    })();
-                    return String((baseLetterSpacing * fontSize) / baseFontSize);
-                  })()}
-                >
-                  TEAM
-                </text>
+                {/* Black text - the cutout. Drawn once at a fixed size; motion is a transform set per frame */}
+                <svg x="50%" y="50%" overflow="visible">
+                  <text
+                    ref={setTeamTextRef}
+                    x="0"
+                    y="0"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fill="black"
+                    fontSize={TEAM_FONT_SIZE}
+                    fontFamily="Lato, sans-serif"
+                    fontWeight="700"
+                    letterSpacing={TEAM_LETTER_SPACING}
+                  >
+                    TEAM
+                  </text>
+                </svg>
               </mask>
             </defs>
 

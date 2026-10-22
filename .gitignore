@@ -137,3 +137,9 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Vite build output (vite.config outDir)
+build/
+
+# Local test-browser profile (screenshot/perf scripts)
+chrome-profile/
